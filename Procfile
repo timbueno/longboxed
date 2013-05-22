@@ -1,1 +1,1 @@
-web: gunicorn thisweekscomics:app
+web: gunicorn longboxed:app
