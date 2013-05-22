@@ -1,0 +1,9 @@
+<ul class="nav nav-list">
+  {% for group in comicList|groupby('publisher') %}
+    <li>
+      <a href="#g{{ loop.index }}">
+        {{ group.grouper }}
+      </a>
+    </li>
+  {% endfor %}
+</ul>

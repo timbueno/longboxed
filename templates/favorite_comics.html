@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% set active_page = 'favorite_comics' %}
+
+{% block main_content %}
+    <div class="container">
+        <h2>Your Favorite Comics</h2>
+        <div class="well">
+            {% if g.user.comics.favorites %}
+            <ul>
+                {% for item in g.user.comics.favorites %}
+                <li>{{ item }} <a href="javascript:{}" onclick="document.getElementById('removeComic{{ loop.index0 }}').submit();">
+                            <i class="icon-remove-circle"></i>
+                        </a> 
+                    <form id="removeComic{{ loop.index0 }}" method="POST" action="/remove_favorite">
+                        <input type="hidden" name="comic_to_remove" value={{ loop.index0 }}>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <h3>
+                No favorites yet!
+            </h3>
+            {% endif %}
+        </div>
+        <div class="well">
+            <h3>Add more comics...</h3>
+            <form method="POST" id="newcomics">
+                <input type="text" name="newfavorite" class="input-xlarge">
+                <div>
+                    <button class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+
+    </div>  
+{% endblock %}

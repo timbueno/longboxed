@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<div class="container">
+    <form class="form form-horizontal" method="post">
+      <fieldset>
+        <div id="legend">
+          <legend class="">Settings</legend>
+        </div>
+        {{ form.hidden_tag() }}
+        {% for field in form if field.widget.input_type != 'hidden' %}
+        <div class="control-group">
+          <label class="control-label">{{ field.label }}</label>
+            <div class="controls">
+              {{ field }}
+            <p class="help-block">{{ field.description }}</p>
+            </div>
+        </div>
+        {% endfor %}
+        <!-- Recaptcha filed omitted here, can't be placed twice? -->
+        <div class="form-actions">
+           <button name="action_save" type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </fieldset>
+    </form>
+</div>    
+{% endblock %}

@@ -1,0 +1,83 @@
+<div class="favorite_matches">
+{% if matches %}
+  {% include 'favorite_matches.html' %}
+{% endif %}
+</div>
+{% for group in comicList|groupby('publisher') %}
+  {% set outer_loop = loop %} 
+  <section id="g{{ loop.index }}">
+    <h2 style="padding-top: 60px; margin-top: -60px;">{{ group.grouper }}</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <td class="copt">Options</td>
+          <td class="ctitle">Title</td>
+          <td class="cdate">Released</td>
+          <td class="cprice">Price</td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for comic in group.list|sort(attribute='title') %}
+          <tr>
+            <td class="copt">
+              <div id="pop{{ outer_loop.index }}{{ loop.index }}_content" class="popSourceBlock">
+                <div class="popTitle">
+                  {{ comic.title }}
+                </div>
+                <div class="popContent">
+                  <div class="cpImage">
+                    {% if (comic.image_url is defined) and (comic.image_url) %}
+                    <a href="{{ comic['image_url'] }}">
+                      <img class="popImage" src="{{ comic['image_url'] }}" class="img-rounded">
+                    </a>
+                    {% else %}
+                    <img class="popImage" src="{{ url_for('static', filename='noimage.png') }}">
+                    {% endif %}
+                  </div>
+                  <div class="cpInfo">
+                    <table class="table">
+                      <tbody>
+                        <tr>
+                          <td>Price</td>
+                          <td>${{ comic.price }}</td>
+                        </tr>
+                        <tr>
+                          <td>DiamondID</td>
+                          <td>
+                            <a href="{{ comic.link }}">
+                            {{ comic.id }}
+                            </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Date</td>
+                          <td>{{ comic.date.strftime('%B %-d, %Y') }}</td>
+                        </tr>
+                        {% if g.user %}
+                        <tr>
+                          <td>Add to Calendar</td>
+                          <td>
+                            <a href="{{ url_for('add_comic_to_calendar', diamondid=comic.id) }}"><i class="icon-calendar"></i></a>
+                          </td>
+                        </tr>
+                        {% endif %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <a id="pop{{ outer_loop.index }}{{ loop.index }}" class="btn pop"> <i class="icon-eye-open"></i></a>
+            </td>
+            <td class="ctitle">
+              <a href="{{ url_for('issue', diamondid=comic.id) }}">
+                {{ comic['title'] }}
+              </a>
+            </td>
+            <td class="cdate">{{ comic.date.strftime('%-m/%-d/%y') }}</td>
+            <td class="cprice">${{ comic.price }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+{% endfor %}

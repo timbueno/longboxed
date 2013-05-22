@@ -1,0 +1,28 @@
+{% for row in comicList|groupby('publisher')|batch(3) %}
+  {% set outer_loop = loop %} 
+    <div class="row">
+      {% for publisher in row %}
+        <div class="span3">
+          <div class="accordion" id="accordion{{ outer_loop.index }}{{ loop.index }}">
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion{{ outer_loop.index }}{{ loop.index }}" href="#collapse{{ loop.index }}{{ outer_loop.index }}">
+                  <h2>{{ publisher.grouper }}</h2>
+                </a>
+              </div>
+              <div id="collapse{{ loop.index }}{{ outer_loop.index }}" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  {% for comic in publisher.list|sort(attribute='title') %}
+                      <li class="comic">
+                        <a href= "{{ comic['link'] }}" >{{ comic['title'] }}</a> - {{ comic['price'] }}
+                        <a href="http://www.google.com"><i class="icon-calendar"></i></a>
+                      </li>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+{% endfor %}

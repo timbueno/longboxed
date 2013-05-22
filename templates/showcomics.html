@@ -1,0 +1,24 @@
+<div class="row">
+  <div class="span3">
+    <div id="comicsidebar">
+      {% if calendarenable %}
+      <div style="margin-top:-10px">
+        <div id="reportrange">
+            <i class="icon-calendar icon-large"></i>
+            <span>{{ dates['start'].strftime("%m/%d/%y") }} - {{ dates['end'].strftime("%m/%d/%y") }}</span> <b class="caret"></b>
+        </div>
+      </div>
+      {% else %}
+      <h2 style="padding-top: 60px; margin-top: -60px;">{{ comicList[0]['date'].strftime('%B %-d, %Y') }}</h2>
+      {% endif %}
+        <div class="comicsidenav">
+          {% include 'comicsidenav.html' %}
+        </div>
+    </div>
+  </div>
+    <div class="span8 offset1">
+      <div class="comiclist">
+        {% include 'comiclist.html' %}
+      </div>
+    </div>
+</div>
