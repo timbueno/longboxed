@@ -7,6 +7,7 @@ Jinja2==2.6
 WTForms==1.0.4
 Werkzeug==0.8.3
 distribute==0.6.28
+gunicorn==0.17.4
 httplib2==0.8
 mongokit==0.8.3
 oauth2==1.5.211
