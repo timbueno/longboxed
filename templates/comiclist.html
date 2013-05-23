@@ -67,7 +67,9 @@
             </td>
             <td class="cdate">{{ comic.date.strftime('%-m/%-d/%y') }}</td>
             <td class="cprice">${{ comic.price }}</td>
+            {% if g.user %}
             <td class="ccal"><div class="add2cal" data-id="{{ comic.id }}"><i class="icon-calendar"></i></div></td>
+            {% endif %}
           </tr>
         {% endfor %}
       </tbody>
