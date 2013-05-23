@@ -53,14 +53,6 @@
                           <td>Date</td>
                           <td>{{ comic.date.strftime('%B %-d, %Y') }}</td>
                         </tr>
-                        {% if g.user %}
-                        <tr>
-                          <td>Add to Calendar</td>
-                          <td>
-                            <a href="{{ url_for('add_comic_to_calendar', diamondid=comic.id) }}"><i class="icon-calendar"></i></a>
-                          </td>
-                        </tr>
-                        {% endif %}
                       </tbody>
                     </table>
                   </div>
@@ -75,6 +67,7 @@
             </td>
             <td class="cdate">{{ comic.date.strftime('%-m/%-d/%y') }}</td>
             <td class="cprice">${{ comic.price }}</td>
+            <td class="ccal"><div class="add2cal" data-id="{{ comic.id }}"><i class="icon-calendar"></i></div></td>
           </tr>
         {% endfor %}
       </tbody>

@@ -37,14 +37,14 @@ var attachpopover = function(){
             var self = this;
             timer = setTimeout(function(){hidePopover(popover_parent)},300); 
           },
-          click: function() {
-            var self = this;
-            timer = setTimeout(function(){hidePopover(popover_parent)},300); 
-          },
-          tap: function() {
-            var self = this;
-            timer = setTimeout(function(){hidePopover(popover_parent)},300); 
-          }
+          // click: function() {
+          //   var self = this;
+          //   timer = setTimeout(function(){hidePopover(popover_parent)},300); 
+          // },
+          // tap: function() {
+          //   var self = this;
+          //   timer = setTimeout(function(){hidePopover(popover_parent)},300); 
+          // }
         }, '.popover');
     });
 

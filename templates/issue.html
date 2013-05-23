@@ -13,9 +13,7 @@
                     <h2>{{ issue.title }}</h2>
                     <h4>
                         {{ issue.publisher }} - 
-                        <a href="{{ url_for('add_comic_to_calendar', diamondid=issue.id) }}">
-                            <i class="icon-calendar"></i>
-                        </a>
+                        <a href="#" class="add2cal" data-id="{{ issue.id }}"><i class="icon-calendar"></i></a>
                     </h4>
                     <table class="table">
                         <tbody>

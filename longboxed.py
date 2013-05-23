@@ -328,6 +328,31 @@ def add_comic_to_calendar(diamondid=None):
             return abort(404) 
     return redirect(url_for('index'))
 
+@app.route('/add_issue_to_cal')
+@login_required
+def add_issue_to_cal():
+    try:
+        diamondid = request.args['id']
+        issue = collection.comics.find_one({'id': diamondid})
+        if issue:
+            event = {
+                'summary': issue['title'],
+                'start': {
+                    'date': issue['date'].strftime('%Y-%m-%d')
+                },
+                'end': {
+                    'date': issue['date'].strftime('%Y-%m-%d')
+                }
+            }
+            insert_calendar_event(event)
+            return jsonify(response=200, title=issue['title'])
+        else:
+            return jsonify(response=500)
+    except:
+        print "Unexpected error:", sys.exc_info()[1]
+        return jsonify(response=500)
+
+
 # ===================================
 # 
 # Google Calendar Methods
