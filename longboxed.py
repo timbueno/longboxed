@@ -392,16 +392,13 @@ def get_favorites():
     except:
         clist = None
     try:
+        matches = None
         if g.user is not None:
             if g.user.comics.favorites:
                 matches = []
                 matches = get_favorite_matches(g.user.comics.favorites, comicList)
                 if matches:
                     matches = render_template('favorite_matches.html', matches=matches)
-                else:
-                    matches = None
-            else:
-                matches = None
     except:
         matches = None
 
@@ -483,6 +480,7 @@ def authorized():
         # print "CREATING NEW USER"
         identity = identity_data
         identity['access_token'] = auth_data['access_token']
+        print 'AUTH_DATA ', auth_data
         identity['refresh_token'] = auth_data['refresh_token']
         create_new_user(identity)
 
