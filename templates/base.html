@@ -49,13 +49,18 @@
                     <li><a href="/logout"><i class="icon-off"></i> Sign Out</a></li>
                   </ul>
                   {% else %}
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sign In <b class="caret"></b></a>
+<!--                   <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sign In <b class="caret"></b></a>
                   <div class="dropdown-menu" style="padding: 15px; padding-bottom: 15px;">
                     <form action="/login" method="post">
                     <div><button class='zocial google' style="font-size: 12px">Sign In With Google</button></div>
                     </form>
                     <div><button class='zocial facebook' style="font-size: 12px">Sign In With Facebook</button></div>
-                  </div>
+                  </div> -->
+                    <ul class="nav">
+                        <li>
+                            <a href="{{ url_for('login') }}">Sign in with Google</a>
+                        </li>
+                    </ul>
                   {% endif %}
                 {% endblock dropdown_content %}
               </li>
