@@ -261,6 +261,13 @@ def settings():
     else:
         return redirect(url_for('index'))
 
+    #
+    #
+    #
+    # THIS IS STUPID AND NEEDS FIXED
+    #
+    #
+    #
     # Default calendars
     calendars = get_calendar_info() # Get a users calendar
     c = []
@@ -272,6 +279,7 @@ def settings():
         default_cal = True
     for cal in calendars[1]:
         c.append((cal[0], cal[1]))
+        print cal
         if cal[2] and not default_cal:
             default_cal = cal[0]
 
@@ -307,32 +315,32 @@ def edit_profile():
 
     return render_template('edit_profile.html')
 
-@app.route('/add_comic_to_calendar/<diamondid>')
-@login_required
-def add_comic_to_calendar(diamondid=None):
-    if diamondid:
-        try:
-            issue = collection.comics.find_one({"id": diamondid})
-            if issue:
-                event = {
-                    'summary': issue['title'],
-                    'start': {
-                        'date': issue['date'].strftime('%Y-%m-%d')
-                    },
-                    'end': {
-                        'date': issue['date'].strftime('%Y-%m-%d')
-                    }
-                }
-                insert_calendar_event(event)
-        except:
-            return abort(404) 
-    return redirect(url_for('index'))
+# @app.route('/add_comic_to_calendar/<diamondid>')
+# @login_required
+# def add_comic_to_calendar(diamondid=None):
+#     if diamondid:
+#         try:
+#             issue = collection.comics.find_one({"id": diamondid})
+#             if issue:
+#                 event = {
+#                     'summary': issue['title'],
+#                     'start': {
+#                         'date': issue['date'].strftime('%Y-%m-%d')
+#                     },
+#                     'end': {
+#                         'date': issue['date'].strftime('%Y-%m-%d')
+#                     }
+#                 }
+#                 insert_calendar_event(event)
+#         except:
+#             return abort(404) 
+#     return redirect(url_for('index'))
 
 @app.route('/add_issue_to_cal')
 @login_required
 def add_issue_to_cal():
     try:
-        diamondid = request.args['id']
+        diamondid = request.args.get('id')
         issue = collection.comics.find_one({'id': diamondid})
         if issue:
             event = {
