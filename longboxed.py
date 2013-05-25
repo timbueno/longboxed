@@ -215,16 +215,16 @@ def favorites():
 # Individual issue page
 @app.route('/issue/<diamondid>')
 def issue(diamondid):
-    # try:
+    try:
         print 'DIAMONDID ', diamondid
         issue = collection.comics.find_one({"id": diamondid})
         print 'ISSUE ', issue
         if issue:
             return render_template('issue.html', issue=issue)
-        # return abort(404) 
-    # except:
-    #     print "Unexpected error:", sys.exc_info()[1]
-    #     # return abort(404) 
+        return abort(404) 
+    except:
+        print "Unexpected error:", sys.exc_info()[1]
+        return abort(404) 
 
 @app.route('/remove_favorite', methods=['POST'])
 @login_required
