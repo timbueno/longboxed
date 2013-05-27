@@ -265,12 +265,9 @@ def settings():
     c = []
     for cal in calendars[1]:
         c.append((cal[0], cal[1]))
-
     # Set the default calendar
     default_cal = current_user.settings.default_cal
-
-    print 'DEFAULT CAL: ', default_cal
-
+    
     class ExampleForm(Form):
         display_favs = BooleanField(
                             'Display Favorites',
