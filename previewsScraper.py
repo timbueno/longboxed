@@ -18,6 +18,7 @@ def getComics(url="http://www.previewsworld.com/Home/1/1/71/954"):
 
     #Get the date from the top of the page
     headline = soup.find('div', class_='Headline')
+    # print headline
     headlineText = headline.get_text(strip=True)
     d = re.search("([0-9]{1,2}/[0-9]{1,2}/[0-9]{4})", headlineText)
     d = d.group(1)

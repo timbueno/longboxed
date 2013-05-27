@@ -112,8 +112,7 @@ class User(Document, UserMixin):
     required_fields = ['id', 'info.email', 'date_creation']
     default_values = {
         'date_creation': datetime.utcnow,
-        'settings.display_favs': True,
-        'settings.default_cal': u'primary'
+        'settings.display_favs': True
     }
     use_dot_notation = True
     def __repr__(self):
@@ -261,27 +260,16 @@ def settings():
     else:
         return redirect(url_for('index'))
 
-    #
-    #
-    #
-    # THIS IS STUPID AND NEEDS FIXED
-    #
-    #
-    #
     # Default calendars
     calendars = get_calendar_info() # Get a users calendar
     c = []
-    # If users default_cal is primary (default) search
-    # for default value for the form (calendar id)
-    if current_user.settings.default_cal == 'primary':
-        default_cal = False
-    else:
-        default_cal = True
     for cal in calendars[1]:
         c.append((cal[0], cal[1]))
-        print cal
-        if cal[2] and not default_cal:
-            default_cal = cal[0]
+
+    # Set the default calendar
+    default_cal = current_user.settings.default_cal
+
+    print 'DEFAULT CAL: ', default_cal
 
     class ExampleForm(Form):
         display_favs = BooleanField(
@@ -314,27 +302,6 @@ def edit_profile():
         return redirect(url_for('index'))
 
     return render_template('edit_profile.html')
-
-# @app.route('/add_comic_to_calendar/<diamondid>')
-# @login_required
-# def add_comic_to_calendar(diamondid=None):
-#     if diamondid:
-#         try:
-#             issue = collection.comics.find_one({"id": diamondid})
-#             if issue:
-#                 event = {
-#                     'summary': issue['title'],
-#                     'start': {
-#                         'date': issue['date'].strftime('%Y-%m-%d')
-#                     },
-#                     'end': {
-#                         'date': issue['date'].strftime('%Y-%m-%d')
-#                     }
-#                 }
-#                 insert_calendar_event(event)
-#         except:
-#             return abort(404) 
-#     return redirect(url_for('index'))
 
 @app.route('/add_issue_to_cal')
 @login_required
@@ -543,6 +510,8 @@ def create_new_user(resp):
     newUser.info.first_name = resp['given_name']
     newUser.info.last_name = resp['family_name']
     newUser.info.full_name = resp['name']
+    # Set default calendar
+    newUser.settings.default_cal = resp['email']
 
     # Save tokens
     newUser.tokens.access_token = resp['access_token']
