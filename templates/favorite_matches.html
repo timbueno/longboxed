@@ -35,7 +35,7 @@
                                 <tbody>
                                   <tr>
                                     <td>Price</td>
-                                    <td>${{ comic.price }}</td>
+                                    <td>${{ comic.retailPrice }}</td>
                                   </tr>
                                   <tr>
                                     <td>DiamondID</td>
@@ -67,7 +67,7 @@
                         {{ comic.onSaleDate.strftime('%-m/%-d/%y') }}
                     </td>
                     <td class="cprice">
-                        ${{ comic.price }}
+                        ${{ comic.retailPrice }}
                     </td>
                     {% if g.user %}
                     <td class="ccal">

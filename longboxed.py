@@ -309,20 +309,20 @@ def edit_profile():
 def add_issue_to_cal():
     try:
         diamondid = request.args.get('id')
-        issue = collection.comics.find_one({'id': diamondid})
+        issue = collection.comics.Comic.find_one({'id': diamondid})
         if issue:
             event = {
-                'summary': issue['title'],
+                'summary': issue.name,
                 'start': {
-                    'date': issue['date'].strftime('%Y-%m-%d')
+                    'date': issue.onSaleDate.strftime('%Y-%m-%d')
                 },
                 'end': {
-                    'date': issue['date'].strftime('%Y-%m-%d')
+                    'date': issue.onSaleDate.strftime('%Y-%m-%d')
                 }
             }
             response = insert_calendar_event(event)
             if response:
-                return jsonify(response=200, title=issue['title'])
+                return jsonify(response=200, title=issue.name)
             else:
                 return jsonify(response=201)
         return jsonify(response=500)
