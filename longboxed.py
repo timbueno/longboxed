@@ -19,7 +19,7 @@ import requests
 import sys
 import json
 
-from models.py import Comic
+from models import Comic
 # 4
 # MongoLab configuration
 MONGO_USERNAME = 'bueno'
@@ -218,16 +218,16 @@ def favorites():
 # Individual issue page
 @app.route('/issue/<diamondid>')
 def issue(diamondid):
-    try:
-        # print 'DIAMONDID ', diamondid
-        issue = collection.comics.find_one({"id": diamondid})
-        # print 'ISSUE ', issue
-        if issue:
-            return render_template('issue.html', issue=issue)
-        return abort(404) 
-    except:
-        print "Unexpected error:", sys.exc_info()[1]
-        return abort(404) 
+    # try:
+    # print 'DIAMONDID ', diamondid
+    issue = collection.comics.find_one({"id": diamondid})
+    # print 'ISSUE ', issue
+    if issue:
+        return render_template('issue.html', issue=issue)
+    return abort(404) 
+    # except:
+    #     print "Unexpected error:", sys.exc_info()[1]
+    #     return abort(404) 
 
 @app.route('/remove_favorite', methods=['POST'])
 @login_required
@@ -570,13 +570,13 @@ def get_user_with_google_id(gid):
 #
 # ===================================
 def find_all_comics_by_date(date = datetime.now()):
-    result = list(collection.comics.find({"date": date}))
-    result = sorted(result, key=lambda k: k['publisher'])
+    result = list(collection.comics.Comic.find({"date": date}))
+    result = sorted(result, key=lambda k: k.publisher)
     return result
 
 def find_comics_in_date_range(start, end):
-    result = list(collection.comics.find({"date": {"$gte": start, "$lt": end}}))
-    result = sorted(result, key=lambda k: k['publisher'])
+    result = list(collection.comics.Comic.find({"onSaleDate": {"$gte": start, "$lt": end}}))
+    result = sorted(result, key=lambda k: k.publisher)
     return result
 
 def get_current_week():
@@ -598,11 +598,11 @@ def get_favorite_matches(favorites, comicList):
     matches = []
     if g.user.settings.display_favs:
         for idx, comic in enumerate(favorites):
-            match = difflib.get_close_matches(comic, (c['title'] for c in comicList))
+            match = difflib.get_close_matches(comic, (c.name for c in comicList))
             # print "Match: ", match
             matches = matches + match
 
-    matchingComics = [dictio for dictio in comicList if dictio['title'] in matches]
+    matchingComics = [dictio for dictio in comicList if dictio.name in matches]
     return matchingComics
 
 

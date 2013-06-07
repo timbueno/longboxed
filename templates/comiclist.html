@@ -17,18 +17,18 @@
         </tr>
       </thead>
       <tbody>
-        {% for comic in group.list|sort(attribute='title') %}
+        {% for comic in group.list|sort(attribute='name') %}
           <tr>
             <td class="copt">
               <div id="pop{{ outer_loop.index }}{{ loop.index }}_content" class="popSourceBlock">
                 <div class="popTitle">
-                  {{ comic.title }}
+                  {{ comic.name }}
                 </div>
                 <div class="popContent">
                   <div class="cpImage">
-                    {% if (comic.image_url is defined) and (comic.image_url) %}
-                    <a href="{{ comic['image_url'] }}">
-                      <img class="popImage" src="{{ comic['image_url'] }}" class="img-rounded">
+                    {% if (comic.thumbnail is defined) and (comic.thumbnail) %}
+                    <a href="{{ comic.thumbnail }}">
+                      <img class="popImage" src="{{ comic.thumbnail }}" class="img-rounded">
                     </a>
                     {% else %}
                     <img class="popImage" src="{{ url_for('static', filename='noimage.png') }}">
@@ -51,7 +51,7 @@
                         </tr>
                         <tr>
                           <td>Date</td>
-                          <td>{{ comic.date.strftime('%B %-d, %Y') }}</td>
+                          <td>{{ comic.onSaleDate.strftime('%B %-d, %Y') }}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -62,10 +62,10 @@
             </td>
             <td class="ctitle">
               <a href="{{ url_for('issue', diamondid=comic.id) }}">
-                {{ comic['title'] }}
+                {{ comic.name }}
               </a>
             </td>
-            <td class="cdate">{{ comic.date.strftime('%-m/%-d/%y') }}</td>
+            <td class="cdate">{{ comic.onSaleDate.strftime('%-m/%-d/%y') }}</td>
             <td class="cprice">${{ comic.price }}</td>
             {% if g.user %}
             <td class="ccal"><div class="add2cal" data-id="{{ comic.id }}"><i class="icon-calendar"></i></div></td>

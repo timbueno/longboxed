@@ -13,10 +13,14 @@ M_URI = 'mongodb://heroku:93f17e34f76c9902ad0b574509c98040@linus.mongohq.com:100
 
 lab = Connection(LAB_URI)
 lab = lab[MONGO_DBNAME]
-mdb = Connection(M_URI)
-mdb = mdb['app15098233']
 
-allComics = list(mdb.comicDB.find())
+cbackup = list(lab.comics.find())
+lab.comic_backup.insert(cbackup)
 
-lab.comics.insert(allComics)
+# mdb = Connection(M_URI)
+# mdb = mdb['app15098233']
+
+# allComics = list(mdb.comicDB.find())
+
+# lab.comics.insert(allComics)
 

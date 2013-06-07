@@ -107,7 +107,7 @@ if __name__ == "__main__":
 
     print cList[0]
     for i, issue in enumerate(cList):
-        collection.test_comics.update({'id': issue.id}, issue, upsert=True)
+        collection.comics.update({'id': issue.id}, issue, upsert=True)
         if i % 250 == 0:
             print 'Inserted %d / %d' % (i, len(cList))
 

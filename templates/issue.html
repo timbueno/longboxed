@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% set title = issue.title+' | Longboxed' %}
+{% set title = issue.name+' | Longboxed' %}
 
 {% block main_content %}
     <div class="container">
@@ -7,11 +7,11 @@
             <div class="row">
                 <div class="span4">
                     <div class="coverImage">
-                       <img class="m_issue img-rounded" src="{{ issue.image_url }}"> 
+                       <img class="m_issue img-rounded" src="{{ issue.bigImage }}"> 
                     </div>
                 </div>
                 <div class="span8">
-                    <h2>{{ issue.title }}</h2>
+                    <h2>{{ issue.name }}</h2>
                     <h4>
                         {{ issue.publisher }} - 
                         <a href="#" class="add2cal" data-id="{{ issue.id }}"><i class="icon-calendar"></i></a>
@@ -20,7 +20,7 @@
                         <tbody>
                             <tr>
                                 <td>Release Date</td>
-                                <td>{{ issue.date.strftime('%-m/%-d/%y') }}</td>
+                                <td>{{ issue.onSaleDate.strftime('%-m/%-d/%y') }}</td>
                             </tr>
                             <tr>
                                 <td>Price</td>
@@ -28,13 +28,13 @@
                             </tr>
                             <tr>
                                 <td>Distributor Code</td>
-                                <td><a href="{{ issue.link }}">{{ issue.id }}</a></td>
+                                <td><a href="{{ issue.alink }}">{{ issue.id }}</a></td>
                             </tr>
                             <tr>
                                 <td>Description</td>
                                 <td>
                                     <p>
-                                        Shiznit ipsizzle dolizzle pimpin' amizzle, consectetuer adipiscing fizzle. Nullizzle uhuh ... yih! phat, black daahng dawg, mammasay mammasa mamma oo sa doggy, gravida vel, break it down. Pellentesque eget tortizzle. The bizzle erizzle. Funky fresh fo we gonna chung dapibus turpis we gonna chung gangster. Mauris pellentesque my shizz brizzle turpizzle. Fo shizzle in sure. Pellentesque dope rhoncus shiznit. Dang ma nizzle habitasse platea dictumst. Brizzle dapibizzle. Sizzle tellus urna, fizzle eu, mattizzle ac, rizzle vitae, nunc. Fizzle suscipizzle. Integer sempizzle velit sizzle purus.
+                                        {{ issue.description }}
                                     </p>
                                 </td>
                             </tr>

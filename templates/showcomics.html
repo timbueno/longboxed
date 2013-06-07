@@ -9,7 +9,7 @@
         </div>
       </div>
       {% else %}
-      <h2 style="padding-top: 60px; margin-top: -60px;">{{ comicList[0]['date'].strftime('%B %-d, %Y') }}</h2>
+      <h2 style="padding-top: 60px; margin-top: -60px;">{{ comicList[0].onSaleDate.strftime('%B %-d, %Y') }}</h2>
       {% endif %}
         <div class="comicsidenav">
           {% include 'comicsidenav.html' %}
