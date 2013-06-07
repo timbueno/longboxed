@@ -18,6 +18,8 @@ import difflib
 import requests
 import sys
 import json
+
+from models.py import Comic
 # 4
 # MongoLab configuration
 MONGO_USERNAME = 'bueno'
@@ -124,25 +126,26 @@ class User(Document, UserMixin):
 # Comic Book Class
 # (DOESNT DO ANYTHING YET)
 # ===================================
-@mongo.register
-class Comic(Document, UserMixin):
-    structure = {
-        'id': unicode,
-        'publisher': unicode,
-        'title': unicode,
-        'price': float,
-        'link': unicode,
-        'date_released': datetime,
-        'last_updated': datetime
-    }
-    required_fields = ['id', 'title']
-    default_values = {
-        'last_updated': datetime.utcnow
-    }
-    use_dot_notation = True
-    def __repr__(self):
-        return '<Comic %r>' % (self.name)
+# @mongo.register
+# class Comic(Document, UserMixin):
+#     structure = {
+#         'id': unicode,
+#         'publisher': unicode,
+#         'title': unicode,
+#         'price': float,
+#         'link': unicode,
+#         'date_released': datetime,
+#         'last_updated': datetime
+#     }
+#     required_fields = ['id', 'title']
+#     default_values = {
+#         'last_updated': datetime.utcnow
+#     }
+#     use_dot_notation = True
+#     def __repr__(self):
+#         return '<Comic %r>' % (self.name)
 
+mongo.register([Comic])
 collection = mongo[MONGO_DBNAME]
 
 # ===================================
@@ -216,9 +219,9 @@ def favorites():
 @app.route('/issue/<diamondid>')
 def issue(diamondid):
     try:
-        print 'DIAMONDID ', diamondid
+        # print 'DIAMONDID ', diamondid
         issue = collection.comics.find_one({"id": diamondid})
-        print 'ISSUE ', issue
+        # print 'ISSUE ', issue
         if issue:
             return render_template('issue.html', issue=issue)
         return abort(404) 

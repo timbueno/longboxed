@@ -61,6 +61,30 @@ class User(Document, UserMixin):
     def __repr__(self):
         return '<User %r>' % (self.name)
 
+# # ===================================
+# # 
+# # Comic Book Model
+# # 
+# # ===================================
+# class Comic(Document, UserMixin):
+#     structure = {
+#         'id': unicode,
+#         'publisher': unicode,
+#         'title': unicode,
+#         'price': float,
+#         'link': unicode,
+#         'image_url': unicode,
+#         'date': datetime,
+#         'last_updated': datetime
+#     }
+#     required_fields = ['id', 'title']
+#     default_values = {
+#         'last_updated': datetime.utcnow
+#     }
+#     use_dot_notation = True
+#     def __repr__(self):
+#         return '<Comic %r>' % (self.name)
+
 # ===================================
 # 
 # Comic Book Model
@@ -68,19 +92,24 @@ class User(Document, UserMixin):
 # ===================================
 class Comic(Document, UserMixin):
     structure = {
-        'id': unicode,
-        'publisher': unicode,
-        'title': unicode,
-        'price': float,
-        'link': unicode,
-        'image_url': unicode,
-        'date': datetime,
-        'last_updated': datetime
+        'productID': unicode, # 0
+        'name': unicode, # 1
+        'alink': unicode, # 4
+        'thumbnail': unicode, # 5
+        'bigImage': unicode, # 6
+        'retailPrice': float, # 8
+        'description': unicode, # 11
+        'onSaleDate': datetime, # 12
+        'genre': unicode, # 13
+        'people': unicode, # 14
+        'popularity': float, # 16
+        'lastUpdated': datetime, # 17
+        'publisher': unicode, # 19
+        'id': unicode, # 20
+        'category': unicode, # 21
+        'upc': unicode # 25
     }
-    required_fields = ['id', 'title']
-    default_values = {
-        'last_updated': datetime.utcnow
-    }
+    required_fields = ['id', 'name']
     use_dot_notation = True
     def __repr__(self):
         return '<Comic %r>' % (self.name)
