@@ -598,11 +598,15 @@ def get_favorite_matches(favorites, comicList):
     matches = []
     if g.user.settings.display_favs:
         for idx, comic in enumerate(favorites):
-            match = difflib.get_close_matches(comic, (c.name for c in comicList))
-            # print "Match: ", match
+            print idx, comic
+            # for c in comicList:
+            #     if c.info.name == None:
+            #         print c.info
+            match = difflib.get_close_matches(comic, [c.info.name for c in comicList if c.info])
+            print "Match: ", match
             matches = matches + match
 
-    matchingComics = [dictio for dictio in comicList if dictio.name in matches]
+    matchingComics = [dictio for dictio in comicList if dictio.info.name in matches]
     return matchingComics
 
 

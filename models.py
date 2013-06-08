@@ -90,10 +90,15 @@ class User(Document, UserMixin):
 # Comic Book Model
 # 
 # ===================================
-class Comic(Document, UserMixin):
+class Comic(Document):
     structure = {
         'productID': unicode, # 0
-        'name': unicode, # 1
+        'info': { #1
+            'name': unicode,
+            'issue_number': float,
+            'issues': float,
+            'other': unicode
+        },
         'alink': unicode, # 4
         'thumbnail': unicode, # 5
         'bigImage': unicode, # 6
@@ -109,8 +114,8 @@ class Comic(Document, UserMixin):
         'category': unicode, # 21
         'upc': unicode # 25
     }
-    required_fields = ['id', 'name']
+    required_fields = ['id', 'info']
     use_dot_notation = True
     def __repr__(self):
-        return '<Comic %r>' % (self.name)
+        return '<Comic %r>' % (self.info.name)
 

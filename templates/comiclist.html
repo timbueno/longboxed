@@ -17,12 +17,12 @@
         </tr>
       </thead>
       <tbody>
-        {% for comic in group.list|sort(attribute='name') %}
+        {% for comic in group.list|sort(attribute='info.name') %}
           <tr>
             <td class="copt">
               <div id="pop{{ outer_loop.index }}{{ loop.index }}_content" class="popSourceBlock">
                 <div class="popTitle">
-                  {{ comic.name }}
+                  {{ comic.info.name }}{% if comic.info.issue_number %} #{{ '%d' % comic.info.issue_number}}{% endif %} {{ comic.info.other }}
                 </div>
                 <div class="popContent">
                   <div class="cpImage">
@@ -62,7 +62,7 @@
             </td>
             <td class="ctitle">
               <a href="{{ url_for('issue', diamondid=comic.id) }}">
-                {{ comic.name }}
+                {{ comic.info.name }}{% if comic.info.issue_number %} #{{ '%d' % comic.info.issue_number }}{% endif %} {{ comic.info.other }}
               </a>
             </td>
             <td class="cdate">{{ comic.onSaleDate.strftime('%-m/%-d/%y') }}</td>

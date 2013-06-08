@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% set title = issue.name+' | Longboxed' %}
+{% set title = issue.info.name+' | Longboxed' %}
 
 {% block main_content %}
     <div class="container">
@@ -11,7 +11,7 @@
                     </div>
                 </div>
                 <div class="span8">
-                    <h2>{{ issue.name }}</h2>
+                    <h2>{{ issue.info.name }}{% if issue.info.issue_number %} #{{ '%d' % issue.info.issue_number }}{% endif %}</h2>
                     <h4>
                         {{ issue.publisher }} - 
                         <a href="#" class="add2cal" data-id="{{ issue.id }}"><i class="icon-calendar"></i></a>
@@ -24,7 +24,7 @@
                             </tr>
                             <tr>
                                 <td>Price</td>
-                                <td>${{ issue.price }}</td>
+                                <td>${{ issue.retailPrice }}</td>
                             </tr>
                             <tr>
                                 <td>Distributor Code</td>

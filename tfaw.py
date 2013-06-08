@@ -59,9 +59,20 @@ def get_comics():
     print '...Done'
     return comics
 
-def is_float(thing):
+def title_info(title):
+    try:
+        m = re.match(r'(?P<name>[^#]*[^#\s])\s*(?:#(?P<issue_number>(\d+))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', title).groupdict()
+        if is_float(m['issue_number']):
+            m['issue_number'] = float(m['issue_number'])
+        if is_float(m['issues']):
+            m['issues'] = float(m['issues'])
+    except:
+        'PROBLEM IN TITLE_INFO'
+    return m
+
+def is_float(number):
     try: 
-        float(thing)
+        float(number)
         return True
     except ValueError:
         return False
@@ -76,7 +87,7 @@ if __name__ == "__main__":
         try:
             new = Comic()
             new.productID = comic[0]
-            new.name = comic[1]
+            new.info = title_info(comic[1])
             new.alink = re.sub('YOURUSERID', unicode(AFFILIATE_ID), comic[4])
             new.thumbnail = comic[5]
             new.bigImage = comic[6]
@@ -105,7 +116,7 @@ if __name__ == "__main__":
         if i % 250 == 0:
             print 'Saved %d / %d comics' % (i, len(comics))
 
-    print cList[0]
+    print cList[0].info
     for i, issue in enumerate(cList):
         collection.comics.update({'id': issue.id}, issue, upsert=True)
         if i % 250 == 0:
