@@ -67,7 +67,7 @@ def title_info(title):
         if is_float(m['issues']):
             m['issues'] = float(m['issues'])
     except:
-        'PROBLEM IN TITLE_INFO'
+        print "Unexpected error:", sys.exc_info()[1]
     finally:
         m['complete_title'] = unicode(title)
     return m
@@ -76,7 +76,7 @@ def is_float(number):
     try: 
         float(number)
         return True
-    except ValueError:
+    except (ValueError, TypeError):
         return False
 
 if __name__ == "__main__":
