@@ -312,7 +312,7 @@ def add_issue_to_cal():
         issue = collection.comics.Comic.find_one({'id': diamondid})
         if issue:
             event = {
-                'summary': issue.name,
+                'summary': issue.info.name,
                 'start': {
                     'date': issue.onSaleDate.strftime('%Y-%m-%d')
                 },
@@ -322,7 +322,7 @@ def add_issue_to_cal():
             }
             response = insert_calendar_event(event)
             if response:
-                return jsonify(response=200, title=issue.name)
+                return jsonify(response=200, title=issue.info.name)
             else:
                 return jsonify(response=201)
         return jsonify(response=500)
@@ -569,6 +569,10 @@ def get_user_with_google_id(gid):
 #  Comic Specific Functions
 #
 # ===================================
+def find_all_comics_by_publisher(publisher):
+    result = list(collection.comics.Comic.find({"publisher": publisher}))
+    return result
+
 def find_all_comics_by_date(date = datetime.now()):
     result = list(collection.comics.Comic.find({"date": date}))
     result = sorted(result, key=lambda k: k.publisher)
