@@ -27,7 +27,7 @@
         <div class="well">
             <h3>Add more comics...</h3>
             <form method="POST" id="newcomics">
-                <input type="text" name="newfavorite" class="input-xlarge">
+                <input type="text" name="newfavorite" class="input-xlarge typeahead" data-provide="typeahead" autocomplete="off">
                 <div>
                     <button class="btn btn-primary">Update</button>
                 </div>
@@ -36,3 +36,21 @@
 
     </div>  
 {% endblock %}
+
+{%- block bootstrap_js_bottom %}
+
+    {{ super() }}
+
+    <script>
+        var comic_typeahead = function(titles){
+            var colors = ["red", "blue", "green", "yellow", "brown", "black"];
+            $('.typeahead').typeahead({
+                    source: titles
+                }
+            );
+        }
+        $.get('/typeahead', function(data){
+            comic_typeahead(data.titles);
+        });
+    </script>
+{% endblock bootstrap_js_bottom %}

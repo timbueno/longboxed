@@ -417,6 +417,11 @@ def get_calendar_info():
 # AJAX helper routes
 #
 # ===================================
+@app.route('/typeahead')
+def typeahead():
+    titles = distinct_titles()
+    return jsonify(titles=titles)
+
 @app.route('/get_comicpage', methods=['POST'])
 def get_favorites():
     start = datetime.strptime(request.form['start'], '%B %d, %Y')
@@ -571,6 +576,9 @@ def get_user_with_google_id(gid):
 # ===================================
 def distinct_publishers():
     return collection.comics.distinct('publisher')
+
+def distinct_titles():
+    return collection.comics.distinct('info.name')
 
 def find_all_comics_by_publisher(publisher):
     result = list(collection.comics.Comic.find({"publisher": publisher}))
