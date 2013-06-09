@@ -59,15 +59,55 @@ def get_comics():
     print '...Done'
     return comics
 
+# def title_info(title):
+#     try:
+#         m = re.match(r'(?P<name>[^#]*[^#\s])\s*(?:#(?P<issue_number>(\d+))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', title).groupdict()
+#         if is_float(m['issue_number']):
+#             m['issue_number'] = float(m['issue_number'])
+#         if is_float(m['issues']):
+#             m['issues'] = float(m['issues'])
+#     except:
+#         print "Unexpected error:", sys.exc_info()[1]
+#     finally:
+#         m['complete_title'] = unicode(title)
+#     return m
+
 def title_info(title):
     try:
+        # Try a basic matching technique
         m = re.match(r'(?P<name>[^#]*[^#\s])\s*(?:#(?P<issue_number>(\d+))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', title).groupdict()
+        # Convert issue numbers to floats
         if is_float(m['issue_number']):
             m['issue_number'] = float(m['issue_number'])
         if is_float(m['issues']):
             m['issues'] = float(m['issues'])
+        m['one_shot'] = False
+        other = [m['other']]
+        # Handle multiple parenthesis matches
+        if '' in other and len(other) == 1:
+            other = [] # Make a fresh list
+            # m['other'] = None # For consistancy
+            n = re.findall(r'\s*(\(.*?\))',m['name']) # Find all parenthesis groups
+            # Add all groups to other list
+            if n:
+                # other = []
+                for match in n:
+                    m['name'] = m['name'].replace(match, '')
+                    other.append(match)
+                m['name'] = m['name'].strip() # Clean up the name
+                m['other'] = other
+        # else:
+        #     # Put other matches in a list
+        #     m['other'] = [m['other']]
+        #     print m['other']
+        if m['name'].find('One Shot') != -1:
+            # Set 'One Shot' flag
+            m['one_shot'] = True
+            # Remove 'One Shot' from name
+            m['name'] = m['name'].replace('One Shot', '')
+        m['other'] = other
     except:
-        print "Unexpected error:", sys.exc_info()[1]
+        print "Unexpected error:", sys.exc_info()[3]
     finally:
         m['complete_title'] = unicode(title)
     return m
@@ -125,39 +165,9 @@ def add_comics_to_mongo():
             print 'Inserted %d / %d' % (i, len(cList))
 
 if __name__ == "__main__":
+    # c = ['Living Corpse Haunted One Shot', "National Comics Madame X", "Walking Dead Michonne Special (2nd Printing)", "Grimm Fairy Tales Realm Knights One Shot (Cover B - Tolibao)"]
+    # c = ["Hellboy: Double Feature of Evil (One Shot) (Richard Corben cover)"]
+    # c = ['Living Corpse Haunted One Shot']
+    # for comic in c:
+    #     print title_info(comic)
     add_comics_to_mongo()
-
-# +++++++++++++++++++++++++++++++++++++++++++++++
-    # for i, comic in enumerate(comics):
-    #     try:
-    #         new = collection.test_comics.Comic()
-    #         new.productID = comic[0]
-    #         new.name = comic[1]
-    #         new.alink = comic[4]
-    #         new.thumbnail = comic[5]
-    #         new.bigImage = comic[6]
-    #         new.retailPrice = float(comic[8]) if is_float(comic[8]) else None
-    #         new.description = comic[11]
-    #         try:
-    #             new.onSaleDate = datetime.strptime(comic[12], '%Y-%m-%d')
-    #         except:
-    #             new.onSaleDate = None
-    #         new.genre = comic[13]
-    #         new.people = comic[14]
-    #         new.popularity = float(comic[16]) if is_float(comic[16]) else None
-    #         try:
-    #             new.lastUpdated = datetime.strptime(comic[17], '%Y-%m-%d %H:%M:%S')
-    #         except:
-    #             new.lastUpdated = None
-    #         new.publisher = comic[19]
-    #         new.diamondID = comic[20]
-    #         new.category = comic[21]
-    #         new.upc = comic[25]
-    #         new.save()
-    #     except:
-    #         print 'SOMETHING HAPPENED', comic
-    #         print "Unexpected error:", sys.exc_info()[1]
-
-    #     if i % 250 == 0:
-    #         print 'Saved %d / %d comics' % (i, len(comics))
-

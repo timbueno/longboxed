@@ -99,7 +99,8 @@ class Comic(Document):
             'issue_number': float,
             'issues': float,
             'other': unicode,
-            'complete_title': unicode
+            'complete_title': unicode,
+            'one_shot': bool
         },
         'alink': unicode, # 4
         'thumbnail': unicode, # 5
