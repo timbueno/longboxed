@@ -206,9 +206,10 @@ def favorites():
     if g.user is not None:
         if request.method == 'POST':
             try:
-                g.user.comics.favorites.append(request.form['newfavorite'])
-                g.user.comics.favorites.sort()
-                g.user.save()
+                if request.form['newfavorite'] not in g.user.comics.favorites:
+                    g.user.comics.favorites.append(request.form['newfavorite'])
+                    g.user.comics.favorites.sort()
+                    g.user.save()
             except:
                 pass
     else:
@@ -425,7 +426,7 @@ def typeahead():
     return jsonify(titles=titles)
 
 @app.route('/ajax/get_comicpage', methods=['POST'])
-def get_favorites():
+def get_comicpage():
     start = datetime.strptime(request.form['start'], '%B %d, %Y')
     end = datetime.strptime(request.form['end'], '%B %d, %Y')
 
