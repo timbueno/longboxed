@@ -47,7 +47,7 @@
    //          $('div.comiclist').load('/get_comiclist', { 'start': start.toString('MMMM d, yyyy'), 'end': end.toString('MMMM d, yyyy') },function(){
    // attachpopover();});
 
-            $.post( '/get_comicpage',
+            $.post( '/ajax/get_comicpage',
                     { 'start': start.toString('MMMM d, yyyy'),'end': end.toString('MMMM d, yyyy') },
                     function(data){
                         $('div.comicsidenav').html(data.nav);

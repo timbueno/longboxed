@@ -417,12 +417,13 @@ def get_calendar_info():
 # AJAX helper routes
 #
 # ===================================
-@app.route('/typeahead')
+@app.route('/ajax/typeahead')
+@login_required
 def typeahead():
     titles = distinct_titles()
     return jsonify(titles=titles)
 
-@app.route('/get_comicpage', methods=['POST'])
+@app.route('/ajax/get_comicpage', methods=['POST'])
 def get_favorites():
     start = datetime.strptime(request.form['start'], '%B %d, %Y')
     end = datetime.strptime(request.form['end'], '%B %d, %Y')
