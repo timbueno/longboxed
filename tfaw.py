@@ -68,6 +68,8 @@ def title_info(title):
             m['issues'] = float(m['issues'])
     except:
         'PROBLEM IN TITLE_INFO'
+    finally:
+        m['complete_title'] = unicode(title)
     return m
 
 def is_float(number):

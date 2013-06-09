@@ -98,7 +98,8 @@ class Comic(Document):
             'name': unicode,
             'issue_number': float,
             'issues': float,
-            'other': unicode
+            'other': unicode,
+            'complete_title': unicode
         },
         'alink': unicode, # 4
         'thumbnail': unicode, # 5
@@ -115,7 +116,7 @@ class Comic(Document):
         'category': unicode, # 21
         'upc': unicode # 25
     }
-    required_fields = ['id', 'info']
+    required_fields = ['id', 'info.complete_title']
     use_dot_notation = True
     def __repr__(self):
         return '<Comic %r>' % (self.info.name)
