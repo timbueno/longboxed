@@ -313,6 +313,7 @@ def add_issue_to_cal():
         if issue:
             event = {
                 'summary': issue.info.complete_title,
+                'description': issue.description,
                 'start': {
                     'date': issue.onSaleDate.strftime('%Y-%m-%d')
                 },

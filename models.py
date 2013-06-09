@@ -129,15 +129,3 @@ class Comic(Document):
         except ValueError:
             return False
 
-    def complete_title(self):
-        title = ''
-        if self.info.name:
-            title = title + self.info.name
-        if self.is_float(self.info.issue_number):
-            title = title + ' #%d' % self.info.issue_number
-        if self.is_float(self.info.issues):
-            title = title + ' (of %d)' % self.info.issues
-        if self.info.other:
-            title = title + self.info.other
-        return title
-

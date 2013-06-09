@@ -96,10 +96,6 @@ def title_info(title):
                     other.append(match)
                 m['name'] = m['name'].strip() # Clean up the name
                 m['other'] = other
-        # else:
-        #     # Put other matches in a list
-        #     m['other'] = [m['other']]
-        #     print m['other']
         if m['name'].find('One Shot') != -1:
             # Set 'One Shot' flag
             m['one_shot'] = True
