@@ -61,6 +61,7 @@ class User(Document, UserMixin):
     def __repr__(self):
         return '<User %r>' % (self.name)
 
+
 # # ===================================
 # # 
 # # Comic Book Model
@@ -118,4 +119,23 @@ class Comic(Document):
     use_dot_notation = True
     def __repr__(self):
         return '<Comic %r>' % (self.info.name)
+
+    def is_float(self, number):
+        try: 
+            float(number)
+            return True
+        except ValueError:
+            return False
+
+    def complete_title(self):
+        title = ''
+        if self.info.name:
+            title = title + self.info.name
+        if self.is_float(self.info.issue_number):
+            title = title + ' #%d' % self.info.issue_number
+        if self.is_float(self.info.issues):
+            title = title + ' (of %d)' % self.info.issues
+        if self.info.other:
+            title = title + self.info.other
+        return title
 

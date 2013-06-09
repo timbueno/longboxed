@@ -312,7 +312,7 @@ def add_issue_to_cal():
         issue = collection.comics.Comic.find_one({'id': diamondid})
         if issue:
             event = {
-                'summary': issue.info.name,
+                'summary': issue.complete_title(),
                 'start': {
                     'date': issue.onSaleDate.strftime('%Y-%m-%d')
                 },
@@ -322,7 +322,7 @@ def add_issue_to_cal():
             }
             response = insert_calendar_event(event)
             if response:
-                return jsonify(response=200, title=issue.info.name)
+                return jsonify(response=200, title=issue.complete_title())
             else:
                 return jsonify(response=201)
         return jsonify(response=500)
