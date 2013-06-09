@@ -569,6 +569,9 @@ def get_user_with_google_id(gid):
 #  Comic Specific Functions
 #
 # ===================================
+def distinct_publishers():
+    return collection.comics.distinct('publisher')
+
 def find_all_comics_by_publisher(publisher):
     result = list(collection.comics.Comic.find({"publisher": publisher}))
     return result

@@ -79,7 +79,7 @@ def is_float(number):
     except (ValueError, TypeError):
         return False
 
-if __name__ == "__main__":
+def add_comics_to_mongo():
     daily_download()
     comics = get_comics()
     collection = open_connection()
@@ -123,6 +123,9 @@ if __name__ == "__main__":
         collection.comics.update({'id': issue.id}, issue, upsert=True)
         if i % 250 == 0:
             print 'Inserted %d / %d' % (i, len(cList))
+
+if __name__ == "__main__":
+    add_comics_to_mongo()
 
 # +++++++++++++++++++++++++++++++++++++++++++++++
     # for i, comic in enumerate(comics):
