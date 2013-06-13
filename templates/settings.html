@@ -26,3 +26,20 @@
     </form>
 </div>    
 {% endblock %}
+
+{%- block bootstrap_js_bottom %}
+
+    {{ super() }}
+
+    <script  type="text/javascript" src="{{ url_for('static', filename='jquery.asmselect.js') }}"></script>
+
+    <script>
+      var default_publishers = function(){
+        $('#publishers').asmSelect({
+
+        });
+      }
+      default_publishers();
+    </script>
+
+{% endblock bootstrap_js_bottom %}

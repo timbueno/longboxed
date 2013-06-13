@@ -9,7 +9,9 @@
         </div>
       </div>
       {% else %}
+      {% if comicList %}
       <h2 style="padding-top: 60px; margin-top: -60px;">{{ comicList[0].onSaleDate.strftime('%B %-d, %Y') }}</h2>
+      {% endif %}
       {% endif %}
         <div class="comicsidenav">
           {% include 'comicsidenav.html' %}

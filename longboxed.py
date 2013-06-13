@@ -8,7 +8,7 @@ from flask.ext.bootstrap import Bootstrap
 from flask.ext.login import (LoginManager, current_user, login_required,
                             login_user, logout_user, UserMixin, AnonymousUser,
                             confirm_login, fresh_login_required)
-from flask.ext.wtf import Form, BooleanField, SelectField
+from flask.ext.wtf import Form, BooleanField, SelectField, SelectMultipleField
 from mongokit import Connection, Document
 from rauth.service import OAuth2Service
 
@@ -94,17 +94,13 @@ def index():
     dates = {}
     dates['start'] = start
     dates['end'] = end
-    comicList = find_comics_in_date_range(start, end)
-
-    # print 'START ', start
-    # print 'END ', end
-    # print 'COMICLIST: ', comicList
-
-    matches = []
-    if g.user is not None:
-        if g.user.comics.favorites:
-            matches = get_favorite_matches(g.user.comics.favorites, comicList)
-            print matches
+    comicList, matches = find_relevent_comics_in_date_range(start, end)
+    # comicList = find_comics_in_date_range(start, end)
+    # matches = []
+    # if g.user is not None:
+    #     if g.user.comics.favorites:
+    #         matches = get_favorite_matches(g.user.comics.favorites, comicList)
+    #         print matches
     # print "MATCHES: ", matches
     return render_template('main.html', comicList=comicList, dates=dates, matches=matches) 
 
@@ -116,14 +112,13 @@ def comics():
     dates['lastweek'] = start.strftime('%B %-d, %Y')
     dates['start'] = start
     dates['end'] = end
-    # day = cMongo.get_wednesday()
-    comicList = find_comics_in_date_range(start, end)
-
-    matches = []
-    if g.user is not None:
-        # print g.user.comics.favorites
-        if g.user.comics.favorites:
-            matches = get_favorite_matches(g.user.comics.favorites, comicList)
+    comicList, matches = find_relevent_comics_in_date_range(start, end)
+    # comicList = find_comics_in_date_range(start, end)
+    # matches = []
+    # if g.user is not None:
+    #     # print g.user.comics.favorites
+    #     if g.user.comics.favorites:
+    #         matches = get_favorite_matches(g.user.comics.favorites, comicList)
     return render_template('comics.html', dates=dates, comicList=comicList, calendarenable=1, matches=matches)
 
 @app.route('/favorites', methods=['GET','POST'])
@@ -168,6 +163,7 @@ def settings():
                 else:
                     current_user.settings.display_favs = False
                 current_user.settings.default_cal = request.form['cals']
+                current_user.settings.publishers = request.form.getlist('publishers')
                 current_user.save()
             except:
                 print "Unexpected error:", sys.exc_info()[0]
@@ -182,6 +178,12 @@ def settings():
     # Set the default calendar
     default_cal = current_user.settings.default_cal
 
+    # Get all publishers
+    pubs = [(p, p) for p in distinct_publishers() if p != '']
+    pubs.sort()
+    # Get user defaults
+    user_pubs = current_user.settings.publishers
+
     class ExampleForm(Form):
         display_favs = BooleanField(
                             'Display Favorites',
@@ -192,6 +194,13 @@ def settings():
                     description=u'Set the calendar the you want to add comics to.',
                     choices=c,
                     default=default_cal)
+        publishers = SelectMultipleField(
+            u'Publishers',
+            {'title':'Select Publishers'},
+            description=u'Publishers to display (selecting none displays all)',
+            choices=pubs,
+            default=user_pubs
+        )
 
     form = ExampleForm()
 
@@ -375,7 +384,8 @@ def get_comicpage():
     start = datetime.strptime(request.form['start'], '%B %d, %Y')
     end = datetime.strptime(request.form['end'], '%B %d, %Y')
 
-    comicList = find_comics_in_date_range(start, end)
+    # comicList = find_comics_in_date_range(start, end)
+    comicList, matches = find_relevent_comics_in_date_range(start, end)
 
     try:
         nav = render_template('comicsidenav.html', comicList=comicList)
@@ -386,13 +396,13 @@ def get_comicpage():
     except:
         clist = None
     try:
-        matches = None
-        if g.user is not None:
-            if g.user.comics.favorites:
-                matches = []
-                matches = get_favorite_matches(g.user.comics.favorites, comicList)
-                if matches:
-                    matches = render_template('favorite_matches.html', matches=matches)
+        # matches = None
+        # if g.user is not None:
+        #     if g.user.comics.favorites:
+        #         matches = []
+        #         matches = get_favorite_matches(g.user.comics.favorites, comicList)
+        if matches:
+            matches = render_template('favorite_matches.html', matches=matches)
     except:
         matches = None
 
@@ -544,6 +554,19 @@ def find_comics_in_date_range(start, end):
     result = list(collection.comics.Comic.find({"onSaleDate": {"$gte": start, "$lt": end}}))
     result = sorted(result, key=lambda k: k.publisher)
     return result
+
+def find_relevent_comics_in_date_range(start, end):
+    allComics = find_comics_in_date_range(start, end)
+    releventComics = allComics
+    if not current_user.is_anonymous():
+        if current_user.settings.publishers:
+            releventComics = [comic for comic in allComics if comic.publisher in current_user.settings.publishers]
+        if current_user.comics.favorites:
+            matches = get_favorite_matches(current_user.comics.favorites, allComics)
+    else:
+        matches = []
+    return (releventComics, matches)
+
 
 def get_current_week():
     today = datetime.today()
