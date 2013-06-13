@@ -14,7 +14,7 @@
                     <h2>{{ issue.info.complete_title }}</h2>
                     <h4>
                         {{ issue.publisher }} - 
-                        <a href="#" class="add2cal" data-id="{{ issue.id }}"><i class="icon-calendar"></i></a>
+                        <a href="#" class="add2cal" data-id="{{ issue.id }}"><i class="icon-calendar"></i></a> <a href="{{ issue.alink }}"><i class="icon-shopping-cart"></i></a>
                     </h4>
                     <table class="table">
                         <tbody>
@@ -28,7 +28,7 @@
                             </tr>
                             <tr>
                                 <td>Distributor Code</td>
-                                <td><a href="{{ issue.alink }}">{{ issue.id }}</a></td>
+                                <td>{{ issue.id }}</td>
                             </tr>
                             <tr>
                                 <td>Description</td>
