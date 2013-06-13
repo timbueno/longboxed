@@ -407,7 +407,11 @@ def get_comicpage():
 # ===================================
 @login_manager.user_loader
 def load_user(userid):
-    return get_user_with_google_id(userid)
+    user = get_user_with_google_id(userid)
+    if user:
+        user.last_login = datetime.now()
+        user.save()
+    return user
 
 @app.before_request
 def before_request():
