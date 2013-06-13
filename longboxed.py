@@ -19,7 +19,7 @@ import requests
 import sys
 import json
 
-from models import Comic
+from models import Comic, User
 # 4
 # MongoLab configuration
 MONGO_USERNAME = 'bueno'
@@ -52,6 +52,9 @@ login_manager.init_app(app)
 
 # Create database connection
 mongo = Connection(app.config['MONGO_URI'])
+mongo.register([Comic])
+mongo.register([User])
+collection = mongo[MONGO_DBNAME]
 
 # Google OAuth Setup
 GOOGLE_CLIENT_ID = '200273015685.apps.googleusercontent.com'
@@ -68,85 +71,6 @@ service = OAuth2Service(
             base_url='https://www.google.com/accounts/')
 
 # ===================================
-
-# ===================================
-# 
-# User Class
-#
-# ===================================
-def max_length(length):
-    def validate(value):
-        if len(value) <= length:
-            return True
-        raise Exception('%s must be at most %s characters long' % length)
-    return validate
-
-@mongo.register
-class User(Document, UserMixin):
-    structure = {
-        'id': unicode,
-        'info': {
-            'full_name': unicode,
-            'first_name': unicode,
-            'last_name': unicode,
-            'gender': unicode,
-            'birthday': datetime,
-            'email': unicode
-        },
-        'comics': {
-            'favorites': [unicode]
-        },
-        'settings': {
-            'display_favs': bool,
-            'default_cal': unicode
-        },
-        'tokens': {
-            'refresh_token': unicode,
-            'access_token': unicode,
-            'expire_time': datetime,
-
-        },
-        'date_creation': datetime
-    }
-    validators = {
-        'info.full_name': max_length(50),
-        'info.email': max_length(120)
-    }
-    required_fields = ['id', 'info.email', 'date_creation']
-    default_values = {
-        'date_creation': datetime.utcnow,
-        'settings.display_favs': True
-    }
-    use_dot_notation = True
-    def __repr__(self):
-        return '<User %r>' % (self.name)
-
-# ===================================
-# 
-# Comic Book Class
-# (DOESNT DO ANYTHING YET)
-# ===================================
-# @mongo.register
-# class Comic(Document, UserMixin):
-#     structure = {
-#         'id': unicode,
-#         'publisher': unicode,
-#         'title': unicode,
-#         'price': float,
-#         'link': unicode,
-#         'date_released': datetime,
-#         'last_updated': datetime
-#     }
-#     required_fields = ['id', 'title']
-#     default_values = {
-#         'last_updated': datetime.utcnow
-#     }
-#     use_dot_notation = True
-#     def __repr__(self):
-#         return '<Comic %r>' % (self.name)
-
-mongo.register([Comic])
-collection = mongo[MONGO_DBNAME]
 
 # ===================================
 # 
@@ -204,14 +128,15 @@ def comics():
 @login_required
 def favorites(): 
     if g.user is not None:
-        if request.method == 'POST':
-            try:
-                if request.form['newfavorite'] not in g.user.comics.favorites:
-                    g.user.comics.favorites.append(request.form['newfavorite'])
-                    g.user.comics.favorites.sort()
-                    g.user.save()
-            except:
-                pass
+        pass
+        # if request.method == 'POST':
+        #     try:
+        #         if request.form['newfavorite'] not in g.user.comics.favorites:
+        #             g.user.comics.favorites.append(request.form['newfavorite'])
+        #             g.user.comics.favorites.sort()
+        #             g.user.save()
+        #     except:
+        #         pass
     else:
         return redirect(url_for('index'))
     return render_template('favorite_comics.html', g=g)
@@ -229,24 +154,6 @@ def issue(diamondid):
     # except:
     #     print "Unexpected error:", sys.exc_info()[1]
     #     return abort(404) 
-
-@app.route('/remove_favorite', methods=['POST'])
-@login_required
-def remove_favorite(): 
-    if g.user is not None:
-        if request.method == 'POST':
-            try:
-                # Get the index of the book to delete
-                i = int(request.form['comic_to_remove'])
-                # Delete comic at desired index
-                del g.user.comics.favorites[i]
-                # Save updated user
-                g.user.save()
-            except:
-                print "Unexpected error:", sys.exc_info()[1]
-    else:
-        return redirect(url_for('index'))
-    return redirect(url_for('favorites'))
 
 @app.route('/settings', methods=['GET','POST'])
 @login_required
@@ -425,6 +332,42 @@ def typeahead():
     titles = distinct_titles()
     return jsonify(titles=titles)
 
+@app.route('/ajax/remove_favorite', methods=['POST'])
+@login_required
+def remove_favorite(): 
+    if g.user is not None:
+        if request.method == 'POST':
+            try:
+                # Get the index of the book to delete
+                i = int(request.form['id'])
+                # Delete comic at desired index
+                del g.user.comics.favorites[i]
+                # Save updated user
+                g.user.save()
+                html = render_template('favorites_list.html')
+                return jsonify(success=True, html=html)
+            except:
+                print "Unexpected error:", sys.exc_info()[1]
+                return jsonify(success=False, html=None)
+    # else:
+    #     return redirect(url_for('index'))
+    # return redirect(url_for('favorites'))
+
+@app.route('/ajax/add_favorite', methods=['POST', 'GET'])
+@login_required
+def add_favorite():
+    if g.user is not None:
+        if request.method == 'POST':
+            print current_user.comics.favorites
+            if request.form['new_favorite'] not in current_user.comics.favorites:
+                current_user.comics.favorites.append(request.form['new_favorite'])
+                current_user.comics.favorites.sort()
+                current_user.save()
+                html = render_template('favorites_list.html')
+                return jsonify(success=True, html=html)
+            else:
+                return jsonify(success=False, html=None)
+
 @app.route('/ajax/get_comicpage', methods=['POST'])
 def get_comicpage():
     start = datetime.strptime(request.form['start'], '%B %d, %Y')
@@ -467,6 +410,7 @@ def load_user(userid):
 @app.before_request
 def before_request():
     if not current_user.is_anonymous():
+        # get new access token if current one is expired
         if datetime.utcnow() > current_user.tokens.expire_time:
             # print "GETTING NEW TOKEN!!"
             auth_response = service.get_raw_access_token(data={
@@ -478,9 +422,7 @@ def before_request():
             current_user.tokens.access_token = auth_data['access_token']
             current_user.tokens.expire_time = datetime.utcnow() + timedelta(seconds=int(auth_data['expires_in']))
             current_user.save()
-
         g.user = current_user
-
     else:
         g.user = None
 
@@ -616,13 +558,8 @@ def get_favorite_matches(favorites, comicList):
     matches = []
     if g.user.settings.display_favs:
         for idx, comic in enumerate(favorites):
-            print idx, comic
-            # for c in comicList:
-            #     if c.info.name == None:
-            #         print c.info
             match = difflib.get_close_matches(comic, [c.info.name for c in comicList if c.info])
-            print "Match: ", match
-            matches = matches + match
+            matches.append(match)
 
     matchingComics = [dictio for dictio in comicList if dictio.info.name in matches]
     return matchingComics

@@ -1,0 +1,11 @@
+{% if g.user.comics.favorites %}
+<ul>
+    {% for item in g.user.comics.favorites %}
+    <li>{{ item }} <i class="icon-remove-circle testremove" data-id="{{ loop.index0 }}" data-name="{{ item }}"></i></li>
+    {% endfor %}
+</ul>
+{% else %}
+<h3>
+    No favorites yet!
+</h3>
+{% endif %}

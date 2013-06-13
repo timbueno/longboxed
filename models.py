@@ -43,6 +43,7 @@ class User(Document, UserMixin):
             'refresh_token': unicode,
             'access_token': unicode,
             'expire_time': datetime,
+
         },
         'date_creation': datetime
     }
@@ -53,11 +54,9 @@ class User(Document, UserMixin):
     required_fields = ['id', 'info.email', 'date_creation']
     default_values = {
         'date_creation': datetime.utcnow,
-        'settings.display_favs': True,
-        'settings.default_cal': u'primary'
+        'settings.display_favs': True
     }
     use_dot_notation = True
-    
     def __repr__(self):
         return '<User %r>' % (self.name)
 
