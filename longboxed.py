@@ -104,6 +104,7 @@ def index():
     if g.user is not None:
         if g.user.comics.favorites:
             matches = get_favorite_matches(g.user.comics.favorites, comicList)
+            print matches
     # print "MATCHES: ", matches
     return render_template('main.html', comicList=comicList, dates=dates, matches=matches) 
 
@@ -120,6 +121,7 @@ def comics():
 
     matches = []
     if g.user is not None:
+        # print g.user.comics.favorites
         if g.user.comics.favorites:
             matches = get_favorite_matches(g.user.comics.favorites, comicList)
     return render_template('comics.html', dates=dates, comicList=comicList, calendarenable=1, matches=matches)
@@ -555,14 +557,22 @@ def get_wednesday():
     return wednesday
 
 def get_favorite_matches(favorites, comicList):
-    matches = []
+    # matches = []
     if g.user.settings.display_favs:
-        for idx, comic in enumerate(favorites):
-            match = difflib.get_close_matches(comic, [c.info.name for c in comicList if c.info])
-            matches.append(match)
+        matchingComics = [c for c in comicList if c.info.name in favorites]
+    #     print 'FAVORITES', favorites
+    #     for idx, comic in enumerate(favorites):
+    #         match = difflib.get_close_matches(comic, [c.info.name for c in comicList if c.info])
+    #         matches.append(match)
 
-    matchingComics = [dictio for dictio in comicList if dictio.info.name in matches]
+    # print matches
+    # matchingComics = [dictio for dictio in comicList if dictio.info.name in matches]
     return matchingComics
+
+# def get_favorite_matches(favorites, comicList):
+#     matches = []
+
+
 
 
 # ===================================
