@@ -558,6 +558,7 @@ def get_wednesday():
 
 def get_favorite_matches(favorites, comicList):
     # matches = []
+    matchingComics = []
     if g.user.settings.display_favs:
         matchingComics = [c for c in comicList if c.info.name in favorites]
     #     print 'FAVORITES', favorites

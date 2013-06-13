@@ -32,12 +32,14 @@ class User(Document, UserMixin):
             'birthday': datetime,
             'email': unicode
         },
+        'friends': [unicode],
         'comics': {
             'favorites': [unicode]
         },
         'settings': {
             'display_favs': bool,
-            'default_cal': unicode
+            'default_cal': unicode,
+            'publishers': [unicode]
         },
         'tokens': {
             'refresh_token': unicode,
@@ -45,7 +47,8 @@ class User(Document, UserMixin):
             'expire_time': datetime,
 
         },
-        'date_creation': datetime
+        'date_creation': datetime,
+        'last_login': datetime,
     }
     validators = {
         'info.full_name': max_length(50),
