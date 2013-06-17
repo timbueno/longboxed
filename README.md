@@ -19,7 +19,7 @@ Longboxed is dedicated to comic book lovers who just want an easy way to discove
     - 'pip install -r requirements.txt'
     - All dependencies should install.
 
-## Running Longboxed for developers
+## Running Longboxed locally
 1. Install according to installation instructions above.
 2. Turn on virtual environment
     - 'source venv/bin/activate'
