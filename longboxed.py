@@ -558,13 +558,12 @@ def find_comics_in_date_range(start, end):
 def find_relevent_comics_in_date_range(start, end):
     allComics = find_comics_in_date_range(start, end)
     releventComics = allComics
+    matches = []
     if not current_user.is_anonymous():
         if current_user.settings.publishers:
             releventComics = [comic for comic in allComics if comic.publisher in current_user.settings.publishers]
         if current_user.comics.favorites:
             matches = get_favorite_matches(current_user.comics.favorites, allComics)
-    else:
-        matches = []
     return (releventComics, matches)
 
 
