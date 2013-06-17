@@ -2,6 +2,15 @@
 
 Longboxed is dedicated to comic book lovers who just want an easy way to discover which comics are coming out each week. Never miss an important issue after a long hiatus.
 
+Features:
+- Each weeks comic releases, updated daily
+- User customizable pull lists
+- Google Calendar integration
+
+Future features:
+- Get recomendations from friends
+- 'Follow' friends and their pull lists
+
 ## Installation notes for developers
 
 1. Make sure 'pip' is installed.
