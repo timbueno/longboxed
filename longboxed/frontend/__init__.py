@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    overholt.frontend
+    longboxed.frontend
     ~~~~~~~~~~~~~~~~~~
 
     launchpad frontend application package
@@ -15,7 +15,7 @@ from . import assets
 
 
 def create_app(settings_override=None):
-    """Returns the Overholt dashboard application instance"""
+    """Returns the Longboxed dashboard application instance"""
     app = factory.create_app(__name__, __path__, settings_override)
 
     # Init assets
