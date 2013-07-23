@@ -1,6 +1,5 @@
 from flask.ext.login import UserMixin
-from mongokit import Document
-from requests import get, post
+from flask.ext.mongokit import Document
 
 from datetime import datetime
 
