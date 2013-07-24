@@ -1,0 +1,7 @@
+<ul>
+  {% if current_user.is_authenticated() -%}
+    <li><a href="Thing">Logout</a></li>
+  {%- else -%}
+    <li><a href="Thing">Login</a></li>
+  {%- endif %}
+</ul>

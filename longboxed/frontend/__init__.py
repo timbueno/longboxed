@@ -24,13 +24,15 @@ def create_app(settings_override=None):
     # Register custom error handlers
     if not app.debug:
         for e in [500, 404]:
-            app.errorhandler(e)(handle_error)
+            print 'IN CREATE_APP_FRONTEND'
+            # app.errorhandler(e)(handle_error)
 
     return app
 
 
-def handle_error(e):
-    return render_template('errors/%s.html' % e.code), e.code
+# def handle_error(e):
+#     print e
+#     return render_template('errors/%s.html' % e.code), e.code
 
 
 def route(bp, *args, **kwargs):

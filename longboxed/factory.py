@@ -11,7 +11,8 @@
 from flask import Flask
 
 from .core import bootstrap, db, login_manager
-from .helpers import register_blueprints
+# from .core import db, login_manager
+from .helpers import register_blueprints, register_models
 from .middleware import HTTPMethodOverrideMiddleware
 # from .models import User
 
@@ -34,6 +35,7 @@ def create_app(package_name, package_path, settings_override=None):
     db.init_app(app)
     login_manager.init_app(app)
 
+    register_models(db, package_name, package_path)
     register_blueprints(app, package_name, package_path)
 
     app.wsgi_app = HTTPMethodOverrideMiddleware(app.wsgi_app)
