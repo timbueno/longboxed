@@ -5,7 +5,9 @@
 
     Comics module
 """
-from mongoengine import EmbeddedDocument, Document, StringField, FloatField, BooleanField, ListField, DateTimeField, EmbeddedDocumentField
+from mongoengine import (EmbeddedDocument, Document, StringField,
+                        FloatField, BooleanField, ListField,
+                        DateTimeField, EmbeddedDocumentField)
 
 class ComicInfo(EmbeddedDocument):
     name = StringField()

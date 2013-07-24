@@ -45,7 +45,7 @@ class Comic(Document):
 def index():
     comics = Comic.objects.all()
     for comic in comics:
-        print comic.publisher
+        print comic.info.name
     return 'comics'
 
 
