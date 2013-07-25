@@ -1,0 +1,84 @@
+{% extends "layouts/base.html" %}
+{% set active_page = 'index' %}
+{% set title = 'Longboxed | Every Comic, Every Week' %}
+
+<!-- CSS Styles to be included on all pages -->
+{% block style -%}
+{{super()}}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='carousel.css') }}" />
+{%- endblock style %}
+{% block main_content %}
+      <div class="belownavbar">
+        <!-- Main hero unit for a primary marketing message or call to action -->
+        <div id="myCarousel" class="carousel slide">
+          <div class="carousel-inner">
+            <div class="item active">
+              <img src="static/img/slide-01.jpg" alt="">
+                <div class="carousel-caption">
+                  <div class="container">
+                    <h1>Your favorite comics.</h1>
+                    <p class="lead">Every comic. Every Week.</p>
+                  </div>
+                </div>
+            </div>
+            <div class="item">
+              <img src="static/img/slide-02.jpg" alt="">
+              <div class="carousel-caption">
+                <div class="container">
+                  <h1>Updated weekly.</h1>
+                  <p class="lead">We make sure that you never miss an issue of your favorite books.</p>
+                </div>
+              </div>
+            </div>
+            <div class="item">
+              <img src="static/img/slide-03.jpg" alt="">
+              <div class="carousel-caption">
+                <div class="container">
+                  <h1>Personalized, just for you.</h1>
+                  <p class="lead">Sign up, and add your favorite books. We intelligently determine if any comics are of interest to you and let you know!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+          <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
+        </div>
+      <div class="container">
+        {% if g.user %}
+          <!-- Display this weeks comics -->
+          {% include 'showcomics.html' %}
+        {% else %}
+          <!-- Display marketing stuff -->
+          <div class="row-fluid">
+            <div class="span4">
+              <h3><i class="icon-repeat"></i> Updated Weekly</h3>
+              <p>Find out which of your favorite comic books are coming out each week. Longboxed currates each weeks releases and organizes them in a list thats easy on the eyes and easy to navigate.  </p>
+              <p><a class="btn" href="{{ url_for('dashboard.comics') }}">View Comics &raquo;</a></p>
+            </div><!--/span-->
+            <div class="span4">
+              <h3><i class="icon-calendar"></i> Add To Your Calendar</h3>
+              <p>Easily add each weeks comics to your Google Calendar with just a single click! Make sure you never miss the release of your favorite book when you are out and about.</p>
+            </div><!--/span-->
+            <div class="span4">
+              <h3><i class="icon-list"></i> Pull Lists</h3>
+              <p>Tell us which comics are on your pull list and Longboxed will let you know if any books on it will be released that week. Also, Longboxed will try and suggest other books you may be interested in!</p>
+            </div><!--/span-->
+          </div><!--/row-->
+        {% endif %}
+      </div>
+    </div>
+{% endblock %}
+
+<!-- Javascript to be included on all pages -->
+{%- block bootstrap_js_bottom %}
+    
+    <!-- Load bootstrap.js and jquery -->
+  {{ super () }}
+
+  <script type="text/javascript">
+    $('#comicsidebar').affix({
+          offset: 387
+       });
+  </script>
+
+{% endblock bootstrap_js_bottom %}

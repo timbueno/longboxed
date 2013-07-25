@@ -9,18 +9,15 @@ from mongoengine import (EmbeddedDocument, Document, StringField,
                         FloatField, BooleanField, ListField,
                         DateTimeField, EmbeddedDocumentField)
 
-class ComicInfo(EmbeddedDocument):
+class Comic(Document):
+    meta = {'collection': 'comics_test'}
+    productID = StringField()
     name = StringField()
     issue_number = FloatField()
     issues = FloatField()
     other = StringField()
     complete_title = StringField()
     one_shot = BooleanField()
-
-class Comic(Document):
-    meta = {'collection': 'comics'}
-    productID = StringField()
-    info = EmbeddedDocumentField(ComicInfo)
     alink = StringField()
     thumbnail = StringField()
     bigImage = StringField()
@@ -32,7 +29,7 @@ class Comic(Document):
     popularity = FloatField()
     lastUpdated = DateTimeField()
     publisher = StringField()
-    id = StringField()
+    diamondid = StringField()
     category = StringField()
     upc = StringField()
 

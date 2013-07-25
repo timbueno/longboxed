@@ -10,7 +10,9 @@ app.config.from_object('longboxed.settings')
 
 db = MongoEngine()
 db.init_app(app)
-db.connect('thisweekscomics')
+# db.connect('thisweekscomics')
+
+print app.config
 
 class ComicInfo(EmbeddedDocument):
     name = StringField()

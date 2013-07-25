@@ -8,7 +8,8 @@
 
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.login import LoginManager
-from flask.ext.mongokit import MongoKit
+# from flask.ext.mongokit import MongoKit
+from flask.ext.mongoengine import MongoEngine
 
 #: Flask-Bootstrap extension instance
 bootstrap = Bootstrap()
@@ -17,7 +18,7 @@ bootstrap = Bootstrap()
 login_manager = LoginManager()
 
 #: Flask-MongoKit extension instance
-db = MongoKit()
+db = MongoEngine()
 
 
 class LongboxedError(Exception):

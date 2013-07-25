@@ -17,6 +17,7 @@
 DEBUG = True
 
 MONGODB_SETTINGS = {
+    'alias': 'default',
     'USERNAME': 'bueno',
     'PASSWORD': 'Cry9Gas',
     'DB': 'thisweekscomics',

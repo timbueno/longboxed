@@ -1,5 +1,5 @@
 from flask.ext.login import UserMixin
-from flask.ext.mongokit import Document
+from mongokit import Document, DocumentMigration
 
 from datetime import datetime
 
@@ -92,6 +92,11 @@ class User(Document, UserMixin):
 # Comic Book Model
 # 
 # ===================================
+class DiamondIDMigration(DocumentMigration):
+    def migration01__rename_id_field(self):
+        self.target = {'id':{'$exists':True}}
+        self.update = {'$rename':{'id':'diamondid'}}
+
 class Comic(Document):
     structure = {
         'productID': unicode, # 0
@@ -114,11 +119,12 @@ class Comic(Document):
         'popularity': float, # 16
         'lastUpdated': datetime, # 17
         'publisher': unicode, # 19
-        'id': unicode, # 20
+        'diamondid': unicode, # 20
         'category': unicode, # 21
         'upc': unicode # 25
     }
-    required_fields = ['id', 'info.complete_title']
+    # required_fields = ['id', 'info.complete_title']
+    migration_handler = DiamondIDMigration
     use_dot_notation = True
     def __repr__(self):
         return '<Comic %r>' % (self.info.name)
