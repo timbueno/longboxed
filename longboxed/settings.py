@@ -32,7 +32,7 @@ BOOTSTRAP_FONTAWESOME = True
 # Flask Application Configuration
 SECRET_KEY = '***REMOVED***'
 
-# Google OAuth Setup
-GOOGLE_CLIENT_ID = '200273015685.apps.googleusercontent.com'
-GOOGLE_CLIENT_SECRET = '***REMOVED***'
-REDIRECT_URI = '/oauth2callback'  # one of the Redirect URIs from Google APIs console
+# # Google OAuth Setup
+# GOOGLE_CLIENT_ID = '200273015685.apps.googleusercontent.com'
+# GOOGLE_CLIENT_SECRET = '***REMOVED***'
+# REDIRECT_URI = '/oauth2callback'  # one of the Redirect URIs from Google APIs console

@@ -1,0 +1,47 @@
+{% extends "layouts/base.html" %}
+{% set title = issue.complete_title+' | Longboxed' %}
+
+{% block main_content %}
+    <div class="container">
+        <div class="issueContainer">
+            <div class="row">
+                <div class="span4">
+                    <div class="coverImage">
+                       <img class="m_issue img-rounded" src="{{ issue.bigImage }}"> 
+                    </div>
+                </div>
+                <div class="span8">
+                    <h2>{{ issue.complete_title }}</h2>
+                    <h4>
+                        {{ issue.publisher }} - 
+                        <a href="#" class="add2cal" data-id="{{ issue.id }}"><i class="icon-calendar"></i></a> <a href="{{ issue.alink }}"><i class="icon-shopping-cart"></i></a>
+                    </h4>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td>Release Date</td>
+                                <td>{{ issue.onSaleDate.strftime('%-m/%-d/%y') }}</td>
+                            </tr>
+                            <tr>
+                                <td>Price</td>
+                                <td>${{ issue.retailPrice }}</td>
+                            </tr>
+                            <tr>
+                                <td>Distributor Code</td>
+                                <td>{{ issue.id }}</td>
+                            </tr>
+                            <tr>
+                                <td>Description</td>
+                                <td>
+                                    <p>
+                                        {{ issue.description }}
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

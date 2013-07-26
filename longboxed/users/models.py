@@ -6,9 +6,11 @@
     User models
 """
 from flask.ext.login import UserMixin
-from mongoengine import (EmbeddedDocument, Document, StringField,
-                        FloatField, BooleanField, ListField,
-                        DateTimeField, EmbeddedDocumentField)
+# from mongoengine import EmbeddedDocument, EmbeddedDocumentField
+# from mongoengine import (EmbeddedDocument, Document, StringField,
+#                         FloatField, BooleanField, ListField,
+#                         DateTimeField, EmbeddedDocumentField)
+# from flask.ext.mongoengine
 
 # from flask.ext.mongokit import Document
 
@@ -21,12 +23,58 @@ from mongoengine import (EmbeddedDocument, Document, StringField,
 #             return True
 #         raise Exception('%s must be at most %s characters long' % length)
 #     return validate
+from ..core import db
 
 
+# class Comment(EmbeddedDocument):
+#     content = StringField()
+
+# class Page(Document):
+#     comments = ListField(EmbeddedDocumentField(Comment))
+
+class UserComics(db.EmbeddedDocument):
+    favorites = db.SortedListField(db.StringField(), default=None)
+
+class UserSettings(db.EmbeddedDocument):
+    display_favs = db.BooleanField(default=False)
+    default_cal = db.StringField(default=None)
+    show_publishers = db.ListField(db.StringField(), default=None)
+
+class UserTokens(db.EmbeddedDocument):
+    refresh_token = db.StringField(default=None)
+    access_token = db.StringField(default=None)
+    expire_time = db.StringField(default=None)
+
+class User(db.Document, UserMixin):
+    # Save User document to this collection
+    meta = {'collection': 'users_test'}
+
+    userid = db.StringField()
+    full_name = db.StringField()
+    first_name = db.StringField()
+    last_name = db.StringField()
+    gender = db.StringField()
+    birthday = db.StringField()
+    email = db.EmailField()
+    friends = db.ListField(db.StringField())
+    date_creation = db.DateTimeField()
+    last_login = db.DateTimeField()
+    favorites = db.EmbeddedDocumentField(UserComics)
+    settings = db.EmbeddedDocumentField(UserSettings)
+    tokens = db.EmbeddedDocumentField(UserTokens)
 
 
-class User(Document, UserMixin):
-    meta = {'collection': 'users'}
+    # favorites = db.SortedListField(db.StringField())
+    # display_favs = db.BooleanField()
+    # default_cal = db.StringField()
+    # show_publishers = db.ListField(db.StringField())
+    # refresh_token = db.StringField()
+    # access_token = db.StringField()
+    # expire_time = db.DateTimeField()
+
+    def get_id(self):
+        return self.userid
+
 
 
 

@@ -5,33 +5,31 @@
 
     Comics module
 """
-from mongoengine import (EmbeddedDocument, Document, StringField,
-                        FloatField, BooleanField, ListField,
-                        DateTimeField, EmbeddedDocumentField)
+from ..core import db
 
-class Comic(Document):
+class Comic(db.Document):
     meta = {'collection': 'comics_test'}
-    productID = StringField()
-    name = StringField()
-    issue_number = FloatField()
-    issues = FloatField()
-    other = StringField()
-    complete_title = StringField()
-    one_shot = BooleanField()
-    alink = StringField()
-    thumbnail = StringField()
-    bigImage = StringField()
-    retailPrice = FloatField()
-    description = StringField()
-    onSaleDate = DateTimeField()
-    genre = StringField()
-    people = ListField(StringField())
-    popularity = FloatField()
-    lastUpdated = DateTimeField()
-    publisher = StringField()
-    diamondid = StringField()
-    category = StringField()
-    upc = StringField()
+    productID = db.StringField()
+    name = db.StringField()
+    issue_number = db.FloatField()
+    issues = db.FloatField()
+    other = db.StringField()
+    complete_title = db.StringField()
+    one_shot = db.BooleanField()
+    alink = db.StringField()
+    thumbnail = db.StringField()
+    bigImage = db.StringField()
+    retailPrice = db.FloatField()
+    description = db.StringField()
+    onSaleDate = db.DateTimeField()
+    genre = db.StringField()
+    people = db.ListField(db.StringField())
+    popularity = db.FloatField()
+    lastUpdated = db.DateTimeField()
+    publisher = db.StringField()
+    diamondid = db.StringField()
+    category = db.StringField()
+    upc = db.StringField()
 
 # from flask.ext.mongokit import Document
 

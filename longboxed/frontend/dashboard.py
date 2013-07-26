@@ -6,7 +6,7 @@
     Frontend blueprints
 """
 
-from flask import Blueprint, render_template, g
+from flask import abort, Blueprint, render_template, g
 from flask.ext.login import (current_user, login_required,
                             login_user, logout_user, confirm_login,
                             fresh_login_required)
@@ -18,16 +18,24 @@ from datetime import datetime, timedelta
 
 bp = Blueprint('dashboard', __name__)
 
-# @route(bp, '/')
-# def index():
-#     """Returns to the dashboard interface."""
-#     return render_template('dashboard.html')
 
 @route(bp, '/')
 def index():
     if not current_user.is_anonymous():
         return render_template('main.html')
     return render_template('main.html')
+
+@route(bp, '/favorites')
+def favorites():
+    return abort(404)
+
+# @route(bp, '/favorites')
+# def favorites():
+#     return abort(404)
+
+@route(bp, '/settings')
+def settings():
+    return abort(404)
 
 @route(bp,'/comics')
 def comics():
@@ -38,7 +46,20 @@ def comics():
     dates['start'] = start
     dates['end'] = end
     comicList = _comics.find_comics_in_date_range(start, end)
+    print comicList[0].diamondid
     return render_template('comics.html', dates=dates, comicList=comicList, calendarenable=1, matches=None)
+
+
+@route(bp, '/issue/<diamondid>')
+def issue(diamondid):
+    """Individual issue page"""
+    # try:
+    # print 'DIAMONDID ', diamondid
+    issue = _comics.find_comic_with_diamondid(diamondid)
+    # print 'ISSUE ', issue
+    if issue:
+        return render_template('issue.html', issue=issue)
+    return abort(404) 
 
 def get_current_week():
     today = datetime.today()

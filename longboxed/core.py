@@ -35,3 +35,10 @@ class LongboxedFormError(Exception):
 
 class Service(object):
     __model__ = None
+
+    def new(self):
+        """Returns a new, unsaved instance of the service's model class.
+
+        :param **kwargs: instance parameters
+        """
+        return self.__model__()
