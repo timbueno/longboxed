@@ -5,6 +5,7 @@
 
     Frontend blueprints
 """
+from datetime import datetime, timedelta
 
 from flask import abort, Blueprint, render_template, g
 from flask.ext.login import (current_user, login_required,
@@ -14,7 +15,6 @@ from flask.ext.login import (current_user, login_required,
 from . import route
 from ..services import comics as _comics
 
-from datetime import datetime, timedelta
 
 bp = Blueprint('dashboard', __name__)
 
@@ -25,17 +25,16 @@ def index():
         return render_template('main.html')
     return render_template('main.html')
 
+
 @route(bp, '/favorites')
 def favorites():
     return abort(404)
 
-# @route(bp, '/favorites')
-# def favorites():
-#     return abort(404)
 
 @route(bp, '/settings')
 def settings():
     return abort(404)
+
 
 @route(bp,'/comics')
 def comics():
@@ -53,13 +52,11 @@ def comics():
 @route(bp, '/issue/<diamondid>')
 def issue(diamondid):
     """Individual issue page"""
-    # try:
-    # print 'DIAMONDID ', diamondid
     issue = _comics.find_comic_with_diamondid(diamondid)
-    # print 'ISSUE ', issue
     if issue:
         return render_template('issue.html', issue=issue)
     return abort(404) 
+
 
 def get_current_week():
     today = datetime.today()

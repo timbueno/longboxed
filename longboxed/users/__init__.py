@@ -6,7 +6,6 @@
     longboxed users package
 """
 from mongoengine.queryset import DoesNotExist
-# from flask.ext.mongoengine.wtf import model_form
 
 from ..core import Service
 from .models import User
@@ -21,5 +20,4 @@ class UsersService(Service):
         try:
             return self.__model__.objects.get(userid=userid)
         except DoesNotExist:
-            print 'USER DOES NOT EXIST'
             return None

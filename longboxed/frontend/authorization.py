@@ -7,9 +7,8 @@
 """
 from datetime import datetime, timedelta
 
-from flask import (Blueprint, current_app, flash, g,
-                   request, redirect, url_for)
-from flask.ext.login import current_user, login_required, login_user,logout_user
+from flask import Blueprint, flash, g, request, redirect, url_for
+from flask.ext.login import current_user, login_required, login_user, logout_user
 from rauth.service import OAuth2Service
 
 import requests
@@ -17,11 +16,8 @@ import requests
 from . import route
 from ..core import login_manager
 from ..services import users as _users
+from ..settings import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIRECT_URI
 
-# Google OAuth Setup
-GOOGLE_CLIENT_ID = '200273015685.apps.googleusercontent.com'
-GOOGLE_CLIENT_SECRET = '***REMOVED***'
-REDIRECT_URI = '/oauth2callback'  # one of the Redirect URIs from Google APIs console
 
 bp = Blueprint('authorization', __name__)
 
@@ -35,45 +31,18 @@ service = OAuth2Service(
             base_url='https://www.google.com/accounts/')
 
 
-@login_manager.user_loader
-def load_user(userid):
-    print 'INSIDE USER LOADER: ', userid
-    user = _users.find_user_with_id(userid)
-    print user
-    if user:
-        user.last_login = datetime.now()
-        user.save()
-    return user
-
-@bp.before_app_request
-def before_request():
-    print 'IN BEFORE APP REQUEST!!!!'
-    print current_user.is_anonymous()
-    if not current_user.is_anonymous():
-        # get new access token if current one is expired
-        if datetime.utcnow() > current_user.expire_time:
-            # print "GETTING NEW TOKEN!!"
-            auth_response = service.get_raw_access_token(data={
-                'refresh_token': current_user.refresh_token,
-                'grant_type': 'refresh_token'
-            })
-            auth_data = auth_response.json()
-            current_user.access_token = auth_data['access_token']
-            current_user.expire_time = datetime.utcnow() + timedelta(seconds=int(auth_data['expires_in']))
-            current_user.save()
-        g.user = current_user
-    else:
-        g.user = None
-
 @route(bp, '/logout')
 @login_required
 def logout():
+    """Logs out user from app"""
     logout_user()
     g.user = None
     return redirect(url_for('dashboard.index'))
 
+
 @route(bp, '/login')
 def login():
+    """Logs user in to application"""
     if current_user is not None and current_user.is_authenticated():
         return redirect(url_for('dashboard.index'))
     params={'scope': 'openid email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar',
@@ -81,6 +50,39 @@ def login():
             'access_type': 'offline',
             'redirect_uri': url_for('.authorized', _external=True)}
     return redirect(service.get_authorize_url(**params))
+
+
+@login_manager.user_loader
+def load_user(userid):
+    """Loads user from database. Used with Flask-Login."""
+    user = _users.find_user_with_id(userid)
+    if user:
+        user.last_login = datetime.now()
+        user.save()
+    return user
+
+
+@bp.before_app_request
+def before_request():
+    """Checks if users tokens have expired and renews them if necessary
+    Also puts current user object in g.user
+    """
+    if not current_user.is_anonymous():
+        # get new access token if current one is expired
+        if datetime.utcnow() > current_user.tokens.expire_time:
+            # print "GETTING NEW TOKEN!!"
+            auth_response = service.get_raw_access_token(data={
+                'refresh_token': current_user.tokens.refresh_token,
+                'grant_type': 'refresh_token'
+            })
+            auth_data = auth_response.json()
+            current_user.tokens.access_token = auth_data['access_token']
+            current_user.tokens.expire_time = datetime.utcnow() + timedelta(seconds=int(auth_data['expires_in']))
+            current_user.save()
+        g.user = current_user
+    else:
+        g.user = None
+
 
 @route(bp, REDIRECT_URI)
 def authorized():
@@ -131,16 +133,10 @@ def create_new_user(resp):
     newUser.first_name = resp['given_name']
     newUser.last_name = resp['family_name']
     newUser.full_name = resp['name']
-
     # Set default calendar
-    # newUser.default_cal = resp['email']
     newUser.settings.default_cal = resp['email']
-
     # Save tokens
-    # newUser.access_token = resp['access_token']
-    # newUser.refresh_token = resp['refresh_token']
     newUser.tokens.access_token = resp['access_token']
     newUser.tokens.refresh_token = resp['refresh_token']
-
     newUser.save()
     return

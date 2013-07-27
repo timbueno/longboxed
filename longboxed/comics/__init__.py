@@ -5,6 +5,7 @@
 
     longboxed comics package
 """
+from mongoengine.queryset import DoesNotExist
 
 from ..core import Service
 from .models import Comic
@@ -16,4 +17,7 @@ class ComicsService(Service):
         return sorted(self.__model__.objects(onSaleDate__gte=start, onSaleDate__lte=end))
 
     def find_comic_with_diamondid(self, diamondid):
-        return self.__model__.objects.get(diamondid=diamondid)
+        try:
+            return self.__model__.objects.get(diamondid=diamondid)
+        except DoesNotExist:
+            return None

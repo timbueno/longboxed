@@ -5,17 +5,11 @@
 
     longboxed factory module
 """
-
-# import os
-
 from flask import Flask
 
 from .core import bootstrap, db, login_manager
 from .helpers import register_blueprints
 from .middleware import HTTPMethodOverrideMiddleware
-# from .models import User
-
-from datetime import datetime
 
 
 def create_app(package_name, package_path, settings_override=None):
