@@ -12,14 +12,10 @@ from flask.ext.login import UserMixin
 from ..core import db
 
 
-class UserComics(db.EmbeddedDocument):
-    favorites = db.SortedListField(db.StringField(), default=None)
-
-
 class UserSettings(db.EmbeddedDocument):
-    display_favs = db.BooleanField(default=False)
-    default_cal = db.StringField(default=None)
-    show_publishers = db.ListField(db.StringField(), default=None)
+    display_pull_list = db.BooleanField(default=False)
+    default_cal = db.StringField()
+    show_publishers = db.ListField(db.StringField(default=None))
 
 
 class UserTokens(db.EmbeddedDocument):
@@ -42,7 +38,7 @@ class User(db.Document, UserMixin):
     friends = db.ListField(db.StringField())
     date_creation = db.DateTimeField()
     last_login = db.DateTimeField()
-    favorites = db.EmbeddedDocumentField(UserComics, default=UserComics)
+    pull_list = db.SortedListField(db.StringField(default=None))
     settings = db.EmbeddedDocumentField(UserSettings, default=UserSettings)
     tokens = db.EmbeddedDocumentField(UserTokens, default=UserTokens)
 
