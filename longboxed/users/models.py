@@ -7,7 +7,9 @@
 """
 from datetime import datetime
 
+import requests
 from flask.ext.login import UserMixin
+
 
 from ..core import db
 
@@ -44,3 +46,26 @@ class User(db.Document, UserMixin):
 
     def get_id(self):
         return self.userid
+
+    def get_calendar_info(self):
+        headers = {'Authorization': 'Bearer '+self.tokens.access_token}
+        data = {'minAccessRole':'owner'}
+        endpoint = 'https://www.googleapis.com/calendar/v3/users/me/calendarList'
+        response = requests.get(endpoint, headers=headers, params=data)
+        r = response.json()
+
+        calendars = []
+        default_cal = None
+        for cal in r['items']:
+            name = cal['summary']
+            calid = cal['id']
+            try:
+                if cal['primary']:
+                    default_cal = (cal['id'], cal['summary'], True)
+                    primary = True
+            except KeyError:
+                primary = False
+
+            calendars.append((calid, name, primary))
+
+        return (default_cal, calendars)    

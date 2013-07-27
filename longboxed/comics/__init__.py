@@ -21,3 +21,15 @@ class ComicsService(Service):
             return self.__model__.objects.get(diamondid=diamondid)
         except DoesNotExist:
             return None
+
+    def distinct_publishers(self):
+        try:
+            return self.__model__.objects.distinct('publisher')
+        except:
+            return None
+
+    def distinct_titles(self):
+        try:
+            return self.__model__.objects.distinct('name')
+        except:
+            return None   
