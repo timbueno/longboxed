@@ -33,7 +33,7 @@
           <div class="nav-collapse collapse">
             <ul class="nav">
               {{ render_sitenav('dashboard.index', 'Home', active=active_page) }}
-              {{ render_sitenav('dashboard.comics', 'Comics', active=active_page) }}
+              {{ render_sitenav('comics.comics', 'Comics', active=active_page) }}
             </ul>
             <ul class="nav pull-right">
               <li class="dropdown">
@@ -44,7 +44,6 @@
                   </a>
                   <ul class="dropdown-menu">
                     <li><a href="{{url_for('pull_list.p')}}"><i class="icon-th-list"></i> Pull List</a></li>
-                    <li><a href="/edit_profile"><i class="icon-user"></i> Edit Profile</a></li>
                     <li class="divider"></li>
                     <li class="nav-header">Preferences</li>
                     <li><a href="{{ url_for('dashboard.settings') }}"><i class="icon-cog"></i> Settings</a></li>

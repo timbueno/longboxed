@@ -22,6 +22,7 @@ bp = Blueprint('dashboard', __name__)
 @route(bp, '/')
 def index():
     if not current_user.is_anonymous():
+        start, end = 1, 2
         return render_template('main.html')
     return render_template('main.html')
 
@@ -87,33 +88,33 @@ def settings():
     return render_template('settings.html',form=form)
 
 
-@route(bp,'/comics')
-def comics():
-    start, end = get_current_week()
-    dates = {}
-    dates['today'] = end.strftime('%B %-d, %Y')
-    dates['lastweek'] = start.strftime('%B %-d, %Y')
-    dates['start'] = start
-    dates['end'] = end
-    comicList = _comics.find_comics_in_date_range(start, end)
-    print comicList[0].diamondid
-    return render_template('comics.html', dates=dates, comicList=comicList, calendarenable=1, matches=None)
+# @route(bp,'/comics')
+# def comics():
+#     start, end = get_current_week()
+#     dates = {}
+#     dates['today'] = end.strftime('%B %-d, %Y')
+#     dates['lastweek'] = start.strftime('%B %-d, %Y')
+#     dates['start'] = start
+#     dates['end'] = end
+#     comicList = _comics.find_comics_in_date_range(start, end)
+#     print comicList[0].diamondid
+#     return render_template('comics.html', dates=dates, comicList=comicList, calendarenable=1, matches=None)
 
 
-@route(bp, '/issue/<diamondid>')
-def issue(diamondid):
-    """Individual issue page"""
-    issue = _comics.find_comic_with_diamondid(diamondid)
-    if issue:
-        return render_template('issue.html', issue=issue)
-    return abort(404) 
+# @route(bp, '/issue/<diamondid>')
+# def issue(diamondid):
+#     """Individual issue page"""
+#     issue = _comics.find_comic_with_diamondid(diamondid)
+#     if issue:
+#         return render_template('issue.html', issue=issue)
+#     return abort(404) 
 
 
-def get_current_week():
-    today = datetime.today()
-    day_of_week = today.weekday()
-    to_beginning_of_week = timedelta(days=day_of_week)
-    beginning_of_week = (today - to_beginning_of_week).replace(hour=0, minute=0, second=0, microsecond=0)
-    to_end_of_week = timedelta(days= (6 - day_of_week))
-    end_of_week = (today + to_end_of_week).replace(hour=0, minute=0, second=0, microsecond=0)
-    return (beginning_of_week, end_of_week)
+# def get_current_week():
+#     today = datetime.today()
+#     day_of_week = today.weekday()
+#     to_beginning_of_week = timedelta(days=day_of_week)
+#     beginning_of_week = (today - to_beginning_of_week).replace(hour=0, minute=0, second=0, microsecond=0)
+#     to_end_of_week = timedelta(days= (6 - day_of_week))
+#     end_of_week = (today + to_end_of_week).replace(hour=0, minute=0, second=0, microsecond=0)
+#     return (beginning_of_week, end_of_week)

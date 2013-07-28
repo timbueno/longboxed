@@ -61,14 +61,14 @@
               <a id="pop{{ outer_loop.index }}{{ loop.index }}" class="btn pop"> <i class="icon-eye-open"></i></a>
             </td>
             <td class="ctitle">
-              <a href="{{ url_for('dashboard.issue', diamondid=comic.diamondid) }}">
+              <a href="{{ url_for('comics.issue', diamondid=comic.diamondid) }}">
                 {{ comic.complete_title }}
               </a>
             </td>
             <td class="cdate">{{ comic.onSaleDate.strftime('%-m/%-d/%y') }}</td>
             <td class="cprice">${{ comic.retailPrice }}</td>
             {% if g.user %}
-            <td class="ccal"><div class="add2cal" data-id="{{ comic.id }}"><i class="icon-calendar"></i></div></td>
+            <td class="ccal"><div class="add2cal" data-id="{{ comic.diamondid }}"><i class="icon-calendar"></i></div></td>
             {% endif %}
           </tr>
         {% endfor %}
