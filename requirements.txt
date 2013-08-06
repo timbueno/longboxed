@@ -6,6 +6,7 @@ Flask-MongoKit==0.6
 Flask-OAuth==0.12
 Flask-WTF==0.8.3
 Jinja2==2.6
+distribute
 WTForms==1.0.4
 Werkzeug==0.8.3
 anyjson==0.3.3
