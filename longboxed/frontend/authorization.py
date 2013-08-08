@@ -55,10 +55,10 @@ def login():
 @login_manager.user_loader
 def load_user(userid):
     """Loads user from database. Used with Flask-Login."""
-    user = _users.find_user_with_id(userid)
+    user = _users.first(google_id=userid)
     if user:
         user.last_login = datetime.now()
-        user.save()
+        _users.save(user)
     return user
 
 
@@ -69,16 +69,16 @@ def before_request():
     """
     if not current_user.is_anonymous():
         # get new access token if current one is expired
-        if datetime.utcnow() > current_user.tokens.expire_time:
+        if datetime.utcnow() > current_user.token_expire_at:
             # print "GETTING NEW TOKEN!!"
             auth_response = service.get_raw_access_token(data={
-                'refresh_token': current_user.tokens.refresh_token,
+                'refresh_token': current_user.refresh_token,
                 'grant_type': 'refresh_token'
             })
             auth_data = auth_response.json()
-            current_user.tokens.access_token = auth_data['access_token']
-            current_user.tokens.expire_time = datetime.utcnow() + timedelta(seconds=int(auth_data['expires_in']))
-            current_user.save()
+            current_user.access_token = auth_data['access_token']
+            current_user.token_expire_at = datetime.utcnow() + timedelta(seconds=int(auth_data['expires_in']))
+            _users.save(current_user)
         g.user = current_user
     else:
         g.user = None
@@ -103,19 +103,21 @@ def authorized():
                                      headers=headers)
     identity_data = identity_response.json()
 
-    if not _users.find_user_with_id(identity_data['id']):
+    if not _users.first(google_id=identity_data['id']):
         # print "CREATING NEW USER"
+        print 'DIDNT FIND: ', _users.first(google_id=identity_data['id'])
         identity = identity_data
         identity['access_token'] = auth_data['access_token']
-        print 'AUTH_DATA ', auth_data
+        # print 'AUTH_DATA ', auth_data
         identity['refresh_token'] = auth_data['refresh_token']
         create_new_user(identity)
 
     # Get the user and save token
-    u = _users.find_user_with_id(identity_data['id'])
+    u = _users.first(google_id=identity_data['id'])
+    print u
     u.access_token = auth_data['access_token']
-    u.expire_time = datetime.utcnow() + timedelta(seconds=int(auth_data['expires_in']))
-    u.save()
+    u.token_expire_at = datetime.utcnow() + timedelta(seconds=int(auth_data['expires_in']))
+    _users.save(u)
 
     # Login the user
     login_user(u)
@@ -127,16 +129,16 @@ def authorized():
 def create_new_user(resp):
     # Create new user
     newUser = _users.new()
-    newUser.userid = resp['id']
+    newUser.google_id = resp['id']
     # User Info
     newUser.email = resp['email']
     newUser.first_name = resp['given_name']
     newUser.last_name = resp['family_name']
     newUser.full_name = resp['name']
     # Set default calendar
-    newUser.settings.default_cal = resp['email']
+    newUser.default_cal = resp['email']
     # Save tokens
-    newUser.tokens.access_token = resp['access_token']
-    newUser.tokens.refresh_token = resp['refresh_token']
-    newUser.save()
+    newUser.access_token = resp['access_token']
+    newUser.refresh_token = resp['refresh_token']
+    _users.save(newUser)
     return

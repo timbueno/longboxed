@@ -14,6 +14,7 @@ from flask.ext.wtf import Form, BooleanField, SelectField, SelectMultipleField
 
 from . import route
 from ..services import comics as _comics
+from ..services import users as _users
 
 
 bp = Blueprint('dashboard', __name__)
@@ -38,38 +39,38 @@ def favorites():
 def settings():
     if current_user is not None:
         if request.method == 'POST':
-            try:
-                if 'display_favs' in request.values:
-                    current_user.settings.display_pull_list = True
-                else:
-                    current_user.settings.display_pull_list = False
-                current_user.settings.default_cal = request.form['cals']
-                current_user.settings.show_publishers = request.form.getlist('publishers')
-                current_user.save()
-            except:
-                print "Unexpected error:", sys.exc_info()[0]
+            # try:
+            if 'display_favs' in request.values:
+                current_user.display_pull_list = True
+            else:
+                current_user.display_pull_list = False
+            current_user.default_cal = request.form['cals']
+            current_user.show_publishers = request.form.getlist('publishers')
+            _users.save(current_user)
+            # except:
+            #     print "Unexpected error:", sys.exc_info()[0]
     else:
         return redirect(url_for('index'))
 
     # Default calendars
-    calendars = current_user.get_calendar_info() # Get a users calendar
+    calendars = _users.get_calendar_info(current_user) # Get a users calendar
     c = []
     for cal in calendars[1]:
         c.append((cal[0], cal[1]))
     # Set the default calendar
-    default_cal = current_user.settings.default_cal
+    default_cal = current_user.default_cal
 
     # Get all publishers
-    pubs = [(p, p) for p in _comics.distinct_publishers() if p != '']
+    pubs = [(p, p) for p in _comics.all() if p != ''] #########
     pubs.sort()
     # Get user defaults
-    user_pubs = current_user.settings.show_publishers
+    user_pubs = current_user.publishers
 
     class ExampleForm(Form):
         display_favs = BooleanField(
                             'Display Favorites',
                             description=u'If a comic on your favorites list matches an issue out that week, display it inline with the other books.', 
-                            default = current_user.settings.display_pull_list)
+                            default = current_user.display_pull_list)
         cals = SelectField(
                     u'Calendars',
                     description=u'Set the calendar the you want to add comics to.',

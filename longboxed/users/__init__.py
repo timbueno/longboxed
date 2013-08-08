@@ -6,6 +6,7 @@
     longboxed users package
 """
 from mongoengine.queryset import DoesNotExist
+import requests
 
 from ..core import Service
 from .models import User
@@ -13,11 +14,25 @@ from .models import User
 class UsersService(Service):
     __model__ = User
 
-    def new(self):
-        return self.__model__()
+    def get_calendar_info(self, user):
+        headers = {'Authorization': 'Bearer '+user.access_token}
+        data = {'minAccessRole':'owner'}
+        endpoint = 'https://www.googleapis.com/calendar/v3/users/me/calendarList'
+        response = requests.get(endpoint, headers=headers, params=data)
+        r = response.json()
 
-    def find_user_with_id(self, userid):
-        try:
-            return self.__model__.objects.get(userid=userid)
-        except DoesNotExist:
-            return None
+        calendars = []
+        default_cal = None
+        for cal in r['items']:
+            name = cal['summary']
+            calid = cal['id']
+            try:
+                if cal['primary']:
+                    default_cal = (cal['id'], cal['summary'], True)
+                    primary = True
+            except KeyError:
+                primary = False
+
+            calendars.append((calid, name, primary))
+
+        return (default_cal, calendars)
