@@ -11,7 +11,7 @@ DEBUG = True
 SECRET_KEY = '***REMOVED***'
 
 SQLALCHEMY_DATABASE_URI = 'mysql://root@127.0.0.1:3306/longboxed'
-
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
 
 # MONGODB_SETTINGS = {
 #     'alias': 'default',

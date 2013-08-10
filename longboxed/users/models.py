@@ -45,6 +45,7 @@ class User(db.Model, UserMixin):
     #                              lazy='select')
     publishers = db.relationship('Publisher', secondary=publishers_users,
         backref=db.backref('users', lazy='dynamic'))
+    pull_list = []
 
     def get_id(self):
         return self.google_id

@@ -6,9 +6,9 @@
     services module
 """
 
-from .comics import ComicsService
+from .comics import ComicService
 from .users import UsersService
 
-comics = ComicsService()
+comics = ComicService()
 
 users = UsersService()

@@ -5,30 +5,41 @@
 
     longboxed comics package
 """
-from mongoengine.queryset import DoesNotExist
+# from mongoengine.queryset import DoesNotExist
 
 from ..core import Service
-from .models import Comic
+from .models import Issue, Publisher, Title
 
-class ComicsService(Service):
-    __model__ = Comic
 
-    def find_comics_in_date_range(self, start, end):
-        return sorted(self.__model__.objects(onSaleDate__gte=start, onSaleDate__lte=end))
+class PublisherService(Service):
+    __model__ = Publisher
 
-    def find_relevent_comics_in_date_range(self, start, end, current_user):
-        all_comics = self.find_comics_in_date_range(start, end)
-        relevent_comics = all_comics
+
+class TitleService(Service):
+    __model__ = Title
+
+
+class IssueService(Service):
+    __model__ = Issue
+
+    def find_issues_in_date_range(self, start, end):
+        s = start.strftime('%Y-%m-%d')
+        e = end.strftime('%Y-%m-%d')
+        return sorted(self.__model__.query.filter(self.__model__.on_sale_date.between(s,e)))
+    
+    def find_relevent_issues_in_date_range(self, start, end, current_user):
+        all_issues = self.find_issues_in_date_range(start, end)
+        relevent_issues = all_issues
         matches = []
         if not current_user.is_anonymous():
-            if current_user.settings.show_publishers:
-                relevent_comics = [comic for comic in all_comics if comic.publisher in current_user.settings.show_publishers]
+            if current_user.publishers:
+                relevent_issues = [issue for issue in all_issues if issue.publisher in current_user.show_publishers]
             if current_user.pull_list:
-                if current_user.settings.display_pull_list:
-                    matches = [c for c in all_comics if c.name in current_user.pull_list]
-        return (relevent_comics, matches)
+                if current_user.display_pull_list:
+                    matches = [c for c in all_issues if c.name in current_user.pull_list]
+        return (relevent_issues, matches)
 
-    def find_comic_with_diamondid(self, diamondid):
+    def find_issue_with_diamondid(self, diamondid):
         try:
             return self.__model__.objects.get(diamondid=diamondid)
         except DoesNotExist:
@@ -40,8 +51,30 @@ class ComicsService(Service):
         except:
             return None
 
-    def distinct_titles(self):
-        try:
-            return self.__model__.objects.distinct('name')
-        except:
-            return None   
+
+class ComicService(object):
+    publishers = PublisherService()
+    titles = TitleService()
+    issues = IssueService()
+
+    def insert_comic(self, publisher, title, issue):
+        p = self.publishers.get(name=publisher.name)
+        if not p:
+            self.publishers.save(publisher)
+        t = self.titles.get(name=title.name)
+        if not t:
+            self.titles.save(title)
+        i = self.issues.get(product_id=issue.product_id)
+        if not i:
+            self.issues.save(issue)
+        return
+
+
+
+
+
+
+
+
+
+

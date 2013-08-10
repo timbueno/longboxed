@@ -27,8 +27,7 @@ def comics():
     dates['lastweek'] = start.strftime('%B %-d, %Y')
     dates['start'] = start
     dates['end'] = end
-    comicList, matches = _comics.find_relevent_comics_in_date_range(start, end, current_user)
-    print comicList[0].diamondid
+    comicList, matches = _comics.issues.find_relevent_issues_in_date_range(start, end, current_user)
     return render_template('comics.html', dates=dates, comicList=comicList, calendarenable=1, matches=None)
 
 

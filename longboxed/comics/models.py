@@ -8,26 +8,36 @@
 from ..core import db
 
 
-publishers_comics = db.Table('publishers_comics',
-    db.Column('comic_id', db.Integer, db.ForeignKey('comics.id')),
-    db.Column('publisher_id', db.Integer, db.ForeignKey('publishers.id'))
-)
-
-
 class Publisher(db.Model):
     __tablename__ = 'publishers'
-    __table_args__ = {'extend_existing': True}
+    # __table_args__ = {'extend_existing': True}
+    # IDs
     id = db.Column(db.Integer, primary_key=True)
+    # Attributes
     name = db.Column(db.String(255))
+    # Relationships
+    titles = db.relationship('Title', backref='publisher', lazy='dynamic')
 
 
-class Comic(db.Model):
-    __tablename__ = 'comics'
-
+class Title(db.Model):
+    __tablename__ = 'titles'
+    # __table_args__ = {'extend_existing': True}
+    # IDs
     id = db.Column(db.Integer, primary_key=True)
-
-    productID = db.Column(db.String(100))
+    publisher_id = db.Column(db.Integer, db.ForeignKey('publishers.id'))
+    # Attributes
     name = db.Column(db.String(255))
+    # Relationships
+    issues = db.relationship('Issue', backref='title', lazy='dynamic')
+
+
+class Issue(db.Model):
+    __tablename__ = 'issues'
+    # IDs
+    id = db.Column(db.Integer, primary_key=True)
+    title_id = db.Column(db.Integer, db.ForeignKey('titles.id'))
+    # Attributes
+    product_id = db.Column(db.String(100))
     issue_number = db.Column(db.Float)
     issues = db.Column(db.Float)
     other = db.Column(db.String(255))
@@ -43,8 +53,6 @@ class Comic(db.Model):
     people = db.Column(db.String(255)) #####
     popularity = db.Column(db.Float)
     last_updated = db.Column(db.DateTime())
-    publisher = db.relationship('Publisher', secondary=publishers_comics,
-        backref=db.backref('comics', lazy='dynamic'))
     diamond_id = db.Column(db.String(100))
     category = db.Column(db.String(100))
     upc = db.Column(db.String(100))
