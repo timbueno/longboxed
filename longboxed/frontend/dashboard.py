@@ -28,10 +28,10 @@ def index():
     return render_template('main.html')
 
 
-@route(bp, '/favorites')
-def favorites():
-    print _comics.distinct_publishers()
-    return abort(404)
+# @route(bp, '/favorites')
+# def favorites():
+#     print _comics.distinct_publishers()
+#     return abort(404)
 
 
 @route(bp, '/settings', methods=['GET','POST'])
@@ -45,7 +45,11 @@ def settings():
             else:
                 current_user.display_pull_list = False
             current_user.default_cal = request.form['cals']
-            current_user.show_publishers = request.form.getlist('publishers')
+            # current_user.publishers = request.form.getlist('publishers')
+
+            pubs = [long(e) for e in request.form.getlist('publishers')]
+            p = _comics.publishers.get_all(*pubs)
+            current_user.publishers = p
             _users.save(current_user)
             # except:
             #     print "Unexpected error:", sys.exc_info()[0]
@@ -61,10 +65,12 @@ def settings():
     default_cal = current_user.default_cal
 
     # Get all publishers
-    pubs = [(p, p) for p in _comics.all() if p != ''] #########
+    pubs = [(p.id, p.name) for p in _comics.publishers.all() if p.name != ''] #########
     pubs.sort()
     # Get user defaults
-    user_pubs = current_user.publishers
+    user_pubs = [p.id for p in current_user.publishers if p.name !='']
+
+
 
     class ExampleForm(Form):
         display_favs = BooleanField(
@@ -87,35 +93,3 @@ def settings():
     form = ExampleForm()
 
     return render_template('settings.html',form=form)
-
-
-# @route(bp,'/comics')
-# def comics():
-#     start, end = get_current_week()
-#     dates = {}
-#     dates['today'] = end.strftime('%B %-d, %Y')
-#     dates['lastweek'] = start.strftime('%B %-d, %Y')
-#     dates['start'] = start
-#     dates['end'] = end
-#     comicList = _comics.find_comics_in_date_range(start, end)
-#     print comicList[0].diamondid
-#     return render_template('comics.html', dates=dates, comicList=comicList, calendarenable=1, matches=None)
-
-
-# @route(bp, '/issue/<diamondid>')
-# def issue(diamondid):
-#     """Individual issue page"""
-#     issue = _comics.find_comic_with_diamondid(diamondid)
-#     if issue:
-#         return render_template('issue.html', issue=issue)
-#     return abort(404) 
-
-
-# def get_current_week():
-#     today = datetime.today()
-#     day_of_week = today.weekday()
-#     to_beginning_of_week = timedelta(days=day_of_week)
-#     beginning_of_week = (today - to_beginning_of_week).replace(hour=0, minute=0, second=0, microsecond=0)
-#     to_end_of_week = timedelta(days= (6 - day_of_week))
-#     end_of_week = (today + to_end_of_week).replace(hour=0, minute=0, second=0, microsecond=0)
-#     return (beginning_of_week, end_of_week)

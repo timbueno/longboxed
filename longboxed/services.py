@@ -9,6 +9,7 @@
 from .comics import ComicService
 from .users import UsersService
 
+
 comics = ComicService()
 
 users = UsersService()

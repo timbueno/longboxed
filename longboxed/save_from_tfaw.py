@@ -1,6 +1,6 @@
 from .services import comics as _comics
 
-from bs4 import UnicodeDammit
+# from bs4 import UnicodeDammit
 from datetime import datetime
 
 import csv
@@ -10,7 +10,7 @@ import requests
 import sys
 
 
-AFFILIATE_ID = 782419
+AFFILIATE_ID = '782419'
 DD_FILE = 'dd.gz'
 
 
@@ -39,7 +39,7 @@ def get_comics():
         reader = csv.reader(f, delimiter='|')
         for item in reader:
             if item[-5] == 'Comics':
-                item = [UnicodeDammit(element).unicode_markup for element in item]
+                item = [element for element in item]
                 comics.append(item)
     print '...Done'
     return comics
@@ -78,7 +78,7 @@ def title_info(title):
     except:
         print "Unexpected error:", sys.exc_info()[3]
     finally:
-        m['complete_title'] = unicode(title)
+        m['complete_title'] = title
     return m
 
 
@@ -102,7 +102,7 @@ def is_float(number):
 def add_comics_to_db():
     daily_download()
     comics = get_comics()
-    for i, comic in enumerate(comics):
+    for q, comic in enumerate(comics):
         # try:
             p = {}
             t = {}
@@ -113,22 +113,24 @@ def add_comics_to_db():
 
             # Publisher
             p['name'] = comic[19]
-            publisher = _comics.publishers.new(**p)
+            # publisher = _comics.publishers.new(**p)
+            # _comics.publishers.save(publisher)
 
             # Title
             t['name'] = t_info['name']
-            t['publisher'] = publisher
-            title = _comics.titles.new(**t)
+            # t['publisher'] = publisher
+            # title = _comics.titles.new(**t)
+            # _comics.titles.save(title)
 
             # Issue
-            i['title'] = title
+            # i['title'] = title
             i['product_id'] = comic[0]
             i['issue_number'] = t_info['issue_number']
             i['issues'] = t_info['issues']
-            i['other'] = t_info['other']
+            i['other'] = None
             i['complete_title'] = t_info['complete_title']
             i['one_shot'] = t_info['one_shot']
-            i['a_link'] = re.sub('YOURUSERID', unicode(AFFILIATE_ID), comic[4])
+            i['a_link'] = re.sub('YOURUSERID', AFFILIATE_ID, comic[4])
             i['thumbnail'] = comic[5]
             i['big_image'] = comic[6]
             i['retail_price'] = float(comic[8]) if is_float(comic[8]) else None
@@ -144,21 +146,27 @@ def add_comics_to_db():
                 i['last_updated'] = datetime.strptime(comic[17], '%Y-%m-%d %H:%M:%S')
             except:
                 i['last_updated'] = None
-            i['publisher'] = comic[19]
             i['diamond_id'] = comic[20]
             i['category'] = comic[21]
             i['upc'] = comic[25]
 
-            issue = _comics.issues.new(**i)
+            # issue = _comics.issues.new(**i)
+            # _comics.issues.save(issue)
 
-            _comics.insert_comic(publisher, title, issue)
+            # print '####### PUBLISHER: ', dir(title)
+            # print '##########'
+            # print title.name
+
+            _comics.insert_comic(p, t, i)
+            # _comics.insert_comic(publisher, title)
 
         # except:
         #     print 'SOMETHING HAPPENED', comic
         #     print "Unexpected error:", sys.exc_info()
-            print i
-            # if i % 250 == 0:
-            #     print 'Saved %d / %d comics' % (i, len(comics))
+            if q % 250 == 0:
+                print 'Saved %d / %d comics' % (q, len(comics))
+            if q == 50:
+                break
 
     return
 

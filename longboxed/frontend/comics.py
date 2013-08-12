@@ -5,12 +5,10 @@
 
     Comics blueprints
 """
-import sys
 from datetime import datetime, timedelta
 
-from flask import abort, Blueprint, jsonify, redirect, render_template, request, url_for
-from flask.ext.login import (current_user, login_required)
-from flask.ext.wtf import Form, BooleanField, SelectField, SelectMultipleField
+from flask import abort, Blueprint, jsonify, render_template, request
+from flask.ext.login import current_user
 
 from . import route
 from ..services import comics as _comics
@@ -28,13 +26,13 @@ def comics():
     dates['start'] = start
     dates['end'] = end
     comicList, matches = _comics.issues.find_relevent_issues_in_date_range(start, end, current_user)
-    return render_template('comics.html', dates=dates, comicList=comicList, calendarenable=1, matches=None)
+    return render_template('comics.html', dates=dates, comicList=comicList, calendarenable=1, matches=matches)
 
 
-@route(bp, '/issue/<diamondid>')
-def issue(diamondid):
+@route(bp, '/issue/<diamond_id>')
+def issue(diamond_id):
     """Individual issue page"""
-    issue = _comics.find_comic_with_diamondid(diamondid)
+    issue = _comics.issues.first(diamond_id=diamond_id)
     if issue:
         return render_template('issue.html', issue=issue)
     return abort(404)

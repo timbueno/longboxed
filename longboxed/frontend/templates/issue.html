@@ -7,28 +7,28 @@
             <div class="row">
                 <div class="span4">
                     <div class="coverImage">
-                       <img class="m_issue img-rounded" src="{{ issue.bigImage }}"> 
+                       <img class="m_issue img-rounded" src="{{ issue.big_image }}"> 
                     </div>
                 </div>
                 <div class="span8">
                     <h2>{{ issue.complete_title }}</h2>
                     <h4>
-                        {{ issue.publisher }} - 
-                        <a href="#" class="add2cal" data-id="{{ issue.id }}"><i class="icon-calendar"></i></a> <a href="{{ issue.alink }}"><i class="icon-shopping-cart"></i></a>
+                        {{ issue.publisher.name }} - 
+                        <a href="#" class="add2cal" data-id="{{ issue.id }}"><i class="icon-calendar"></i></a> <a href="{{ issue.a_link }}"><i class="icon-shopping-cart"></i></a>
                     </h4>
                     <table class="table">
                         <tbody>
                             <tr>
                                 <td>Release Date</td>
-                                <td>{{ issue.onSaleDate.strftime('%-m/%-d/%y') }}</td>
+                                <td>{{ issue.on_sale_date.strftime('%-m/%-d/%y') }}</td>
                             </tr>
                             <tr>
                                 <td>Price</td>
-                                <td>${{ issue.retailPrice }}</td>
+                                <td>${{ issue.retail_price }}</td>
                             </tr>
                             <tr>
                                 <td>Distributor Code</td>
-                                <td>{{ issue.id }}</td>
+                                <td>{{ issue.diamond_id }}</td>
                             </tr>
                             <tr>
                                 <td>Description</td>

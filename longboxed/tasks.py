@@ -25,12 +25,3 @@ def talk():
 @celery.task
 def add(x,y):
     return x+y
-
-# @celery.task
-# def send_manager_added_email(*recipients):
-#     print 'sending manager added email...'
-
-
-# @celery.task
-# def send_manager_removed_email(*recipients):
-#     print 'sending manager removed email...'

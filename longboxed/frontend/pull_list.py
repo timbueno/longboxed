@@ -7,12 +7,12 @@
 """
 import sys
 
-from flask import (abort, Blueprint, jsonify, render_template, request, url_for)
+from flask import (Blueprint, jsonify, render_template, request)
 from flask.ext.login import current_user, login_required
-from flask.ext.wtf import Form
 
 from . import route
 from ..services import comics as _comics
+from ..services import users as _users
 
 
 bp = Blueprint('pull_list', __name__)
@@ -27,8 +27,7 @@ def p():
 @route(bp, '/ajax/typeahead')
 @login_required
 def typeahead():
-    titles = _comics.distinct_titles()
-    print 'DISTINCT TITLES: ', titles
+    titles = [title.name for title in _comics.titles.all()]
     return jsonify(titles=titles)
 
 @route(bp, '/ajax/remove_favorite', methods=['POST'])
@@ -36,11 +35,11 @@ def typeahead():
 def remove_favorite(): 
     try:
         # Get the index of the book to delete
-        i = int(request.form['id'])
+        title = _comics.titles.get(long(request.form['id']))
         # Delete comic at desired index
-        del current_user.pull_list[i]
+        current_user.pull_list.remove(title)
         # Save updated user
-        current_user.save()
+        _users.save(current_user)
         html = render_template('favorites_list.html')
         return jsonify(success=True, html=html)
     except:
@@ -51,11 +50,10 @@ def remove_favorite():
 @route(bp, '/ajax/add_favorite', methods=['POST'])
 @login_required
 def add_favorite():
-    # print current_user.pull_list
-    if request.form['new_favorite'] not in current_user.pull_list:
-        current_user.pull_list.append(request.form['new_favorite'])
-        # current_user.pull.sort()
-        current_user.save()
+    new_title = _comics.titles.first(name=request.form['new_favorite'])
+    if new_title not in current_user.pull_list:
+        current_user.pull_list.append(new_title)
+        _users.save(current_user)
         html = render_template('favorites_list.html')
         return jsonify(success=True, html=html)
     else:

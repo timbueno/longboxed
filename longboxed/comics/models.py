@@ -16,7 +16,8 @@ class Publisher(db.Model):
     # Attributes
     name = db.Column(db.String(255))
     # Relationships
-    titles = db.relationship('Title', backref='publisher', lazy='dynamic')
+    titles = db.relationship('Title', backref=db.backref('publisher', lazy='joined'), lazy='dynamic')
+    comics = db.relationship('Issue', backref=db.backref('publisher', lazy='joined'), lazy='dynamic')
 
 
 class Title(db.Model):
@@ -28,7 +29,7 @@ class Title(db.Model):
     # Attributes
     name = db.Column(db.String(255))
     # Relationships
-    issues = db.relationship('Issue', backref='title', lazy='dynamic')
+    issues = db.relationship('Issue', backref=db.backref('title', lazy='joined'), lazy='dynamic')
 
 
 class Issue(db.Model):
@@ -36,6 +37,7 @@ class Issue(db.Model):
     # IDs
     id = db.Column(db.Integer, primary_key=True)
     title_id = db.Column(db.Integer, db.ForeignKey('titles.id'))
+    publisher_id = db.Column(db.Integer, db.ForeignKey('publishers.id'))
     # Attributes
     product_id = db.Column(db.String(100))
     issue_number = db.Column(db.Float)
@@ -47,8 +49,8 @@ class Issue(db.Model):
     thumbnail = db.Column(db.String(255))
     big_image = db.Column(db.String(255))
     retail_price = db.Column(db.Float)
-    description = db.Column(db.String(255))
-    on_sale_date = db.Column(db.Date())
+    description = db.Column(db.Text)
+    on_sale_date = db.Column(db.DateTime())
     genre = db.Column(db.String(100))
     people = db.Column(db.String(255)) #####
     popularity = db.Column(db.Float)
@@ -56,68 +58,3 @@ class Issue(db.Model):
     diamond_id = db.Column(db.String(100))
     category = db.Column(db.String(100))
     upc = db.Column(db.String(100))
-
-
-# class Comic(db.Document):
-#     meta = {'collection': 'comics_test'}
-#     productID = db.StringField()
-#     name = db.StringField()
-#     issue_number = db.FloatField()
-#     issues = db.FloatField()
-#     other = db.StringField()
-#     complete_title = db.StringField()
-#     one_shot = db.BooleanField()
-#     alink = db.StringField()
-#     thumbnail = db.StringField()
-#     bigImage = db.StringField()
-#     retailPrice = db.FloatField()
-#     description = db.StringField()
-#     onSaleDate = db.DateTimeField()
-#     genre = db.StringField()
-#     people = db.ListField(db.StringField())
-#     popularity = db.FloatField()
-#     lastUpdated = db.DateTimeField()
-#     publisher = db.StringField()
-#     diamondid = db.StringField()
-#     category = db.StringField()
-#     upc = db.StringField()
-
-# from flask.ext.mongokit import Document
-
-# class Comic(Document):
-#     structure = {
-#         'productID': unicode, # 0
-#         'info': { #1
-#             'name': unicode,
-#             'issue_number': float,
-#             'issues': float,
-#             'other': unicode,
-#             'complete_title': unicode,
-#             'one_shot': bool
-#         },
-#         'alink': unicode, # 4
-#         'thumbnail': unicode, # 5
-#         'bigImage': unicode, # 6
-#         'retailPrice': float, # 8
-#         'description': unicode, # 11
-#         'onSaleDate': datetime, # 12
-#         'genre': unicode, # 13
-#         'people': unicode, # 14
-#         'popularity': float, # 16
-#         'lastUpdated': datetime, # 17
-#         'publisher': unicode, # 19
-#         'id': unicode, # 20
-#         'category': unicode, # 21
-#         'upc': unicode # 25
-#     }
-#     required_fields = ['id', 'info.complete_title']
-#     use_dot_notation = True
-#     def __repr__(self):
-#         return '<Comic %r>' % (self.info.name)
-
-#     def is_float(self, number):
-#         try: 
-#             float(number)
-#             return True
-#         except ValueError:
-#             return False

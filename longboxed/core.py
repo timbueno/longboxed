@@ -8,7 +8,6 @@
 
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.login import LoginManager
-# from flask.ext.mongoengine import MongoEngine
 from flask.ext.sqlalchemy import SQLAlchemy
 
 #: Flask-Bootstrap extension instance
@@ -18,7 +17,6 @@ bootstrap = Bootstrap()
 login_manager = LoginManager()
 
 #: Flask-MongoKit extension instance
-# db = MongoEngine()
 db = SQLAlchemy()
 
 

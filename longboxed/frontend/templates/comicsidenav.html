@@ -1,5 +1,5 @@
 <ul class="nav nav-list">
-  {% for group in comicList|groupby('publisher') %}
+  {% for group in comicList|groupby('publisher.name') %}
     <li>
       <a href="#g{{ loop.index }}">
         {{ group.grouper }}

@@ -9,11 +9,10 @@ from datetime import datetime, timedelta
 import json
 import sys
 
-import requests
-
 from dateutil import tz
-from flask import abort, Blueprint, jsonify, redirect, render_template, request, url_for
-from flask.ext.login import (current_user, login_required)
+from flask import Blueprint, jsonify, request
+from flask.ext.login import current_user, login_required
+import requests
 
 from . import route
 from ..services import comics as _comics
@@ -26,17 +25,17 @@ bp = Blueprint('calendar', __name__)
 @login_required
 def add_issue_to_cal():
     try:
-        diamondid = request.args.get('id')
-        issue = _comics.find_comic_with_diamondid(diamondid)
+        diamond_id = request.args.get('id')
+        issue = _comics.issues.first(diamond_id=diamond_id)
         if issue:
             event = {
                 'summary': issue.complete_title,
                 'description': issue.description,
                 'start': {
-                    'date': issue.onSaleDate.strftime('%Y-%m-%d')
+                    'date': issue.on_sale_date.strftime('%Y-%m-%d')
                 },
                 'end': {
-                    'date': issue.onSaleDate.strftime('%Y-%m-%d')
+                    'date': issue.on_sale_date.strftime('%Y-%m-%d')
                 }
             }
             response = insert_calendar_event(event)
@@ -51,7 +50,7 @@ def add_issue_to_cal():
 
 
 def current_headers():
-    headers = {'Authorization': 'Bearer '+current_user.tokens.access_token,
+    headers = {'Authorization': 'Bearer '+current_user.access_token,
                 'X-JavaScript-User-Agent':  'Google       APIs Explorer',
                 'Content-Type':  'application/json'}
     return headers
@@ -59,11 +58,11 @@ def current_headers():
 
 def insert_calendar_event(new_event):
     headers = current_headers()
-    endpoint = 'https://www.googleapis.com/calendar/v3/calendars/%s/events' % current_user.settings.default_cal
+    endpoint = 'https://www.googleapis.com/calendar/v3/calendars/%s/events' % current_user.default_cal
     
     # Check all events on given day
     day = datetime.strptime(new_event['start']['date'], '%Y-%m-%d')
-    events = events_on_day(current_user.settings.default_cal, day)
+    events = events_on_day(current_user.default_cal, day)
     
     # Check if event has already been added based on summaries
     insert_event = True
@@ -91,8 +90,6 @@ def events_on_day(cal, day):
     response = requests.get(endpoint, headers=headers, params=data)
     r = response.json()
     if 'items' in r:
-        print 'FOUND EVENTS!!!!'
         return r['items']
-
-    print 'NO EVENTS FOUND'
+    # print 'NO EVENTS FOUND'
     return None
