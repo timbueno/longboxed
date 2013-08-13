@@ -5,8 +5,8 @@
 
     overholt tasks module
 """
+from celery.task.schedules import crontab
 
-# from .core import mail
 from .factory import create_celery_app
 from .save_from_tfaw import add_comics_to_db
 
@@ -25,3 +25,8 @@ def talk():
 @celery.task
 def add(x,y):
     return x+y
+
+
+@celery.task(name='tasks.test')
+def test():
+    print 'firing test task'
