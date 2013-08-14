@@ -4,3 +4,4 @@ openid_store
 celerybeat-schedule
 *.pyc
 *.gz
+dd

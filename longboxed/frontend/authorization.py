@@ -104,41 +104,49 @@ def authorized():
     identity_data = identity_response.json()
 
     if not _users.first(google_id=identity_data['id']):
-        # print "CREATING NEW USER"
-        print 'DIDNT FIND: ', _users.first(google_id=identity_data['id'])
-        identity = identity_data
+        identity = {}
+
+        identity['google_id'] = identity_data['id']
+        identity['email'] = identity_data['email']
+        identity['first_name'] = identity_data['given_name']
+        identity['last_name'] = identity_data['family_name']
+        identity['full_name'] = identity_data['name']
+        identity['default_cal'] = identity_data['email']
+
         identity['access_token'] = auth_data['access_token']
-        # print 'AUTH_DATA ', auth_data
         identity['refresh_token'] = auth_data['refresh_token']
-        create_new_user(identity)
+        
+        _users.create(**identity)
 
     # Get the user and save token
     u = _users.first(google_id=identity_data['id'])
-    print u
     u.access_token = auth_data['access_token']
     u.token_expire_at = datetime.utcnow() + timedelta(seconds=int(auth_data['expires_in']))
+    u.last_login_at = datetime.now()
+    u.login_count = u.login_count + 1
+
     _users.save(u)
 
     # Login the user
     login_user(u)
-    g.user = current_user
 
     return redirect(url_for('dashboard.index'))
 
 
-def create_new_user(resp):
-    # Create new user
-    newUser = _users.new()
-    newUser.google_id = resp['id']
-    # User Info
-    newUser.email = resp['email']
-    newUser.first_name = resp['given_name']
-    newUser.last_name = resp['family_name']
-    newUser.full_name = resp['name']
-    # Set default calendar
-    newUser.default_cal = resp['email']
-    # Save tokens
-    newUser.access_token = resp['access_token']
-    newUser.refresh_token = resp['refresh_token']
-    _users.save(newUser)
-    return
+
+# def create_new_user(resp):
+#     # Create new user
+#     newUser = _users.new()
+#     newUser.google_id = resp['id']
+#     # User Info
+#     newUser.email = resp['email']
+#     newUser.first_name = resp['given_name']
+#     newUser.last_name = resp['family_name']
+#     newUser.full_name = resp['name']
+#     # Set default calendar
+#     newUser.default_cal = resp['email']
+#     # Save tokens
+#     newUser.access_token = resp['access_token']
+#     newUser.refresh_token = resp['refresh_token']
+#     _users.save(newUser)
+#     return

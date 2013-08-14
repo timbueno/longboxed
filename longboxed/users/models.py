@@ -5,19 +5,19 @@
 
     User models
 """
-# from datetime import datetime
+from datetime import datetime
 
-# import requests
 from flask.ext.login import UserMixin
 
 from ..core import db
 
-
+# Many-to-Many relationship for user defined publishers to display
 publishers_users = db.Table('publishers_users',
     db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
     db.Column('publisher_id', db.Integer, db.ForeignKey('publishers.id'))
 )
 
+# Many-to-Many relationship for user Pull Lists
 titles_users = db.Table('titles_users',
     db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
     db.Column('title_id', db.Integer, db.ForeignKey('titles.id'))
@@ -36,9 +36,9 @@ class User(db.Model, UserMixin):
     full_name = db.Column(db.String(255))
     birthday = db.Column(db.Date())
 
-    registered_at = db.Column(db.DateTime())
+    registered_at = db.Column(db.DateTime(), default=datetime.utcnow)
     last_login_at = db.Column(db.DateTime())
-    login_count = db.Column(db.Integer)
+    login_count = db.Column(db.Integer, default=0)
 
     refresh_token = db.Column(db.String(100))
     access_token = db.Column(db.String(100))

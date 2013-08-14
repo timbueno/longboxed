@@ -5,7 +5,6 @@
 
     longboxed users package
 """
-from mongoengine.queryset import DoesNotExist
 import requests
 
 from ..core import Service
