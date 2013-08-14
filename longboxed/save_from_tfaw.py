@@ -147,10 +147,10 @@ def add_comics_to_db():
 
             # Insert comic into collection
             _comics.insert_comic(p, t, i)
-
+            
             if q % 250 == 0:
                 print 'Saved %d / %d comics' % (q, len(comics))
-            # if q == 50:
+            # if q == 10:
             #     break
 
         except:

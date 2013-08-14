@@ -39,12 +39,6 @@ class IssueService(Service):
                     matches = [c for c in all_issues if c.title in current_user.pull_list]
         return (relevent_issues, matches)
 
-    def distinct_publishers(self):
-        try:
-            return self.__model__.objects.distinct('publisher')
-        except:
-            return None
-
 
 class ComicService(object):
     def __init__(self):
@@ -56,23 +50,23 @@ class ComicService(object):
         publisher = self.publishers.first(name=p['name'])
         if not publisher:
             # print 'Adding Publisher: %s' % p['name']
-            publisher = self.publishers.new(**p)
-            self.publishers.save(publisher)
+            publisher = self.publishers.create(**p)
 
         title = self.titles.first(name=t['name'])
         if not title:
             # print 'Adding Title: %s' % t['name']
             t['publisher'] = publisher
-            title = self.titles.new(**t)
-            self.titles.save(title)
+            title = self.titles.create(**t)
 
-        issue = self.issues.first(product_id=i['diamond_id'])
-        if not issue:
-            # print 'Adding Issue: %s' % i['diamond_id']
-            i['publisher'] = publisher
-            i['title'] = title
-            issue = self.issues.new(**i)
-            self.issues.save(issue)
+        i['publisher'] = publisher
+        i['title'] = title
+        issue = self.issues.first(diamond_id=i['diamond_id'])
+        if issue:
+            # print 'Updating: %s' % issue.complete_title
+            issue = self.issues.update(issue, **i)
+        else:
+            # print 'Adding Issue: %s' % i['complete_title']
+            issue = self.issues.create(**i)
             
         return
 
