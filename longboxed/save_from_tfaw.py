@@ -1,13 +1,13 @@
-from .services import comics as _comics
-
-# from bs4 import UnicodeDammit
-from datetime import datetime
-
 import csv
 import gzip
+import HTMLParser
 import re
 import requests
 import sys
+
+from datetime import datetime
+
+from .services import comics as _comics
 
 
 AFFILIATE_ID = '782419'
@@ -35,6 +35,10 @@ def get_comics():
     print 'Checking for comics'
     # open gzip archive and extract only comics
     with gzip.open(DD_FILE, 'rb') as f:
+        # file_content = f.read()
+        # f.close()
+        # decoded_content = file_content.decode('iso-8859-7')
+        # # encoded_content = decoded_content.encode('utf8')
         comics = []
         reader = csv.reader(f, delimiter='|')
         for item in reader:
@@ -55,7 +59,7 @@ def title_info(title):
         if is_float(m['issues']):
             m['issues'] = float(m['issues'])
         m['one_shot'] = False
-        other = [m['other']]
+        other = m['other']
         # Handle multiple parenthesis matches
         if '' in other and len(other) == 1:
             other = [] # Make a fresh list
@@ -75,10 +79,13 @@ def title_info(title):
             # Remove 'One Shot' from name
             m['name'] = m['name'].replace('One Shot', '')
         m['other'] = other
-    except:
-        print "Unexpected error:", sys.exc_info()[3]
+    except AttributeError:
+        # print "Unexpected error:", sys.exc_info()
+        print 'Throwing out comic!'
+        m = None
     finally:
-        m['complete_title'] = title
+        if m:
+            m['complete_title'] = title
     return m
 
 
@@ -90,51 +97,39 @@ def is_float(number):
         return False
 
 
-# 'info': { #1
-#     'name': unicode,
-#     'issue_number': float,
-#     'issues': float,
-#     'other': unicode,
-#     'complete_title': unicode,
-#     'one_shot': bool
-# },
-
 def add_comics_to_db():
     daily_download()
     comics = get_comics()
+    parser = HTMLParser.HTMLParser()
     for q, comic in enumerate(comics):
-        # try:
+        try:
             p = {}
             t = {}
             i = {}
 
             # Extract Title Info
             t_info = title_info(comic[1])
+            if not t_info:
+                continue
 
             # Publisher
             p['name'] = comic[19]
-            # publisher = _comics.publishers.new(**p)
-            # _comics.publishers.save(publisher)
 
             # Title
             t['name'] = t_info['name']
-            # t['publisher'] = publisher
-            # title = _comics.titles.new(**t)
-            # _comics.titles.save(title)
 
             # Issue
-            # i['title'] = title
             i['product_id'] = comic[0]
             i['issue_number'] = t_info['issue_number']
             i['issues'] = t_info['issues']
-            i['other'] = None
+            i['other'] = t_info['other']
             i['complete_title'] = t_info['complete_title']
             i['one_shot'] = t_info['one_shot']
             i['a_link'] = re.sub('YOURUSERID', AFFILIATE_ID, comic[4])
             i['thumbnail'] = comic[5]
             i['big_image'] = comic[6]
             i['retail_price'] = float(comic[8]) if is_float(comic[8]) else None
-            i['description'] = comic[11]
+            i['description'] = parser.unescape(comic[11])
             try:
                 i['on_sale_date'] = datetime.strptime(comic[12], '%Y-%m-%d')
             except:
@@ -150,70 +145,20 @@ def add_comics_to_db():
             i['category'] = comic[21]
             i['upc'] = comic[25]
 
-            # issue = _comics.issues.new(**i)
-            # _comics.issues.save(issue)
-
-            # print '####### PUBLISHER: ', dir(title)
-            # print '##########'
-            # print title.name
-
+            # Insert comic into collection
             _comics.insert_comic(p, t, i)
-            # _comics.insert_comic(publisher, title)
 
-        # except:
-        #     print 'SOMETHING HAPPENED', comic
-        #     print "Unexpected error:", sys.exc_info()
             if q % 250 == 0:
                 print 'Saved %d / %d comics' % (q, len(comics))
-            if q == 50:
-                break
+            # if q == 50:
+            #     break
+
+        except:
+            print 'SOMETHING HAPPENED', comic
+            print "Unexpected error:", sys.exc_info()
+            continue
 
     return
-
-
-# def add_comics_to_mongo():
-#     daily_download()
-#     comics = get_comics()
-
-#     for i, comic in enumerate(comics):
-#         try:
-#             new = Comic()
-#             new.productID = comic[0]
-#             # Extract Title Info
-#             t_info = title_info(comic[1])
-#             new.name = t_info['name']
-#             new.issue_number = t_info['issue_number']
-#             new.issues = t_info['issues']
-#             new.other = t_info['other']
-#             new.complete_title = t_info['complete_title']
-#             new.one_shot = t_info['one_shot']
-#             new.alink = re.sub('YOURUSERID', unicode(AFFILIATE_ID), comic[4])
-#             new.thumbnail = comic[5]
-#             new.bigImage = comic[6]
-#             new.retailPrice = float(comic[8]) if is_float(comic[8]) else None
-#             new.description = comic[11]
-#             try:
-#                 new.onSaleDate = datetime.strptime(comic[12], '%Y-%m-%d')
-#             except:
-#                 new.onSaleDate = None
-#             new.genre = comic[13]
-#             new.people = comic[14].split(';')
-#             new.popularity = float(comic[16]) if is_float(comic[16]) else None
-#             try:
-#                 new.lastUpdated = datetime.strptime(comic[17], '%Y-%m-%d %H:%M:%S')
-#             except:
-#                 new.lastUpdated = None
-#             new.publisher = comic[19]
-#             new.diamondid = comic[20]
-#             new.category = comic[21]
-#             new.upc = comic[25]
-#             new.save()
-#         except:
-#             print 'SOMETHING HAPPENED', comic
-#             print "Unexpected error:", sys.exc_info()[1]
-
-#         if i % 250 == 0:
-#             print 'Saved %d / %d comics' % (i, len(comics))
 
 
 if __name__ == "__main__":

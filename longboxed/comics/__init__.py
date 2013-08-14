@@ -55,20 +55,20 @@ class ComicService(object):
     def insert_comic(self, p=None, t=None, i=None):
         publisher = self.publishers.first(name=p['name'])
         if not publisher:
-            print 'Adding Publisher: %s' % p['name']
+            # print 'Adding Publisher: %s' % p['name']
             publisher = self.publishers.new(**p)
             self.publishers.save(publisher)
 
         title = self.titles.first(name=t['name'])
         if not title:
-            print 'Adding Title: %s' % t['name']
+            # print 'Adding Title: %s' % t['name']
             t['publisher'] = publisher
             title = self.titles.new(**t)
             self.titles.save(title)
 
         issue = self.issues.first(product_id=i['diamond_id'])
         if not issue:
-            print 'Adding Issue: %s' % i['diamond_id']
+            # print 'Adding Issue: %s' % i['diamond_id']
             i['publisher'] = publisher
             i['title'] = title
             issue = self.issues.new(**i)

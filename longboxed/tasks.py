@@ -5,8 +5,6 @@
 
     overholt tasks module
 """
-from celery.task.schedules import crontab
-
 from .factory import create_celery_app
 from .save_from_tfaw import add_comics_to_db
 
