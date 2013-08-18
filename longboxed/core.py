@@ -65,7 +65,7 @@ class Service(object):
 
         :param model: the model to save
         """
-        self._isinstance(model)
+        # self._isinstance(model)
         db.session.add(model)
         db.session.commit()
         return model
