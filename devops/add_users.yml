@@ -1,0 +1,27 @@
+---
+
+- hosts: webservers
+  user: root
+  sudo: True
+
+  vars:
+    app_name: longboxed
+    repo_url: https://github.com/timbueno/longboxed.git
+    repo_remote: origin
+    repo_version: master
+    webapps_dir: /srv/webapps
+    wsgi_file: wsgi.py
+    wsgi_callable: application
+
+  vars_files:
+    - vars/external_vars.yml
+
+  tasks:
+    - name: Create Supervisord group
+      group: name=supervisor state=present
+
+    - name: Setup users
+      user: name=longboxed comment='Longboxed' groups=supervisor password=${user_pass}
+
+    - name: create webapps directory
+      action: file dest=/home/longboxed/.ssh state=directory
