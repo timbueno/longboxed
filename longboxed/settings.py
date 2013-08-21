@@ -13,7 +13,7 @@ DEBUG = True
 SECRET_KEY = '***REMOVED***'
 
 # URIS
-SQLALCHEMY_DATABASE_URI = 'mysql://root:password@127.0.0.1:3306/longboxed'
+SQLALCHEMY_DATABASE_URI = 'mysql://root:password@localhost:3306/longboxed'
 
 # Celery
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
