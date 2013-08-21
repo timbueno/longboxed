@@ -16,7 +16,6 @@ ansible==1.2.2
 anyjson==0.3.3
 billiard==2.7.3.32
 celery==3.0.22
-distribute==0.6.28
 itsdangerous==0.23
 kombu==2.5.13
 paramiko==1.11.0

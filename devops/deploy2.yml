@@ -1,17 +1,20 @@
 ---
 
 - hosts: webservers
-  user: longboxed
+  user: vagrant
   sudo: True
 
-  vars:
-    app_name: longboxed
-    repo_url: https://github.com/timbueno/longboxed.git
-    repo_remote: origin
-    repo_version: master
-    webapps_dir: /srv/webapps
-    wsgi_file: wsgi.py
-    wsgi_callable: application
+  vars_files:
+      - vars/external_vars.yml
+
+  # vars:
+  #   app_name: longboxed
+  #   repo_url: https://github.com/timbueno/longboxed.git
+  #   repo_remote: origin
+  #   repo_version: master
+  #   webapps_dir: /srv/webapps
+  #   wsgi_file: wsgi.py
+  #   wsgi_callable: application
 
   tasks:
     - name: ensure log directory
@@ -21,7 +24,7 @@
       action: git repo=$repo_url dest=${webapps_dir}/${app_name}/src remote=$repo_remote version=$repo_version
 
     - name: install dependencies into virtualenv
-      action: pip requirements=${webapps_dir}/${app_name}/src/requirements.txt virtualenv=${webapps_dir}/${app_name}/venv  state=present
+      action: pip requirements=${webapps_dir}/${app_name}/src/requirements.txt virtualenv=${webapps_dir}/${app_name}/venv state=present
 
     - name: create supervisor program config
       action: template src=templates/supervisor.ini dest=/etc/supervisor/${app_name}.ini
