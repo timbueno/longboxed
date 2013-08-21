@@ -13,11 +13,11 @@ Vagrant::Config.run do |config|
   # You can adjust this to the amount of CPUs your system has available
   config.vm.customize ["modifyvm", :id, "--cpus", "1"]
 
-  # IP address of vagrant system (Doesn't Work)
-  #config.vm.network :bridged, ip:"192.168.111.222"
+  # IP address of vagrant system
+  config.vm.network :hostonly, "33.33.33.33"
 
   # Forward guest port 80 to host port 4567
-  config.vm.forward_port 80, 4567
+  #config.vm.forward_port 80, 4567
 
   config.vm.provision :ansible do |ansible|
     # point Vagrant at the location of your playbook you want to run
