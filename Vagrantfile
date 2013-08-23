@@ -21,8 +21,8 @@ Vagrant::Config.run do |config|
 
   config.vm.provision :ansible do |ansible|
     # point Vagrant at the location of your playbook you want to run
-    #ansible.playbook = "devops/setup_server.yml"
-    ansible.playbook = "devops/deploy2.yml"
+    ansible.playbook = "devops/setup_server.yml"
+    #ansible.playbook = "devops/deploy2.yml"
 
     # the Vagrant VM will be put in this host group change this should
     # match the host group in your playbook you want to test
