@@ -29,7 +29,8 @@
         - git-core
         - nginx
         - zlib1g-dev
-        - rabbitmq-server
+        - redis-server
+        # - rabbitmq-server
 
 
     - name: install pip
@@ -107,17 +108,17 @@
     ##
     # RabbitMQ Server Configuration (for Celery)
     #
-    - name: create vhost in RabbitMQ (for Celery)
-      rabbitmq_vhost: name=celery state=present
+    # - name: create vhost in RabbitMQ (for Celery)
+    #   rabbitmq_vhost: name=celery state=present
 
-    - name: create user for RabbitMQ
-      rabbitmq_user: user=celery_user
-                     password=password
-                     vhost=celery
-                     configure_priv=.*
-                     read_priv=.*
-                     write_priv=.*
-                     state=present
+    # - name: create user for RabbitMQ
+    #   rabbitmq_user: user=celery_user
+    #                  password=password
+    #                  vhost=celery
+    #                  configure_priv=.*
+    #                  read_priv=.*
+    #                  write_priv=.*
+    #                  state=present
 
     ##
     # Create directory to serve applications from
