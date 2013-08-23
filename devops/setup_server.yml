@@ -8,6 +8,15 @@
       - vars/external_vars.yml
 
   tasks:
+    - name: add supervisor group to system
+      group: name=supervisor state=present
+
+    - name: add user to supervisor group
+      user: name=vagrant group=supervisor
+
+    - name: update repositories (apt-get update)
+      apt: update_cache=yes
+
     - name: install initial packages
       action: apt pkg=$item state=installed
       with_items:
@@ -65,9 +74,6 @@
 
     - name: remove the MySQL test database
       action: mysql_db db=test state=absent
-
-    - name: Create the application database
-      mysql_db: name=longboxed state=present
 
     ##
     # Install Supervisor and WSGI
