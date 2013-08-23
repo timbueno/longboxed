@@ -26,10 +26,14 @@
     - name: install dependencies into virtualenv
       action: pip requirements=${webapps_dir}/${app_name}/src/requirements.txt virtualenv=${webapps_dir}/${app_name}/venv state=present
 
-    # - name: create supervisor program config
-    #   action: template src=templates/supervisor.ini dest=/etc/supervisor/${app_name}.ini
-    #   notify:
-    #     - restart app
+    - name: make sure application database exists in mysql
+      mysql_db: name=${app_name}
+                login_host=localhost
+                login_user=root
+                login_password=${mysql_root_password}
+                state=present
+
+
     - name: create supervisor program config
       action: template src=templates/supervisor_flask_app.conf dest=/etc/supervisor/${app_name}.conf
       notify:
