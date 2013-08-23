@@ -5,7 +5,7 @@
 
     longboxed settings module
 """
-# from datetime import timedelta
+from datetime import timedelta
 
 DEBUG = True
 
@@ -17,13 +17,13 @@ SQLALCHEMY_DATABASE_URI = 'mysql://root:password@localhost:3306/longboxed'
 
 # Celery
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
-# CELERYBEAT_SCHEDULE = {
-#     'test-every-30-seconds': {
-#         'task': 'tasks.test',
-#         'schedule': timedelta(seconds=5)
-#     },
-# }
-# CELERY_TIMEZONE = 'UTC'
+CELERYBEAT_SCHEDULE = {
+    'test-every-30-seconds': {
+        'task': 'tasks.test',
+        'schedule': timedelta(seconds=5)
+    },
+}
+CELERY_TIMEZONE = 'UTC'
 
 # Bootstrap Configuration
 BOOTSTRAP_USE_MINIFIED = True
