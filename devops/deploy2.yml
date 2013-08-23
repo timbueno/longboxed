@@ -35,6 +35,11 @@
       notify:
         - restart app
 
+    - name: create supervisor celery config
+      action: template src=templates/celeryd.conf dest=/etc/supervisor/celeryd.conf
+      notify:
+        - restart celery
+
     - name: create nginx site config
       action: template src=templates/nginx_site.conf dest=/etc/nginx/sites-available/${app_name}.conf
       notify:
@@ -49,6 +54,9 @@
   handlers:
     - name: restart app
       action: supervisorctl name=${app_name} state=restarted
+
+    - name: restart celery
+      action: supervisorctl name=celery state=restarted
 
     - name: restart nginx
       action: service name=nginx state=restarted
