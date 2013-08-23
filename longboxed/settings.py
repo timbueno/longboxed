@@ -17,7 +17,7 @@ SQLALCHEMY_DATABASE_URI = 'mysql://root:password@localhost:3306/longboxed'
 
 # Celery
 # CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_BROKER_URL = 'amqp://celery_user:password@localhost:5672//'
+CELERY_BROKER_URL = 'amqp://celery_user:password@precise32:5672//'
 # CELERYBEAT_SCHEDULE = {
 #     'test-every-30-seconds': {
 #         'task': 'tasks.test',
