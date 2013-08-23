@@ -20,7 +20,7 @@ CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERYBEAT_SCHEDULE = {
     'test-every-30-seconds': {
         'task': 'tasks.test',
-        'schedule': timedelta(seconds=5)
+        'schedule': timedelta(seconds=600)
     },
 }
 CELERY_TIMEZONE = 'UTC'
