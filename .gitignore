@@ -1,7 +1,9 @@
 venv
+.vagrant
 base_files
 openid_store
 celerybeat-schedule
 *.pyc
 *.gz
 dd
+/devops/vars/external_vars.yml

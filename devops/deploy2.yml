@@ -1,0 +1,57 @@
+---
+
+- hosts: webservers
+  user: vagrant
+  sudo: True
+
+  vars_files:
+      - vars/external_vars.yml
+
+  tasks:
+    - name: ensure log directory
+      action: file dest=${webapps_dir}/${app_name}/log state=directory
+
+    - name: deploy code from repository
+      action: git repo=$repo_url dest=${webapps_dir}/${app_name}/src remote=$repo_remote version=$repo_version
+
+    - name: install dependencies into virtualenv
+      action: pip requirements=${webapps_dir}/${app_name}/src/requirements.txt virtualenv=${webapps_dir}/${app_name}/venv state=present
+
+    - name: make sure application database exists in mysql
+      mysql_db: name=${app_name}
+                login_host=localhost
+                login_user=root
+                login_password=${mysql_root_password}
+                state=present
+
+
+    - name: create supervisor program config
+      action: template src=templates/supervisor_flask_app.conf dest=/etc/supervisor/${app_name}.conf
+      notify:
+        - restart app
+
+    - name: create supervisor celery config
+      action: template src=templates/celeryd.conf dest=/etc/supervisor/celeryd.conf
+      notify:
+        - restart celery
+
+    - name: create nginx site config
+      action: template src=templates/nginx_site.conf dest=/etc/nginx/sites-available/${app_name}.conf
+      notify:
+        - restart nginx
+
+    - name: link nginx config
+      action: file src=/etc/nginx/sites-available/${app_name}.conf dest=/etc/nginx/sites-enabled/${app_name}.conf state=link
+
+    - name: start app
+      action: supervisorctl name=${app_name} state=started
+
+  handlers:
+    - name: restart app
+      action: supervisorctl name=${app_name} state=restarted
+
+    - name: restart celery
+      action: supervisorctl name=celery state=restarted
+
+    - name: restart nginx
+      action: service name=nginx state=restarted
