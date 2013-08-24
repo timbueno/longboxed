@@ -18,10 +18,7 @@ ansible==1.2.2
 anyjson==0.3.3
 billiard==2.7.3.32
 celery==3.0.22
-<<<<<<< HEAD
-=======
 celery-with-redis==3.0
->>>>>>> feature/ansible
 itsdangerous==0.23
 kombu==2.5.13
 paramiko==1.11.0
