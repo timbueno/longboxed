@@ -4,6 +4,9 @@
   user: vagrant
   sudo: True
 
+  vars:
+    application: longboxed
+
   vars_files:
       - vars/initial_provision_vars.yml
 
@@ -76,6 +79,13 @@
 
     - name: remove the MySQL test database
       action: mysql_db db=test state=absent
+
+    - name: make sure application database exists in mysql
+      mysql_db: name=${application}
+                login_host=localhost
+                login_user=root
+                login_password=${mysql_root_password}
+                state=present
 
     ##
     # Install Supervisor and WSGI
