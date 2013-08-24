@@ -5,6 +5,7 @@
   sudo: True
 
   vars_files:
+      - vars/initial_provision_vars.yml
       - vars/external_vars.yml
 
   tasks:

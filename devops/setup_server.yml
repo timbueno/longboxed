@@ -5,7 +5,7 @@
   sudo: True
 
   vars_files:
-      - vars/external_vars.yml
+      - vars/initial_provision_vars.yml
 
   tasks:
     - name: add supervisor group to system

@@ -7,3 +7,4 @@ celerybeat-schedule
 *.gz
 dd
 /devops/vars/external_vars.yml
+/devops/vars/initial_provision_vars.yml
