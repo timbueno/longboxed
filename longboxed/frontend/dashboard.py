@@ -8,7 +8,7 @@
 import sys
 from datetime import datetime, timedelta
 
-from flask import abort, Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, redirect, render_template, request, url_for
 from flask.ext.login import (current_user, login_required)
 from flask.ext.wtf import Form
 from wtforms import BooleanField, SelectField, SelectMultipleField
