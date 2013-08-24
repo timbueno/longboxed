@@ -1,7 +1,4 @@
 ---
-    mysql_root_password: password
-    server_hostname: precise32
-
     app_name: longboxed
     repo_url: https://github.com/timbueno/longboxed.git
     repo_remote: origin
