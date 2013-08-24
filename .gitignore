@@ -6,5 +6,5 @@ celerybeat-schedule
 *.pyc
 *.gz
 dd
-/devops/vars/external_vars.yml
+/devops/vars/app_deployment_vars.yml
 /devops/vars/initial_provision_vars.yml
