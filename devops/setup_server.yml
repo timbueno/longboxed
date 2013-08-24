@@ -39,8 +39,6 @@
         - nginx
         - zlib1g-dev
         - redis-server
-        # - rabbitmq-server
-
 
     - name: install pip
       action: easy_install name=pip
@@ -49,12 +47,16 @@
       action: pip name=$item
       with_items:
         - virtualenv
+        - virtualenvwrapper
+
+    - name: move bash .profile file into place (for virtualenvwrapper)
+      template: src=templates/bash_profile dest=/home/vagrant/.profile
 
     ##
     # MySQL database setup.
     #
     # 'localhost' needs to be the last item for idempotency, see
-        # http://ansible.cc/docs/modules.html#mysql-user
+    #  http://ansible.cc/docs/modules.html#mysql-user
     - name: update mysql root password for all root accounts
       mysql_user: name=root host=$item password=$mysql_root_password
       with_items:
@@ -112,22 +114,7 @@
       action: service name=supervisord state=started enabled=yes
 
     ##
-    # RabbitMQ Server Configuration (for Celery)
-    #
-    # - name: create vhost in RabbitMQ (for Celery)
-    #   rabbitmq_vhost: name=celery state=present
-
-    # - name: create user for RabbitMQ
-    #   rabbitmq_user: user=celery_user
-    #                  password=password
-    #                  vhost=celery
-    #                  configure_priv=.*
-    #                  read_priv=.*
-    #                  write_priv=.*
-    #                  state=present
-
-    ##
-    # Create directory to serve applications from
+    # Create Directory for Flask Web Applications
     #
     - name: create webapps directory
       action: file dest=$webapps_dir state=directory
