@@ -27,6 +27,8 @@ Once you have set up the developer environment described above, working on the p
 4. `cd /vagrant`
 5. `python wsgi.py`
 
+You can then edit your code on your local machine as normal. The `/vagrant` directory in the virtual machine is linked to your project directory!
+
 When you are finished working for the day:
 
 1. Exit the SSH session
