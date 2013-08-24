@@ -33,3 +33,5 @@ When you are finished working for the day:
 
 1. Exit the SSH session
 2. `vagrant halt`
+
+More information can be found in the project wiki!
