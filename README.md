@@ -10,27 +10,24 @@ Features:
 Future features:
 - Get recomendations from friends
 - 'Follow' friends and their pull lists
+- Get weekly emails of your pull list
 
 ## Installation notes for developers
 
-1. Make sure 'pip' is installed.
-    - 'sudo easy_install pip'
-2. Install 'virtualenv' with 'pip'
-    - 'sudo pip install virtualenv'
-3. Inside 'longboxed' project root, install virtual environment
-    - 'virtualenv venv --distribute'
-4. Run the virtual environment
-    - Make sure you are in the 'longboxed' project root
-    - 'source venv/bin/activate'
-    - The virtual environment should now be activated.
-5. Install python dependencies from requirements file in virtual environment.
-    - Make sure virtual environment is activated.
-    - 'pip install -r requirements.txt'
-    - All dependencies should install.
+Follow the instructions located in the project wiki:
+- [Setting up a development environment](https://github.com/timbueno/longboxed/wiki/Setting-up-a-development-environment)
 
-## Running Longboxed locally
-1. Install according to installation instructions above.
-2. Turn on virtual environment
-    - 'source venv/bin/activate'
-3. Run longboxed
-    - 'python longboxed.py'
+## Working on the project
+
+Once you have set up the developer environment described above, working on the project is as simple as:
+
+1. `vagrant up`
+2. `vagrant ssh`
+3. `workon longboxed`
+4. `cd /vagrant`
+5. `python wsgi.py`
+
+When you are finished working for the day:
+
+1. Exit the SSH session
+2. `vagrant halt`
