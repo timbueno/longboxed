@@ -9,16 +9,22 @@
       - vars/external_vars.yml
 
   tasks:
-    - name: ensure log directory
+    - name: System | Ensure log directory
       action: file dest=${webapps_dir}/${app_name}/log state=directory
 
-    - name: deploy code from repository
+    ##
+    # Create Directory for Flask Web Applications
+    #
+    - name: System | Create webapps directory
+      action: file dest=$webapps_dir state=directory
+
+    - name: Git | Deploy code from repository
       action: git repo=$repo_url dest=${webapps_dir}/${app_name}/src remote=$repo_remote version=$repo_version
 
-    - name: install dependencies into virtualenv
+    - name: Pip | Install dependencies into virtualenv
       action: pip requirements=${webapps_dir}/${app_name}/src/requirements.txt virtualenv=${webapps_dir}/${app_name}/venv state=present
 
-    - name: make sure application database exists in mysql
+    - name: MySQL | Make sure application database exists in MySQL
       mysql_db: name=${app_name}
                 login_host=localhost
                 login_user=root
@@ -26,25 +32,25 @@
                 state=present
 
 
-    - name: create supervisor program config
+    - name: Supervisor | Create supervisor program config
       action: template src=templates/supervisor_flask_app.conf dest=/etc/supervisor/${app_name}.conf
       notify:
         - restart app
 
-    - name: create supervisor celery config
+    - name: Supervisor | Create supervisor celery config
       action: template src=templates/celeryd.conf dest=/etc/supervisor/celeryd.conf
       notify:
         - restart celery
 
-    - name: create nginx site config
+    - name: Nginx | Create Nginx site config
       action: template src=templates/nginx_site.conf dest=/etc/nginx/sites-available/${app_name}.conf
       notify:
         - restart nginx
 
-    - name: link nginx config
+    - name: Nginx | Link Nginx config
       action: file src=/etc/nginx/sites-available/${app_name}.conf dest=/etc/nginx/sites-enabled/${app_name}.conf state=link
 
-    - name: start app
+    - name: Supervisor | Start application
       action: supervisorctl name=${app_name} state=started
 
   handlers:

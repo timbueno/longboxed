@@ -11,25 +11,25 @@
       - vars/initial_provision_vars.yml
 
   tasks:
-    - name: add supervisor group to system
+    - name: System | Add supervisor group to system
       group: name=supervisor state=present
 
-    - name: add user to supervisor group
+    - name: System | Add user to supervisor group
       user: name=vagrant group=supervisor
 
-    - name: update repositories (apt-get update)
+    - name: System | Update repositories (apt-get update)
       apt: update_cache=yes
 
-    - name: install initial packages
+    - name: Apt | Install initial packages
       action: apt pkg=$item state=installed
       with_items:
         - build-essential
         - python-software-properties
 
-    - name: add nginx ppa
+    - name: Apt | Add nginx ppa
       action: apt_repository repo=ppa:nginx/stable state=present
 
-    - name: install common packages needed for python application development
+    - name: Apt | Install common packages needed for python application development
       action: apt pkg=$item state=installed
       with_items:
         - libmysqlclient-dev
@@ -43,16 +43,16 @@
         - zlib1g-dev
         - redis-server
 
-    - name: install pip
+    - name: pip | Install pip
       action: easy_install name=pip
 
-    - name: install virtualenv
+    - name: pip | Install virtualenv
       action: pip name=$item
       with_items:
         - virtualenv
         - virtualenvwrapper
 
-    - name: move bash .profile file into place (for virtualenvwrapper)
+    - name: System | move bash .profile file into place (for virtualenvwrapper)
       template: src=templates/bash_profile dest=/home/vagrant/.profile
 
     ##
@@ -60,7 +60,7 @@
     #
     # 'localhost' needs to be the last item for idempotency, see
     #  http://ansible.cc/docs/modules.html#mysql-user
-    - name: update mysql root password for all root accounts
+    - name: MySQL | Update MySQL root password for all root accounts
       mysql_user: name=root host=$item password=$mysql_root_password
       with_items:
         - $ansible_hostname
@@ -68,19 +68,19 @@
         - ::1
         - localhost
 
-    - name: copy .my.cnf file with root password credentials
+    - name: MySQL | copy .my.cnf file with root password credentials
       template: src=templates/my.cnf.j2 dest=/root/.my.cnf owner=root mode=0600
 
-    - name: delete anonymous MySQL server user for $server_hostname
+    - name: MySQL | Delete anonymous MySQL server user for $server_hostname
       action: mysql_user user="" host="$server_hostname" state="absent"
 
-    - name: delete anonymous MySQL server user for localhost
+    - name: MySQL | Delete anonymous MySQL server user for localhost
       action: mysql_user user="" state="absent"
 
-    - name: remove the MySQL test database
-      action: mysql_db db=test state=absent
+    - name: MySQL | Remove the MySQL test database
+      action: MySQL | mysql_db db=test state=absent
 
-    - name: make sure application database exists in mysql
+    - name: MySQL | Make sure application database exists in mysql
       mysql_db: name=${application}
                 login_host=localhost
                 login_user=root
@@ -90,41 +90,35 @@
     ##
     # Install Supervisor and WSGI
     #
-    - name: install supervisor with pip
+    - name: Supervisor | Install Supervisor with pip
       pip: name=supervisor extra_args=--pre
 
-    - name: install wsgi
+    - name: uWSGI | Install uWSGI
       pip: name=uwsgi
 
     ##
     # Nginx setup
     #
-    - name: remove default nginx site
+    - name: Nginx | Remove default nginx site
       action: file path=/etc/nginx/sites-enabled/default state=absent
 
-    - name: write nginx.conf
+    - name: Nginx | Write nginx.conf
       action: template src=templates/nginx.conf dest=/etc/nginx/nginx.conf
 
-    - name: Start Nginx at boot
+    - name: Nginx | Start Nginx at boot
       service: name=nginx state=started enabled=yes
 
     ##
     # Supervisor setup
     #
-    - name: create supervisord config folder
+    - name: Supervisor | Create supervisord config folder
       action: file dest=/etc/supervisor state=directory owner=root
 
-    - name: create supervisord config
+    - name: Supervisor | Create supervisord config
       action: template src=templates/supervisord.conf dest=/etc/supervisord.conf
 
-    - name: create supervisord init script
+    - name: Supervisor | Create supervisord init script
       action: template src=templates/supervisord.sh dest=/etc/init.d/supervisord mode=0755
 
-    - name: start supervisord service and have it run during system startup
+    - name: Supervisor | Start supervisord service and have it run during system startup
       action: service name=supervisord state=started enabled=yes
-
-    ##
-    # Create Directory for Flask Web Applications
-    #
-    - name: create webapps directory
-      action: file dest=$webapps_dir state=directory
