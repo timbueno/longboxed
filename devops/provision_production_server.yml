@@ -15,7 +15,7 @@
       group: name=supervisor state=present
 
     - name: System | Add user to supervisor group
-      user: name=vagrant group=supervisor
+      user: name={{ansible_ssh_user}} group=supervisor
 
     - name: System | Update repositories (apt-get update)
       apt: update_cache=yes
@@ -53,7 +53,7 @@
         - virtualenvwrapper
 
     - name: System | move bash .profile file into place (for virtualenvwrapper)
-      template: src=templates/bash_profile dest=/home/vagrant/.profile
+      template: src=templates/bash_profile dest=/home/{{ansible_ssh_user}}/.profile
 
     ##
     # MySQL database setup.
@@ -78,7 +78,7 @@
       action: mysql_user user="" state="absent"
 
     - name: MySQL | Remove the MySQL test database
-      action: MySQL | mysql_db db=test state=absent
+      action: mysql_db db=test state=absent
 
     - name: MySQL | Make sure application database exists in mysql
       mysql_db: name=${application}
