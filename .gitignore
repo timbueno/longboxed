@@ -1,5 +1,6 @@
 venv
 .vagrant
+.DS_Store
 base_files
 openid_store
 celerybeat-schedule
