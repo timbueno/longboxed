@@ -74,5 +74,5 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary=roles_users,
         backref=db.backref('users', lazy='dynamic'))
 
-    def get_id(self):
-        return self.google_id
+    # def get_id(self):
+    #     return self.google_id
