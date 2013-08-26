@@ -43,7 +43,7 @@ SECURITY_SEND_REGISTER_EMAIL = False
 MAIL_SERVER = 'smtp.mailgun.org'
 MAIL_PORT = 587
 MAIL_USERNAME = 'postmaster@longboxed.mailgun.org'
-MAIL_PASSWORD = '0xcp43by5fb6'
+MAIL_PASSWORD = ';lkj;ljl;kj'
 
 # Bootstrap Configuration
 BOOTSTRAP_USE_MINIFIED = True
