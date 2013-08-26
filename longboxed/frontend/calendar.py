@@ -11,7 +11,7 @@ import sys
 
 from dateutil import tz
 from flask import Blueprint, jsonify, request
-from flask.ext.login import current_user, login_required
+from flask.ext.security import current_user, login_required
 import requests
 
 from . import route

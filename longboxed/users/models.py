@@ -7,7 +7,8 @@
 """
 from datetime import datetime
 
-from flask.ext.login import UserMixin
+# from flask.ext.login import UserMixin
+from flask.ext.security import UserMixin, RoleMixin
 
 from ..core import db
 
@@ -24,6 +25,17 @@ titles_users = db.Table('titles_users',
 )
 
 
+roles_users = db.Table('roles_users',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+    db.Column('role_id', db.Integer, db.ForeignKey('role.id')))
+
+
+class Role(db.Model, RoleMixin):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    description = db.Column(db.String(255))
+
+
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
     # ids
@@ -36,13 +48,21 @@ class User(db.Model, UserMixin):
     full_name = db.Column(db.String(255))
     birthday = db.Column(db.Date())
 
-    registered_at = db.Column(db.DateTime(), default=datetime.utcnow)
+    # Flask-Security 
+    password = db.Column(db.String(255))
+    active = db.Column(db.Boolean())
     last_login_at = db.Column(db.DateTime())
+    current_login_at = db.Column(db.DateTime())
+    last_login_ip = db.Column(db.String(80))
+    current_login_ip = db.Column(db.String(80))
     login_count = db.Column(db.Integer, default=0)
 
-    refresh_token = db.Column(db.String(100))
-    access_token = db.Column(db.String(100))
-    token_expire_at = db.Column(db.DateTime())
+    # registered_at = db.Column(db.DateTime(), default=datetime.utcnow)
+    # # login_count = db.Column(db.Integer, default=0)
+
+    # refresh_token = db.Column(db.String(100))
+    # access_token = db.Column(db.String(100))
+    # token_expire_at = db.Column(db.DateTime())
 
     display_pull_list = db.Column(db.Boolean, default=True)
     default_cal = db.Column(db.String(255))
@@ -51,6 +71,8 @@ class User(db.Model, UserMixin):
         backref=db.backref('users', lazy='dynamic'))
     pull_list = db.relationship('Title', secondary=titles_users,
         backref=db.backref('users', lazy='dynamic'), lazy='joined')
+    roles = db.relationship('Role', secondary=roles_users,
+        backref=db.backref('users', lazy='dynamic'))
 
     def get_id(self):
         return self.google_id

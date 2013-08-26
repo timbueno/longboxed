@@ -25,6 +25,26 @@ CELERYBEAT_SCHEDULE = {
 }
 CELERY_TIMEZONE = 'UTC'
 
+# Flask-Security Configuration
+SECURITY_REGISTERABLE = True
+# # SECURITY_SEND_REGISTER_EMAIL = False
+# SECURITY_LOGIN_WITHOUT_CONFIRMATION = True
+# SECURITY_EMAIL_SENDER = 'postmaster@longboxed.mailgun.org'
+SECURITY_POST_LOGIN_URL = '/'
+SECURITY_PASSWORD_HASH = 'plaintext'
+SECURITY_PASSWORD_SALT = 'password_salt'
+SECURITY_REMEMBER_SALT = 'remember_salt'
+SECURITY_RESET_SALT = 'reset_salt'
+SECURITY_RESET_WITHIN = '5 days'
+SECURITY_CONFIRM_WITHIN = '5 days'
+SECURITY_SEND_REGISTER_EMAIL = False
+
+# Mail configuration
+MAIL_SERVER = 'smtp.mailgun.org'
+MAIL_PORT = 587
+MAIL_USERNAME = 'postmaster@longboxed.mailgun.org'
+MAIL_PASSWORD = '0xcp43by5fb6'
+
 # Bootstrap Configuration
 BOOTSTRAP_USE_MINIFIED = True
 BOOTSTRAP_FONTAWESOME = True

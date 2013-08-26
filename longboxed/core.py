@@ -7,18 +7,25 @@
 """
 
 from flask.ext.bootstrap import Bootstrap
-from flask.ext.login import LoginManager
+# from flask.ext.login import LoginManager
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.security import Security
+from flask_mail import Mail
 
 #: Flask-Bootstrap extension instance
 bootstrap = Bootstrap()
 
 #: Flask-Login extension instance
-login_manager = LoginManager()
+# login_manager = LoginManager()
 
 #: Flask-MongoKit extension instance
 db = SQLAlchemy()
 
+#: Flask-Security extension instance
+security = Security()
+
+#: Flask Mail Extension Instance
+mail = Mail()
 
 class LongboxedError(Exception):
     """Base application error class"""
