@@ -56,6 +56,7 @@ class User(db.Model, UserMixin):
     last_login_ip = db.Column(db.String(80))
     current_login_ip = db.Column(db.String(80))
     login_count = db.Column(db.Integer, default=0)
+    confirmed_at = db.Column(db.DateTime())
 
     # registered_at = db.Column(db.DateTime(), default=datetime.utcnow)
     # # login_count = db.Column(db.Integer, default=0)

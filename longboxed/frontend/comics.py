@@ -8,7 +8,7 @@
 from datetime import datetime, timedelta
 
 from flask import abort, Blueprint, jsonify, render_template, request
-from flask.ext.security import current_user, login_required
+from flask.ext.security import current_user
 
 from . import route
 from ..services import comics as _comics
@@ -18,7 +18,6 @@ bp = Blueprint('comics', __name__)
 
 
 @route(bp,'/comics')
-@login_required
 def comics():
     start, end = get_current_week()
     dates = {}
