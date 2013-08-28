@@ -1,5 +1,5 @@
 {% extends "layouts/base.html" %}
-{% set title = issue.complete_title+' | Longboxed' %}
+{% set page_title = issue.complete_title+' | Longboxed' %}
 
 {% block main_content %}
     <div class="container">
@@ -13,11 +13,15 @@
                 <div class="span8">
                     <h2>{{ issue.complete_title }}</h2>
                     <h4>
-                        {{ issue.publisher.name }} - 
+                        <a href="{{ url_for('comics.publisher', pub_id=issue.publisher.id) }}">{{ issue.publisher.name }}</a> - 
                         <a href="#" class="add2cal" data-id="{{ issue.diamond_id }}"><i class="icon-calendar"></i></a> <a href="{{ issue.a_link }}"><i class="icon-shopping-cart"></i></a>
                     </h4>
                     <table class="table">
                         <tbody>
+                            <tr>
+                                <td>Title</td>
+                                <td><a href="{{ url_for('comics.title', title_id=issue.title.id) }}">{{ issue.title.name }}</a></td>
+                            </tr>
                             <tr>
                                 <td>Release Date</td>
                                 <td>{{ issue.on_sale_date.strftime('%-m/%-d/%y') }}</td>
