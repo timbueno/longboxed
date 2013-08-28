@@ -9,13 +9,15 @@ import os
 
 from celery import Celery
 from flask import Flask
+from flask.ext.security import SQLAlchemyUserDatastore
 
-from .core import bootstrap, db, login_manager
+from .core import bootstrap, db, mail, security
 from .helpers import register_blueprints
 from .middleware import HTTPMethodOverrideMiddleware
+from .models import User, Role
 
 
-def create_app(package_name, package_path, settings_override=None):
+def create_app(package_name, package_path, settings_override=None, register_security_blueprint=True):
     """Returns a :class:`Flask` application instance configured with common
     functionality for the Longboxed platform.
 
@@ -31,7 +33,15 @@ def create_app(package_name, package_path, settings_override=None):
 
     bootstrap.init_app(app)
     db.init_app(app)
-    login_manager.init_app(app)
+    # login_manager.init_app(app)
+
+    mail.init_app(app)
+
+    #: Setup Flask-Security
+    security.init_app(app, SQLAlchemyUserDatastore(db, User, Role),
+                      register_blueprint=register_security_blueprint)
+
+
 
     # register_models(db, package_name, package_path)
     register_blueprints(app, package_name, package_path)

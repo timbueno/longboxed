@@ -5,11 +5,11 @@
 
     Frontend blueprints
 """
-import sys
-from datetime import datetime, timedelta
+# import sys
+# from datetime import datetime, timedelta
 
-from flask import Blueprint, redirect, render_template, request, url_for
-from flask.ext.login import (current_user, login_required)
+from flask import Blueprint, g,redirect, render_template, request, url_for
+from flask.ext.security import (current_user, login_required)
 from flask.ext.wtf import Form
 from wtforms import BooleanField, SelectField, SelectMultipleField
 
@@ -20,6 +20,12 @@ from ..services import users as _users
 
 bp = Blueprint('dashboard', __name__)
 
+@bp.before_app_request
+def before_request():
+    if not current_user.is_anonymous():
+        g.user = current_user
+    else:
+        g.user = None
 
 @route(bp, '/')
 def index():

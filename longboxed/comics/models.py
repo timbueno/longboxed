@@ -29,7 +29,7 @@ class Title(db.Model):
     # Attributes
     name = db.Column(db.String(255))
     # Relationships
-    issues = db.relationship('Issue', backref=db.backref('title', lazy='joined'), lazy='dynamic')
+    issues = db.relationship('Issue', backref=db.backref('title', lazy='joined'), lazy='dynamic', order_by='Issue.on_sale_date')
 
 
 class Issue(db.Model):

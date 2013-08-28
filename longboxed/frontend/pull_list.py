@@ -51,6 +51,7 @@ def remove_favorite():
 @login_required
 def add_favorite():
     new_title = _comics.titles.first(name=request.form['new_favorite'])
+    print new_title
     if new_title not in current_user.pull_list:
         current_user.pull_list.append(new_title)
         _users.save(current_user)

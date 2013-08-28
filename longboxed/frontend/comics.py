@@ -8,7 +8,7 @@
 from datetime import datetime, timedelta
 
 from flask import abort, Blueprint, jsonify, render_template, request
-from flask.ext.login import current_user
+from flask.ext.security import current_user
 
 from . import route
 from ..services import comics as _comics
@@ -32,10 +32,33 @@ def comics():
 @route(bp, '/issue/<diamond_id>')
 def issue(diamond_id):
     """Individual issue page"""
-    issue = _comics.issues.first(diamond_id=diamond_id)
+    issue = _comics.issues.first_or_404(diamond_id=diamond_id)
     if issue:
         return render_template('issue.html', issue=issue)
     return abort(404)
+
+
+@route(bp, '/title/<title_id>')
+def title(title_id):
+    """Title page"""
+    """TODO change comic_title to title. Problem with base template"""
+    """TODO title model to get issues to 'select' change back to dynamic"""
+    title = _comics.titles.get_or_404(id=title_id)
+    if title:
+        # issues = title.issues.limit(10).order_by()
+        issues = title.issues.all()
+        # issues = title.issues.limit(10)
+        return render_template('title.html', comic_title=title, issues=issues)
+    return abort(404)
+
+
+@route(bp, '/publisher/<pub_id>')
+def publisher(pub_id):
+    """Publisher Page"""
+    publisher = _comics.publishers.get_or_404(id=pub_id)
+    titles = publisher.titles.all()
+    return render_template('publisher.html', publisher=publisher, titles=titles)
+
 
 
 @route(bp, '/ajax/get_comicpage', methods=['POST'])

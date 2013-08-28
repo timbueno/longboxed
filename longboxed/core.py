@@ -7,18 +7,25 @@
 """
 
 from flask.ext.bootstrap import Bootstrap
-from flask.ext.login import LoginManager
+# from flask.ext.login import LoginManager
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.security import Security
+from flask_mail import Mail
 
 #: Flask-Bootstrap extension instance
 bootstrap = Bootstrap()
 
 #: Flask-Login extension instance
-login_manager = LoginManager()
+# login_manager = LoginManager()
 
 #: Flask-MongoKit extension instance
 db = SQLAlchemy()
 
+#: Flask-Security extension instance
+security = Security()
+
+#: Flask Mail Extension Instance
+mail = Mail()
 
 class LongboxedError(Exception):
     """Base application error class"""
@@ -83,6 +90,14 @@ class Service(object):
         """
         return self.__model__.query.get(id)
 
+    def get_or_404(self, id):
+        """Returns an instance of the service's model with the specified id or
+        raises an 404 error if an instance with the specified id does not exist.
+
+        :param id: the instance id
+        """
+        return self.__model__.query.get_or_404(id)
+
     def get_all(self, *ids):
         """Returns a list of instances of the service's model with the specified
         ids.
@@ -107,13 +122,14 @@ class Service(object):
         """
         return self.find(**kwargs).first()
 
-    def get_or_404(self, id):
-        """Returns an instance of the service's model with the specified id or
+    def first_or_404(self, **kwargs):
+        """Returns the first instance found of the service's model filtered by
+        the specified key word arguments or
         raises an 404 error if an instance with the specified id does not exist.
 
-        :param id: the instance id
+        :param **kwargs: filter parameters
         """
-        return self.__model__.query.get_or_404(id)
+        return self.find(**kwargs).first_or_404()
 
     def new(self, **kwargs):
         """Returns a new, unsaved instance of the service's model class.
