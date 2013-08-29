@@ -1,0 +1,20 @@
+# TODO
+
+## Design Todo
+
+
+## Backend Todo
+
+- Improve detection of comics when importing from CSV file
+- Create relationship between base comic and alternate covers
+- Create profile page 
+- Forward user to 'Setup' page after registration
+- Create API
+- Full text search
+- Group each users pull list haul each week into logical 'bundles' in the database so they can be returned to at a later date.
+- Use Title subscriber count for something cool
+    - Count users in Title.users backref to determine subscriber count
+- Create 'short list' for publishers that should be displayed
+    - User should be able to add additional publishers via their settings.
+- Weekly email reminders using user's bundles of comics. Mailed every wednesday early in the morning.
+- 
