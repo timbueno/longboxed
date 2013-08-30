@@ -7,6 +7,7 @@
 """
 from .factory import create_celery_app
 from .save_from_tfaw import add_comics_to_db
+from .services import comics
 
 celery = create_celery_app()
 
@@ -28,3 +29,8 @@ def add(x,y):
 @celery.task(name='tasks.test')
 def test():
     print 'firing test task'
+
+
+@celery.task(name='tasks.addissues')
+def get_new_issues():
+    comics.test_grouping()

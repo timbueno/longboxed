@@ -151,7 +151,7 @@ class Service(object):
         :param model: the model to update
         :param **kwargs: update parameters
         """
-        self._isinstance(model)
+        # self._isinstance(model)
         for k, v in self._preprocess_params(kwargs).items():
             setattr(model, k, v)
         self.save(model)
