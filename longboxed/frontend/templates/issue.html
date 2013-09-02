@@ -42,6 +42,23 @@
                                     </p>
                                 </td>
                             </tr>
+                            <tr>
+                                <td>Alternates</td>
+                                <td>
+                                    <p>{% if issue.parent %}
+                                        <a href="{{ url_for('comics.issue', diamond_id=issue.parent.diamond_id) }}">
+                                        {{ issue.parent.complete_title }}
+                                        {% endif %}
+                                    </a>                             
+                                        {% for alternate in issue.alternates %}
+                                        <a href="{{ url_for('comics.issue', diamond_id=alternate.diamond_id) }}">
+                                        {{ alternate.complete_title }}
+                                    </a>
+                                        <br>
+                                        {% endfor %}
+                                    </p>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
