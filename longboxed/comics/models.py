@@ -5,6 +5,8 @@
 
     Comics module
 """
+from decimal import Decimal
+
 from ..core import db
 
 
@@ -38,29 +40,33 @@ class Issue(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title_id = db.Column(db.Integer, db.ForeignKey('titles.id'))
     publisher_id = db.Column(db.Integer, db.ForeignKey('publishers.id'))
-    parent_id = db.Column(db.Integer, db.ForeignKey('issues.id'))
     # Attributes
     product_id = db.Column(db.String(100))
-    issue_number = db.Column(db.Float)
-    issues = db.Column(db.Float)
+    issue_number = db.Column(db.Numeric(precision=6, scale=2))
+    issues = db.Column(db.Numeric())
     other = db.Column(db.String(255))
     complete_title = db.Column(db.String(255))
-    one_shot = db.Column(db.Boolean())
+    one_shot = db.Column(db.Boolean(), default=False)
     a_link = db.Column(db.String(255))
     thumbnail = db.Column(db.String(255))
     big_image = db.Column(db.String(255))
-    retail_price = db.Column(db.Float)
-    description = db.Column(db.Text)
+    retail_price = db.Column(db.Float())
+    description = db.Column(db.Text())
     on_sale_date = db.Column(db.DateTime())
     genre = db.Column(db.String(100))
     people = db.Column(db.String(255)) #####
-    popularity = db.Column(db.Float)
+    popularity = db.Column(db.Float())
     last_updated = db.Column(db.DateTime())
     diamond_id = db.Column(db.String(100))
     category = db.Column(db.String(100))
     upc = db.Column(db.String(100))
     # Relationships
     is_parent = db.Column(db.Boolean(), default=False)
-    alternates = db.relationship('Issue',
-                    backref=db.backref('parent', remote_side=[id])
-                )
+    @property
+    def return_alternates(self):
+        x = self.query.filter_by(title=self.title, issue_number=self.issue_number)
+        return [issue for issue in x if issue.diamond_id != self.diamond_id]
+
+
+
+
