@@ -9,6 +9,12 @@ from datetime import timedelta
 
 DEBUG = True
 
+# Longboxed Specific Variables
+AFFILIATE_ID = '782419'
+SUPPORTED_PUBS = ['Marvel Comics', 'DC Comics', 'Dark Horse', 'IDW Publishing',\
+                  'Boom! Studios', 'Image Comics', 'Dynamite Entertainment', \
+                  'Avatar Press', 'Abstract Studios','Archie Comics']
+
 # Flask Application Configuration
 SECRET_KEY = '***REMOVED***'
 

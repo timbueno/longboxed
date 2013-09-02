@@ -14,12 +14,10 @@ from decimal import Decimal
 from HTMLParser import HTMLParser
 from itertools import groupby
 
+from flask import current_app
+
 from ..core import Service
 from .models import Issue, Publisher, Title
-
-
-AFFILIATE_ID = '782419'
-SUPPORTED_PUBS = ['Marvel Comics', 'DC Comics', 'Dark Horse', 'IDW Publishing', 'Boom! Studios', 'Image Comics', 'Dynamite Entertainment', 'Avatar Press', 'Abstract Studios','Archie Comics']
 
 
 class PublisherService(Service):
@@ -115,7 +113,7 @@ class ComicService(object):
             for item in reader:
                 if item[-5] == 'Comics':
                     item = [element for element in item]
-                    if item[19] in SUPPORTED_PUBS and self.is_diamond_id(item[20]):
+                    if item[19] in current_app.config['SUPPORTED_PUBS'] and self.is_diamond_id(item[20]):
                         release_date = datetime.strptime(item[12], '%Y-%m-%d')
                         if release_date.date() > datetime.now().date() and release_date.date() < (datetime.now().date() + timedelta(days=21)):
                             comics.append(item)
@@ -142,7 +140,7 @@ class ComicService(object):
         i['other'] = t_info['other']
         i['complete_title'] = t_info['complete_title']
         # i['one_shot'] = t_info['one_shot']
-        i['a_link'] = re.sub('YOURUSERID', AFFILIATE_ID, raw_issue[4])
+        i['a_link'] = re.sub('YOURUSERID', current_app.config['AFFILIATE_ID'], raw_issue[4])
         i['thumbnail'] = raw_issue[5]
         i['big_image'] = raw_issue[6]
         i['retail_price'] = float(raw_issue[8]) if self.is_float(raw_issue[8]) else None
