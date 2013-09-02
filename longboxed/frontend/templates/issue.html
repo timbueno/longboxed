@@ -1,5 +1,5 @@
 {% extends "layouts/base.html" %}
-{% set page_title = issue.complete_title+' | Longboxed' %}
+{% set title = issue.complete_title+' | Longboxed' %}
 
 {% block main_content %}
     <div class="container">
@@ -54,10 +54,18 @@
                                 <td>Alternate Covers</td>
                                 <td>
                                     <p>
-                                        {% for i in issue.return_alternates %}
+                                        {% for i in issue.alternates %}
                                             <a href="{{ url_for('comics.issue', diamond_id=i.diamond_id) }}">{{ i.complete_title }}</a>
                                             <br>
                                         {% endfor %}
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Is Parent</td>
+                                <td>
+                                    <p>
+                                        {{ issue.is_parent }}
                                     </p>
                                 </td>
                             </tr>

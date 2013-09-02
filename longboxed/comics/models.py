@@ -43,7 +43,7 @@ class Issue(db.Model):
     # Attributes
     product_id = db.Column(db.String(100))
     issue_number = db.Column(db.Numeric(precision=6, scale=2))
-    issues = db.Column(db.Numeric())
+    issues = db.Column(db.Numeric(precision=6, scale=2))
     other = db.Column(db.String(255))
     complete_title = db.Column(db.String(255))
     one_shot = db.Column(db.Boolean(), default=False)
@@ -62,8 +62,9 @@ class Issue(db.Model):
     upc = db.Column(db.String(100))
     # Relationships
     is_parent = db.Column(db.Boolean(), default=False)
+    has_alternates = db.Column(db.Boolean(), default=False)
     @property
-    def return_alternates(self):
+    def alternates(self):
         x = self.query.filter_by(title=self.title, issue_number=self.issue_number)
         return [issue for issue in x if issue.diamond_id != self.diamond_id]
 

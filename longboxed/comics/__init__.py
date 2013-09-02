@@ -110,10 +110,6 @@ class ComicService(object):
         print 'Checking for comics'
         # open gzip archive and extract only comics
         with gzip.open(ffile, 'rb') as f:
-            # file_content = f.read()
-            # f.close()
-            # decoded_content = file_content.decode('iso-8859-7')
-            # # encoded_content = decoded_content.encode('utf8')
             comics = []
             reader = csv.reader(f, delimiter='|')
             for item in reader:
@@ -193,7 +189,6 @@ class ComicService(object):
         # Group by title name
         title_groups = groupby(issues, key=lambda x: x.title)
         # Sort and group by issue number
-        # print title_groups
         issue_number_groups = []
         for k, g in title_groups:
             group = list(g)
@@ -209,9 +204,7 @@ class ComicService(object):
             m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>([+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', title).groupdict()
             m['complete_title'] = title
             if m['issue_number']:
-                # print 'ORIGINAL ISSUE NUMBER: ', m['issue_number']
                 m['issue_number'] = Decimal(m['issue_number'])
-                # print 'CONVERTED ISSUE NUMBER: ', m['issue_number']
             if m['issues']:
                 m['issues'] = Decimal(m['issues'])
             # print '\n--------------'
@@ -226,7 +219,6 @@ class ComicService(object):
 
 
     def test_grouping(self):
-        flag = False
         # Get raw text data from daily download
         raw_issues = self.get_raw_issues('dd.gz')
         # Insert raw comic book into the database
@@ -250,7 +242,6 @@ class ComicService(object):
                 for i in w:
                     if i not in new_issues:
                         new_issues.append(i)
-                        flag = True
                 # Sort group based on Diamond ID and set a parent for display purposes
                 matches = []
                 for issue in new_issues:
@@ -262,22 +253,10 @@ class ComicService(object):
                         issue.is_parent = True
                     else:
                         issue.is_parent = False
+                    if len(new_issues) > 1:
+                        issue.has_alternates = True
                     self.issues.save(issue)
-        # for group in groups:
-        #     for k, g in group:
-        #         issues = list(g)
-
-        #         matches = []
-        #         for issue in issues:
-        #             match = re.search(r'\d+', issue.diamond_id)
-        #             matches.append((int(match.group()), match.string))
-        #             # print 'Info: %s | %s | %s' % (issue.issue_number, issue.diamond_id, issue.other)
-        #         matches.sort(key=lambda x: x[0])
-        #         for issue in issues:
-        #             if issue.diamond_id == matches[0][1]:
-        #                 issue.is_parent = True
         print 'DONE!'
-        print flag
 
 
 
