@@ -208,7 +208,8 @@ class ComicService(object):
 
     def title_regex(self, title):
         try:
-            m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>(\d+))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', title).groupdict()
+            # m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>(\d+))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', title).groupdict()
+            m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>([+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', title).groupdict()
             m['complete_title'] = title
             # print '\n--------------'
             # print 'Full:    ', title
@@ -236,17 +237,30 @@ class ComicService(object):
             # print publisher, title, issue
             if q % 250 == 0:
                 print 'Saved %d / %d comics' % (q, len(raw_issues))
-            if q == 1000:
-                break
+            # if q == 1000:
+            #     break
         groups = self.group_issues(issue_list)
         for group in groups:
             for k, g in group:
                 issues = list(g)
-                print '\n--------------------'
-                print 'Title: %s' % issues[0].title.name
-                print 'Issue Number: %s' % k
+                matches = []
                 for issue in issues:
-                    print 'Info: %s | %s | %s' % (issue.issue_number, issue.on_sale_date, issue.other)
+                    match = re.search(r'\d+', issue.diamond_id)
+                    matches.append((int(match.group()), match.string))
+                    # print 'Info: %s | %s | %s' % (issue.issue_number, issue.diamond_id, issue.other)
+                matches.sort(key=lambda x: x[0])
+                for issue in issues:
+                    if issue.diamond_id == matches[0][1]:
+                        issue.is_parent = True
+                        issue.alternates = [i for i in issues if i.diamond_id != issue.diamond_id]
+                        self.issues.save(issue)
+                for issue in issues:
+                    if issue.is_parent:
+                        print '\n--------------------'
+                        print 'Title: %s' % issues[0].title.name
+                        print 'Issue Number: %s' % k
+                        print 'Alternates: %d' % len(issue.alternates)
+
 
 
 
