@@ -38,6 +38,7 @@ class Issue(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title_id = db.Column(db.Integer, db.ForeignKey('titles.id'))
     publisher_id = db.Column(db.Integer, db.ForeignKey('publishers.id'))
+    parent_id = db.Column(db.Integer, db.ForeignKey('issues.id'))
     # Attributes
     product_id = db.Column(db.String(100))
     issue_number = db.Column(db.Float)
@@ -58,3 +59,8 @@ class Issue(db.Model):
     diamond_id = db.Column(db.String(100))
     category = db.Column(db.String(100))
     upc = db.Column(db.String(100))
+    # Relationships
+    is_parent = db.Column(db.Boolean(), default=False)
+    alternates = db.relationship('Issue',
+                    backref=db.backref('parent', remote_side=[id])
+                )
