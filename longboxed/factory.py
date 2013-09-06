@@ -17,7 +17,7 @@ from .middleware import HTTPMethodOverrideMiddleware
 from .models import User, Role
 
 
-def create_app(package_name, package_path, settings_override=None, register_security_blueprint=True):
+def create_app(package_name, package_path, settings_override=None, debug_override=None, register_security_blueprint=True):
     """Returns a :class:`Flask` application instance configured with common
     functionality for the Longboxed platform.
 
@@ -30,6 +30,8 @@ def create_app(package_name, package_path, settings_override=None, register_secu
     app.config.from_object('longboxed.settings')
     app.config.from_pyfile('settings.cfg', silent=True)
     app.config.from_object(settings_override)
+    if debug_override is not None:
+        app.debug = debug_override
 
     #: Setup Flask Extentions
     bootstrap.init_app(app)
@@ -68,7 +70,7 @@ def create_app(package_name, package_path, settings_override=None, register_secu
 
 
 def create_celery_app(app=None):
-    app = app or create_app('longboxed', os.path.dirname(__file__), settings_override='longboxed.celery_settings')
+    app = app or create_app('longboxed', os.path.dirname(__file__), debug_override=False)
     # app.config['DEBUG'] = False
     celery = Celery(__name__, broker=app.config['CELERY_BROKER_URL'])
     celery.conf.update(app.config)
