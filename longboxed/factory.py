@@ -31,17 +31,26 @@ def create_app(package_name, package_path, settings_override=None, register_secu
     app.config.from_pyfile('settings.cfg', silent=True)
     app.config.from_object(settings_override)
 
+    #: Setup Logging if not debug
+    if not app.debug:
+        import logging
+        from logging import Formatter, RotatingFileHandler
+        formatter = Formatter(
+            '%(asctime)s %(levelname)s: %(message)s '
+            '[in %(pathname)s:%(lineno)d]'
+        )
+        info_handler = RotatingFileHandler('logs/info.log').setLevel(logging.INFO)
+        error_handler = RotatingFileHandler('logs/error.log').setLevel(logging.ERROR)
+        app.logger.addHandler(info_handler.setFormatter(formatter))
+        app.logger.addHandler(error_handler.setFormatter(formatter))
+
+    #: Setup Flask Extentions
     bootstrap.init_app(app)
     db.init_app(app)
-    # login_manager.init_app(app)
-
     mail.init_app(app)
-
     #: Setup Flask-Security
     security.init_app(app, SQLAlchemyUserDatastore(db, User, Role),
                       register_blueprint=register_security_blueprint)
-
-
 
     # register_models(db, package_name, package_path)
     register_blueprints(app, package_name, package_path)

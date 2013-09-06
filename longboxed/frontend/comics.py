@@ -7,7 +7,7 @@
 """
 from datetime import datetime, timedelta
 
-from flask import abort, Blueprint, jsonify, render_template, request
+from flask import abort, current_app, Blueprint, jsonify, render_template, request
 from flask.ext.security import current_user
 
 from . import route
