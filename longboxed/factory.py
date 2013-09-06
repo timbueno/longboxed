@@ -31,19 +31,6 @@ def create_app(package_name, package_path, settings_override=None, register_secu
     app.config.from_pyfile('settings.cfg', silent=True)
     app.config.from_object(settings_override)
 
-    #: Setup Logging if not debug
-    if not app.debug:
-        import logging
-        from logging import Formatter, RotatingFileHandler
-        formatter = Formatter(
-            '%(asctime)s %(levelname)s: %(message)s '
-            '[in %(pathname)s:%(lineno)d]'
-        )
-        info_handler = RotatingFileHandler('logs/info.log').setLevel(logging.INFO)
-        error_handler = RotatingFileHandler('logs/error.log').setLevel(logging.ERROR)
-        app.logger.addHandler(info_handler.setFormatter(formatter))
-        app.logger.addHandler(error_handler.setFormatter(formatter))
-
     #: Setup Flask Extentions
     bootstrap.init_app(app)
     db.init_app(app)
@@ -57,11 +44,32 @@ def create_app(package_name, package_path, settings_override=None, register_secu
 
     app.wsgi_app = HTTPMethodOverrideMiddleware(app.wsgi_app)
 
+    #: Setup Logging if not debug
+    if not app.debug:
+        import logging
+        from logging import Formatter
+        from logging.handlers import RotatingFileHandler
+        formatter = Formatter(
+            '%(asctime)s %(levelname)s: %(message)s '
+            '[in %(pathname)s:%(lineno)d]'
+        )
+        info_handler = RotatingFileHandler('logs/info.log')
+        info_handler.setLevel(logging.INFO)
+        info_handler.setFormatter(formatter)
+        error_handler = RotatingFileHandler('logs/error.log')
+        error_handler.setLevel(logging.ERROR)
+        error_handler.setFormatter(formatter)
+        app.logger.addHandler(info_handler)
+        app.logger.addHandler(error_handler)
+
+        app.logger.setLevel(logging.INFO)
+
     return app
 
 
 def create_celery_app(app=None):
-    app = app or create_app('longboxed', os.path.dirname(__file__))
+    app = app or create_app('longboxed', os.path.dirname(__file__), settings_override='longboxed.celery_settings')
+    # app.config['DEBUG'] = False
     celery = Celery(__name__, broker=app.config['CELERY_BROKER_URL'])
     celery.conf.update(app.config)
     TaskBase = celery.Task

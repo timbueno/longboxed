@@ -14,7 +14,7 @@ from decimal import Decimal
 from HTMLParser import HTMLParser
 from itertools import groupby
 
-from flask import current_app
+from flask import current_app as app
 
 from ..core import Service
 from .models import Issue, Publisher, Title
@@ -105,7 +105,7 @@ class ComicService(object):
 
 
     def get_raw_issues(self, ffile):
-        print 'Checking for comics'
+        app.logger.info('Checking for comics')
         # open gzip archive and extract only comics
         with gzip.open(ffile, 'rb') as f:
             comics = []
@@ -113,11 +113,11 @@ class ComicService(object):
             for item in reader:
                 if item[-5] == 'Comics':
                     item = [element for element in item]
-                    if item[19] in current_app.config['SUPPORTED_PUBS'] and self.is_diamond_id(item[20]):
+                    if item[19] in app.config['SUPPORTED_PUBS'] and self.is_diamond_id(item[20]):
                         release_date = datetime.strptime(item[12], '%Y-%m-%d')
                         if release_date.date() > datetime.now().date() and release_date.date() < (datetime.now().date() + timedelta(days=21)):
                             comics.append(item)
-        print '...Done'
+        app.logger.info('...Done')
         return comics
 
 
@@ -140,7 +140,7 @@ class ComicService(object):
         i['other'] = t_info['other']
         i['complete_title'] = t_info['complete_title']
         # i['one_shot'] = t_info['one_shot']
-        i['a_link'] = re.sub('YOURUSERID', current_app.config['AFFILIATE_ID'], raw_issue[4])
+        i['a_link'] = re.sub('YOURUSERID', app.config['AFFILIATE_ID'], raw_issue[4])
         i['thumbnail'] = raw_issue[5]
         i['big_image'] = raw_issue[6]
         i['retail_price'] = float(raw_issue[8]) if self.is_float(raw_issue[8]) else None
@@ -228,7 +228,7 @@ class ComicService(object):
             issue = self.insert_issue(i, title, publisher)
             issue_list.append(issue)
             if q % 250 == 0:
-                print 'Saved %d / %d comics' % (q, len(raw_issues))
+                app.logger.info('Saved %d / %d comics' % (q, len(raw_issues)))
         # Group new issues based on title and issue_number
         groups = self.group_issues(issue_list)
         # Process grouped issues
@@ -254,7 +254,7 @@ class ComicService(object):
                     if len(new_issues) > 1:
                         issue.has_alternates = True
                     self.issues.save(issue)
-        print 'DONE!'
+        app.logger.info('DONE!')
 
 
 
