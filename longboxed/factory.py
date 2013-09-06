@@ -6,6 +6,10 @@
     longboxed factory module
 """
 import os
+import json
+
+import logging
+import logging.config
 
 from celery import Celery
 from flask import Flask
@@ -47,24 +51,25 @@ def create_app(package_name, package_path, settings_override=None, debug_overrid
     app.wsgi_app = HTTPMethodOverrideMiddleware(app.wsgi_app)
 
     #: Setup Logging if not debug
-    if not app.debug:
-        import logging
-        from logging import Formatter
-        from logging.handlers import RotatingFileHandler
-        formatter = Formatter(
-            '%(asctime)s %(levelname)s: %(message)s '
-            '[in %(pathname)s:%(lineno)d]'
-        )
-        info_handler = RotatingFileHandler('logs/info.log')
-        info_handler.setLevel(logging.INFO)
-        info_handler.setFormatter(formatter)
-        error_handler = RotatingFileHandler('logs/error.log')
-        error_handler.setLevel(logging.ERROR)
-        error_handler.setFormatter(formatter)
-        app.logger.addHandler(info_handler)
-        app.logger.addHandler(error_handler)
+    # setup_logging()
+    # if not app.debug:
+    #     import logging
+    #     from logging import Formatter
+    #     from logging.handlers import RotatingFileHandler
+    #     formatter = Formatter(
+    #         '%(asctime)s %(levelname)s: %(message)s '
+    #         '[in %(pathname)s:%(lineno)d]'
+    #     )
+    #     info_handler = RotatingFileHandler('logs/info.log')
+    #     info_handler.setLevel(logging.INFO)
+    #     info_handler.setFormatter(formatter)
+    #     error_handler = RotatingFileHandler('logs/error.log')
+    #     error_handler.setLevel(logging.ERROR)
+    #     error_handler.setFormatter(formatter)
+    #     app.logger.addHandler(info_handler)
+    #     app.logger.addHandler(error_handler)
 
-        app.logger.setLevel(logging.INFO)
+    #     app.logger.setLevel(logging.INFO)
 
     return app
 
@@ -85,3 +90,20 @@ def create_celery_app(app=None):
 
     celery.Task = ContextTask
     return celery
+
+
+def setup_logging(default_path='longboxed/logging.json', default_level=logging.INFO, env_key='LOG_CFG'):
+    """
+    Setup logging configuration
+    """
+    path = default_path
+    value = os.getenv(env_key, None)
+    if value:
+        path = value
+    if os.path.exists(path):
+        print 'hurray!'
+        with open(path, 'rt') as f:
+            config = json.loads(f.read())
+        logging.config.dictConfig(config)
+    else:
+        logging.basicConfig(level=default_level)

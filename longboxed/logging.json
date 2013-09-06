@@ -1,0 +1,53 @@
+{ 
+	"version": 1, 
+	"formatters": { 
+		"long": {
+			"format": "%(asctime)s %(levelname)-5.5s [%(name)s][%(threadName)s] %(message)s"
+		},
+		"short": {
+			"format": "%(message)s"
+		}
+	}, 
+	"handlers": {
+		"console": { 
+			"class": "logging.StreamHandler", 
+			"formatter": "short",
+			"stream": "ext://sys.stderr"
+		}, 
+		"file": { 
+			"class": "logging.handlers.RotatingFileHandler",
+			"formatter": "long", 
+			"filename": "logs/frontend.log",
+			"maxBytes": 16384,
+			"backupCount": 5
+		},
+		"info_handler": { 
+			"level": "INFO",
+			"class": "logging.handlers.RotatingFileHandler",
+			"formatter": "long", 
+			"filename": "logs/info.log",
+			"maxBytes": 16384,
+			"backupCount": 5
+		}
+
+	}, 
+	"loggers": { 
+		"longboxed.frontend": {
+			"level": "DEBUG"
+		},
+		"weird": {
+			"level": "INFO",
+			"handlers": ["info_handler"]
+		},
+		"sqlalchemy.engine": {
+			"propagate": true
+		},
+		"werkzeug": {
+			"propagate": true
+		}
+	}, 
+	"root": {
+		"level": "ERROR",
+		"handlers": ["console"]
+	}
+}
