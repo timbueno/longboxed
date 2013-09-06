@@ -9,6 +9,8 @@ import csv
 import gzip
 import re
 
+import requests
+
 from datetime import datetime, timedelta
 from decimal import Decimal
 from HTMLParser import HTMLParser
@@ -102,6 +104,22 @@ class ComicService(object):
         else:
             issue = self.issues.create(**raw_issue_dict) # Update
         return issue
+
+
+    def get_latest_TFAW_database(self):
+        app.logger.info('Getting latest TFAW database')
+        base_url = 'http://www.tfaw.com/intranet/download-8908-daily.php'
+        payload = {
+            'aid': app.config['AFFILIATE_ID'],
+            't': '',
+            'z': 'gz'
+        }
+        # Download the file
+        r = requests.get(base_url, params=payload)
+        with open('latest_db.gz', 'wb') as code:
+            code.write(r.content)
+        app.logger.info('...Done')
+        return
 
 
     def get_raw_issues(self, ffile):
@@ -217,8 +235,10 @@ class ComicService(object):
 
 
     def test_grouping(self):
+        # Get latest database data from TFAW
+        self.get_latest_TFAW_database()
         # Get raw text data from daily download
-        raw_issues = self.get_raw_issues('dd.gz')
+        raw_issues = self.get_raw_issues('latest_db.gz')
         # Insert raw comic book into the database
         issue_list = []
         for q, raw_issue in enumerate(raw_issues):
