@@ -106,7 +106,6 @@ class ComicService(object):
         return issue
 
     def get_latest_TFAW_database(self):
-        process_logger.error('Getting latest TFAW database')
         base_url = 'http://www.tfaw.com/intranet/download-8908-daily.php'
         payload = {
             'aid': app.config['AFFILIATE_ID'],
@@ -117,12 +116,10 @@ class ComicService(object):
         r = requests.get(base_url, params=payload)
         with open('latest_db.gz', 'wb') as code:
             code.write(r.content)
-        process_logger.error('...Done')
         return
 
 
     def get_raw_issues(self, ffile):
-        process_logger.error('Checking for comics')
         # open gzip archive and extract only comics
         with gzip.open(ffile, 'rb') as f:
             comics = []
@@ -134,7 +131,6 @@ class ComicService(object):
                         release_date = datetime.strptime(item[12], '%Y-%m-%d')
                         if release_date.date() > datetime.now().date() and release_date.date() < (datetime.now().date() + timedelta(days=21)):
                             comics.append(item)
-        process_logger.error('...Done')
         return comics
 
 
@@ -222,62 +218,76 @@ class ComicService(object):
                 m['issue_number'] = Decimal(m['issue_number'])
             if m['issues']:
                 m['issues'] = Decimal(m['issues'])
-            # print '\n--------------'
-            # print 'Full:    ', title
-            # print 'Name:    ', m.get('title')
-            # print 'Issue #: ', m.get('issue_number')
-            # print 'Issues:  ', m.get('issues')
-            # print 'Other:   ', m.get('other')
         except (AttributeError, TypeError):
             m = None
         return m
 
 
-    def add_new_issues_to_database(self):
-        # Reset Statistic Variables
-        self.reset_statistics()
-        # Get latest database data from TFAW
-        self.get_latest_TFAW_database()
-        # Get raw text data from daily download
-        raw_issues = self.get_raw_issues('latest_db.gz')
-        # Insert raw comic book into the database
-        issue_list = []
-        for q, raw_issue in enumerate(raw_issues):
-            (i, t, p) = self.extract_issue_information(raw_issue)
-            publisher = self.insert_publisher(p)
-            title = self.insert_title(t, publisher)
-            issue = self.insert_issue(i, title, publisher)
-            issue_list.append(issue)
-            if q % 250 == 0:
-                process_logger.error('Saved %d / %d comics' % (q, len(raw_issues)))
-        # Group new issues based on title and issue_number
-        groups = self.group_issues(issue_list)
-        # Process grouped issues
-        for group in groups:
-            for k, g in group:
-                # Look for pre-exisiting issue in the database but not in new download
-                new_issues = list(g)
-                w = self.issues.__model__.query.filter_by(title=new_issues[0].title, issue_number=k)
-                for i in w:
-                    if i not in new_issues:
-                        new_issues.append(i)
-                # Sort group based on Diamond ID and set a parent for display purposes
-                matches = []
-                for issue in new_issues:
-                    match = re.search(r'\d+', issue.diamond_id)
-                    matches.append((int(match.group()), match.string))
-                matches.sort(key=lambda x: x[0])
-                for issue in new_issues:
-                    if issue.diamond_id == matches[0][1]:
-                        issue.is_parent = True
-                    else:
-                        issue.is_parent = False
-                    if len(new_issues) > 1:
-                        issue.has_alternates = True
-                    self.issues.save(issue)
-        process_logger.error('DONE!')
-        process_logger.error('Summary: %d %d %d' % (self.issue_updates, self.issue_additions, self.title_additions))
+    def database_summary(self):
+        summary = """
+        -----------------------------------
+        Database Update Summary
+        -----------------------------------
+        Publishers Added: %d
+        Titles Added:     %d
 
+        Issues Added:     %d
+        Issues Updated:   %d
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Issues in DB:     %d
+        """ % (self.publisher_additions, self.title_additions, \
+               self.issue_additions, self.issue_updates, \
+               self.issues.count())
+
+        return summary
+
+
+    def add_new_issues_to_database(self):
+        try:
+            process_logger.error('Starting Database Update')
+            # Reset Statistic Variables
+            self.reset_statistics()
+            # Get latest database data from TFAW
+            self.get_latest_TFAW_database()
+            # Get raw text data from daily download
+            raw_issues = self.get_raw_issues('latest_db.gz')
+            # Insert raw comic book into the database
+            issue_list = []
+            for q, raw_issue in enumerate(raw_issues):
+                (i, t, p) = self.extract_issue_information(raw_issue)
+                publisher = self.insert_publisher(p)
+                title = self.insert_title(t, publisher)
+                issue = self.insert_issue(i, title, publisher)
+                issue_list.append(issue)
+            # Group new issues based on title and issue_number
+            groups = self.group_issues(issue_list)
+            # Process grouped issues
+            for group in groups:
+                for k, g in group:
+                    # Look for pre-exisiting issue in the database but not in new download
+                    new_issues = list(g)
+                    w = self.issues.__model__.query.filter_by(title=new_issues[0].title, issue_number=k)
+                    for i in w:
+                        if i not in new_issues:
+                            new_issues.append(i)
+                    # Sort group based on Diamond ID and set a parent for display purposes
+                    matches = []
+                    for issue in new_issues:
+                        match = re.search(r'\d+', issue.diamond_id)
+                        matches.append((int(match.group()), match.string))
+                    matches.sort(key=lambda x: x[0])
+                    for issue in new_issues:
+                        if issue.diamond_id == matches[0][1]:
+                            issue.is_parent = True
+                        else:
+                            issue.is_parent = False
+                        if len(new_issues) > 1:
+                            issue.has_alternates = True
+                        self.issues.save(issue)
+            summary = self.database_summary()
+            process_logger.error(summary)
+        except:
+            process_logger.exception('Something happened with Database Update')
 
 
 
