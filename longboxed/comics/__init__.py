@@ -93,7 +93,6 @@ class ComicService(object):
         return title
 
     def insert_issue(self, raw_issue_dict, title_object, publisher_object):
-        # TODO save off issues siblings as well
         issue = self.issues.first(diamond_id=raw_issue_dict['diamond_id'])
         raw_issue_dict['title'] = title_object
         raw_issue_dict['publisher'] = publisher_object
@@ -234,7 +233,7 @@ class ComicService(object):
         return m
 
 
-    def test_grouping(self):
+    def add_new_issues_to_database(self):
         # Reset Statistic Variables
         self.reset_statistics()
         # Get latest database data from TFAW

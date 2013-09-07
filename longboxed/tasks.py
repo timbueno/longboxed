@@ -11,11 +11,6 @@ from .services import comics
 
 celery = create_celery_app()
 
-
-@celery.task(name='tasks.addcomics')
-def get_new_comics():
-    add_comics_to_db()
-
 @celery.task
 def talk():
     print 'Hey whats going on man?'
@@ -32,5 +27,5 @@ def test():
 
 
 @celery.task(name='tasks.addissues')
-def get_new_issues():
-    comics.test_grouping()
+def add_new_issues_to_database():
+    comics.add_new_issues_to_database()
