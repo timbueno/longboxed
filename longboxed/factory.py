@@ -52,24 +52,6 @@ def create_app(package_name, package_path, settings_override=None, debug_overrid
 
     #: Setup Logging if not debug
     setup_logging()
-    # if not app.debug:
-    #     import logging
-    #     from logging import Formatter
-    #     from logging.handlers import RotatingFileHandler
-    #     formatter = Formatter(
-    #         '%(asctime)s %(levelname)s: %(message)s '
-    #         '[in %(pathname)s:%(lineno)d]'
-    #     )
-    #     info_handler = RotatingFileHandler('logs/info.log')
-    #     info_handler.setLevel(logging.INFO)
-    #     info_handler.setFormatter(formatter)
-    #     error_handler = RotatingFileHandler('logs/error.log')
-    #     error_handler.setLevel(logging.ERROR)
-    #     error_handler.setFormatter(formatter)
-    #     app.logger.addHandler(info_handler)
-    #     app.logger.addHandler(error_handler)
-
-    #     app.logger.setLevel(logging.INFO)
 
     return app
 
