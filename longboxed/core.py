@@ -15,9 +15,6 @@ from flask_mail import Mail
 #: Flask-Bootstrap extension instance
 bootstrap = Bootstrap()
 
-#: Flask-Login extension instance
-# login_manager = LoginManager()
-
 #: Flask-MongoKit extension instance
 db = SQLAlchemy()
 
