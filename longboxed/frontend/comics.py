@@ -5,10 +5,9 @@
 
     Comics blueprints
 """
-from logging import getLogger
 from datetime import datetime, timedelta
 
-from flask import abort, current_app, Blueprint, jsonify, render_template, request
+from flask import abort, Blueprint, jsonify, render_template, request
 from flask.ext.security import current_user
 
 from . import route
@@ -17,11 +16,8 @@ from ..services import comics as _comics
 
 bp = Blueprint('comics', __name__)
 
-
 @route(bp,'/comics')
 def comics():
-    logger = getLogger('POOP')
-    logger.info('hello?')
     start, end = get_current_week()
     dates = {}
     dates['today'] = end.strftime('%B %-d, %Y')
