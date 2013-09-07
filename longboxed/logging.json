@@ -6,12 +6,29 @@
 		},
 		"short": {
 			"format": "%(message)s"
+		},
+		"comic_format": {
+			"format" : "%(asctime)s %(message)s"
+		}
+	},
+	"filters":{
+		"log_only_debug":{
+			"()": "longboxed.factory.LogOnlyLevel",
+			"level": "DEBUG"
+		},
+		"log_only_info":{
+			"()": "longboxed.factory.LogOnlyLevel",
+			"level": "INFO"
+		},
+		"log_only_error":{
+			"()": "longboxed.factory.LogOnlyLevel",
+			"level": "ERROR"
 		}
 	}, 
 	"handlers": {
-		"console": { 
+		"console": {
 			"class": "logging.StreamHandler", 
-			"formatter": "short",
+			"formatter": "long",
 			"stream": "ext://sys.stderr"
 		}, 
 		"file": { 
@@ -28,16 +45,38 @@
 			"filename": "logs/info.log",
 			"maxBytes": 16384,
 			"backupCount": 5
+		},
+		"database_modifications": {
+			"level": "INFO",
+			"filters": ["log_only_info"],
+			"class": "logging.handlers.RotatingFileHandler",
+			"formatter": "comic_format",
+			"filename": "logs/db_modifications.log",
+			"maxBytes": 16384,
+			"backupCount": 5
+		},
+		"comic_processing": {
+			"level": "ERROR",
+			"filters": ["log_only_error"],
+			"class": "logging.handlers.RotatingFileHandler",
+			"formatter": "comic_format",
+			"filename": "logs/comic_processing.log",
+			"maxBytes": 16384,
+			"backupCount": 5
 		}
-
 	}, 
 	"loggers": { 
-		"longboxed.frontend": {
-			"level": "DEBUG"
-		},
-		"weird": {
+		"frontend": {
 			"level": "INFO",
 			"handlers": ["info_handler"]
+		},
+		"api": {
+			"level": "INFO",
+			"handlers": ["info_handler"]
+		},
+		"issue_processing": {
+			"level": "DEBUG",
+			"handlers": ["database_modifications", "comic_processing"]
 		},
 		"sqlalchemy.engine": {
 			"propagate": true
@@ -47,7 +86,6 @@
 		}
 	}, 
 	"root": {
-		"level": "ERROR",
-		"handlers": ["console"]
+		"level": "ERROR"
 	}
 }
