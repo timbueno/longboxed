@@ -15,11 +15,15 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from HTMLParser import HTMLParser
 from itertools import groupby
+from logging import getLogger
 
 from flask import current_app as app
 
 from ..core import Service
 from .models import Issue, Publisher, Title
+
+
+process_logger = getLogger('issue_processing')
 
 
 class PublisherService(Service):
@@ -59,39 +63,33 @@ class ComicService(object):
         self.titles = TitleService()
         self.issues = IssueService()
 
-    # def insert_comic(self, p=None, t=None, i=None):
-    #     publisher = self.publishers.first(name=p['name'])
-    #     if not publisher:
-    #         # print 'Adding Publisher: %s' % p['name']
-    #         publisher = self.publishers.create(**p)
+        self.issue_updates = 0
+        self.issue_additions = 0
+        self.title_additions = 0
+        self.publisher_additions = 0
 
-    #     title = self.titles.first(name=t['name'])
-    #     if not title:
-    #         # print 'Adding Title: %s' % t['name']
-    #         t['publisher'] = publisher
-    #         title = self.titles.create(**t)
 
-    #     i['publisher'] = publisher
-    #     i['title'] = title
-    #     issue = self.issues.first(diamond_id=i['diamond_id'])
-    #     if issue:
-    #         # print 'Updating: %s' % issue.complete_title
-    #         issue = self.issues.update(issue, **i)
-    #     else:
-    #         # print 'Adding Issue: %s' % i['complete_title']
-    #         issue = self.issues.create(**i) 
-    #     return
+    def reset_statistics(self):
+        self.issue_updates = 0
+        self.issue_additions = 0
+        self.title_additions = 0
+        self.publisher_additions = 0
+        return
 
     def insert_publisher(self, raw_publisher=None):
         publisher = self.publishers.first(name=raw_publisher)
         if not publisher:
             publisher = self.publishers.create(name=raw_publisher)
+            process_logger.info('PUBLISHER: %s' % (publisher.name))
+            self.publisher_additions = self.publisher_additions + 1
         return publisher
 
     def insert_title(self, raw_title, publisher_object):
         title = self.titles.first(name=raw_title)
         if not title:
             title = self.titles.create(name=raw_title, publisher=publisher_object)
+            process_logger.info('TITLE: %s' % (title.name))
+            self.title_additions = self.title_additions + 1
         return title
 
     def insert_issue(self, raw_issue_dict, title_object, publisher_object):
@@ -100,14 +98,16 @@ class ComicService(object):
         raw_issue_dict['title'] = title_object
         raw_issue_dict['publisher'] = publisher_object
         if issue:
-            issue = self.issues.update(issue, **raw_issue_dict) # Create
+            issue = self.issues.update(issue, **raw_issue_dict) # Update
+            self.issue_updates = self.issue_updates + 1
         else:
-            issue = self.issues.create(**raw_issue_dict) # Update
+            issue = self.issues.create(**raw_issue_dict) # Create
+            process_logger.info('ISSUE: %s ID: %s' % (issue.complete_title, issue.diamond_id))
+            self.issue_additions = self.issue_additions + 1
         return issue
 
-
     def get_latest_TFAW_database(self):
-        app.logger.info('Getting latest TFAW database')
+        process_logger.error('Getting latest TFAW database')
         base_url = 'http://www.tfaw.com/intranet/download-8908-daily.php'
         payload = {
             'aid': app.config['AFFILIATE_ID'],
@@ -118,12 +118,12 @@ class ComicService(object):
         r = requests.get(base_url, params=payload)
         with open('latest_db.gz', 'wb') as code:
             code.write(r.content)
-        app.logger.info('...Done')
+        process_logger.error('...Done')
         return
 
 
     def get_raw_issues(self, ffile):
-        app.logger.info('Checking for comics')
+        process_logger.error('Checking for comics')
         # open gzip archive and extract only comics
         with gzip.open(ffile, 'rb') as f:
             comics = []
@@ -135,7 +135,7 @@ class ComicService(object):
                         release_date = datetime.strptime(item[12], '%Y-%m-%d')
                         if release_date.date() > datetime.now().date() and release_date.date() < (datetime.now().date() + timedelta(days=21)):
                             comics.append(item)
-        app.logger.info('...Done')
+        process_logger.error('...Done')
         return comics
 
 
@@ -235,6 +235,8 @@ class ComicService(object):
 
 
     def test_grouping(self):
+        # Reset Statistic Variables
+        self.reset_statistics()
         # Get latest database data from TFAW
         self.get_latest_TFAW_database()
         # Get raw text data from daily download
@@ -248,7 +250,7 @@ class ComicService(object):
             issue = self.insert_issue(i, title, publisher)
             issue_list.append(issue)
             if q % 250 == 0:
-                app.logger.info('Saved %d / %d comics' % (q, len(raw_issues)))
+                process_logger.error('Saved %d / %d comics' % (q, len(raw_issues)))
         # Group new issues based on title and issue_number
         groups = self.group_issues(issue_list)
         # Process grouped issues
@@ -274,7 +276,8 @@ class ComicService(object):
                     if len(new_issues) > 1:
                         issue.has_alternates = True
                     self.issues.save(issue)
-        app.logger.info('DONE!')
+        process_logger.error('DONE!')
+        process_logger.error('Summary: %d %d %d' % (self.issue_updates, self.issue_additions, self.title_additions))
 
 
 
