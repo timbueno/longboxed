@@ -67,6 +67,11 @@ class Service(object):
         kwargs.pop('csrf_token', None)
         return kwargs
 
+    def count(self):
+        """Returns the number of rows in the models table
+        """
+        return self.__model__.query.count()
+
     def save(self, model):
         """Commits the model to the database and returns the model
 
