@@ -51,7 +51,7 @@ def create_app(package_name, package_path, settings_override=None, debug_overrid
     app.wsgi_app = HTTPMethodOverrideMiddleware(app.wsgi_app)
 
     #: Setup Logging if not debug
-    # setup_logging()
+    setup_logging()
     # if not app.debug:
     #     import logging
     #     from logging import Formatter
@@ -75,8 +75,7 @@ def create_app(package_name, package_path, settings_override=None, debug_overrid
 
 
 def create_celery_app(app=None):
-    app = app or create_app('longboxed', os.path.dirname(__file__), debug_override=False)
-    # app.config['DEBUG'] = False
+    app = app or create_app('longboxed', os.path.dirname(__file__))
     celery = Celery(__name__, broker=app.config['CELERY_BROKER_URL'])
     celery.conf.update(app.config)
     TaskBase = celery.Task
@@ -101,9 +100,26 @@ def setup_logging(default_path='longboxed/logging.json', default_level=logging.I
     if value:
         path = value
     if os.path.exists(path):
-        print 'hurray!'
         with open(path, 'rt') as f:
             config = json.loads(f.read())
         logging.config.dictConfig(config)
     else:
         logging.basicConfig(level=default_level)
+    return
+
+
+class LogOnlyLevel(object):
+    def __init__(self, level):
+        if level == 'DEBUG':
+            level = logging.DEBUG
+        elif level == 'INFO':
+            level = logging.INFO
+        elif level == 'ERROR':
+            level = logging.ERROR
+        else:
+            print 'Something is wrong with your filter...'
+            level = None
+        self.__level = level
+
+    def filter(self, logRecord):
+        return logRecord.levelno <= self.__level
