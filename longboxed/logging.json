@@ -30,7 +30,13 @@
 			"class": "logging.StreamHandler", 
 			"formatter": "long",
 			"stream": "ext://sys.stderr"
-		}, 
+		},
+		"debug_handler": {
+			"level": "DEBUG",
+			"filters": ["log_only_debug"],
+			"stream": "ext://sys.stderr",
+			"formatter": "short",
+		},
 		"file": { 
 			"class": "logging.handlers.RotatingFileHandler",
 			"formatter": "long", 
@@ -76,7 +82,7 @@
 		},
 		"issue_processing": {
 			"level": "DEBUG",
-			"handlers": ["database_modifications", "comic_processing"]
+			"handlers": ["debug_handler", "database_modifications", "comic_processing"]
 		},
 		"sqlalchemy.engine": {
 			"propagate": true
