@@ -16,10 +16,13 @@ from decimal import Decimal
 from HTMLParser import HTMLParser
 from itertools import groupby
 from logging import getLogger
+from StringIO import StringIO
 
+from bs4 import BeautifulSoup
 from flask import current_app as app
 
 from ..core import Service
+from ..helpers import strip_tags
 from .models import Issue, Publisher, Title
 
 
@@ -38,9 +41,9 @@ class IssueService(Service):
     __model__ = Issue
 
     def find_issues_in_date_range(self, start, end):
-        s = start.strftime('%Y-%m-%d')
-        e = end.strftime('%Y-%m-%d')
-        titles = sorted(self.__model__.query.filter(self.__model__.on_sale_date.between(s,e)))
+        # s = start.strftime('%Y-%m-%d')
+        # e = end.strftime('%Y-%m-%d')
+        titles = sorted(self.__model__.query.filter(self.__model__.on_sale_date.between(start,end)))
         sorted_titles = sorted(titles, key=lambda k: k.publisher.name)
         return sorted_titles
 
@@ -119,6 +122,56 @@ class ComicService(object):
         return
 
 
+    def get_shipping_this_week(self):
+        base_url = 'http://www.tfaw.com/intranet/diamondlists_raw.php'
+        payload = {
+            'mode': 'thisweek',
+            'uid': app.config['AFFILIATE_ID'],
+            'show%5B%5D': 'Comics',
+            'display': 'text_raw'
+        }
+        r = requests.get(base_url, params=payload)
+
+        # return strip_tags(r.content.strip(' \t\n\r'))
+        return r.content
+
+
+    def get_diamond_ids_shipping(self, raw_content):
+        html = BeautifulSoup(raw_content)
+        f = StringIO(html.pre.string.strip(' \t\n\r'))
+        incsv = csv.DictReader(f)
+        shipping = [x['ITEMCODE']+x['DiscountCode'] for x in incsv if x['Vendor'].strip('*') in [y.upper() for y in app.config['SUPPORTED_DIAMOND_PUBS']]]
+        return shipping
+
+
+    def compare_shipping_with_database(self, shipping_ids):
+        # Get every item in the list
+        # diamond_shipments = [self.issues.first(diamond_id=x) for x in shipping_ids]
+        diamond_shipments = []
+        for diamond_id in shipping_ids:
+            issue = self.issues.first(diamond_id=diamond_id)
+            if issue:
+                diamond_shipments.append(issue)
+        local_shipments = self.issues.find_issues_in_date_range(datetime.now(), (datetime.now()+timedelta(days=7)))
+        # print local_shipments
+        print len(local_shipments)
+        print len(diamond_shipments)
+        print len(shipping_ids)
+        diamond = set(diamond_shipments)
+        for issue in diamond:
+            pass
+        # TODO for item in diamond set - set to this weeks wednesday
+        # Then get all comics scheduled to ship this week 
+        # get difference between shipments
+        # set the date of difference between them to null
+        local = set(local_shipments)
+        difference = diamond - local
+        # for issue in difference:
+        #     print issue.complete_title
+        # for item in diamond.intersection(local):
+        #     print item.complete_title
+        return
+
     def get_raw_issues(self, ffile):
         # open gzip archive and extract only comics
         with gzip.open(ffile, 'rb') as f:
@@ -129,7 +182,7 @@ class ComicService(object):
                     item = [element for element in item]
                     if item[19] in app.config['SUPPORTED_PUBS'] and self.is_diamond_id(item[20]):
                         release_date = datetime.strptime(item[12], '%Y-%m-%d')
-                        if release_date.date() > datetime.now().date() and release_date.date() < (datetime.now().date() + timedelta(days=21)):
+                        if release_date.date() > (datetime.now().date() - timedelta(days=7)) and release_date.date() < (datetime.now().date() + timedelta(days=21)):
                             comics.append(item)
         return comics
 
@@ -159,9 +212,11 @@ class ComicService(object):
         i['retail_price'] = float(raw_issue[8]) if self.is_float(raw_issue[8]) else None
         i['description'] = parser.unescape(raw_issue[11])
         try:
-            i['on_sale_date'] = datetime.strptime(raw_issue[12], '%Y-%m-%d')
+            i['on_sale_date'] = datetime.strptime(raw_issue[12], '%Y-%m-%d').date()
+            i['current_tfaw_release_date'] = datetime.strptime(raw_issue[12], '%Y-%m-%d').date()
         except:
             i['on_sale_date'] = None
+            i['current_tfaw_release_date'] = None
         i['genre'] = raw_issue[13]
         i['people'] = None #### Fixme
         i['popularity'] = float(raw_issue[16]) if self.is_float(raw_issue[16]) else None
