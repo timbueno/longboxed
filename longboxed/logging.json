@@ -59,7 +59,7 @@
 			"class": "logging.handlers.RotatingFileHandler",
 			"formatter": "comic_format",
 			"filename": "logs/db_modifications.log",
-			"maxBytes": 16384,
+			"maxBytes": 163840,
 			"backupCount": 5
 		},
 		"comic_processing": {
@@ -68,7 +68,7 @@
 			"class": "logging.handlers.RotatingFileHandler",
 			"formatter": "comic_format",
 			"filename": "logs/comic_processing.log",
-			"maxBytes": 16384,
+			"maxBytes": 163840,
 			"backupCount": 5
 		}
 	}, 
