@@ -28,3 +28,13 @@ def test():
 @celery.task(name='tasks.addissues')
 def add_new_issues_to_database():
     comics.add_new_issues_to_database()
+
+
+@celery.task(name='tasks.diamondtest')
+def cross_check():
+    content = comics.get_shipping_this_week()
+    shipping = comics.get_diamond_ids_shipping(content)
+    # for item in shipping:
+    #     print item
+    # print len(shipping)
+    comics.compare_shipping_with_database(shipping)
