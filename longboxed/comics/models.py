@@ -52,7 +52,8 @@ class Issue(db.Model):
     big_image = db.Column(db.String(255))
     retail_price = db.Column(db.Float())
     description = db.Column(db.Text())
-    on_sale_date = db.Column(db.DateTime())
+    on_sale_date = db.Column(db.Date())
+    current_tfaw_release_date = db.Column(db.Date())
     genre = db.Column(db.String(100))
     people = db.Column(db.String(255)) #####
     popularity = db.Column(db.Float())
