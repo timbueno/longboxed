@@ -5,12 +5,13 @@
 
     Comics blueprints
 """
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from flask import abort, Blueprint, jsonify, render_template, request
 from flask.ext.security import current_user
 
 from . import route
+from ..helpers import get_week
 from ..services import comics as _comics
 
 
@@ -18,7 +19,7 @@ bp = Blueprint('comics', __name__)
 
 @route(bp,'/comics')
 def comics():
-    start, end = get_current_week()
+    start, end = get_week(datetime.today().date())
     dates = {}
     dates['today'] = end.strftime('%B %-d, %Y')
     dates['lastweek'] = start.strftime('%B %-d, %Y')
@@ -84,14 +85,3 @@ def get_comicpage():
 
     # return the html as json for jquery to insert
     return jsonify(nav=nav, clist=clist, matches=matches)
-
-
-
-def get_current_week():
-    today = datetime.today()
-    day_of_week = today.weekday()
-    to_beginning_of_week = timedelta(days=day_of_week)
-    beginning_of_week = (today - to_beginning_of_week).replace(hour=0, minute=0, second=0, microsecond=0)
-    to_end_of_week = timedelta(days= (6 - day_of_week))
-    end_of_week = (today + to_end_of_week).replace(hour=0, minute=0, second=0, microsecond=0)
-    return (beginning_of_week, end_of_week)
