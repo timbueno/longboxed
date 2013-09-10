@@ -22,7 +22,7 @@ from bs4 import BeautifulSoup
 from flask import current_app as app
 
 from ..core import Service
-from ..helpers import strip_tags
+from ..helpers import strip_tags, wednesday, current_wednesday
 from .models import Issue, Publisher, Title
 
 
@@ -58,6 +58,10 @@ class IssueService(Service):
                 if current_user.display_pull_list:
                     matches = [c for c in all_issues if c.title in current_user.pull_list]
         return (relevent_issues, matches)
+
+    def find_issue_with_date(self, date):
+        titles = sorted(self.__model__.query.filter(self.__model__.on_sale_date == date))
+        return sorted(titles, key=lambda k: k.publisher.name)
 
 
 class ComicService(object):
@@ -148,28 +152,26 @@ class ComicService(object):
         # Get every item in the list
         # diamond_shipments = [self.issues.first(diamond_id=x) for x in shipping_ids]
         diamond_shipments = []
+        q = 0
         for diamond_id in shipping_ids:
             issue = self.issues.first(diamond_id=diamond_id)
             if issue:
+                issue.on_sale_date = current_wednesday()
+                self.issues.save(issue)
                 diamond_shipments.append(issue)
-        local_shipments = self.issues.find_issues_in_date_range(datetime.now(), (datetime.now()+timedelta(days=7)))
-        # print local_shipments
-        print len(local_shipments)
-        print len(diamond_shipments)
-        print len(shipping_ids)
+                q = q + 1
+        local_shipments = self.issues.find_issue_with_date(current_wednesday())
         diamond = set(diamond_shipments)
-        for issue in diamond:
-            pass
-        # TODO for item in diamond set - set to this weeks wednesday
-        # Then get all comics scheduled to ship this week 
-        # get difference between shipments
-        # set the date of difference between them to null
         local = set(local_shipments)
-        difference = diamond - local
-        # for issue in difference:
-        #     print issue.complete_title
-        # for item in diamond.intersection(local):
-        #     print item.complete_title
+        difference = local - diamond
+        e = 0
+        for issue in difference:
+            issue.on_sale_date = None
+            self.issues.save(issue)
+            e = e + 1
+
+        print 'Scheduled for Release: %d' % q
+        print 'Unscheduled: %d' % e
         return
 
     def get_raw_issues(self, ffile):
@@ -212,7 +214,8 @@ class ComicService(object):
         i['retail_price'] = float(raw_issue[8]) if self.is_float(raw_issue[8]) else None
         i['description'] = parser.unescape(raw_issue[11])
         try:
-            i['on_sale_date'] = datetime.strptime(raw_issue[12], '%Y-%m-%d').date()
+            # i['on_sale_date'] = datetime.strptime(raw_issue[12], '%Y-%m-%d').date()
+            i['on_sale_date'] = None
             i['current_tfaw_release_date'] = datetime.strptime(raw_issue[12], '%Y-%m-%d').date()
         except:
             i['on_sale_date'] = None
