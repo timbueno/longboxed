@@ -24,7 +24,11 @@
                             </tr>
                             <tr>
                                 <td>Release Date</td>
+                                {% if issue.on_sale_date %}
                                 <td>{{ issue.on_sale_date.strftime('%-m/%-d/%y') }}</td>
+                                {% else %}
+                                <td>Unknown</td>
+                                {% endif %}
                             </tr>
                             <tr>
                                 <td>Price</td>
