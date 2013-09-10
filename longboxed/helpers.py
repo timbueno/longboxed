@@ -60,8 +60,11 @@ def strip_tags(html):
     s.feed(html)
     return s.get_data()
 
-def wednesday(date):
-    sunday, saturday = get_week(date)
+def wednesday(date, multiplier=0):
+    """Given a date, returns a Date() object containng the week's wednesday.
+    A week is defined as Sunday thru Saturday. The 'multiplier' argument 
+    provides the ability navigate multiple weeks into the future and past"""
+    sunday, saturday = get_week(date, multiplier)
     return sunday + timedelta(days=3)
 
 def current_wednesday():
@@ -72,12 +75,13 @@ def current_wednesday():
 #     start, end = get_current_week()
 #     return get_wednesday(start)
 
-def get_week(date):
-    """Returns Sunday through Saturday of the current week
-    (Sunday first)"""
+def get_week(date, multiplier=0):
+    """Returns Sunday and Saturday of the week the 'date' argument is currently in.
+    The 'multiplier' argument provides the ability to navigate multiple weeks into 
+    the future and past"""
     day_idx = (date.weekday() + 1) % 7 # Turn sunday into 0, monday into 1, etc.
-    sunday = date - timedelta(days=day_idx)
-    saturday = sunday + timedelta(days=6)
+    sunday = (date - timedelta(days=day_idx)) + (multiplier * timedelta(7))
+    saturday = (sunday + timedelta(days=6))
     return (sunday, saturday)
 
 # def get_current_week():
