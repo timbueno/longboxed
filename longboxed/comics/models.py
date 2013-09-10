@@ -66,8 +66,8 @@ class Issue(db.Model):
     has_alternates = db.Column(db.Boolean(), default=False)
     @property
     def alternates(self):
-        x = self.query.filter_by(title=self.title, issue_number=self.issue_number)
-        return [issue for issue in x if issue.diamond_id != self.diamond_id]
+        return self.query.filter(Issue.title==self.title, Issue.issue_number==self.issue_number, \
+                                 Issue.diamond_id!=self.diamond_id, Issue.on_sale_date!=None)
 
 
 
