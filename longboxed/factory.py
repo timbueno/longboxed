@@ -6,6 +6,10 @@
     longboxed factory module
 """
 import os
+import json
+
+import logging
+import logging.config
 
 from celery import Celery
 from flask import Flask
@@ -17,7 +21,7 @@ from .middleware import HTTPMethodOverrideMiddleware
 from .models import User, Role
 
 
-def create_app(package_name, package_path, settings_override=None, register_security_blueprint=True):
+def create_app(package_name, package_path, settings_override=None, debug_override=None, register_security_blueprint=True):
     """Returns a :class:`Flask` application instance configured with common
     functionality for the Longboxed platform.
 
@@ -30,23 +34,24 @@ def create_app(package_name, package_path, settings_override=None, register_secu
     app.config.from_object('longboxed.settings')
     app.config.from_pyfile('settings.cfg', silent=True)
     app.config.from_object(settings_override)
+    if debug_override is not None:
+        app.debug = debug_override
 
+    #: Setup Flask Extentions
     bootstrap.init_app(app)
     db.init_app(app)
-    # login_manager.init_app(app)
-
     mail.init_app(app)
-
     #: Setup Flask-Security
     security.init_app(app, SQLAlchemyUserDatastore(db, User, Role),
                       register_blueprint=register_security_blueprint)
-
-
 
     # register_models(db, package_name, package_path)
     register_blueprints(app, package_name, package_path)
 
     app.wsgi_app = HTTPMethodOverrideMiddleware(app.wsgi_app)
+
+    #: Setup Logging if not debug
+    setup_logging()
 
     return app
 
@@ -66,3 +71,37 @@ def create_celery_app(app=None):
 
     celery.Task = ContextTask
     return celery
+
+
+def setup_logging(default_path='longboxed/logging.json', default_level=logging.INFO, env_key='LOG_CFG'):
+    """
+    Setup logging configuration
+    """
+    path = default_path
+    value = os.getenv(env_key, None)
+    if value:
+        path = value
+    if os.path.exists(path):
+        with open(path, 'rt') as f:
+            config = json.loads(f.read())
+        logging.config.dictConfig(config)
+    else:
+        logging.basicConfig(level=default_level)
+    return
+
+
+class LogOnlyLevel(object):
+    def __init__(self, level):
+        if level == 'DEBUG':
+            level = logging.DEBUG
+        elif level == 'INFO':
+            level = logging.INFO
+        elif level == 'ERROR':
+            level = logging.ERROR
+        else:
+            print 'Something is wrong with your filter...'
+            level = None
+        self.__level = level
+
+    def filter(self, logRecord):
+        return logRecord.levelno <= self.__level

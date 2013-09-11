@@ -9,6 +9,18 @@ from datetime import timedelta
 
 DEBUG = True
 
+# Longboxed Specific Variables
+AFFILIATE_ID = '782419'
+SUPPORTED_PUBS = ['Marvel Comics', 'DC Comics', 'Dark Horse', 'IDW Publishing',\
+                  'Boom! Studios', 'Image Comics', 'Dynamite Entertainment', \
+                  'Avatar Press', 'Abstract Studios','Archie Comics', \
+                  'Vertigo', 'Valiant Comics']
+
+SUPPORTED_DIAMOND_PUBS = ['MARVEL COMICS', 'DC COMICS', 'DARK HORSE COMICS', \
+                          'IDEA & DESIGN WORKS LLC', 'BOOM ENTERTAINMENT', 'IMAGE COMICS',\
+                          'DYNAMIC FORCES','ABSTRACT STUDIOS', 'AVATAR PRESS INC', \
+                          'VALIANT ENTERTAINMENT LLC']
+
 # Flask Application Configuration
 SECRET_KEY = '***REMOVED***'
 
@@ -45,17 +57,14 @@ SECURITY_RESET_WITHIN = '5 days'
 SECURITY_CONFIRM_WITHIN = '5 days'
 
 SECURITY_EMAIL_SENDER = 'no-reply@longboxed.com'
+SECURITY_EMAIL_SUBJECT_REGISTER = 'Welcome to Longboxed!'
+SECURITY_EMAIL_SUBJECT_CONFIRM = 'Please confirm your Longboxed email!'
 
 # Mail configuration
 MAIL_SERVER = 'smtp.mailgun.org'
 MAIL_PORT = 587
-# MAIL_USERNAME = 'postmaster@longboxed.mailgun.org'
-# MAIL_PASSWORD = '0xcp43by5fb6'
 MAIL_USERNAME = 'postmaster@longboxed.com'
 MAIL_PASSWORD = '***REMOVED***'
-
-SECURITY_EMAIL_SUBJECT_REGISTER = 'Welcome to Longboxed!'
-SECURITY_EMAIL_SUBJECT_CONFIRM = 'Please confirm your Longboxed email!'
 
 # Bootstrap Configuration
 BOOTSTRAP_USE_MINIFIED = True

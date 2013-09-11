@@ -15,9 +15,6 @@ from flask_mail import Mail
 #: Flask-Bootstrap extension instance
 bootstrap = Bootstrap()
 
-#: Flask-Login extension instance
-# login_manager = LoginManager()
-
 #: Flask-MongoKit extension instance
 db = SQLAlchemy()
 
@@ -66,6 +63,11 @@ class Service(object):
         """
         kwargs.pop('csrf_token', None)
         return kwargs
+
+    def count(self):
+        """Returns the number of rows in the models table
+        """
+        return self.__model__.query.count()
 
     def save(self, model):
         """Commits the model to the database and returns the model
@@ -151,7 +153,7 @@ class Service(object):
         :param model: the model to update
         :param **kwargs: update parameters
         """
-        self._isinstance(model)
+        # self._isinstance(model)
         for k, v in self._preprocess_params(kwargs).items():
             setattr(model, k, v)
         self.save(model)

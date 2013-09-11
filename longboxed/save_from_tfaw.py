@@ -5,13 +5,16 @@ import re
 import requests
 import sys
 
+from itertools import groupby
+
 from datetime import datetime
 
-from .services import comics as _comics
+# from .services import comics as _comics
 
 
 AFFILIATE_ID = '782419'
 DD_FILE = 'dd.gz'
+SUPPORTED_PUBS = ['Marvel Comics', 'DC Comics', 'Dark Horse', 'IDW Publishing', 'Boom! Studios', 'Image Comics', 'Dynamite Entertainment', 'Avatar Press', 'Abstract Studios','Archie Comics']
 
 
 def daily_download():
@@ -47,6 +50,47 @@ def get_comics():
                 comics.append(item)
     print '...Done'
     return comics
+
+
+def title_regex(title):
+    try:
+        m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>(\d+))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', title).groupdict()
+
+        # print '\n--------------'
+        # print 'Full:    ', title
+        # print 'Name:    ', m.get('title')
+        # print 'Issue #: ', m.get('issue_number')
+        # print 'Issues:  ', m.get('issues')
+        # print 'Other:   ', m.get('other')
+
+    except (AttributeError, TypeError):
+        m = None
+
+    return m
+
+
+def group_issues(issues):
+    # Sort by title name
+    issues = sorted(issues, key=lambda x: x.title)
+    # Group by title name
+    title_groups = groupby(issues, key=lambda x: x.title)
+    # Sort and group by issue number
+    issue_number_groups = []
+    for group in title_groups:
+        group = sorted(group, key=lambda x: x.issue_number)
+        issue_number_group = groupby(group, key=lambda x: x.issue_number)
+        issue_number_groups.append(issue_number_group)
+    return issue_number_groups
+
+
+def is_diamond_id(possible_id):
+    """Detects if possible_id is a verifiable DiamondID"""
+    months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+    # 'BAG' is checked so as to not include Grab Bags
+    if any(month in possible_id for month in months) and 'BAG' not in possible_id:
+        return True
+    else:
+        return False
 
 
 def title_info(title):
@@ -162,4 +206,22 @@ def add_comics_to_db():
 
 
 if __name__ == "__main__":
-    add_comics_to_db()
+    # add_comics_to_db()
+    raw_info = get_comics()
+    processed_titles = []
+    for q, raw_comic in enumerate(raw_info):
+        if raw_comic[19] in SUPPORTED_PUBS and is_diamond_id(raw_comic[20]):
+            t = title_regex(raw_comic[1])
+            if t:
+                processed_titles.append(t)
+            else:
+                continue
+            print 'Genre: ', raw_comic[13]
+            print 'Publisher: ', raw_comic[19]
+            print 'Date: ', raw_comic[12]
+            print 'ID: ', raw_comic[20]
+
+        # if q == 500:
+        #     break
+
+

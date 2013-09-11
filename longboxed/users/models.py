@@ -5,8 +5,6 @@
 
     User models
 """
-from datetime import datetime
-
 # from flask.ext.login import UserMixin
 from flask.ext.security import UserMixin, RoleMixin
 
@@ -58,13 +56,6 @@ class User(db.Model, UserMixin):
     login_count = db.Column(db.Integer, default=0)
     confirmed_at = db.Column(db.DateTime())
 
-    # registered_at = db.Column(db.DateTime(), default=datetime.utcnow)
-    # # login_count = db.Column(db.Integer, default=0)
-
-    # refresh_token = db.Column(db.String(100))
-    # access_token = db.Column(db.String(100))
-    # token_expire_at = db.Column(db.DateTime())
-
     display_pull_list = db.Column(db.Boolean, default=True)
     default_cal = db.Column(db.String(255))
     # Relationships
@@ -74,6 +65,3 @@ class User(db.Model, UserMixin):
         backref=db.backref('users', lazy='dynamic'), lazy='joined')
     roles = db.relationship('Role', secondary=roles_users,
         backref=db.backref('users', lazy='dynamic'))
-
-    # def get_id(self):
-    #     return self.google_id
