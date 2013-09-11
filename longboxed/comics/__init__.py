@@ -148,19 +148,19 @@ class ComicService(object):
         return shipping
 
 
-    def compare_shipping_with_database(self, shipping_ids):
+    def compare_shipping_with_database(self, shipping_ids, week_advance=0):
         # Get every item in the list
-        # diamond_shipments = [self.issues.first(diamond_id=x) for x in shipping_ids]
         diamond_shipments = []
         q = 0
+        date = wednesday(datetime.today().date(), week_advance)
         for diamond_id in shipping_ids:
             issue = self.issues.first(diamond_id=diamond_id)
             if issue:
-                issue.on_sale_date = current_wednesday()
+                issue.on_sale_date = date
                 self.issues.save(issue)
                 diamond_shipments.append(issue)
                 q = q + 1
-        local_shipments = self.issues.find_issue_with_date(current_wednesday())
+        local_shipments = self.issues.find_issue_with_date(date)
         diamond = set(diamond_shipments)
         local = set(local_shipments)
         difference = local - diamond
@@ -170,8 +170,13 @@ class ComicService(object):
             self.issues.save(issue)
             e = e + 1
 
-        print 'Scheduled for Release: %d' % q
-        print 'Unscheduled: %d' % e
+        summary = """
+        -----------------------------------
+        %s     Release Summary
+        -----------------------------------
+        Scheduled:   %d
+        Unscheduled: %d""" % (date, q, e)
+        process_logger.error(summary)
         return
 
     def get_raw_issues(self, ffile):

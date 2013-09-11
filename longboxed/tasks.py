@@ -30,11 +30,14 @@ def add_new_issues_to_database():
     comics.add_new_issues_to_database()
 
 
-@celery.task(name='tasks.diamondtest')
+@celery.task(name='tasks.cross_check')
 def cross_check():
     content = comics.get_shipping_this_week()
     shipping = comics.get_diamond_ids_shipping(content)
-    # for item in shipping:
-    #     print item
-    # print len(shipping)
     comics.compare_shipping_with_database(shipping)
+
+
+@celery.task(name='tasks.add_and_check')
+def add_and_check():
+    add_new_issues_to_database()
+    cross_check()
