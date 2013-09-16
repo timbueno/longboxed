@@ -150,6 +150,7 @@ class ComicService(object):
 
     def compare_shipping_with_database(self, shipping_ids, week_advance=0):
         # Get every item in the list
+        # TODO adfasdfthinadfdf;
         diamond_shipments = []
         q = 0
         date = wednesday(datetime.today().date(), week_advance)

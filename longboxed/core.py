@@ -7,7 +7,6 @@
 """
 
 from flask.ext.bootstrap import Bootstrap
-# from flask.ext.login import LoginManager
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security
 from flask_mail import Mail

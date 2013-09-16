@@ -7,11 +7,12 @@
 """
 from datetime import datetime
 
-from flask import abort, Blueprint, jsonify, render_template, request
+from flask import abort, Blueprint, jsonify, render_template, redirect, request, \
+                  url_for
 from flask.ext.security import current_user
 
 from . import route
-from ..helpers import get_week
+from ..helpers import current_wednesday, get_week, wednesday
 from ..services import comics as _comics
 
 
@@ -27,6 +28,38 @@ def comics():
     dates['end'] = end
     comicList, matches = _comics.issues.find_relevent_issues_in_date_range(start, end, current_user)
     return render_template('comics.html', dates=dates, comicList=comicList, calendarenable=1, matches=matches)
+
+
+@route(bp,'/releases/<date>')
+def releases(date):
+    try:
+        release_date = datetime.strptime(date, '%Y-%m-%d')
+        issues = _comics.issues.find_issue_with_date(release_date)
+        return render_template('releases.html', date=release_date, comicList=issues, calendarenable=1, matches=None)
+    except ValueError:
+        return abort(404)
+
+
+@route(bp, '/thisweek')
+def this_week():
+    date = current_wednesday()
+    date = date.strftime('%Y-%m-%d')
+    print date
+    return redirect(url_for('comics.releases', date=date))
+
+
+@route(bp, '/lastweek')
+def last_week():
+    date = wednesday(datetime.today().date(), -1)
+    date = date.strftime('%Y-%m-%d')
+    return redirect(url_for('comics.releases', date=date))
+
+
+@route(bp, '/nextweek')
+def next_week():
+    date = wednesday(datetime.today().date(), 1)
+    date = date.strftime('%Y-%m-%d')
+    return redirect(url_for('comics.releases', date=date))
 
 
 @route(bp, '/issue/<diamond_id>')
