@@ -43,8 +43,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #
   config.vm.provision :ansible do |ansible|
     # point Vagrant at the location of your playbook you want to run
-    #ansible.playbook = "devops/provision_production_server.yml"
-    ansible.playbook = "devops/setup_database.yml"
+    ansible.playbook = "devops/provision_production_server.yml"
+    #ansible.playbook = "devops/setup_database.yml"
     #ansible.playbook = "devops/deploy_app.yml"
 
     ansible.inventory_file = "devops/vagrant_hosts"

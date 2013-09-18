@@ -141,27 +141,23 @@
     - name: Supervisor | Start supervisord service and have it run during system startup
       action: service name=supervisord state=started enabled=yes
 
-# - hosts: webservers
-#   user: vagrant
-#   sudo: yes
-#   sudo_user: postgres
-#   gather_facts: no
+- hosts: webservers
+  user: vagrant
+  sudo: yes
+  sudo_user: postgres
+  gather_facts: no
 
-#   vars:
-#       dbname: longboxed
-#       dbuser: flask_user
-#       dbpassword: mysupersecretpassword
+  vars:
+      dbname: longboxed
+      dbuser: app_user
+      dbpassword: password
 
-#   tasks:
-#     - name: ensure database is created
-#       action: postgresql_db db={{dbname}}
+  tasks:
+    - name: ensure database is created
+      action: postgresql_db db={{dbname}}
 
-#     - name: ensure user has access to database
-#       action: postgresql_user db={{dbname}} user={{dbuser}} password={{dbpassword}} priv=ALL
+    - name: ensure user has access to database
+      action: postgresql_user db={{dbname}} user={{dbuser}} password={{dbpassword}} priv=ALL
 
-#     - name: ensure user does not have unnecessary privilege
-#       action: postgresql_user user={{dbuser}} role_attr_flags=NOSUPERUSER,NOCREATEDB
-
-#   handlers:
-#       - name: restart postgresql
-#         action: service name=postgresql state=restarted
+    - name: ensure user does not have unnecessary privilege
+      action: postgresql_user user={{dbuser}} role_attr_flags=NOSUPERUSER,NOCREATEDB
