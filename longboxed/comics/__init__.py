@@ -144,7 +144,8 @@ class ComicService(object):
         html = BeautifulSoup(raw_content)
         f = StringIO(html.pre.string.strip(' \t\n\r'))
         incsv = csv.DictReader(f)
-        shipping = [x['ITEMCODE']+x['DiscountCode'] for x in incsv if x['Vendor'].strip('*') in [y.upper() for y in app.config['SUPPORTED_DIAMOND_PUBS']]]
+        # shipping = [x['ITEMCODE']+x['DiscountCode'] for x in incsv if x['Vendor'].strip('*') in [y.upper() for y in app.config['SUPPORTED_DIAMOND_PUBS']]]
+        shipping = [x['ITEMCODE']+x['DiscountCode'] for x in incsv]
         return shipping
 
 

@@ -25,7 +25,9 @@ SUPPORTED_DIAMOND_PUBS = ['MARVEL COMICS', 'DC COMICS', 'DARK HORSE COMICS', \
 SECRET_KEY = '***REMOVED***'
 
 # URIS
-SQLALCHEMY_DATABASE_URI = 'mysql://root:password@localhost:3306/longboxed'
+# SQLALCHEMY_DATABASE_URI = 'mysql://root:password@localhost:3306/longboxed'
+# SQLALCHEMY_DATABASE_URI = 'postgres://longboxed:mysupersecretpassword@localhost/longboxed'
+SQLALCHEMY_DATABASE_URI = 'postgres://app_user:password@localhost/longboxed'
 
 # Celery
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
