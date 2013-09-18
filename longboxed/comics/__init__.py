@@ -22,7 +22,7 @@ from bs4 import BeautifulSoup
 from flask import current_app as app
 
 from ..core import Service
-from ..helpers import strip_tags, wednesday, current_wednesday
+from ..helpers import wednesday
 from .models import Issue, Publisher, Title
 
 
