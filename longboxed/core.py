@@ -5,6 +5,7 @@
 
     core module
 """
+import werkzeug
 
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -49,6 +50,8 @@ class Service(object):
         :param model: the model instance to check
         :param raise_error: flag to raise an error on a mismatch
         """
+        if type(model) == werkzeug.local.LocalProxy:
+            model = model._get_current_object()
         rv = isinstance(model, self.__model__)
         if not rv and raise_error:
             raise ValueError('%s is not of type %s' % (model, self.__model__))
@@ -73,7 +76,7 @@ class Service(object):
 
         :param model: the model to save
         """
-        # self._isinstance(model)
+        self._isinstance(model)
         db.session.add(model)
         db.session.commit()
         return model
@@ -152,7 +155,7 @@ class Service(object):
         :param model: the model to update
         :param **kwargs: update parameters
         """
-        # self._isinstance(model)
+        self._isinstance(model)
         for k, v in self._preprocess_params(kwargs).items():
             setattr(model, k, v)
         self.save(model)
