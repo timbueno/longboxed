@@ -5,8 +5,6 @@
 
     Comics module
 """
-from decimal import Decimal
-
 from ..core import db
 
 
@@ -67,7 +65,7 @@ class Issue(db.Model):
     @property
     def alternates(self):
         return self.query.filter(Issue.title==self.title, Issue.issue_number==self.issue_number, \
-                                 Issue.diamond_id!=self.diamond_id, Issue.on_sale_date!=None)
+                                 Issue.diamond_id!=self.diamond_id)
 
 
 

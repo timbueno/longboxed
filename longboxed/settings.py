@@ -16,16 +16,18 @@ SUPPORTED_PUBS = ['Marvel Comics', 'DC Comics', 'Dark Horse', 'IDW Publishing',\
                   'Avatar Press', 'Abstract Studios','Archie Comics', \
                   'Vertigo', 'Valiant Comics']
 
-SUPPORTED_DIAMOND_PUBS = ['MARVEL COMICS', 'DC COMICS', 'DARK HORSE COMICS', \
-                          'IDEA & DESIGN WORKS LLC', 'BOOM ENTERTAINMENT', 'IMAGE COMICS',\
-                          'DYNAMIC FORCES','ABSTRACT STUDIOS', 'AVATAR PRESS INC', \
-                          'VALIANT ENTERTAINMENT LLC']
+# SUPPORTED_DIAMOND_PUBS = ['MARVEL COMICS', 'DC COMICS', 'DARK HORSE COMICS', \
+#                           'IDEA & DESIGN WORKS LLC', 'BOOM ENTERTAINMENT', 'IMAGE COMICS',\
+#                           'DYNAMIC FORCES','ABSTRACT STUDIOS', 'AVATAR PRESS INC', \
+#                           'ARCHIE COMIC PUBLICATIONS', 'VALIANT ENTERTAINMENT LLC']
 
 # Flask Application Configuration
 SECRET_KEY = '***REMOVED***'
 
 # URIS
-SQLALCHEMY_DATABASE_URI = 'mysql://root:password@localhost:3306/longboxed'
+# SQLALCHEMY_DATABASE_URI = 'mysql://root:password@localhost:3306/longboxed'
+# SQLALCHEMY_DATABASE_URI = 'postgres://longboxed:mysupersecretpassword@localhost/longboxed'
+SQLALCHEMY_DATABASE_URI = 'postgres://app_user:password@localhost/longboxed'
 
 # Celery
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
