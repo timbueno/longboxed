@@ -19,6 +19,8 @@ class Publisher(db.Model):
     titles = db.relationship('Title', backref=db.backref('publisher', lazy='joined'), lazy='dynamic')
     comics = db.relationship('Issue', backref=db.backref('publisher', lazy='joined'), lazy='dynamic')
 
+    def __str__(self):
+        return self.name
 
 class Title(db.Model):
     __tablename__ = 'titles'
@@ -31,6 +33,8 @@ class Title(db.Model):
     # Relationships
     issues = db.relationship('Issue', backref=db.backref('title', lazy='joined'), lazy='dynamic', order_by='Issue.on_sale_date')
 
+    def __str__(self):
+        return self.name
 
 class Issue(db.Model):
     __tablename__ = 'issues'
