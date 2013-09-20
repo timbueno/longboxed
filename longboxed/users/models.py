@@ -65,3 +65,6 @@ class User(db.Model, UserMixin):
         backref=db.backref('users', lazy='dynamic'), lazy='joined')
     roles = db.relationship('Role', secondary=roles_users,
         backref=db.backref('users', lazy='dynamic'))
+
+    def __str__(self):
+        return self.email
