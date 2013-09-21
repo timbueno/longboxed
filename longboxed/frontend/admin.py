@@ -13,7 +13,18 @@ from ..core import db
 from ..models import Issue, Publisher, Title, User, Role
 
 
-class IssueAdmin(ModelView):
+class AdministratorBase(ModelView):
+    def is_accessible(self):
+        return current_user.has_role('admin')
+
+
+class SuperUserBase(ModelView):
+    def is_accessible(self):
+        return (current_user.has_role('admin') and
+                current_user.has_role('super'))
+
+
+class IssueAdmin(AdministratorBase):
     # List of columns that can be sorted
     column_sortable_list = ('issue_number', 'complete_title', 'on_sale_date', ('title',Title.name), ('publisher', Publisher.name))
     # column_searchable_list = ('title')
@@ -23,17 +34,13 @@ class IssueAdmin(ModelView):
         super(IssueAdmin, self).__init__(Issue, session)
 
 
-class PublisherAdmin(ModelView):
-
-    def is_accessible(self):
-        return current_user.has_role('admin')
-
+class PublisherAdmin(AdministratorBase):
     def __init__(self, session):
         # Just call parent class with predefined model.
         super(PublisherAdmin, self).__init__(Publisher, session) 
 
 
-class TitleAdmin(ModelView):
+class TitleAdmin(AdministratorBase):
     column_sortable_list= ('name', ('publisher', Publisher.name))
     # column_searchable_list = ('name')
     def __init__(self, session):
@@ -41,7 +48,7 @@ class TitleAdmin(ModelView):
         super(TitleAdmin, self).__init__(Title, session)        
 
 
-class UserAdmin(ModelView):
+class UserAdmin(SuperUserBase):
     column_list = ('email', 'last_login_at', 'login_count', 'pull_list', 'roles')
 
     def __init__(self, session):
