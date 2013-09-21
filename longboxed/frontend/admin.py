@@ -5,11 +5,12 @@
 
     frontend application asset "pipeline"
 """
+from flask.ext.security import current_user
 from flask.ext.admin import Admin
 from flask.ext.admin.contrib.sqlamodel import ModelView
 
 from ..core import db
-from ..models import Issue, Publisher, Title, User
+from ..models import Issue, Publisher, Title, User, Role
 
 
 class IssueAdmin(ModelView):
@@ -23,6 +24,10 @@ class IssueAdmin(ModelView):
 
 
 class PublisherAdmin(ModelView):
+
+    def is_accessible(self):
+        return current_user.has_role('admin')
+
     def __init__(self, session):
         # Just call parent class with predefined model.
         super(PublisherAdmin, self).__init__(Publisher, session) 
@@ -37,11 +42,17 @@ class TitleAdmin(ModelView):
 
 
 class UserAdmin(ModelView):
-    column_list = ('email', 'last_login_at', 'login_count', 'pull_list')
+    column_list = ('email', 'last_login_at', 'login_count', 'pull_list', 'roles')
 
     def __init__(self, session):
         # Just call parent class with predefined model.
         super(UserAdmin, self).__init__(User, session)
+
+
+class RoleAdmin(ModelView):
+    def __init__(self, session):
+        # Just call parent class with predefined model.
+        super(RoleAdmin, self).__init__(Role, session)
 
 
 def init_app(app):
@@ -50,3 +61,4 @@ def init_app(app):
     admin.add_view(IssueAdmin(db.session))
     admin.add_view(PublisherAdmin(db.session))
     admin.add_view(TitleAdmin(db.session))
+    admin.add_view(RoleAdmin(db.session))
