@@ -7,9 +7,11 @@
 """
 
 from .comics import ComicService
-from .users import UsersService
+from .users import UsersService, RolesService
 
 
 comics = ComicService()
 
 users = UsersService()
+
+roles = RolesService()

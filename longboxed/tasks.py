@@ -6,7 +6,7 @@
     overholt tasks module
 """
 from .factory import create_celery_app
-from .services import comics
+from .services import comics, roles
 
 celery = create_celery_app()
 
@@ -23,7 +23,6 @@ def add(x,y):
 @celery.task(name='tasks.test')
 def test():
     print 'firing test task'
-
 
 @celery.task(name='tasks.addissues')
 def add_new_issues_to_database():
