@@ -42,7 +42,7 @@ class Role(db.Model, RoleMixin):
                 self.name != getattr(other, 'name', None))
 
     def __str__(self):
-        return self.description
+        return self.name
 
 
 class User(db.Model, UserMixin):
