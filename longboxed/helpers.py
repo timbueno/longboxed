@@ -71,6 +71,10 @@ def current_wednesday():
     return wednesday(datetime.today().date())
 
 
+def next_wednesday():
+    return wednesday(datetime.today().date(), 1)
+
+
 def get_week(date, multiplier=0):
     """Returns Sunday and Saturday of the week the 'date' argument is currently in.
     The 'multiplier' argument provides the ability to navigate multiple weeks into 
