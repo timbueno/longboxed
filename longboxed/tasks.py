@@ -6,7 +6,7 @@
     overholt tasks module
 """
 from .factory import create_celery_app
-from .services import comics, roles
+from .services import comics
 
 celery = create_celery_app()
 
