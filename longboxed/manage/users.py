@@ -15,16 +15,30 @@ from werkzeug.local import LocalProxy
 
 from ..core import db
 from ..services import users
+from ..services import roles
 
 
-class CreateRolesCommand(Command):
+class CreateNewRoleCommand(Command):
+    """Creates a role"""
+
+    def run(self):
+        name = prompt('Role Name')
+        description = prompt('Role Description')
+        _security_datastore = LocalProxy(lambda: current_app.extensions['security'].datastore)
+        _security_datastore.create_role(name=name, description=description)
+        db.session.commit()
+        return
+
+
+class CreateDefaultRolesCommand(Command):
     """Creates inital roles (user, admin, super)"""
 
     def run(self):
-        roles = [('user', 'No Permissions'), ('admin', 'Comic specific permissions'), ('super', 'All permissions')]
+        default_roles = [('user', 'No Permissions'), ('admin', 'Comic specific permissions'), ('super', 'All permissions')]
         _security_datastore = LocalProxy(lambda: current_app.extensions['security'].datastore)
-        for role in roles:
+        for role in default_roles:
             _security_datastore.find_or_create_role(name=role[0], description=role[1])
+            db.session.commit()
         print 'Sucessfully added roles'
 
 
@@ -79,6 +93,13 @@ class AddAdminUserRoleCommand(Command):
             print '\nUser given admin role sucessfully'
             return
         print '\nNo user found'
+
+class ListRolesCommand(Command):
+    """List all roles"""
+
+    def run(self):
+        for r in roles.all():
+            print 'Role(name=%s description=%s)' % (r.name, r.description)
 
 
 class ListUsersCommand(Command):
