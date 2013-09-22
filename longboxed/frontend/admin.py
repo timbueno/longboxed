@@ -6,17 +6,20 @@
     frontend application asset "pipeline"
 """
 from flask.ext.security import current_user
-from flask.ext.admin import Admin
+from flask.ext.admin import Admin, AdminIndexView
 from flask.ext.admin.contrib.sqlamodel import ModelView
 
 from ..core import db
 from ..models import Issue, Publisher, Title, User, Role
 
 
-class AdministratorBase(ModelView):
+class LongboxedAdminIndexView(AdminIndexView):
     def is_accessible(self):
         return current_user.has_role('admin')
 
+class AdministratorBase(ModelView):
+    def is_accessible(self):
+        return current_user.has_role('admin')
 
 class SuperUserBase(ModelView):
     def is_accessible(self):
@@ -63,7 +66,7 @@ class RoleAdmin(ModelView):
 
 
 def init_app(app):
-    admin = Admin(app)
+    admin = Admin(app, index_view=LongboxedAdminIndexView())
     admin.add_view(UserAdmin(db.session))
     admin.add_view(IssueAdmin(db.session))
     admin.add_view(PublisherAdmin(db.session))
