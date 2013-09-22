@@ -59,7 +59,7 @@ class UserAdmin(SuperUserBase):
         super(UserAdmin, self).__init__(User, session)
 
 
-class RoleAdmin(ModelView):
+class RoleAdmin(SuperUserBase):
     def __init__(self, session):
         # Just call parent class with predefined model.
         super(RoleAdmin, self).__init__(Role, session)
