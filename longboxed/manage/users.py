@@ -17,6 +17,17 @@ from ..core import db
 from ..services import users
 
 
+class CreateRolesCommand(Command):
+    """Creates inital roles (user, admin, super)"""
+
+    def run(self):
+        roles = [('user', 'No Permissions'), ('admin', 'Comic specific permissions'), ('super', 'All permissions')]
+        _security_datastore = LocalProxy(lambda: current_app.extensions['security'].datastore)
+        for role in roles:
+            _security_datastore.find_or_create_role(name=role[0], description=role[1])
+        print 'Sucessfully added roles'
+
+
 class CreateUserCommand(Command):
     """Create a user"""
 
@@ -68,7 +79,7 @@ class AddAdminUserRoleCommand(Command):
             print '\nUser given admin role sucessfully'
             return
         print '\nNo user found'
-        
+
 
 class ListUsersCommand(Command):
     """List all users"""
