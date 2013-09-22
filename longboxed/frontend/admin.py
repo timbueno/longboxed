@@ -13,7 +13,7 @@ from flask.ext.admin.babel import gettext, lazy_gettext
 from flask.ext.admin.contrib.sqlamodel import ModelView
 
 from ..core import db
-from ..helpers import current_wednesday, next_wednesday 
+from ..helpers import current_wednesday, last_wednesday, next_wednesday 
 from ..services import comics as _comics
 from ..models import Issue, Publisher, Title, User, Role
 
@@ -35,7 +35,7 @@ class SuperUserBase(ModelView):
 class IssueAdmin(AdministratorBase):
     # List of columns that can be sorted
     column_sortable_list = ('issue_number', 'complete_title', 'on_sale_date', ('title',Title.name), ('publisher', Publisher.name))
-    # column_searchable_list = ('title')
+    column_searchable_list = ('complete_title', 'diamond_id')
     column_list = ('on_sale_date', 'diamond_id', 'issue_number', 'issues', 'complete_title', 'title', 'publisher')
     
     def __init__(self, session):
@@ -58,6 +58,10 @@ class IssueAdmin(AdministratorBase):
     def action_next_wednesday(self, ids):
         self.set_on_sale_date(ids, next_wednesday())
 
+    @action('last_wednesday', lazy_gettext('Last Wed | %(date)s', date=last_wednesday()), lazy_gettext('Are you sure? | %(date)s', date=last_wednesday()))
+    def action_last_wednesday(self, ids):
+        self.set_on_sale_date(ids, last_wednesday())
+
     @action('no_date', lazy_gettext('No Date'), lazy_gettext('Are you sure? | No Date'))
     def action_no_date(self, ids):
         self.set_on_sale_date(ids, None)
@@ -78,6 +82,7 @@ class TitleAdmin(AdministratorBase):
 
 class UserAdmin(SuperUserBase):
     column_list = ('email', 'last_login_at', 'login_count', 'pull_list', 'roles')
+    column_searchable_list = ('email',)
 
     def __init__(self, session):
         # Just call parent class with predefined model.

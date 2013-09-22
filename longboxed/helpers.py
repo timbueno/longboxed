@@ -70,9 +70,11 @@ def wednesday(date, multiplier=0):
 def current_wednesday():
     return wednesday(datetime.today().date())
 
-
 def next_wednesday():
     return wednesday(datetime.today().date(), 1)
+
+def last_wednesday():
+    return wednesday(datetime.today().date(), -1)
 
 
 def get_week(date, multiplier=0):
