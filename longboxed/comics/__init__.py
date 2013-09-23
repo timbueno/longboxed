@@ -217,10 +217,10 @@ class ComicService(object):
         i['description'] = parser.unescape(raw_issue[11])
         try:
             # i['on_sale_date'] = datetime.strptime(raw_issue[12], '%Y-%m-%d').date()
-            i['on_sale_date'] = None
+            # i['on_sale_date'] = None
             i['current_tfaw_release_date'] = datetime.strptime(raw_issue[12], '%Y-%m-%d').date()
         except:
-            i['on_sale_date'] = None
+            # i['on_sale_date'] = None
             i['current_tfaw_release_date'] = None
         i['genre'] = raw_issue[13]
         i['people'] = None #### Fixme
