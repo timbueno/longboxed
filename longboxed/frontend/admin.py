@@ -74,7 +74,6 @@ class PublisherAdmin(AdministratorBase):
 
 class TitleAdmin(AdministratorBase):
     column_sortable_list= ('name', ('publisher', Publisher.name))
-    # column_searchable_list = ('name')
     def __init__(self, session):
         # Just call parent class with predefined model.
         super(TitleAdmin, self).__init__(Title, session)        

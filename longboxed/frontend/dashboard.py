@@ -27,6 +27,7 @@ def before_request():
     else:
         g.user = None
 
+
 @route(bp, '/')
 def index():
     if not current_user.is_anonymous():
@@ -35,31 +36,21 @@ def index():
     return render_template('main.html')
 
 
-# @route(bp, '/favorites')
-# def favorites():
-#     print _comics.distinct_publishers()
-#     return abort(404)
-
-
 @route(bp, '/settings', methods=['GET','POST'])
 @login_required
 def settings():
     if current_user is not None:
         if request.method == 'POST':
-            # try:
             if 'display_favs' in request.values:
                 current_user.display_pull_list = True
             else:
                 current_user.display_pull_list = False
             current_user.default_cal = request.form['cals']
-            # current_user.publishers = request.form.getlist('publishers')
 
             pubs = [long(e) for e in request.form.getlist('publishers')]
             p = _comics.publishers.get_all(*pubs)
             current_user.publishers = p
             _users.save(current_user)
-            # except:
-            #     print "Unexpected error:", sys.exc_info()[0]
     else:
         return redirect(url_for('index'))
 

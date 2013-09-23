@@ -14,6 +14,6 @@ def user_registered_signal_handler(app, user, confirm_token):
     db.session.commit()
 
 
-# Run this function from the app factory to register signal handlers
 def init_app(app):
+    """Registers signal handlers with flask application"""
     user_registered.connect_via(app)(user_registered_signal_handler)

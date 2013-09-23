@@ -56,6 +56,7 @@ class MLStripper(HTMLParser):
 
 
 def strip_tags(html):
+    """Strips a string of all html tags"""
     s = MLStripper()
     s.feed(html)
     return s.get_data()

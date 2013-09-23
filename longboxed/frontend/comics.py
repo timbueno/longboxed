@@ -78,9 +78,7 @@ def title(title_id):
     """TODO title model to get issues to 'select' change back to dynamic"""
     title = _comics.titles.get_or_404(id=title_id)
     if title:
-        # issues = title.issues.limit(10).order_by()
         issues = title.issues.all()
-        # issues = title.issues.limit(10)
         return render_template('title.html', comic_title=title, issues=issues)
     return abort(404)
 
@@ -99,7 +97,6 @@ def get_comicpage():
     start = datetime.strptime(request.form['start'], '%B %d, %Y')
     end = datetime.strptime(request.form['end'], '%B %d, %Y')
 
-    # comicList = find_comics_in_date_range(start, end)
     comicList, matches = _comics.find_relevent_comics_in_date_range(start, end, current_user)
 
     try:

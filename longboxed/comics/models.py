@@ -10,7 +10,6 @@ from ..core import db
 
 class Publisher(db.Model):
     __tablename__ = 'publishers'
-    # __table_args__ = {'extend_existing': True}
     # IDs
     id = db.Column(db.Integer, primary_key=True)
     # Attributes
@@ -24,7 +23,6 @@ class Publisher(db.Model):
 
 class Title(db.Model):
     __tablename__ = 'titles'
-    # __table_args__ = {'extend_existing': True}
     # IDs
     id = db.Column(db.Integer, primary_key=True)
     publisher_id = db.Column(db.Integer, db.ForeignKey('publishers.id'))

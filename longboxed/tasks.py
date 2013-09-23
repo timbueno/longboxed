@@ -11,14 +11,8 @@ from .services import comics
 celery = create_celery_app()
 
 @celery.task
-def talk():
-    print 'Hey whats going on man?'
-
-
-@celery.task
 def add(x,y):
     return x+y
-
 
 @celery.task(name='tasks.test')
 def test():
