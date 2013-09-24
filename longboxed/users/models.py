@@ -33,6 +33,17 @@ class Role(db.Model, RoleMixin):
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
 
+    def __eq__(self, other):
+        return (self.name == other or
+                self.name == getattr(other, 'name', None))
+
+    def __ne__(self, other):
+        return (self.name != other and
+                self.name != getattr(other, 'name', None))
+
+    def __str__(self):
+        return self.name
+
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -65,3 +76,6 @@ class User(db.Model, UserMixin):
         backref=db.backref('users', lazy='dynamic'), lazy='joined')
     roles = db.relationship('Role', secondary=roles_users,
         backref=db.backref('users', lazy='dynamic'))
+
+    def __str__(self):
+        return self.email

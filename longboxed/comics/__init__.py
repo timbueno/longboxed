@@ -41,8 +41,6 @@ class IssueService(Service):
     __model__ = Issue
 
     def find_issues_in_date_range(self, start, end):
-        # s = start.strftime('%Y-%m-%d')
-        # e = end.strftime('%Y-%m-%d')
         titles = sorted(self.__model__.query.filter(self.__model__.on_sale_date.between(start,end)))
         sorted_titles = sorted(titles, key=lambda k: k.publisher.name)
         return sorted_titles
@@ -136,7 +134,6 @@ class ComicService(object):
         }
         r = requests.get(base_url, params=payload)
 
-        # return strip_tags(r.content.strip(' \t\n\r'))
         return r.content
 
 
@@ -144,14 +141,12 @@ class ComicService(object):
         html = BeautifulSoup(raw_content)
         f = StringIO(html.pre.string.strip(' \t\n\r'))
         incsv = csv.DictReader(f)
-        # shipping = [x['ITEMCODE']+x['DiscountCode'] for x in incsv if x['Vendor'].strip('*') in [y.upper() for y in app.config['SUPPORTED_DIAMOND_PUBS']]]
         shipping = [x['ITEMCODE']+x['DiscountCode'] for x in incsv]
         return shipping
 
 
     def compare_shipping_with_database(self, shipping_ids, week_advance=0):
         # Get every item in the list
-        # TODO adfasdfthinadfdf;
         diamond_shipments = []
         q = 0
         date = wednesday(datetime.today().date(), week_advance)
@@ -222,10 +217,10 @@ class ComicService(object):
         i['description'] = parser.unescape(raw_issue[11])
         try:
             # i['on_sale_date'] = datetime.strptime(raw_issue[12], '%Y-%m-%d').date()
-            i['on_sale_date'] = None
+            # i['on_sale_date'] = None
             i['current_tfaw_release_date'] = datetime.strptime(raw_issue[12], '%Y-%m-%d').date()
         except:
-            i['on_sale_date'] = None
+            # i['on_sale_date'] = None
             i['current_tfaw_release_date'] = None
         i['genre'] = raw_issue[13]
         i['people'] = None #### Fixme

@@ -91,5 +91,4 @@ def events_on_day(cal, day):
     r = response.json()
     if 'items' in r:
         return r['items']
-    # print 'NO EVENTS FOUND'
     return None

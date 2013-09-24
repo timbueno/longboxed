@@ -15,6 +15,7 @@ from celery import Celery
 from flask import Flask
 from flask.ext.security import SQLAlchemyUserDatastore
 
+from . import signals
 from .core import bootstrap, db, mail, security
 from .helpers import register_blueprints
 from .middleware import HTTPMethodOverrideMiddleware
@@ -45,8 +46,11 @@ def create_app(package_name, package_path, settings_override=None, debug_overrid
     security.init_app(app, SQLAlchemyUserDatastore(db, User, Role),
                       register_blueprint=register_security_blueprint)
 
-    # register_models(db, package_name, package_path)
+    # Register all blueprints
     register_blueprints(app, package_name, package_path)
+
+    # Register all signal handlers
+    signals.init_app(app)
 
     app.wsgi_app = HTTPMethodOverrideMiddleware(app.wsgi_app)
 
