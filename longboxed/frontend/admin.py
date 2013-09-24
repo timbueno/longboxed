@@ -5,6 +5,8 @@
 
     frontend application asset "pipeline"
 """
+from datetime import datetime
+
 from flask import flash
 from flask.ext.security import current_user
 from flask.ext.admin import Admin, AdminIndexView
@@ -42,6 +44,11 @@ class IssueAdmin(AdministratorBase):
         # Just call parent class with predefined model.
         super(IssueAdmin, self).__init__(Issue, session)
 
+    def on_model_change(self, form, model):
+        """Sets last_updated attribute of issue object"""
+        model.last_updated = datetime.now()
+        return
+
     def set_on_sale_date(self, ids, date):
         try:
             issues = _comics.issues.get_all(*ids)
@@ -49,6 +56,7 @@ class IssueAdmin(AdministratorBase):
                 _comics.issues.update(issue, **{'on_sale_date': date})
         except Exception, ex:
             flash(gettext('Failed to set date %(error)s', error=str(ex)), 'error')
+        return
 
     @action('current_wednesday', lazy_gettext('This Wed | %(date)s', date=current_wednesday()), lazy_gettext('Are you sure? | %(date)s', date=current_wednesday()))
     def action_current_wednesday(self, ids):
