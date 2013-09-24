@@ -6,6 +6,7 @@
     launchpad frontend application package
 """
 
+from flask.ext.debugtoolbar import DebugToolbarExtension
 from functools import wraps
 
 from .. import factory
@@ -19,9 +20,11 @@ def create_app(settings_override=None):
 
     # Init assets
     assets.init_app(app)
-
     # Flask-Admin
     admin.init_app(app)
+
+    # Flask-DebugToolbar
+    DebugToolbarExtension(app)
 
     # Register custom error handlers
     if not app.debug:
