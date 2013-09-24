@@ -29,7 +29,7 @@ def create_app(settings_override=None):
     # Register custom error handlers
     if not app.debug:
         for e in [500, 404]:
-            print 'IN CREATE_APP_FRONTEND'
+            pass
             # app.errorhandler(e)(handle_error)
 
     return app
