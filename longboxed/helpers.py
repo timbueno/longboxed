@@ -11,9 +11,12 @@ import importlib
 
 from datetime import datetime, timedelta
 from HTMLParser import HTMLParser
+from json import JSONEncoder as BaseJSONEncoder
 
 from flask import Blueprint
-from json import JSONEncoder as BaseJSONEncoder
+from flask.ext.mail import Message
+
+from .core import mail
 
 
 def register_blueprints(app, package_name, package_path):
@@ -86,6 +89,17 @@ def get_week(date, multiplier=0):
     sunday = (date - timedelta(days=day_idx)) + (multiplier * timedelta(7))
     saturday = (sunday + timedelta(days=6))
     return (sunday, saturday)
+
+
+def mail_content(recipients, sender, content, attachment=None):
+    msg = Message('Your Latest Cross Check',
+                  sender=sender,
+                  recipients=recipients,
+                  body=content)
+    if attachment:
+        msg.attach(filename='checks.txt', content_type='text/plain', data=attachment)
+    mail.send(msg)
+    return
 
 
 class JsonSerializer(object):
