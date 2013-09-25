@@ -176,7 +176,7 @@ class ComicService(object):
         process_logger.error(summary)
         return
 
-    def get_raw_issues(self, ffile):
+    def get_raw_issues(self, ffile, look_ahead):
         # open gzip archive and extract only comics
         with gzip.open(ffile, 'rb') as f:
             comics = []
@@ -186,7 +186,7 @@ class ComicService(object):
                     item = [element for element in item]
                     if item[19] in app.config['SUPPORTED_PUBS'] and self.is_diamond_id(item[20]):
                         release_date = datetime.strptime(item[12], '%Y-%m-%d')
-                        if release_date.date() > (datetime.now().date() - timedelta(days=7)) and release_date.date() < (datetime.now().date() + timedelta(days=21)):
+                        if release_date.date() > (datetime.now().date() - timedelta(days=7)) and release_date.date() < (datetime.now().date() + timedelta(days=look_ahead)):
                             comics.append(item)
         return comics
 
@@ -310,7 +310,7 @@ class ComicService(object):
             # Get latest database data from TFAW
             self.get_latest_TFAW_database()
             # Get raw text data from daily download
-            raw_issues = self.get_raw_issues('latest_db.gz')
+            raw_issues = self.get_raw_issues('latest_db.gz', look_ahead=63)
             # Insert raw comic book into the database
             issue_list = []
             for q, raw_issue in enumerate(raw_issues):
