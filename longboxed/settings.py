@@ -16,10 +16,10 @@ SUPPORTED_PUBS = ['Marvel Comics', 'DC Comics', 'Dark Horse', 'IDW Publishing',\
                   'Avatar Press', 'Abstract Studios','Archie Comics', \
                   'Vertigo', 'Valiant Comics']
 
-# SUPPORTED_DIAMOND_PUBS = ['MARVEL COMICS', 'DC COMICS', 'DARK HORSE COMICS', \
-#                           'IDEA & DESIGN WORKS LLC', 'BOOM ENTERTAINMENT', 'IMAGE COMICS',\
-#                           'DYNAMIC FORCES','ABSTRACT STUDIOS', 'AVATAR PRESS INC', \
-#                           'ARCHIE COMIC PUBLICATIONS', 'VALIANT ENTERTAINMENT LLC']
+SUPPORTED_DIAMOND_PUBS = ['MARVEL COMICS', 'DC COMICS', 'DARK HORSE COMICS', \
+                          'IDEA & DESIGN WORKS LLC', 'BOOM ENTERTAINMENT', 'IMAGE COMICS',\
+                          'DYNAMIC FORCES','ABSTRACT STUDIOS', 'AVATAR PRESS INC', \
+                          'ARCHIE COMIC PUBLICATIONS', 'VALIANT ENTERTAINMENT LLC']
 
 # Flask Application Configuration
 SECRET_KEY = '***REMOVED***'
