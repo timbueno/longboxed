@@ -141,9 +141,18 @@ class ComicService(object):
         html = BeautifulSoup(raw_content)
         f = StringIO(html.pre.string.strip(' \t\n\r'))
         incsv = csv.DictReader(f)
-        shipping = [x['ITEMCODE']+x['DiscountCode'] for x in incsv]
+        # shipping = [x['ITEMCODE']+x['DiscountCode'] for x in incsv]
+        shipping = [x for x in incsv if self.check_publisher(x['Vendor']) and x['DiscountCode'] in ['D','E']]
         return shipping
 
+    def check_publisher(self, publisher):
+        try:
+            if publisher.strip('*') in app.config['SUPPORTED_DIAMOND_PUBS']:
+                return True
+            else:
+                return False
+        except:
+            return False
 
     def compare_shipping_with_database(self, shipping_ids, week_advance=0):
         # Get every item in the list
