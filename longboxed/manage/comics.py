@@ -7,78 +7,37 @@
 """
 import csv
 
+from flask.ext.script import Command, Option
 
-# from flask import current_app as app
-# from flask.ext.mail import Message
-from flask.ext.script import Command
-
-# from bs4 import BeautifulSoup
 from StringIO import StringIO
-# import requests
 
-from ..helpers import mail_content
+from ..helpers import current_wednesday, mail_content, next_wednesday
 from ..services import comics
-
-# publisher_names = ['IMAGE COMICS', 'DARK HORSE COMICS', 'MARVEL COMICS', \
-#                    'DC COMICS', 'ARCHIE COMIC PUBLICATIONS', 'IDEA & DESIGN WORKS LLC', \
-#                    'DYNAMIC FORCES', 'BOOM ENTERTAINMENT']
-
-# def get_shipping_this_week():
-#     base_url = 'http://www.tfaw.com/intranet/diamondlists_raw.php'
-#     payload = {
-#         'mode': 'thisweek',
-#         'uid': app.config['AFFILIATE_ID'],
-#         'show%5B%5D': 'Comics',
-#         'display': 'text_raw'
-#     }
-#     r = requests.get(base_url, params=payload)
-#     return r.content
-
-
-# def get_issues_shipping(raw_content):
-#     html = BeautifulSoup(raw_content)
-#     f = StringIO(html.pre.string.strip(' \t\n\r'))
-#     incsv = csv.DictReader(f)
-#     shipping = [x for x in incsv if check_publisher(x['Vendor']) and x['DiscountCode'] in ['D','E']]
-#     return shipping
-
-# def check_publisher(publisher):
-#     try:
-#         if publisher.strip('*') in publisher_names:
-#             return True
-#         else:
-#             return False
-#     except:
-#         return False
-
-
-# def mail_content(recipients, sender, content, attachment=None):
-#     msg = Message('Your Latest Cross Check',
-#                   sender=sender,
-#                   recipients=recipients,
-#                   body=content)
-#     if attachment:
-#         msg.attach(filename='checks.txt', content_type='text/plain', data=attachment)
-#     mail.send(msg)
-#     return
 
 
 class CrossCheckCommand(Command):
-    """Cross checks releases with items in database"""
+    """
+    Cross checks releases with items in database and mails missing
+    issues to a provided email address
+    """
     
-    def run(self):
-        content = comics.get_shipping_this_week()
-        shipping = comics.get_diamond_ids_shipping(content)
+    def get_options(self):
+        return [
+            Option('-w', '--week', dest='week', required=True, choices=['thisweek', 'nextweek', 'twoweeks']),
+            Option('-e', '--email', dest='email', default='timbueno@gmail')
+        ]
+
+    def run(self, email, week):
+        content = comics.get_shipping_from_TFAW(week)
+        shipping = comics.get_issue_dict_shipping(content)
         not_in_db = [i for i in shipping if not comics.issues.first(diamond_id=(i['ITEMCODE']+i['DiscountCode']))]
-        # for i in not_in_db:
-        #     print '%s    %s' % (i['ITEMCODE']+i['DiscountCode'], i['TITLE'])
-        # return
+        not_in_db = sorted(not_in_db, key=lambda x: x['Vendor'])
         f = StringIO()
         ordered_fieldnames = ['ITEMCODE', 'DiscountCode', 'TITLE', 'Vendor', 'PRICE']
         outcsv = csv.DictWriter(f, fieldnames=ordered_fieldnames, delimiter='\t')
         for i in not_in_db:
             outcsv.writerow(i)
-        mail_content(['timbueno@gmail.com'], 'checker@longboxed.com', 'Attached is your checks', f.getvalue())
+        mail_content([email], 'checker@longboxed.com', 'Attached is your checks', f.getvalue())
         f.close()
         return
 
@@ -95,9 +54,21 @@ class UpdateDatabaseCommand(Command):
 class ScheduleReleasesCommand(Command):
     """Automatically schedule releases from Diamond Release file"""
     
-    def run(self):
+    def get_options(self):
+        return [
+            Option('-w', '--week', dest='week', required=True, choices=['thisweek', 'nextweek', 'twoweeks']),
+        ]
+
+    def run(self, week):
         print 'Starting scheduling'
-        content = comics.get_shipping_this_week()
-        shipping = comics.get_diamond_ids_shipping(content)
-        comics.compare_shipping_with_database(shipping)
+        if week == 'thisweek':
+            date = current_wednesday()
+        if week == 'nextweek':
+            date = next_wednesday()
+        if week == 'twoweeks':
+            raise NotImplementedError
+        content = comics.get_shipping_from_TFAW(week)
+        shipping = comics.get_issue_dict_shipping(content)
+        diamond_ids = [x['ITEMCODE']+x['DiscountCode'] for x in shipping]
+        comics.compare_shipping_with_database(diamond_ids, date)
         print 'Done Scheduling'
