@@ -124,10 +124,12 @@ class ComicService(object):
         return
 
 
-    def get_shipping_this_week(self):
+    def get_shipping_from_TFAW(self, week):
+        if week not in ['thisweek', 'nextweek', 'twoweeks']:
+            raise Exception('Not a valid input for week selection')
         base_url = 'http://www.tfaw.com/intranet/diamondlists_raw.php'
         payload = {
-            'mode': 'thisweek',
+            'mode': week,
             'uid': app.config['AFFILIATE_ID'],
             'show%5B%5D': 'Comics',
             'display': 'text_raw'
@@ -137,7 +139,7 @@ class ComicService(object):
         return r.content
 
 
-    def get_diamond_ids_shipping(self, raw_content):
+    def get_issue_dict_shipping(self, raw_content):
         html = BeautifulSoup(raw_content)
         f = StringIO(html.pre.string.strip(' \t\n\r'))
         incsv = csv.DictReader(f)
@@ -154,11 +156,11 @@ class ComicService(object):
         except:
             return False
 
-    def compare_shipping_with_database(self, shipping_ids, week_advance=0):
+    def compare_shipping_with_database(self, shipping_ids, date):
         # Get every item in the list
         diamond_shipments = []
         q = 0
-        date = wednesday(datetime.today().date(), week_advance)
+        # date = wednesday(datetime.today().date(), week_advance)
         for diamond_id in shipping_ids:
             issue = self.issues.first(diamond_id=diamond_id)
             if issue:
@@ -225,11 +227,8 @@ class ComicService(object):
         i['retail_price'] = float(raw_issue[8]) if self.is_float(raw_issue[8]) else None
         i['description'] = parser.unescape(raw_issue[11])
         try:
-            # i['on_sale_date'] = datetime.strptime(raw_issue[12], '%Y-%m-%d').date()
-            # i['on_sale_date'] = None
             i['current_tfaw_release_date'] = datetime.strptime(raw_issue[12], '%Y-%m-%d').date()
         except:
-            # i['on_sale_date'] = None
             i['current_tfaw_release_date'] = None
         i['genre'] = raw_issue[13]
         i['people'] = None #### Fixme
