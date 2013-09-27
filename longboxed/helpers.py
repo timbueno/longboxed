@@ -77,6 +77,9 @@ def current_wednesday():
 def next_wednesday():
     return wednesday(datetime.today().date(), 1)
 
+def two_wednesdays():
+    return wednesday(datetime.today().date(), 2)
+
 def last_wednesday():
     return wednesday(datetime.today().date(), -1)
 
@@ -91,8 +94,8 @@ def get_week(date, multiplier=0):
     return (sunday, saturday)
 
 
-def mail_content(recipients, sender, content, attachment=None):
-    msg = Message('Your Latest Cross Check',
+def mail_content(recipients, sender, subject, content, attachment=None):
+    msg = Message(subject,
                   sender=sender,
                   recipients=recipients,
                   body=content)
