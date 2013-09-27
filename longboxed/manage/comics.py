@@ -11,7 +11,7 @@ from flask.ext.script import Command, Option
 
 from StringIO import StringIO
 
-from ..helpers import current_wednesday, mail_content, next_wednesday
+from ..helpers import current_wednesday, mail_content, two_wednesdays, next_wednesday
 from ..services import comics
 
 
@@ -24,10 +24,12 @@ class CrossCheckCommand(Command):
     def get_options(self):
         return [
             Option('-w', '--week', dest='week', required=True, choices=['thisweek', 'nextweek', 'twoweeks']),
-            Option('-e', '--email', dest='email', default='timbueno@gmail')
+            Option('-e', '--email', dest='email', default='timbueno@gmail.com')
         ]
 
     def run(self, email, week):
+        if week == 'twoweeks':
+            raise NotImplementedError
         content = comics.get_shipping_from_TFAW(week)
         shipping = comics.get_issue_dict_shipping(content)
         not_in_db = [i for i in shipping if not comics.issues.first(diamond_id=(i['ITEMCODE']+i['DiscountCode']))]
@@ -37,7 +39,7 @@ class CrossCheckCommand(Command):
         outcsv = csv.DictWriter(f, fieldnames=ordered_fieldnames, delimiter='\t')
         for i in not_in_db:
             outcsv.writerow(i)
-        mail_content([email], 'checker@longboxed.com', 'Attached is your checks', f.getvalue())
+        mail_content([email], 'checker@longboxed.com', 'Testing', 'Attached is your checks', f.getvalue())
         f.close()
         return
 
@@ -66,6 +68,7 @@ class ScheduleReleasesCommand(Command):
         if week == 'nextweek':
             date = next_wednesday()
         if week == 'twoweeks':
+            date = two_wednesdays()
             raise NotImplementedError
         content = comics.get_shipping_from_TFAW(week)
         shipping = comics.get_issue_dict_shipping(content)
