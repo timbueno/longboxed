@@ -3,7 +3,8 @@
     longboxed.core
     ~~~~~~~~~~~~~
 
-    core module
+    Core module contains basic classes that all applications
+    depend on
 """
 import werkzeug
 
