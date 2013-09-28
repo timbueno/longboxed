@@ -11,7 +11,7 @@ from flask.ext.script import Manager
 from longboxed.api import create_app
 from longboxed.manage import CreateNewRoleCommand, CreateDefaultRolesCommand, CreateUserCommand, \
                              AddSuperUserRoleCommand, ListUsersCommand, ListRolesCommand, \
-                             UpdateDatabaseCommand, ScheduleReleasesCommand
+                             UpdateDatabaseCommand, ScheduleReleasesCommand, CrossCheckCommand
 
 manager = Manager(create_app())
 manager.add_command('create_role', CreateNewRoleCommand())
@@ -23,6 +23,8 @@ manager.add_command('list_roles', ListRolesCommand())
 
 manager.add_command('update_database', UpdateDatabaseCommand())
 manager.add_command('schedule_releases', ScheduleReleasesCommand())
+
+manager.add_command('cross_check', CrossCheckCommand())
 
 if __name__ == '__main__':
     manager.run()

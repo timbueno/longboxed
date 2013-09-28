@@ -94,6 +94,7 @@ class AddAdminUserRoleCommand(Command):
             return
         print '\nNo user found'
 
+
 class ListRolesCommand(Command):
     """List all roles"""
 
