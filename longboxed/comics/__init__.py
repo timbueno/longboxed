@@ -293,6 +293,14 @@ class ComicService(object):
 
 
     def extract_issue_information(self, raw_issue):
+        """
+        Proccess a line from a TFAW daily download file into three dictionaries, 
+        p (publisher), t (title), i (issue). Each dictionary contains the
+        necessary information necessary to create an object in the database.
+
+        :param raw_issue: List that contains a line from the daily download from
+        TFAW. The list object is should be from a CSV parser.
+        """
         # Setup
         p = {}
         t = {}
@@ -343,7 +351,11 @@ class ComicService(object):
 
 
     def is_diamond_id(self, possible_id):
-        """Detects if possible_id is a verifiable DiamondID"""
+        """
+        Detects if possible_id is a verifiable DiamondID
+
+        :param possible_id: String that contains a possible diamond id
+        """
         months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
         # 'BAG' is checked so as to not include Grab Bags
         if any(month in possible_id for month in months) and 'BAG' not in possible_id:
@@ -353,6 +365,17 @@ class ComicService(object):
 
 
     def group_issues(self, issues):
+        """
+        Groups issues into a logical structure.
+        
+        Groups by title
+            -> Groups by issue number
+
+        This allows us to check if newly imported issues have duplicates
+        in the database. 
+
+        :param issues: List containing issue objects
+        """
         # Sort by title name
         issues = sorted(issues, key=lambda x: x.title)
         # Group by title name
@@ -368,6 +391,14 @@ class ComicService(object):
 
 
     def title_regex(self, title):
+        """
+        Parses the Title, Issue Number, Total Number of Issues, and other
+        information from a title string.
+
+        Example Raw Title String: Infinity Hunt #2 (of 4)
+
+        :param title: String containing raw title.
+        """
         try:
             # m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>(\d+))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', title).groupdict()
             m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>([+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', title).groupdict()
