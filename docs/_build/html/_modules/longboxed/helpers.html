@@ -1,0 +1,276 @@
+
+
+  
+  
+ 
+  
+  
+ 
+
+
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>longboxed.helpers &mdash; Longboxed 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-3.0.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-3.0.0/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.0.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Longboxed 0.1.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">Longboxed</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.1</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a href="../../index.html"
+     class="dropdown-toggle"
+     data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+    ><ul class="simple">
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      
+  <h1>Source code for longboxed.helpers</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    longboxed.helpers</span>
+<span class="sd">    ~~~~~~~~~~~~~~~~~</span>
+
+<span class="sd">    longboxed helpers module</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pkgutil</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">HTMLParser</span> <span class="kn">import</span> <span class="n">HTMLParser</span>
+<span class="kn">from</span> <span class="nn">json</span> <span class="kn">import</span> <span class="n">JSONEncoder</span> <span class="k">as</span> <span class="n">BaseJSONEncoder</span>
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span>
+<span class="kn">from</span> <span class="nn">flask.ext.mail</span> <span class="kn">import</span> <span class="n">Message</span>
+
+<span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">mail</span>
+
+
+<div class="viewcode-block" id="register_blueprints"><a class="viewcode-back" href="../../helpers.html#longboxed.helpers.register_blueprints">[docs]</a><span class="k">def</span> <span class="nf">register_blueprints</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">package_name</span><span class="p">,</span> <span class="n">package_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Register all Blueprint instances on the specified Flask application found</span>
+<span class="sd">    in all modules for the specified package.</span>
+
+<span class="sd">    :param app: the Flask application</span>
+<span class="sd">    :param package_name: the package name</span>
+<span class="sd">    :param package_path: the package path</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rv</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">iter_modules</span><span class="p">(</span><span class="n">package_path</span><span class="p">):</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">.</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">package_name</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Blueprint</span><span class="p">):</span>
+                <span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="n">rv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rv</span>
+
+</div>
+<div class="viewcode-block" id="JSONEncoder"><a class="viewcode-back" href="../../helpers.html#longboxed.helpers.JSONEncoder">[docs]</a><span class="k">class</span> <span class="nc">JSONEncoder</span><span class="p">(</span><span class="n">BaseJSONEncoder</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Custom :class:`JSONEncoder` which respects objects that include the</span>
+<span class="sd">    :class:`JsonSerializer` mixin.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">JsonSerializer</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">JSONEncoder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+</div>
+<span class="k">class</span> <span class="nc">MLStripper</span><span class="p">(</span><span class="n">HTMLParser</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fed</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">def</span> <span class="nf">handle_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fed</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="strip_tags"><a class="viewcode-back" href="../../helpers.html#longboxed.helpers.strip_tags">[docs]</a><span class="k">def</span> <span class="nf">strip_tags</span><span class="p">(</span><span class="n">html</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Strips a string of all html tags&quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">MLStripper</span><span class="p">()</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">feed</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="wednesday"><a class="viewcode-back" href="../../helpers.html#longboxed.helpers.wednesday">[docs]</a><span class="k">def</span> <span class="nf">wednesday</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given a date, returns a Date() object containng the week&#39;s wednesday.</span>
+<span class="sd">    A week is defined as Sunday thru Saturday. The &#39;multiplier&#39; argument </span>
+<span class="sd">    provides the ability navigate multiple weeks into the future and past&quot;&quot;&quot;</span>
+    <span class="n">sunday</span><span class="p">,</span> <span class="n">saturday</span> <span class="o">=</span> <span class="n">get_week</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">multiplier</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sunday</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="current_wednesday"><a class="viewcode-back" href="../../helpers.html#longboxed.helpers.current_wednesday">[docs]</a><span class="k">def</span> <span class="nf">current_wednesday</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">wednesday</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="next_wednesday"><a class="viewcode-back" href="../../helpers.html#longboxed.helpers.next_wednesday">[docs]</a><span class="k">def</span> <span class="nf">next_wednesday</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">wednesday</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+</div>
+<span class="k">def</span> <span class="nf">two_wednesdays</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">wednesday</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">(),</span> <span class="mi">2</span><span class="p">)</span>
+
+<div class="viewcode-block" id="last_wednesday"><a class="viewcode-back" href="../../helpers.html#longboxed.helpers.last_wednesday">[docs]</a><span class="k">def</span> <span class="nf">last_wednesday</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">wednesday</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="get_week"><a class="viewcode-back" href="../../helpers.html#longboxed.helpers.get_week">[docs]</a><span class="k">def</span> <span class="nf">get_week</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns Sunday and Saturday of the week the &#39;date&#39; argument is currently in.</span>
+<span class="sd">    The &#39;multiplier&#39; argument provides the ability to navigate multiple weeks into </span>
+<span class="sd">    the future and past&quot;&quot;&quot;</span>
+    <span class="n">day_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">weekday</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">7</span> <span class="c"># Turn sunday into 0, monday into 1, etc.</span>
+    <span class="n">sunday</span> <span class="o">=</span> <span class="p">(</span><span class="n">date</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">day_idx</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="n">multiplier</span> <span class="o">*</span> <span class="n">timedelta</span><span class="p">(</span><span class="mi">7</span><span class="p">))</span>
+    <span class="n">saturday</span> <span class="o">=</span> <span class="p">(</span><span class="n">sunday</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">6</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">sunday</span><span class="p">,</span> <span class="n">saturday</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="mail_content"><a class="viewcode-back" href="../../helpers.html#longboxed.helpers.mail_content">[docs]</a><span class="k">def</span> <span class="nf">mail_content</span><span class="p">(</span><span class="n">recipients</span><span class="p">,</span> <span class="n">sender</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">attachment</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span>
+                  <span class="n">sender</span><span class="o">=</span><span class="n">sender</span><span class="p">,</span>
+                  <span class="n">recipients</span><span class="o">=</span><span class="n">recipients</span><span class="p">,</span>
+                  <span class="n">body</span><span class="o">=</span><span class="n">content</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">attachment</span><span class="p">:</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;checks.txt&#39;</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s">&#39;text/plain&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">attachment</span><span class="p">)</span>
+    <span class="n">mail</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">return</span>
+
+</div>
+<div class="viewcode-block" id="JsonSerializer"><a class="viewcode-back" href="../../helpers.html#longboxed.helpers.JsonSerializer">[docs]</a><span class="k">class</span> <span class="nc">JsonSerializer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A mixin that can be used to mark a SQLAlchemy model class which</span>
+<span class="sd">    implements a :func:`to_json` method. The :func:`to_json` method is used</span>
+<span class="sd">    in conjuction with the custom :class:`JSONEncoder` class. By default this</span>
+<span class="sd">    mixin will assume all properties of the SQLAlchemy model are to be visible</span>
+<span class="sd">    in the JSON output. Extend this class to customize which properties are</span>
+<span class="sd">    public, hidden or modified before being being passed to the JSON serializer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">__json_public__</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">__json_hidden__</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">__json_modifiers__</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">get_field_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mapper__</span><span class="o">.</span><span class="n">iterate_properties</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">p</span><span class="o">.</span><span class="n">key</span>
+
+    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">field_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_field_names</span><span class="p">()</span>
+
+        <span class="n">public</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__json_public__</span> <span class="ow">or</span> <span class="n">field_names</span>
+        <span class="n">hidden</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__json_hidden__</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="n">modifiers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__json_modifiers__</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="n">rv</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">public</span><span class="p">:</span>
+            <span class="n">rv</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">modifier</span> <span class="ow">in</span> <span class="n">modifiers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+            <span class="n">rv</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">modifier</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">hidden</span><span class="p">:</span>
+            <span class="n">rv</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rv</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, Tim Bueno.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
