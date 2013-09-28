@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     longboxed.helpers
-    ~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~
 
     longboxed helpers module
 """
@@ -65,22 +65,30 @@ def strip_tags(html):
     return s.get_data()
 
 def wednesday(date, multiplier=0):
-    """Given a date, returns a Date() object containng the week's wednesday.
+    """Given a date, returns a Date() object containing the week's wednesday.
     A week is defined as Sunday thru Saturday. The 'multiplier' argument 
-    provides the ability navigate multiple weeks into the future and past"""
+    provides the ability navigate multiple weeks into the future and past
+
+    :param date: :class:`Date` object used to center in on desired week
+    :param multiplier: :class:`int` object that moves the date forward or backward
+    """
     sunday, saturday = get_week(date, multiplier)
     return sunday + timedelta(days=3)
 
 def current_wednesday():
+    """Gets the current weeks wednesday"""
     return wednesday(datetime.today().date())
 
 def next_wednesday():
+    """Gets next weeks wendesday"""
     return wednesday(datetime.today().date(), 1)
 
 def two_wednesdays():
+    """Gets two wednesdays from now"""
     return wednesday(datetime.today().date(), 2)
 
 def last_wednesday():
+    """Get last week's Wednesday as a :class:`Date` object"""
     return wednesday(datetime.today().date(), -1)
 
 
@@ -95,6 +103,16 @@ def get_week(date, multiplier=0):
 
 
 def mail_content(recipients, sender, subject, content, attachment=None):
+    """
+    Generic function allowing for easy sending of email. A :class:`Mail`
+    from :module:`longboxed.core` must be in the applications context
+
+    :param recipients: list of email address strings
+    :param sender: sending email address
+    :param subject: message subject string
+    :param content: html content
+    :param attachment: plain text attachment
+    """
     msg = Message(subject,
                   sender=sender,
                   recipients=recipients,

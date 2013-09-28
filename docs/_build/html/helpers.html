@@ -1,0 +1,269 @@
+
+
+  
+  
+ 
+  
+  
+ 
+
+
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Longboxed Helpers Module &mdash; Longboxed 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-3.0.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-3.0.0/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.0.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Longboxed 0.1.1 documentation" href="index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">Longboxed</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.1</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a href="index.html"
+     class="dropdown-toggle"
+     data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+    ><ul class="simple">
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">Longboxed Helpers Module</a><ul>
+<li><a class="reference internal" href="#longboxed-helpers">longboxed.helpers</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li>
+<div id="sourcelink">
+  <a href="_sources/helpers.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      
+  <div class="section" id="module-longboxed.helpers">
+<span id="longboxed-helpers-module"></span><h1>Longboxed Helpers Module<a class="headerlink" href="#module-longboxed.helpers" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="longboxed-helpers">
+<h2>longboxed.helpers<a class="headerlink" href="#longboxed-helpers" title="Permalink to this headline">¶</a></h2>
+<p>longboxed helpers module</p>
+<dl class="class">
+<dt id="longboxed.helpers.JSONEncoder">
+<em class="property">class </em><tt class="descclassname">longboxed.helpers.</tt><tt class="descname">JSONEncoder</tt><big>(</big><em>skipkeys=False</em>, <em>ensure_ascii=True</em>, <em>check_circular=True</em>, <em>allow_nan=True</em>, <em>sort_keys=False</em>, <em>indent=None</em>, <em>separators=None</em>, <em>encoding='utf-8'</em>, <em>default=None</em><big>)</big><a class="reference internal" href="_modules/longboxed/helpers.html#JSONEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#longboxed.helpers.JSONEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom <a class="reference internal" href="#longboxed.helpers.JSONEncoder" title="longboxed.helpers.JSONEncoder"><tt class="xref py py-class docutils literal"><span class="pre">JSONEncoder</span></tt></a> which respects objects that include the
+<a class="reference internal" href="#longboxed.helpers.JsonSerializer" title="longboxed.helpers.JsonSerializer"><tt class="xref py py-class docutils literal"><span class="pre">JsonSerializer</span></tt></a> mixin.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="longboxed.helpers.JsonSerializer">
+<em class="property">class </em><tt class="descclassname">longboxed.helpers.</tt><tt class="descname">JsonSerializer</tt><a class="reference internal" href="_modules/longboxed/helpers.html#JsonSerializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#longboxed.helpers.JsonSerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>A mixin that can be used to mark a SQLAlchemy model class which
+implements a <tt class="xref py py-func docutils literal"><span class="pre">to_json()</span></tt> method. The <tt class="xref py py-func docutils literal"><span class="pre">to_json()</span></tt> method is used
+in conjuction with the custom <a class="reference internal" href="#longboxed.helpers.JSONEncoder" title="longboxed.helpers.JSONEncoder"><tt class="xref py py-class docutils literal"><span class="pre">JSONEncoder</span></tt></a> class. By default this
+mixin will assume all properties of the SQLAlchemy model are to be visible
+in the JSON output. Extend this class to customize which properties are
+public, hidden or modified before being being passed to the JSON serializer.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="longboxed.helpers.current_wednesday">
+<tt class="descclassname">longboxed.helpers.</tt><tt class="descname">current_wednesday</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/longboxed/helpers.html#current_wednesday"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#longboxed.helpers.current_wednesday" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the current weeks wednesday</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="longboxed.helpers.get_week">
+<tt class="descclassname">longboxed.helpers.</tt><tt class="descname">get_week</tt><big>(</big><em>date</em>, <em>multiplier=0</em><big>)</big><a class="reference internal" href="_modules/longboxed/helpers.html#get_week"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#longboxed.helpers.get_week" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns Sunday and Saturday of the week the &#8216;date&#8217; argument is currently in.
+The &#8216;multiplier&#8217; argument provides the ability to navigate multiple weeks into 
+the future and past</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="longboxed.helpers.last_wednesday">
+<tt class="descclassname">longboxed.helpers.</tt><tt class="descname">last_wednesday</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/longboxed/helpers.html#last_wednesday"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#longboxed.helpers.last_wednesday" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get last week&#8217;s Wednesday as a <tt class="xref py py-class docutils literal"><span class="pre">Date</span></tt> object</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="longboxed.helpers.mail_content">
+<tt class="descclassname">longboxed.helpers.</tt><tt class="descname">mail_content</tt><big>(</big><em>recipients</em>, <em>sender</em>, <em>subject</em>, <em>content</em>, <em>attachment=None</em><big>)</big><a class="reference internal" href="_modules/longboxed/helpers.html#mail_content"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#longboxed.helpers.mail_content" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic function allowing for easy sending of email. A <tt class="xref py py-class docutils literal"><span class="pre">Mail</span></tt>
+from <a href="#id1"><span class="problematic" id="id2">:module:`longboxed.core`</span></a> must be in the applications context</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>recipients</strong> &#8211; list of email address strings</li>
+<li><strong>sender</strong> &#8211; sending email address</li>
+<li><strong>subject</strong> &#8211; message subject string</li>
+<li><strong>content</strong> &#8211; html content</li>
+<li><strong>attachment</strong> &#8211; plain text attachment</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="longboxed.helpers.next_wednesday">
+<tt class="descclassname">longboxed.helpers.</tt><tt class="descname">next_wednesday</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/longboxed/helpers.html#next_wednesday"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#longboxed.helpers.next_wednesday" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets next weeks wendesday</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="longboxed.helpers.register_blueprints">
+<tt class="descclassname">longboxed.helpers.</tt><tt class="descname">register_blueprints</tt><big>(</big><em>app</em>, <em>package_name</em>, <em>package_path</em><big>)</big><a class="reference internal" href="_modules/longboxed/helpers.html#register_blueprints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#longboxed.helpers.register_blueprints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register all Blueprint instances on the specified Flask application found
+in all modules for the specified package.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>app</strong> &#8211; the Flask application</li>
+<li><strong>package_name</strong> &#8211; the package name</li>
+<li><strong>package_path</strong> &#8211; the package path</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="longboxed.helpers.strip_tags">
+<tt class="descclassname">longboxed.helpers.</tt><tt class="descname">strip_tags</tt><big>(</big><em>html</em><big>)</big><a class="reference internal" href="_modules/longboxed/helpers.html#strip_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#longboxed.helpers.strip_tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Strips a string of all html tags</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="longboxed.helpers.two_wednesdays">
+<tt class="descclassname">longboxed.helpers.</tt><tt class="descname">two_wednesdays</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/longboxed/helpers.html#two_wednesdays"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#longboxed.helpers.two_wednesdays" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets two wednesdays from now</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="longboxed.helpers.wednesday">
+<tt class="descclassname">longboxed.helpers.</tt><tt class="descname">wednesday</tt><big>(</big><em>date</em>, <em>multiplier=0</em><big>)</big><a class="reference internal" href="_modules/longboxed/helpers.html#wednesday"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#longboxed.helpers.wednesday" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a date, returns a Date() object containing the week&#8217;s wednesday.
+A week is defined as Sunday thru Saturday. The &#8216;multiplier&#8217; argument 
+provides the ability navigate multiple weeks into the future and past</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>date</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">Date</span></tt> object used to center in on desired week</li>
+<li><strong>multiplier</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">int</span></tt> object that moves the date forward or backward</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, Tim Bueno.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

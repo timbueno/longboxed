@@ -15,18 +15,21 @@ from . import admin
 
 
 def create_app(settings_override=None):
-    """Returns the Longboxed dashboard application instance"""
+    """Returns the Longboxed dashboard application instance
+
+    :param settings_override: dictionary of settings to overide
+    """
     app = factory.create_app(__name__, __path__, settings_override)
 
-    # Init assets
+    #: Init assets
     assets.init_app(app)
-    # Flask-Admin
+    #: Flask-Admin
     admin.init_app(app)
 
-    # Flask-DebugToolbar
+    #: Flask-DebugToolbar
     DebugToolbarExtension(app)
 
-    # Register custom error handlers
+    #: Register custom error handlers
     if not app.debug:
         for e in [500, 404]:
             pass
@@ -41,6 +44,7 @@ def create_app(settings_override=None):
 
 
 def route(bp, *args, **kwargs):
+    """Route decorator for use in blueprints"""
     def decorator(f):
         @bp.route(*args, **kwargs)
         @wraps(f)

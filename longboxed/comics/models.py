@@ -10,11 +10,11 @@ from ..core import db
 
 class Publisher(db.Model):
     __tablename__ = 'publishers'
-    # IDs
+    #: IDs
     id = db.Column(db.Integer, primary_key=True)
-    # Attributes
+    #: Attributes
     name = db.Column(db.String(255))
-    # Relationships
+    #: Relationships
     titles = db.relationship('Title', backref=db.backref('publisher', lazy='joined'), lazy='dynamic')
     comics = db.relationship('Issue', backref=db.backref('publisher', lazy='joined'), lazy='dynamic')
 
@@ -23,12 +23,12 @@ class Publisher(db.Model):
 
 class Title(db.Model):
     __tablename__ = 'titles'
-    # IDs
+    #: IDs
     id = db.Column(db.Integer, primary_key=True)
     publisher_id = db.Column(db.Integer, db.ForeignKey('publishers.id'))
-    # Attributes
+    #: Attributes
     name = db.Column(db.String(255))
-    # Relationships
+    #: Relationships
     issues = db.relationship('Issue', backref=db.backref('title', lazy='joined'), lazy='dynamic', order_by='Issue.on_sale_date')
 
     def __str__(self):
@@ -36,11 +36,11 @@ class Title(db.Model):
 
 class Issue(db.Model):
     __tablename__ = 'issues'
-    # IDs
+    #: IDs
     id = db.Column(db.Integer, primary_key=True)
     title_id = db.Column(db.Integer, db.ForeignKey('titles.id'))
     publisher_id = db.Column(db.Integer, db.ForeignKey('publishers.id'))
-    # Attributes
+    #: Attributes
     product_id = db.Column(db.String(100))
     issue_number = db.Column(db.Numeric(precision=6, scale=2))
     issues = db.Column(db.Numeric(precision=6, scale=2))
@@ -61,7 +61,7 @@ class Issue(db.Model):
     diamond_id = db.Column(db.String(100))
     category = db.Column(db.String(100))
     upc = db.Column(db.String(100))
-    # Relationships
+    #: Relationships
     is_parent = db.Column(db.Boolean(), default=False)
     has_alternates = db.Column(db.Boolean(), default=False)
     @property

@@ -1,0 +1,212 @@
+
+
+  
+  
+ 
+  
+  
+ 
+
+
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Longboxed Factory Module &mdash; Longboxed 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-3.0.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-3.0.0/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.0.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Longboxed 0.1.1 documentation" href="index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">Longboxed</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.1</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a href="index.html"
+     class="dropdown-toggle"
+     data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+    ><ul class="simple">
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"><ul>
+<li><a class="reference internal" href="#">Longboxed Factory Module</a><ul>
+<li><a class="reference internal" href="#longboxed-factory">longboxed.factory</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li>
+<div id="sourcelink">
+  <a href="_sources/factory.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      
+  <div class="section" id="module-longboxed.factory">
+<span id="longboxed-factory-module"></span><h1>Longboxed Factory Module<a class="headerlink" href="#module-longboxed.factory" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="longboxed-factory">
+<h2>longboxed.factory<a class="headerlink" href="#longboxed-factory" title="Permalink to this headline">¶</a></h2>
+<p>longboxed factory module</p>
+<dl class="class">
+<dt id="longboxed.factory.LogOnlyLevel">
+<em class="property">class </em><tt class="descclassname">longboxed.factory.</tt><tt class="descname">LogOnlyLevel</tt><big>(</big><em>level</em><big>)</big><a class="reference internal" href="_modules/longboxed/factory.html#LogOnlyLevel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#longboxed.factory.LogOnlyLevel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter function. Used in a logging json configuration file to allow a handler to 
+log only its own specific log level.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="longboxed.factory.create_app">
+<tt class="descclassname">longboxed.factory.</tt><tt class="descname">create_app</tt><big>(</big><em>package_name</em>, <em>package_path</em>, <em>settings_override=None</em>, <em>debug_override=None</em>, <em>register_security_blueprint=True</em><big>)</big><a class="reference internal" href="_modules/longboxed/factory.html#create_app"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#longboxed.factory.create_app" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a <tt class="xref py py-class docutils literal"><span class="pre">Flask</span></tt> application instance configured with common
+functionality for the Longboxed platform.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>package_name</strong> &#8211; application package name</li>
+<li><strong>package_path</strong> &#8211; application package path</li>
+<li><strong>settings_override</strong> &#8211; a dictionary of settings to override</li>
+<li><strong>debug_overide</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">Bool</span></tt> value that overrides the debug settings</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="longboxed.factory.create_celery_app">
+<tt class="descclassname">longboxed.factory.</tt><tt class="descname">create_celery_app</tt><big>(</big><em>app=None</em><big>)</big><a class="reference internal" href="_modules/longboxed/factory.html#create_celery_app"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#longboxed.factory.create_celery_app" title="Permalink to this definition">¶</a></dt>
+<dd><p>Factory method that to place a Celery instance in the context
+of a Flask application</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>app</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">Flask</span></tt> application instance</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="longboxed.factory.setup_logging">
+<tt class="descclassname">longboxed.factory.</tt><tt class="descname">setup_logging</tt><big>(</big><em>default_path='longboxed/logging.json'</em>, <em>default_level=20</em>, <em>env_key='LOG_CFG'</em><big>)</big><a class="reference internal" href="_modules/longboxed/factory.html#setup_logging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#longboxed.factory.setup_logging" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup logging configuration</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>default_path</strong> &#8211; Path to json log configuration file</li>
+<li><strong>default_level</strong> &#8211; Level to set the logger at. Default to INFO level</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, Tim Bueno.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -7,6 +7,10 @@ from .core import db
 def user_registered_signal_handler(app, user, confirm_token):
     """Executed imediately after user registers a new account.
     Adds a default 'user' role to the new user
+
+    :param app: Flask application object
+    :param user: Newly registered Flask-Login User object
+    :param confirm_token: Users confirm token
     """
     _security_datastore = LocalProxy(lambda: app.extensions['security'].datastore)
     default_role = _security_datastore.find_role('user')
@@ -15,5 +19,9 @@ def user_registered_signal_handler(app, user, confirm_token):
 
 
 def init_app(app):
-    """Registers signal handlers with flask application"""
+    """
+    Registers signal handlers with flask application
+
+    :param app: Flask application object
+    """
     user_registered.connect_via(app)(user_registered_signal_handler)
