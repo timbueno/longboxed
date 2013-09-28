@@ -22,7 +22,6 @@ from bs4 import BeautifulSoup
 from flask import current_app as app
 
 from ..core import Service
-from ..helpers import wednesday
 from .models import Issue, Publisher, Title
 
 
@@ -41,11 +40,31 @@ class IssueService(Service):
     __model__ = Issue
 
     def find_issues_in_date_range(self, start, end):
+        """
+        Depricated
+
+        Finds issues in the given date range
+
+        :param start: :class:`Date` class to start the search on
+        :param end: :class:`Date` class to end the search on
+        """
+
         titles = sorted(self.__model__.query.filter(self.__model__.on_sale_date.between(start,end)))
         sorted_titles = sorted(titles, key=lambda k: k.publisher.name)
         return sorted_titles
 
     def find_relevent_issues_in_date_range(self, start, end, current_user):
+        """
+        Depricated
+
+        Gets issue objects in a date range only if their publisher attribute
+        matches the users choices. Also returns another value, matches, which
+        are titles being released also on the users pull list
+
+        :param start: :class:`Date` class to start the search on
+        :param end: :class:`Date` class to end the search on
+        :param current_user: :class:`User` class used to extract their pull list
+        """
         all_issues = self.find_issues_in_date_range(start, end)
         relevent_issues = all_issues
         matches = []
@@ -58,6 +77,12 @@ class IssueService(Service):
         return (relevent_issues, matches)
 
     def find_issue_with_date(self, date):
+        """
+        Gets all issue objects whose on_sale_date attribute matches 
+        the given date.
+
+        :param date: :class:`Date` object you wish to pull issues from
+        """
         titles = sorted(self.__model__.query.filter(self.__model__.on_sale_date == date))
         return sorted(titles, key=lambda k: k.publisher.name)
 
@@ -82,6 +107,12 @@ class ComicService(object):
         return
 
     def insert_publisher(self, raw_publisher=None):
+        """
+        Inserts a publisher into the database if it does not already
+        exist. 
+
+        :param raw_publisher: String containing publisher name
+        """
         publisher = self.publishers.first(name=raw_publisher)
         if not publisher:
             publisher = self.publishers.create(name=raw_publisher)
@@ -90,6 +121,13 @@ class ComicService(object):
         return publisher
 
     def insert_title(self, raw_title, publisher_object):
+        """
+        Inserts a title into the database if it does not already
+        exist. 
+
+        :param raw_title: String containing title name
+        :param publisher_object: Publisher model instance to link the title to
+        """
         title = self.titles.first(name=raw_title)
         if not title:
             title = self.titles.create(name=raw_title, publisher=publisher_object)
@@ -98,6 +136,14 @@ class ComicService(object):
         return title
 
     def insert_issue(self, raw_issue_dict, title_object, publisher_object):
+        """
+        Inserts an issue into the database if it does not already
+        exist. 
+
+        :param raw_issue_dict: Dictionary conatining issue data from TFAW
+        :param publisher_object: Publisher model instance to link the issue to
+        :param title_object: Title model instance to link the issue to
+        """
         issue = self.issues.first(diamond_id=raw_issue_dict['diamond_id'])
         raw_issue_dict['title'] = title_object
         raw_issue_dict['publisher'] = publisher_object
@@ -111,6 +157,10 @@ class ComicService(object):
         return issue
 
     def get_latest_TFAW_database(self):
+        """
+        Gets latest Daily Download file from TFAW's servers. This file
+        contains a record of every item they have for sale.
+        """
         base_url = 'http://www.tfaw.com/intranet/download-8908-daily.php'
         payload = {
             'aid': app.config['AFFILIATE_ID'],
@@ -125,6 +175,15 @@ class ComicService(object):
 
 
     def get_shipping_from_TFAW(self, week):
+        """
+        Gets file containing a list of shippments from Diamond Distributers.
+        This file is served from TFAW's servers. Three files are available at 
+        any given time; thisweek, nextweek, twoweeks. They describe shipments 
+        pertaining to their respective timeframes.
+
+        :param week: String designating which diamond list to download 
+                     Options: 'thisweek', 'nextweek', 'twoweeks'
+        """
         if week not in ['thisweek', 'nextweek', 'twoweeks']:
             raise Exception('Not a valid input for week selection')
         base_url = 'http://www.tfaw.com/intranet/diamondlists_raw.php'
@@ -140,6 +199,14 @@ class ComicService(object):
 
 
     def get_issue_dict_shipping(self, raw_content):
+        """
+        Turns returned content from a request for a Diamond list into someting
+        we can work with. It discards any items that do not have a vender matching
+        a vender in 'SUPPORTED_DIAMOND_PUBS' settings variable. It also discards any
+        item whose discount code is not a D or and E.
+
+        :param raw_content: html content returned from TFAWs servers, diamond list
+        """
         html = BeautifulSoup(raw_content)
         f = StringIO(html.pre.string.strip(' \t\n\r'))
         incsv = csv.DictReader(f)
@@ -148,6 +215,12 @@ class ComicService(object):
         return shipping
 
     def check_publisher(self, publisher):
+        """
+        Helper method that determines if the given publisher is currently
+        supported by the application.
+
+        :param publisher: String containing a publisher's name.
+        """
         try:
             if publisher.strip('*') in app.config['SUPPORTED_DIAMOND_PUBS']:
                 return True
@@ -157,6 +230,23 @@ class ComicService(object):
             return False
 
     def compare_shipping_with_database(self, shipping_ids, date):
+        """
+        When imported into the database issues are not given a release date.
+        These release dates often change, even at the last minute. That is where
+        this function comes in. A Diamond release list is downloaded and relevent
+        diamond ids are passed into this function. A date object that corelates
+        with the shipment is also passed in. 
+
+        All issues currently scheduled are gathered into one list. Another list is 
+        populated with every issue object that is to be released. These lists are
+        compared. The difference of these lists have their release date set to 
+        None. Effectively unscheduling them for release. The result keeps our 
+        database as up to date as possible.
+
+        :param shipping_ids: List of strings that are Diamond IDs
+        :param date: :class:`Date` object used to obtain relevent issues 
+        from the database
+        """
         # Get every item in the list
         diamond_shipments = []
         q = 0
