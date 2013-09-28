@@ -84,6 +84,7 @@ def next_wednesday():
     return wednesday(datetime.today().date(), 1)
 
 def two_wednesdays():
+    """Gets two wednesdays from now"""
     return wednesday(datetime.today().date(), 2)
 
 def last_wednesday():

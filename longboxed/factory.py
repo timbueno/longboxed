@@ -29,6 +29,7 @@ def create_app(package_name, package_path, settings_override=None, debug_overrid
     :param package_name: application package name
     :param package_path: application package path
     :param settings_override: a dictionary of settings to override
+    :param debug_overide: :class:`Bool` value that overrides the debug settings
     """
     app = Flask(package_name, instance_relative_config=True)
 
@@ -61,6 +62,12 @@ def create_app(package_name, package_path, settings_override=None, debug_overrid
 
 
 def create_celery_app(app=None):
+    """
+    Factory method that to place a Celery instance in the context
+    of a Flask application
+
+    :param app: :class:`Flask` application instance
+    """
     app = app or create_app('longboxed', os.path.dirname(__file__))
     celery = Celery(__name__, broker=app.config['CELERY_BROKER_URL'])
     celery.conf.update(app.config)
@@ -80,6 +87,9 @@ def create_celery_app(app=None):
 def setup_logging(default_path='longboxed/logging.json', default_level=logging.INFO, env_key='LOG_CFG'):
     """
     Setup logging configuration
+
+    :param default_path: Path to json log configuration file
+    :param default_level: Level to set the logger at. Default to INFO level
     """
     path = default_path
     value = os.getenv(env_key, None)
@@ -95,6 +105,11 @@ def setup_logging(default_path='longboxed/logging.json', default_level=logging.I
 
 
 class LogOnlyLevel(object):
+    """
+    Filter function. Used in a logging json configuration file to allow a handler to 
+    log only its own specific log level.
+    """
+
     def __init__(self, level):
         if level == 'DEBUG':
             level = logging.DEBUG

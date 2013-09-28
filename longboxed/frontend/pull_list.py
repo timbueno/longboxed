@@ -27,12 +27,22 @@ def p():
 @route(bp, '/ajax/typeahead')
 @login_required
 def typeahead():
+    """
+    AJAX method
+
+    Gets title names for all titles. This should go away someday
+    """
     titles = [title.name for title in _comics.titles.all()]
     return jsonify(titles=titles)
 
 @route(bp, '/ajax/remove_favorite', methods=['POST'])
 @login_required
-def remove_favorite(): 
+def remove_favorite():
+    """
+    AJAX method
+
+    Remove a favorite title from your pull list
+    """
     try:
         # Get the index of the book to delete
         title = _comics.titles.get(long(request.form['id']))
@@ -50,6 +60,11 @@ def remove_favorite():
 @route(bp, '/ajax/add_favorite', methods=['POST'])
 @login_required
 def add_favorite():
+    """
+    AJAX method
+
+    Add a favorite title to your pull list
+    """
     new_title = _comics.titles.first(name=request.form['new_favorite'])
     print new_title
     if new_title not in current_user.pull_list:
