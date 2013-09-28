@@ -9,6 +9,11 @@ from ..core import db
 
 
 class Publisher(db.Model):
+    """
+    Publisher model class with two back referenced relationships, titles and issues.
+
+    Example: Marvel Comics, Image Comics
+    """
     __tablename__ = 'publishers'
     #: IDs
     id = db.Column(db.Integer, primary_key=True)
@@ -22,6 +27,12 @@ class Publisher(db.Model):
         return self.name
 
 class Title(db.Model):
+    """
+    Title Model class with backreferenced relationship, issues. Publisher 
+    can also be accessed with the hidden 'publisher' attribute.
+
+    Example: Saga, East Of West
+    """
     __tablename__ = 'titles'
     #: IDs
     id = db.Column(db.Integer, primary_key=True)
@@ -35,6 +46,10 @@ class Title(db.Model):
         return self.name
 
 class Issue(db.Model):
+    """
+    Issue model class. Title and Publisher can both be referenced with
+    the hidden 'publisher' and 'title' attributes
+    """
     __tablename__ = 'issues'
     #: IDs
     id = db.Column(db.Integer, primary_key=True)
