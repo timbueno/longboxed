@@ -14,6 +14,7 @@ from ..core import db
 from ..helpers import current_wednesday, mail_content, two_wednesdays, next_wednesday
 from ..services import comics
 
+
 class TestImageCommand(Command):
     def run(self):
         try:

@@ -484,7 +484,7 @@ class ComicService(object):
                         if len(new_issues) > 1:
                             issue.has_alternates = True
                         self.issues.save(issue)
-                        # self.issues.set_cover_image_from_url(issue, issue.big_image)
+                        self.issues.set_cover_image_from_url(issue, issue.big_image)
             summary = self.database_summary()
             process_logger.error(summary)
         except:
