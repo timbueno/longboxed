@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     longboxed.comics.models
-    ~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~
 
     Comics module
 """

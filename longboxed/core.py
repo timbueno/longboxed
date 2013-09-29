@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     longboxed.core
-    ~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~
 
     Core module contains basic classes that all applications
     depend on
@@ -12,8 +12,7 @@ from flask.ext.bootstrap import Bootstrap
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security
 from flask_mail import Mail
-from sqlalchemy_imageattach.stores.fs import HttpExposedFileSystemStore, FileSystemStore
-
+from sqlalchemy_imageattach.stores.fs import HttpExposedFileSystemStore
 #: Flask-Bootstrap extension instance
 bootstrap = Bootstrap()
 
@@ -28,7 +27,6 @@ mail = Mail()
 
 #: Image Filesystem
 store = HttpExposedFileSystemStore('store', 'images')
-# store = FileSystemStore('store', 'http://localhost:3000/')
 
 class LongboxedError(Exception):
     """Base application error class"""

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     longboxed.factory
-    ~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~
 
     longboxed factory module
 """
