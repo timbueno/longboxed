@@ -1,18 +1,28 @@
 # -*- coding: utf-8 -*-
 """
     longboxed.manage.comics
-    ~~~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~
 
     comic management commands
 """
 import csv
+from StringIO import StringIO
 
 from flask.ext.script import Command, Option
 
-from StringIO import StringIO
-
+from ..core import db
 from ..helpers import current_wednesday, mail_content, two_wednesdays, next_wednesday
 from ..services import comics
+
+class TestImageCommand(Command):
+    def run(self):
+        try:
+            issue = comics.issues.first(diamond_id='JUL130221D')
+            if issue:
+                comics.issues.set_cover_image_from_url(issue, issue.big_image)
+        except Exception:
+            db.session.rollback()
+            raise
 
 
 class CrossCheckCommand(Command):
