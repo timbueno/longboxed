@@ -14,9 +14,10 @@ import logging.config
 from celery import Celery
 from flask import Flask
 from flask.ext.security import SQLAlchemyUserDatastore
+from sqlalchemy_imageattach.context import push_store_context, pop_store_context
 
 from . import signals
-from .core import bootstrap, db, mail, security
+from .core import bootstrap, db, mail, security, store
 from .helpers import register_blueprints
 from .middleware import HTTPMethodOverrideMiddleware
 from .models import User, Role
@@ -54,6 +55,18 @@ def create_app(package_name, package_path, settings_override=None, debug_overrid
     signals.init_app(app)
 
     app.wsgi_app = HTTPMethodOverrideMiddleware(app.wsgi_app)
+    app.wsgi_app = store.wsgi_middleware(app.wsgi_app)
+
+    @app.before_request
+    def start_implicit_store_context():
+        push_store_context(store)
+
+    @app.teardown_request
+    def stop_implicit_store_context(exception=None):
+        try:
+            pop_store_context()
+        except IndexError:
+            pass
 
     #: Setup Logging if not debug
     setup_logging()
