@@ -20,8 +20,10 @@ from StringIO import StringIO
 
 from bs4 import BeautifulSoup
 from flask import current_app as app
+from sqlalchemy_imageattach.entity import store_context
+from requests import get
 
-from ..core import Service
+from ..core import store, Service
 from .models import Issue, Publisher, Title
 
 
@@ -38,6 +40,15 @@ class TitleService(Service):
 
 class IssueService(Service):
     __model__ = Issue
+
+    def set_cover_image_from_url(self, model, url, overwrite=False):
+        if not model.cover_image.original or overwrite:
+            r = get(url)
+            if r.status_code == 200 and r.headers['content-type'] == 'image/jpeg':
+                with store_context(store):
+                    model.cover_image.from_blob(r.content)
+                    model = self.save(model)
+        return
 
     def find_issues_in_date_range(self, start, end):
         """
@@ -104,7 +115,7 @@ class ComicService(object):
         self.issue_additions = 0
         self.title_additions = 0
         self.publisher_additions = 0
-        return
+        return   
 
     def insert_publisher(self, raw_publisher=None):
         """
@@ -439,7 +450,7 @@ class ComicService(object):
             # Get latest database data from TFAW
             self.get_latest_TFAW_database()
             # Get raw text data from daily download
-            raw_issues = self.get_raw_issues('latest_db.gz', look_ahead=63)
+            raw_issues = self.get_raw_issues('latest_db.gz', look_ahead=10)
             # Insert raw comic book into the database
             issue_list = []
             for q, raw_issue in enumerate(raw_issues):
@@ -473,6 +484,7 @@ class ComicService(object):
                         if len(new_issues) > 1:
                             issue.has_alternates = True
                         self.issues.save(issue)
+                        # self.issues.set_cover_image_from_url(issue, issue.big_image)
             summary = self.database_summary()
             process_logger.error(summary)
         except:
