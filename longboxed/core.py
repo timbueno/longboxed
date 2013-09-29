@@ -12,6 +12,7 @@ from flask.ext.bootstrap import Bootstrap
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security
 from flask_mail import Mail
+from sqlalchemy_imageattach.stores.fs import HttpExposedFileSystemStore, FileSystemStore
 
 #: Flask-Bootstrap extension instance
 bootstrap = Bootstrap()
@@ -24,6 +25,10 @@ security = Security()
 
 #: Flask Mail Extension Instance
 mail = Mail()
+
+#: Image Filesystem
+store = HttpExposedFileSystemStore('store', 'images')
+# store = FileSystemStore('store', 'http://localhost:3000/')
 
 class LongboxedError(Exception):
     """Base application error class"""
