@@ -35,11 +35,12 @@ class SuperUserBase(ModelView):
 
 
 class IssueAdmin(AdministratorBase):
+    edit_template = 'edit_issue_model.html'
     # List of columns that can be sorted
     column_sortable_list = ('issue_number', 'complete_title', 'on_sale_date', ('title',Title.name), ('publisher', Publisher.name))
     column_searchable_list = ('complete_title', 'diamond_id')
     column_list = ('on_sale_date', 'diamond_id', 'issue_number', 'issues', 'complete_title', 'title', 'publisher')
-    
+
     def __init__(self, session):
         # Just call parent class with predefined model.
         super(IssueAdmin, self).__init__(Issue, session)
