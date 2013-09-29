@@ -42,13 +42,15 @@ class IssueService(Service):
     __model__ = Issue
 
     def set_cover_image_from_url(self, model, url, overwrite=False):
+        created_flag = False
         if not model.cover_image.original or overwrite:
             r = get(url)
             if r.status_code == 200 and r.headers['content-type'] == 'image/jpeg':
                 with store_context(store):
                     model.cover_image.from_blob(r.content)
                     model = self.save(model)
-        return
+                    created_flag = True
+        return created_flag
 
     def find_issues_in_date_range(self, start, end):
         """
