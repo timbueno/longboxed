@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="span4">
                     <div class="coverImage">
-                       <img class="m_issue img-rounded" src="{{ issue.big_image }}"> 
+                       <img class="m_issue img-rounded" src={% if issue.cover_image %}"{{ issue.cover_image.locate() }}"{% endif %}> 
                     </div>
                 </div>
                 <div class="span8">
