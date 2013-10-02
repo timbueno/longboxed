@@ -8,7 +8,7 @@
 
 from flask.ext.script import Manager
 
-from longboxed.frontend import create_app
+from longboxed.api import create_app
 from longboxed.manage import CreateNewRoleCommand, CreateDefaultRolesCommand, CreateUserCommand, \
                              AddSuperUserRoleCommand, ListUsersCommand, ListRolesCommand, \
                              UpdateDatabaseCommand, ScheduleReleasesCommand, CrossCheckCommand, \
