@@ -11,3 +11,4 @@ dd
 /devops/vars/initial_provision_vars.yml
 /logs/*
 /store
+/longboxed/settings.py

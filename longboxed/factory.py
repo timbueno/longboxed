@@ -55,7 +55,8 @@ def create_app(package_name, package_path, settings_override=None, debug_overrid
     signals.init_app(app)
 
     app.wsgi_app = HTTPMethodOverrideMiddleware(app.wsgi_app)
-    app.wsgi_app = store.wsgi_middleware(app.wsgi_app)
+    if not app.config['USE_AWS']:
+        app.wsgi_app = store.wsgi_middleware(app.wsgi_app)
 
     @app.before_request
     def start_implicit_store_context():
