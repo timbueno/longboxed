@@ -101,6 +101,16 @@ class IssueService(Service):
 
 
 class ComicService(object):
+    """
+    The ComicService class is not an actual service class. However, it wraps
+    three service classes for convenience purposes. The publsishers, titles, 
+    and issues classes are all available from ComicService. 
+
+    Processes like adding an issue to the database require manipulating Issue,
+    Title, and Publisher objects. ComicService gives access to functions that 
+    need to manipulate all three of these objects at the same time.
+    """
+
     def __init__(self):
         self.publishers = PublisherService()
         self.titles = TitleService()
