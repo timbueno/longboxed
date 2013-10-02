@@ -24,12 +24,11 @@ manager.add_command('list_roles', ListRolesCommand())
 
 manager.add_command('update_database', UpdateDatabaseCommand())
 manager.add_command('schedule_releases', ScheduleReleasesCommand())
-
 manager.add_command('cross_check', CrossCheckCommand())
 
-manager.add_command('test', TestImageCommand())
-
 manager.add_command('set_cover_image', SetCoverImageCommand())
+
+manager.add_command('test', TestImageCommand())
 
 if __name__ == '__main__':
     manager.run()
