@@ -20,6 +20,7 @@ from StringIO import StringIO
 
 from bs4 import BeautifulSoup
 from flask import current_app as app
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy_imageattach.entity import store_context
 from requests import get
 
@@ -41,16 +42,40 @@ class TitleService(Service):
 class IssueService(Service):
     __model__ = Issue
 
-    def set_cover_image_from_url(self, model, url, overwrite=False):
+    def set_cover_image_from_url(self, issue, url, overwrite=False):
+        """
+        Downloads a jpeg file from a url and stores it in the image store.
+
+        :param issue: :class:`Issue` object class
+        :param url: URL to download the jpeg cover image format
+        :param overwrite: Boolean flag that overwrites an existing image
+        """
         created_flag = False
-        if not model.cover_image.original or overwrite:
+        if not issue.cover_image.original or overwrite:
             r = get(url)
             if r.status_code == 200 and r.headers['content-type'] == 'image/jpeg':
                 with store_context(store):
-                    model.cover_image.from_blob(r.content)
-                    model = self.save(model)
+                    issue.cover_image.from_blob(r.content)
+                    issue = self.save(issue)
                     created_flag = True
         return created_flag
+
+    def find_or_create_thumbnail(self, issue, width=None, height=None):
+        """
+        Creates a thumbnail image from the original if one of the same size
+        does not already exist. Width OR height must be provided. It is not
+        necessary to provide both.
+
+        :param issue: :class:`Issue` object class
+        :param width: Width of desired thumbnail image
+        :param height: Height of desired thumbnail image
+        """
+        assert width is not None or height is not None
+        try:
+            image = issue.cover_image.find_thumbnail(width=width, height=height)
+        except NoResultFound:
+            image = issue.cover_image.generate_thumbnail(width=width, height=height)
+        return image
 
     def find_issues_in_date_range(self, start, end):
         """
