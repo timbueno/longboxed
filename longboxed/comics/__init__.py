@@ -71,10 +71,11 @@ class IssueService(Service):
         :param height: Height of desired thumbnail image
         """
         assert width is not None or height is not None
-        try:
-            image = issue.cover_image.find_thumbnail(width=width, height=height)
-        except NoResultFound:
-            image = issue.cover_image.generate_thumbnail(width=width, height=height)
+        with store_context(store):
+            try:
+                image = issue.cover_image.find_thumbnail(width=width, height=height)
+            except NoResultFound:
+                image = issue.cover_image.generate_thumbnail(width=width, height=height)
         return image
 
     def find_issues_in_date_range(self, start, end):
