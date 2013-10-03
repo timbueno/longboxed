@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     longboxed.frontend.comics
-    ~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Comics blueprints
 """

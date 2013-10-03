@@ -1,18 +1,53 @@
 # -*- coding: utf-8 -*-
 """
     longboxed.manage.comics
-    ~~~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~
 
     comic management commands
 """
 import csv
-
-from flask.ext.script import Command, Option
-
 from StringIO import StringIO
 
+from flask.ext.script import Command, Option, prompt, prompt_bool
+
+from ..core import db
 from ..helpers import current_wednesday, mail_content, two_wednesdays, next_wednesday
 from ..services import comics
+
+
+class TestImageCommand(Command):
+    def run(self):
+        try:
+            issue = comics.issues.first(diamond_id='JUL130221D')
+            if issue:
+                comics.issues.set_cover_image_from_url(issue, issue.big_image)
+        except Exception:
+            db.session.rollback()
+            raise
+
+
+class SetCoverImageCommand(Command):
+    """
+    Sets the cover image of an issue. The issues is found in the 
+    database with a diamond id. If the issue already has an image
+    attached, you can optionally choose to replace it.
+    """
+    def run(self):
+        diamond_id = prompt('Issue Diamond id')
+        issue = comics.issues.first(diamond_id=diamond_id)
+        if issue:
+            url = prompt('Url of jpg image for cover image')
+            overwrite = False
+            if issue.cover_image.original:
+                print 'Issue object already has a cover image set.'
+                overwrite = prompt_bool('Overwrite existing picture?')
+            success = comics.issues.set_cover_image_from_url(issue, url, overwrite)
+            if success:
+                print 'Successfully set cover image'
+            return
+        print 'No issue found!'
+        return
+
 
 
 class CrossCheckCommand(Command):

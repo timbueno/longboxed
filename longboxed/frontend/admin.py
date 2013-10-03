@@ -35,11 +35,12 @@ class SuperUserBase(ModelView):
 
 
 class IssueAdmin(AdministratorBase):
+    edit_template = 'edit_issue_model.html'
     # List of columns that can be sorted
     column_sortable_list = ('issue_number', 'complete_title', 'on_sale_date', ('title',Title.name), ('publisher', Publisher.name))
     column_searchable_list = ('complete_title', 'diamond_id')
     column_list = ('on_sale_date', 'diamond_id', 'issue_number', 'issues', 'complete_title', 'title', 'publisher')
-    
+
     def __init__(self, session):
         # Just call parent class with predefined model.
         super(IssueAdmin, self).__init__(Issue, session)
@@ -56,6 +57,17 @@ class IssueAdmin(AdministratorBase):
                 _comics.issues.update(issue, **{'on_sale_date': date})
         except Exception, ex:
             flash(gettext('Failed to set date %(error)s', error=str(ex)), 'error')
+        return
+
+    @action('set_cover_image', lazy_gettext('Set Cover Image'), lazy_gettext('Are you sure you want to set the cover image?'))
+    def set_cover_image(self, ids):
+        try:
+            issues = _comics.issues.get_all(*ids)
+            for issue in issues:
+                _comics.issues.set_cover_image_from_url(issue, issue.big_image, True)
+                _comics.issues.find_or_create_thumbnail(issue, width=250)
+        except Exception, ex:
+            flash(gettext('Failed to set cover image %(errors)s', error=str(ex)), 'error')
         return
 
     @action('current_wednesday', lazy_gettext('This Wed | %(date)s', date=current_wednesday()), lazy_gettext('Are you sure? | %(date)s', date=current_wednesday()))

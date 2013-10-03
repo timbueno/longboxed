@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """
     longboxed.comics.models
-    ~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~
 
     Comics module
 """
+from sqlalchemy_imageattach.entity import Image, image_attachment
+
 from ..core import db
 
 
@@ -77,6 +79,7 @@ class Issue(db.Model):
     category = db.Column(db.String(100))
     upc = db.Column(db.String(100))
     #: Relationships
+    cover_image = image_attachment('IssueCover')
     is_parent = db.Column(db.Boolean(), default=False)
     has_alternates = db.Column(db.Boolean(), default=False)
     @property
@@ -85,5 +88,13 @@ class Issue(db.Model):
                                  Issue.diamond_id!=self.diamond_id)
 
 
+class IssueCover(db.Model, Image):
+    """
+    Issue cover model
+    """
+    __tabelname__ = 'issue_cover'
+
+    issue_id = db.Column(db.Integer, db.ForeignKey('issues.id'), primary_key=True)
+    issue = db.relationship('Issue')
 
 

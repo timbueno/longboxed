@@ -5,10 +5,7 @@
 
     Frontend blueprints
 """
-# import sys
-# from datetime import datetime, timedelta
-
-from flask import Blueprint, g,redirect, render_template, request, url_for
+from flask import Blueprint, g, redirect, render_template, request, url_for
 from flask.ext.security import (current_user, login_required)
 from flask.ext.wtf import Form
 from wtforms import BooleanField, SelectField, SelectMultipleField

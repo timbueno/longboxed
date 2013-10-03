@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     longboxed.comics
-    ~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~
 
     longboxed comics package
 """
@@ -20,8 +20,11 @@ from StringIO import StringIO
 
 from bs4 import BeautifulSoup
 from flask import current_app as app
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy_imageattach.entity import store_context
+from requests import get
 
-from ..core import Service
+from ..core import store, Service
 from .models import Issue, Publisher, Title
 
 
@@ -38,6 +41,43 @@ class TitleService(Service):
 
 class IssueService(Service):
     __model__ = Issue
+
+    def set_cover_image_from_url(self, issue, url, overwrite=False):
+        """
+        Downloads a jpeg file from a url and stores it in the image store.
+
+        :param issue: :class:`Issue` object class
+        :param url: URL to download the jpeg cover image format
+        :param overwrite: Boolean flag that overwrites an existing image
+        """
+        created_flag = False
+        if not issue.cover_image.original or overwrite:
+            r = get(url)
+            if r.status_code == 200 and r.headers['content-type'] == 'image/jpeg':
+                with store_context(store):
+                    issue.cover_image.from_blob(r.content)
+                    issue = self.save(issue)
+                    created_flag = True
+        return created_flag
+
+    def find_or_create_thumbnail(self, issue, width=None, height=None):
+        """
+        Creates a thumbnail image from the original if one of the same size
+        does not already exist. Width OR height must be provided. It is not
+        necessary to provide both.
+
+        :param issue: :class:`Issue` object class
+        :param width: Width of desired thumbnail image
+        :param height: Height of desired thumbnail image
+        """
+        assert width is not None or height is not None
+        with store_context(store):
+            try:
+                image = issue.cover_image.find_thumbnail(width=width, height=height)
+            except NoResultFound:
+                image = issue.cover_image.generate_thumbnail(width=width, height=height)
+            issue = self.save(issue)
+        return image
 
     def find_issues_in_date_range(self, start, end):
         """
@@ -88,6 +128,16 @@ class IssueService(Service):
 
 
 class ComicService(object):
+    """
+    The ComicService class is not an actual service class. However, it wraps
+    three service classes for convenience purposes. The publsishers, titles, 
+    and issues classes are all available from ComicService. 
+
+    Processes like adding an issue to the database require manipulating Issue,
+    Title, and Publisher objects. ComicService gives access to functions that 
+    need to manipulate all three of these objects at the same time.
+    """
+
     def __init__(self):
         self.publishers = PublisherService()
         self.titles = TitleService()
@@ -104,7 +154,7 @@ class ComicService(object):
         self.issue_additions = 0
         self.title_additions = 0
         self.publisher_additions = 0
-        return
+        return   
 
     def insert_publisher(self, raw_publisher=None):
         """
@@ -439,7 +489,7 @@ class ComicService(object):
             # Get latest database data from TFAW
             self.get_latest_TFAW_database()
             # Get raw text data from daily download
-            raw_issues = self.get_raw_issues('latest_db.gz', look_ahead=63)
+            raw_issues = self.get_raw_issues('latest_db.gz', look_ahead=10)
             # Insert raw comic book into the database
             issue_list = []
             for q, raw_issue in enumerate(raw_issues):
@@ -473,6 +523,7 @@ class ComicService(object):
                         if len(new_issues) > 1:
                             issue.has_alternates = True
                         self.issues.save(issue)
+                        self.issues.set_cover_image_from_url(issue, issue.big_image)
             summary = self.database_summary()
             process_logger.error(summary)
         except:

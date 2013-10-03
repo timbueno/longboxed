@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     longboxed.core
-    ~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~
 
     Core module contains basic classes that all applications
     depend on
@@ -12,6 +12,10 @@ from flask.ext.bootstrap import Bootstrap
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security
 from flask_mail import Mail
+from sqlalchemy_imageattach.stores.fs import HttpExposedFileSystemStore
+from sqlalchemy_imageattach.stores.s3 import S3Store
+
+from .settings import USE_AWS, AWS_S3_BUCKET, AWS_SECRET_KEY, AWS_ACCESS_KEY_ID
 
 #: Flask-Bootstrap extension instance
 bootstrap = Bootstrap()
@@ -24,6 +28,12 @@ security = Security()
 
 #: Flask Mail Extension Instance
 mail = Mail()
+
+#: Image Filesystem
+if USE_AWS:
+    store = S3Store(AWS_S3_BUCKET, AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
+else:
+    store = HttpExposedFileSystemStore('store', 'images')
 
 class LongboxedError(Exception):
     """Base application error class"""

@@ -9,8 +9,13 @@ from datetime import timedelta
 
 DEBUG = True
 
+USE_AWS = False
+AWS_S3_BUCKET = None
+AWS_ACCESS_KEY_ID = None
+AWS_SECRET_KEY = None
+
 # Longboxed Specific Variables
-AFFILIATE_ID = '782419'
+AFFILIATE_ID = None
 SUPPORTED_PUBS = ['Marvel Comics', 'DC Comics', 'Dark Horse', 'IDW Publishing',\
                   'Boom! Studios', 'Image Comics', 'Dynamite Entertainment', \
                   'Avatar Press', 'Abstract Studios','Archie Comics', \
@@ -22,7 +27,7 @@ SUPPORTED_DIAMOND_PUBS = ['MARVEL COMICS', 'DC COMICS', 'DARK HORSE COMICS', \
                           'ARCHIE COMIC PUBLICATIONS', 'VALIANT ENTERTAINMENT LLC']
 
 # Flask Application Configuration
-SECRET_KEY = '***REMOVED***'
+SECRET_KEY = 'tLqoyTDEr7ui8kL3K993Nj'
 
 # URIS
 SQLALCHEMY_DATABASE_URI = 'postgres://app_user:password@localhost/longboxed'
@@ -63,12 +68,13 @@ SECURITY_EMAIL_SUBJECT_CONFIRM = 'Please confirm your Longboxed email!'
 # Mail configuration
 MAIL_SERVER = 'smtp.mailgun.org'
 MAIL_PORT = 587
-MAIL_USERNAME = 'postmaster@longboxed.com'
-MAIL_PASSWORD = '***REMOVED***'
+MAIL_USERNAME = 'None'
+MAIL_PASSWORD = 'None'
 
 # Bootstrap Configuration
 BOOTSTRAP_USE_MINIFIED = True
 BOOTSTRAP_FONTAWESOME = True
+BOOTSTRAP_GOOGLE_ANALYTICS_ACCOUNT = None
 
 # # Google OAuth Setup
 GOOGLE_CLIENT_ID = '200273015685.apps.googleusercontent.com'
