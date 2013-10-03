@@ -59,6 +59,17 @@ class IssueAdmin(AdministratorBase):
             flash(gettext('Failed to set date %(error)s', error=str(ex)), 'error')
         return
 
+    @action('set_cover_image', lazy_gettext('Set Cover Image'), lazy_gettext('Are you sure you want to set the cover image?'))
+    def set_cover_image(self, ids):
+        try:
+            issues = _comics.issues.get_all(*ids)
+            for issue in issues:
+                _comics.issues.set_cover_image_from_url(issue, issue.big_image, True)
+                _comics.issues.find_or_create_thumbnail(issue, width=250)
+        except Exception, ex:
+            flash(gettext('Failed to set cover image %(errors)s', error=str(ex)), 'error')
+        return
+
     @action('current_wednesday', lazy_gettext('This Wed | %(date)s', date=current_wednesday()), lazy_gettext('Are you sure? | %(date)s', date=current_wednesday()))
     def action_current_wednesday(self, ids):
         self.set_on_sale_date(ids, current_wednesday())

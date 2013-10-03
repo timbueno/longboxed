@@ -76,6 +76,7 @@ class IssueService(Service):
                 image = issue.cover_image.find_thumbnail(width=width, height=height)
             except NoResultFound:
                 image = issue.cover_image.generate_thumbnail(width=width, height=height)
+            issue = self.save(issue)
         return image
 
     def find_issues_in_date_range(self, start, end):
