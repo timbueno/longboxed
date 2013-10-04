@@ -82,9 +82,15 @@ class CrossCheckCommand(Command):
 class UpdateDatabaseCommand(Command):
     """Updates database with TFAW Daily Download"""
 
-    def run(self):
+    def get_options(self):
+        return [
+            Option('-d','--days', dest='days', required=True)
+        ]
+
+    def run(self, days):
         print 'Starting update'
-        comics.add_new_issues_to_database(days=10)
+        days = int(days)
+        comics.add_new_issues_to_database(days=days)
         print 'Done Adding to DB'
 
 
