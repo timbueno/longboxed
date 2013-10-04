@@ -6,6 +6,7 @@
     launchpad frontend application package
 """
 
+from flask import render_template
 from flask.ext.debugtoolbar import DebugToolbarExtension
 from functools import wraps
 
@@ -32,15 +33,13 @@ def create_app(settings_override=None):
     #: Register custom error handlers
     if not app.debug:
         for e in [500, 404]:
-            pass
-            # app.errorhandler(e)(handle_error)
+            app.errorhandler(e)(handle_error)
 
     return app
 
 
-# def handle_error(e):
-#     print e
-#     return render_template('errors/%s.html' % e.code), e.code
+def handle_error(e):
+    return render_template('errors/%s.html' % e.code), e.code
 
 
 def route(bp, *args, **kwargs):
