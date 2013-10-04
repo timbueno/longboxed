@@ -481,7 +481,7 @@ class ComicService(object):
         return summary
 
 
-    def add_new_issues_to_database(self):
+    def add_new_issues_to_database(self, days=10):
         try:
             process_logger.error('Starting Database Update')
             # Reset Statistic Variables
@@ -489,7 +489,7 @@ class ComicService(object):
             # Get latest database data from TFAW
             self.get_latest_TFAW_database()
             # Get raw text data from daily download
-            raw_issues = self.get_raw_issues('latest_db.gz', look_ahead=10)
+            raw_issues = self.get_raw_issues('latest_db.gz', look_ahead=days)
             # Insert raw comic book into the database
             issue_list = []
             for q, raw_issue in enumerate(raw_issues):

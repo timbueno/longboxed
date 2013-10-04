@@ -84,7 +84,7 @@ class UpdateDatabaseCommand(Command):
 
     def run(self):
         print 'Starting update'
-        comics.add_new_issues_to_database()
+        comics.add_new_issues_to_database(days=10)
         print 'Done Adding to DB'
 
 
