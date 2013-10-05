@@ -328,6 +328,11 @@ class ComicService(object):
         return
 
     def get_raw_issues(self, ffile, look_ahead):
+        """
+        Gets raw issues from TFAW daily download file. 
+
+        TODO: Remove timedelta that subtracts from todays date 
+        """
         # open gzip archive and extract only comics
         with gzip.open(ffile, 'rb') as f:
             comics = []

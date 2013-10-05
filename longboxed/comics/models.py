@@ -10,6 +10,13 @@ from sqlalchemy_imageattach.entity import Image, image_attachment
 from ..core import db
 
 
+#: Many-to-Many relationship for bundles and issues helper table
+issues_bundles = db.Table('issues_bundles',
+    db.Column('bundle_id', db.Integer, db.ForeignKey('bundles.id')),
+    db.Column('issue_id', db.Integer, db.ForeignKey('issues.id'))
+)
+
+
 class Publisher(db.Model):
     """
     Publisher model class with two back referenced relationships, titles and issues.
@@ -22,8 +29,16 @@ class Publisher(db.Model):
     #: Attributes
     name = db.Column(db.String(255))
     #: Relationships
-    titles = db.relationship('Title', backref=db.backref('publisher', lazy='joined'), lazy='dynamic')
-    comics = db.relationship('Issue', backref=db.backref('publisher', lazy='joined'), lazy='dynamic')
+    titles = db.relationship(
+        'Title',
+        backref=db.backref('publisher', lazy='joined'),
+        lazy='dynamic'
+    )
+    comics = db.relationship(
+        'Issue',
+        backref=db.backref('publisher', lazy='joined'),
+        lazy='dynamic'
+    )
 
     def __str__(self):
         return self.name
@@ -37,12 +52,16 @@ class Title(db.Model):
     """
     __tablename__ = 'titles'
     #: IDs
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer(), primary_key=True)
     publisher_id = db.Column(db.Integer, db.ForeignKey('publishers.id'))
     #: Attributes
     name = db.Column(db.String(255))
     #: Relationships
-    issues = db.relationship('Issue', backref=db.backref('title', lazy='joined'), lazy='dynamic', order_by='Issue.on_sale_date')
+    issues = db.relationship('Issue',
+        backref=db.backref('title', lazy='joined'),
+        lazy='dynamic',
+        order_by='Issue.on_sale_date'
+    )
 
     def __str__(self):
         return self.name
@@ -92,9 +111,32 @@ class IssueCover(db.Model, Image):
     """
     Issue cover model
     """
-    __tabelname__ = 'issue_cover'
+    __tablename__ = 'issue_cover'
 
     issue_id = db.Column(db.Integer, db.ForeignKey('issues.id'), primary_key=True)
     issue = db.relationship('Issue')
+
+
+class Bundle(db.Model):
+    """
+    Bundle model class.
+
+    Bundles are groupings of issues that contain a date and a link to a an
+    owner. Owners are able to view previous weeks hauls.
+    """
+    __tablename__ = 'bundles'
+    #: IDs
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    #: Attributes
+    release_date = db.Column(db.Date())
+    #: Relationships
+    issues = db.relationship(
+        'Issue',
+        secondary=issues_bundles,
+        backref=db.backref('bundles', lazy='dynamic')
+    )
+
+
 
 
