@@ -106,6 +106,9 @@ class Issue(db.Model):
         return self.query.filter(Issue.title==self.title, Issue.issue_number==self.issue_number, \
                                  Issue.diamond_id!=self.diamond_id)
 
+    def __str__(self):
+        return self.complete_title
+
 
 class IssueCover(db.Model, Image):
     """
@@ -129,6 +132,7 @@ class Bundle(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     #: Attributes
+    last_updated = db.Column(db.DateTime())
     release_date = db.Column(db.Date())
     #: Relationships
     issues = db.relationship(
