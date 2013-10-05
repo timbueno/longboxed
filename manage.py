@@ -12,7 +12,7 @@ from longboxed.api import create_app
 from longboxed.manage import CreateNewRoleCommand, CreateDefaultRolesCommand, CreateUserCommand, \
                              AddSuperUserRoleCommand, ListUsersCommand, ListRolesCommand, \
                              UpdateDatabaseCommand, ScheduleReleasesCommand, CrossCheckCommand, \
-                             TestImageCommand, SetCoverImageCommand
+                             TestImageCommand, SetCoverImageCommand, UserBundlesCommand
 
 manager = Manager(create_app())
 manager.add_command('create_role', CreateNewRoleCommand())
@@ -27,6 +27,8 @@ manager.add_command('schedule_releases', ScheduleReleasesCommand())
 manager.add_command('cross_check', CrossCheckCommand())
 
 manager.add_command('set_cover_image', SetCoverImageCommand())
+
+manager.add_command('bundle_issues', UserBundlesCommand())
 
 manager.add_command('test', TestImageCommand())
 
