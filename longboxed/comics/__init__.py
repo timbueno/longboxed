@@ -25,10 +25,14 @@ from sqlalchemy_imageattach.entity import store_context
 from requests import get
 
 from ..core import store, Service
-from .models import Issue, Publisher, Title
+from .models import Bundle, Issue, Publisher, Title
 
 
 process_logger = getLogger('issue_processing')
+
+
+class BundleService(Service):
+    __model__ = Bundle
 
 
 class PublisherService(Service):
