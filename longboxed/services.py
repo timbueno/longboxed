@@ -6,10 +6,11 @@
     services module
 """
 
-from .comics import ComicService
+from .comics import ComicService, BundleService
 from .users import UsersService, RolesService
 
 
+bundle = BundleService()
 comics = ComicService()
 
 users = UsersService()

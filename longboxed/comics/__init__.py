@@ -25,10 +25,14 @@ from sqlalchemy_imageattach.entity import store_context
 from requests import get
 
 from ..core import store, Service
-from .models import Issue, Publisher, Title
+from .models import Bundle, Issue, Publisher, Title
 
 
 process_logger = getLogger('issue_processing')
+
+
+class BundleService(Service):
+    __model__ = Bundle
 
 
 class PublisherService(Service):
@@ -328,6 +332,11 @@ class ComicService(object):
         return
 
     def get_raw_issues(self, ffile, look_ahead):
+        """
+        Gets raw issues from TFAW daily download file. 
+
+        TODO: Remove timedelta that subtracts from todays date 
+        """
         # open gzip archive and extract only comics
         with gzip.open(ffile, 'rb') as f:
             comics = []

@@ -5,8 +5,9 @@
 
     user management commands
 """
+from datetime import datetime
 
-from flask import current_app
+from flask import current_app, render_template
 from flask.ext.script import Command, prompt, prompt_pass
 from flask.ext.security.forms import RegisterForm
 from flask.ext.security.registerable import register_user
@@ -14,8 +15,52 @@ from werkzeug.datastructures import MultiDict
 from werkzeug.local import LocalProxy
 
 from ..core import db
-from ..services import users
-from ..services import roles
+from ..helpers import current_wednesday, mail_content
+from ..services import bundle, comics, roles, users
+
+
+class UserBundlesCommand(Command):
+    """
+    Creates bundles for each user
+    """
+    def run(self):
+        date = current_wednesday()
+        issues_this_week = comics.issues.find_issue_with_date(date)
+        for user in users.all():
+            matches = [i for i in issues_this_week if i.title in user.pull_list and i.is_parent]
+            # Get existing bundle if there already is one
+            b = bundle.first(user=user, release_date=date)
+            if b:
+                b = bundle.update(b, issues=matches, last_updated=datetime.now())
+            else:
+                b = bundle.create(
+                        user=user,
+                        release_date=date,
+                        issues=matches,
+                        last_updated=datetime.now()
+                )
+        return
+
+
+class MailBundlesCommand(Command):
+    """
+    Mails bundles to users
+    """
+    def run(self):
+        date = current_wednesday()
+        users_to_mail = users.find(mail_bundles=True)
+        for user in users_to_mail:
+            b = user.bundles.filter_by(release_date=date).first()
+            if b.issues:
+                html = render_template('mail/bundle_mail.html', issues=b.issues)
+                mail_content(
+                    [user.email],
+                    'bundles@longboxed.com',
+                    'Your weekly comic book bundle!',
+                    'Content',
+                    html
+                )
+        return
 
 
 class CreateNewRoleCommand(Command):

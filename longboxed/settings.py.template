@@ -8,6 +8,7 @@
 from datetime import timedelta
 
 DEBUG = True
+DEBUG_TB_INTERCEPT_REDIRECTS = True
 
 USE_AWS = False
 AWS_S3_BUCKET = None

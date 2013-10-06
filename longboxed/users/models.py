@@ -5,7 +5,6 @@
 
     User models
 """
-# from flask.ext.login import UserMixin
 from flask.ext.security import UserMixin, RoleMixin
 
 from ..core import db
@@ -25,7 +24,8 @@ titles_users = db.Table('titles_users',
 
 roles_users = db.Table('roles_users',
     db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-    db.Column('role_id', db.Integer, db.ForeignKey('role.id')))
+    db.Column('role_id', db.Integer, db.ForeignKey('role.id'))
+)
 
 
 class Role(db.Model, RoleMixin):
@@ -67,15 +67,33 @@ class User(db.Model, UserMixin):
     login_count = db.Column(db.Integer, default=0)
     confirmed_at = db.Column(db.DateTime())
 
+    #: Feature Settings
     display_pull_list = db.Column(db.Boolean, default=True)
     default_cal = db.Column(db.String(255))
+    mail_bundles = db.Column(db.Boolean, default=True)
+
     # Relationships
-    publishers = db.relationship('Publisher', secondary=publishers_users,
-        backref=db.backref('users', lazy='dynamic'))
-    pull_list = db.relationship('Title', secondary=titles_users,
-        backref=db.backref('users', lazy='dynamic'), lazy='joined')
-    roles = db.relationship('Role', secondary=roles_users,
-        backref=db.backref('users', lazy='dynamic'))
+    publishers = db.relationship(
+        'Publisher',
+        secondary=publishers_users,
+        backref=db.backref('users', lazy='dynamic')
+    )
+    pull_list = db.relationship(
+        'Title',
+        secondary=titles_users,
+        backref=db.backref('users', lazy='dynamic'),
+        lazy='joined'
+    )
+    roles = db.relationship(
+        'Role',
+        secondary=roles_users,
+        backref=db.backref('users', lazy='dynamic')
+    )
+    bundles = db.relationship(
+        'Bundle',
+        backref=db.backref('user', lazy='joined'),
+        lazy='dynamic'
+    )
 
     def __str__(self):
         return self.email

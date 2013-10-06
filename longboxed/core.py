@@ -20,7 +20,7 @@ from .settings import USE_AWS, AWS_S3_BUCKET, AWS_SECRET_KEY, AWS_ACCESS_KEY_ID
 #: Flask-Bootstrap extension instance
 bootstrap = Bootstrap()
 
-#: Flask-MongoKit extension instance
+#: Flask-SQLAlchemy extension instance
 db = SQLAlchemy()
 
 #: Flask-Security extension instance
