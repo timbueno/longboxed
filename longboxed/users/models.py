@@ -67,8 +67,11 @@ class User(db.Model, UserMixin):
     login_count = db.Column(db.Integer, default=0)
     confirmed_at = db.Column(db.DateTime())
 
+    #: Feature Settings
     display_pull_list = db.Column(db.Boolean, default=True)
     default_cal = db.Column(db.String(255))
+    mail_bundles = db.Column(db.Boolean, default=True)
+
     # Relationships
     publishers = db.relationship(
         'Publisher',

@@ -102,7 +102,7 @@ def get_week(date, multiplier=0):
     return (sunday, saturday)
 
 
-def mail_content(recipients, sender, subject, content, attachment=None):
+def mail_content(recipients, sender, subject, content, html=None, attachment=None):
     """
     Generic function allowing for easy sending of email. A :class:`Mail`
     from :module:`longboxed.core` must be in the applications context
@@ -116,7 +116,9 @@ def mail_content(recipients, sender, subject, content, attachment=None):
     msg = Message(subject,
                   sender=sender,
                   recipients=recipients,
-                  body=content)
+                  body=content,
+                  html=html
+    )
     if attachment:
         msg.attach(filename='checks.txt', content_type='text/plain', data=attachment)
     mail.send(msg)
