@@ -5,7 +5,6 @@
 
     User models
 """
-# from flask.ext.login import UserMixin
 from flask.ext.security import UserMixin, RoleMixin
 
 from ..core import db
