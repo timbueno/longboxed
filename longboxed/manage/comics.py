@@ -67,7 +67,7 @@ class CrossCheckCommand(Command):
             raise NotImplementedError
         content = comics.get_shipping_from_TFAW(week)
         shipping = comics.get_issue_dict_shipping(content)
-        not_in_db = [i for i in shipping if not comics.issues.first(diamond_id=(i['ITEMCODE']+i['DiscountCode']))]
+        not_in_db = [i for i in shipping if not comics.issues.first(diamond_id=i['ITEMCODE'])]
         not_in_db = sorted(not_in_db, key=lambda x: x['Vendor'])
         f = StringIO()
         ordered_fieldnames = ['ITEMCODE', 'DiscountCode', 'TITLE', 'Vendor', 'PRICE']
@@ -113,6 +113,6 @@ class ScheduleReleasesCommand(Command):
             raise NotImplementedError
         content = comics.get_shipping_from_TFAW(week)
         shipping = comics.get_issue_dict_shipping(content)
-        diamond_ids = [x['ITEMCODE']+x['DiscountCode'] for x in shipping]
+        diamond_ids = [x['ITEMCODE'] for x in shipping]
         comics.compare_shipping_with_database(diamond_ids, date)
         print 'Done Scheduling'

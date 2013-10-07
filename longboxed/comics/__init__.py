@@ -304,7 +304,6 @@ class ComicService(object):
         # Get every item in the list
         diamond_shipments = []
         q = 0
-        # date = wednesday(datetime.today().date(), week_advance)
         for diamond_id in shipping_ids:
             issue = self.issues.first(diamond_id=diamond_id)
             if issue:
@@ -394,7 +393,9 @@ class ComicService(object):
             i['last_updated'] = datetime.strptime(raw_issue[17], '%Y-%m-%d %H:%M:%S')
         except:
             i['last_updated'] = None
-        i['diamond_id'] = raw_issue[20]
+        diamond_id, discount_code = self.separate_TFAW_diamond_id(raw_issue[20])
+        i['diamond_id'] = diamond_id
+        i['discount_code'] = discount_code
         i['category'] = raw_issue[21]
         i['upc'] = raw_issue[25]
 
@@ -421,6 +422,22 @@ class ComicService(object):
             return True
         else:
             return False
+
+
+    def separate_TFAW_diamond_id(self, raw_id):
+        """
+        Takes a raw diamond id string from the TFAW daily download and separates
+        it into the diamond id and the discount code.
+
+        :param raw_id: String of raw diamond id from TFAW daily download
+        """
+        if raw_id[-1:].isalpha():
+            diamond_id = raw_id[:-1]
+            discount_code = raw_id[-1:]
+        else:
+            diamond_id = raw_id
+            discount_code = None
+        return (diamond_id, discount_code)
 
 
     def group_issues(self, issues):

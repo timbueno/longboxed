@@ -95,6 +95,7 @@ class Issue(db.Model):
     popularity = db.Column(db.Float())
     last_updated = db.Column(db.DateTime())
     diamond_id = db.Column(db.String(100))
+    discount_code = db.Column(db.String(1))
     category = db.Column(db.String(100))
     upc = db.Column(db.String(100))
     #: Relationships
