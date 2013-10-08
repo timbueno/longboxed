@@ -173,6 +173,3 @@ if __name__ == "__main__":
     print type(my_record.raw_record['retail_price'])
     my_record.process()
     print type(my_record.processed_record['retail_price'])
-    # my_importer = DailyDownloadImporter('782419', my_record)
-    # print my_importer.csv_rules
-    # print my_importer.record
