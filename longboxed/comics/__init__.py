@@ -364,7 +364,7 @@ class ComicService(object):
                 (8, 'RetailPrice', 'retail_price', True),
                 (9, 'Category', 'sas_category', False),
                 (10, 'SubCategory', 'sas_subcategory', False),
-                (11, 'Description', 'description', True)
+                (11, 'Description', 'description', True),
                 (12, 'OnSaleDate', 'current_tfaw_release_date', True),
                 (13, 'Genre', 'genre', True),
                 (14, 'People', 'people', True),
