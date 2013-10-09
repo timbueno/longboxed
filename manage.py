@@ -12,7 +12,7 @@ from longboxed.frontend import create_app
 from longboxed.manage import CreateNewRoleCommand, CreateDefaultRolesCommand, CreateUserCommand, \
                              AddSuperUserRoleCommand, ListUsersCommand, ListRolesCommand, \
                              UpdateDatabaseCommand, ScheduleReleasesCommand, CrossCheckCommand, \
-                             TestImageCommand, SetCoverImageCommand, UserBundlesCommand, \
+                             TestCommand, SetCoverImageCommand, UserBundlesCommand, \
                              MailBundlesCommand
 
 manager = Manager(create_app())
@@ -32,7 +32,7 @@ manager.add_command('set_cover_image', SetCoverImageCommand())
 manager.add_command('bundle_issues', UserBundlesCommand())
 manager.add_command('mail_bundles', MailBundlesCommand())
 
-manager.add_command('test', TestImageCommand())
+manager.add_command('test', TestCommand())
 
 if __name__ == '__main__':
     manager.run()

@@ -1,9 +1,18 @@
 import gzip
 import inspect
+import re
 
+from copy import deepcopy
 from csv import DictReader
+from datetime import datetime
+from decimal import Decimal
+from HTMLParser import HTMLParser
 
 import requests
+
+from flask import current_app
+
+from .services import comics as _comics
 
 class BaseImporter(object):
     """
@@ -57,23 +66,48 @@ class BaseRecord(object):
     """
     Base record class
     """
-    def __init__(self, raw_record, process_func_tag='process'):
-        self.process_func_tag = process_func_tag
-        self.processes = self.get_processors(self.process_func_tag)
+    def __init__(self, raw_record, csv_rules, pre_process_tag='pre', post_process_tag='post'):
         self.raw_record = raw_record
+        self.csv_rules = csv_rules
+        self.pre_processes = self.get_processors(pre_process_tag)
+        self.post_processes = self.get_processors(post_process_tag)
         self.processed_record = None
+        self.object = None
 
     def get_processors(self, tag):
         processors = [x[0] for x in inspect.getmembers(self, predicate=inspect.ismethod) \
-            if tag in x[0] and x[0] != 'get_processors' and x[0] != 'process']
+            if tag in x[0] and x[0] and x[0] not in ['pre_process', 'post_process', 'get_processors']]
         return processors
 
-    def process(self):
-        self.processed_record = self.raw_record
-        for method in self.processes:
-            result = getattr(self, method)(self.processed_record)
-            self.processed_record.update(result)
-        return
+    def pre_process(self):
+        temp = deepcopy(self.raw_record)
+        temp = {key: temp[key] for key in temp.keys() if self.csv_rules[key]}
+        for method in self.pre_processes:
+            result = getattr(self, method)(temp)
+            temp.update(result)
+        self.processed_record = temp
+        return self.processed_record
+
+    def post_process(self):
+        results = {}
+        for method in self.post_processes:
+            result = getattr(self, method)(self.object)
+            results[method] = result
+        return results
+
+    def make_object(self):
+        raise NotImplementedError
+
+    def run(self):
+        try:
+            self.pre_process()
+            self.make_object()
+            self.post_process()
+        except NotImplementedError:
+            pass
+
+    def is_relevent(self):
+        return True
 
 
 class DailyDownloadRecord(BaseRecord):
@@ -84,6 +118,31 @@ class DailyDownloadRecord(BaseRecord):
         super(DailyDownloadRecord, self).__init__(*args, **kwargs)
         self.affiliate_id = affiliate_id
 
+    def is_relevent(self):
+        if self.raw_record['category'] == 'Comics' \
+            and self.raw_record['publisher'] in current_app.config['SUPPORTED_PUBS']:
+            return True
+        return False
+
+    def make_object(self):
+        if not self.processed_record:
+            raise Exception
+        issue_dict = deepcopy(self.processed_record)
+        publisher = _comics.insert_publisher(
+            raw_publisher = issue_dict['publisher']
+        )
+        title = _comics.insert_title(
+            raw_title = issue_dict['title'],
+            publisher_object = publisher
+        )
+        issue = _comics.insert_issue(
+            raw_issue_dict = issue_dict,
+            title_object = title,
+            publisher_object = publisher
+        )
+        self.object = issue
+        return self.object
+
     def is_float(self, number):
         try: 
             float(number)
@@ -91,15 +150,37 @@ class DailyDownloadRecord(BaseRecord):
         except (ValueError, TypeError):
             return False
 
-    def process_retail_price(self, record, key='retail_price'):
+    def pre_complete_title(self, record, key='complete_title'):
+        """
+        Parses the Title, Issue Number, Total Number of Issues, and other
+        information from a title string.
+
+        Example Raw Title String: Infinity Hunt #2 (of 4)
+
+        :param record: String containing raw title.
+        :param key: Dictionary key associated with raw unprocessed title
+        """
+        try:
+            # m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>(\d+))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', title).groupdict()
+            m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>([+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', record[key]).groupdict()
+            m['complete_title'] = record[key]
+            if m['issue_number']:
+                m['issue_number'] = Decimal(m['issue_number'])
+            if m['issues']:
+                m['issues'] = Decimal(m['issues'])
+        except (AttributeError, TypeError):
+            m = None
+        return m
+
+    def pre_retail_price(self, record, key='retail_price'):
         result = float(record[key]) if self.is_float(record[key]) else None
         return {key: result}
 
-    def process_a_link(self, record, key='a_link'):
+    def pre_a_link(self, record, key='a_link'):
         result = record[key].replace('YOURUSERID', self.affiliate_id)
         return {key: result}
 
-    def process_diamond_id(self, record, key='diamond_id'):
+    def pre_diamond_id(self, record, key='diamond_id'):
         if record[key][-1:].isalpha():
             diamond_id = record[key][:-1]
             discount_code = record[key][-1:]
@@ -108,6 +189,29 @@ class DailyDownloadRecord(BaseRecord):
             discount_code = None
         return {key: diamond_id, 'discount_code': discount_code}
 
+    def pre_description(self, record, key='description'):
+        result = HTMLParser().unescape(record[key])
+        return {key: result}
+
+    def pre_current_tfaw_release_date(self, record, key='current_tfaw_release_date'):
+        result = datetime.strptime(record[key], '%Y-%m-%d').date()
+        return {key: result}
+
+    def pre_last_updated(self, record, key='last_updated'):
+        result = datetime.strptime(record[key], '%Y-%m-%d %H:%M:%S')
+        return {key: result}
+
+    def post_check_parent_status(self, issue):
+        similar_issues = _comics.issues.filter(
+            _comics.issues.__model__.title == issue.title,
+            _comics.issues.__model__.issue_number==issue.issue_number,
+            _comics.issues.__model__.diamond_id != issue.diamond_id
+        )
+        print similar_issues
+
+    def post_cover_image(self, issue):
+        created = _comics.issues.set_cover_image_from_url(issue, issue.big_image)
+        return created
 
 if __name__ == "__main__":
     csv_rules = [
@@ -115,7 +219,7 @@ if __name__ == "__main__":
         (1, 'Name', 'complete_title', True),
         (2, 'MerchantID', 'merchant_id', False),
         (3, 'Merchant', 'merchant', False),
-        (4, 'Link', 'link', True),
+        (4, 'Link', 'a_link', True),
         (5, 'Thumbnail', 'thumbnail', True),
         (6, 'BigImage', 'big_image', True),
         (7, 'Price', 'price', False),
@@ -144,7 +248,7 @@ if __name__ == "__main__":
         'last_updated': '2013-10-07 07:00:22',
         'people': 'Brian Azzarello;Eduardo Risso;Dave Johnson',
         'isbn': '1401222870',
-        'category': 'Graphic Novels',
+        'category': 'Comics',
         'big_image': 'http://affimg.tfaw.com/covers_tfaw/400/ap/apr090260d.jpg',
         'merchant_id': '8908',
         'theme': '100 Bullets',
@@ -167,9 +271,9 @@ if __name__ == "__main__":
         'sas_subcategory': 'Misc.',
         'current_tfaw_release_date': '2013-10-09'
     }
+    csv_rules = {x[2]: x[3] for x in csv_rules}
+    my_record = DailyDownloadRecord('782419', record, csv_rules)
+    record = my_record.pre_process()
+    print record
+    # print my_record.is_relevent()
 
-    my_record = DailyDownloadRecord(record)
-    # my_record.process()
-    print type(my_record.raw_record['retail_price'])
-    my_record.process()
-    print type(my_record.processed_record['retail_price'])
