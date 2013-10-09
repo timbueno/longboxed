@@ -127,7 +127,7 @@ class Service(object):
 
         :param *ids: instance ids
         """
-        return self.__model__query.filter(*criterion).all()
+        return self.__model__.query.filter(*criterion).all()
 
     def find(self, **kwargs):
         """Returns a list of instances of the service's model filtered by the
