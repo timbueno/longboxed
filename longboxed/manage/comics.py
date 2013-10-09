@@ -12,39 +12,12 @@ from flask.ext.script import Command, Option, prompt, prompt_bool
 
 # from ..core import db
 from ..helpers import current_wednesday, mail_content, two_wednesdays, next_wednesday
-from ..importer import DailyDownloadImporter, DailyDownloadRecord, BaseImporter
+from ..importer import DailyDownloadImporter, DailyDownloadRecord
 from ..services import comics
 
 
 class TestCommand(Command):
     def run(self):
-        # record = {
-        #     'status': 'instock',
-        #     'last_updated': '2013-10-07 07:00:22',
-        #     'people': 'Brian Azzarello;Eduardo Risso;Dave Johnson',
-        #     'isbn': '1401222870',
-        #     'category': 'Comics',
-        #     'big_image': 'http://affimg.tfaw.com/covers_tfaw/400/ap/apr090260d.jpg',
-        #     'merchant_id': '8908',
-        #     'theme': '100 Bullets',
-        #     'short_description': '',
-        #     'thumbnail': 'http://affimg.tfaw.com/covers_tfaw/100/ap/apr090260d.jpg',
-        #     'merchant': 'Things From Another World',
-        #     'complete_title': 'Fantomex Max #1 (of 4)',
-        #     'description': 'This is a pretty sweet description of the issue',
-        #     'price': '17.99',
-        #     'merchant_subcategory': '',
-        #     'a_link': 'http://www.shareasale.com/m-pr.cfm?merchantID=8908&userID=YOURUSERID&productID=466299720',
-        #     'genre': 'Crime',
-        #     'sas_category': 'Books/Reading',
-        #     'retail_price': '2.99',
-        #     'diamond_id': 'APR090260D',
-        #     'publisher': 'DC Comics',
-        #     'popularity': '0',
-        #     'upc': '978140122287151999',
-        #     'sas_subcategory': 'Misc.',
-        #     'current_tfaw_release_date': '2013-10-09'
-        # }
         csv_rules = [
             (0, 'ProductID', 'product_id', True),
             (1, 'Name', 'complete_title', True),
@@ -73,15 +46,12 @@ class TestCommand(Command):
             (24, 'ISBN', 'isbn', False),
             (25, 'UPC', 'upc', True)
         ]
-        # csv_rules = {x[2]: x[3] for x in csv_rules}
-        # my_record = DailyDownloadRecord('782419', record, csv_rules)
-        # my_record.run()
         import_instance = DailyDownloadImporter(
             affiliate_id='782419',
             csv_rules=csv_rules,
             record=DailyDownloadRecord
         )
-        # import_instance.download()
+        import_instance.download()
         import_instance.load()
         import_instance.insert_data()
         return
