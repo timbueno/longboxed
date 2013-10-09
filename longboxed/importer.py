@@ -33,6 +33,12 @@ class BaseImporter(object):
             self.raw_data = [row for row in reader]
         return self.raw_data
 
+    def run(self):
+        self.download()
+        self.load()
+        self.insert_data()
+        return
+
     def download(self):
         raise NotImplementedError
 
@@ -117,8 +123,6 @@ class BaseRecord(object):
             self.pre_process()
             self.make_object()
             self.post_process()
-        except NotImplementedError:
-            pass
         return self.object
 
     def is_relevent(self):
