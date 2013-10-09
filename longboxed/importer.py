@@ -4,7 +4,7 @@ import re
 
 from copy import deepcopy
 from csv import DictReader
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 from HTMLParser import HTMLParser
 
@@ -36,13 +36,17 @@ class BaseImporter(object):
     def download(self):
         raise NotImplementedError
 
+    def insert_data(self):
+        raise NotImplementedError
+
 
 class DailyDownloadImporter(BaseImporter):
     """
     Imports the daily download from TFAW
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, affiliate_id, *args, **kwargs):
         super(DailyDownloadImporter, self).__init__(*args, **kwargs)
+        self.affiliate_id = affiliate_id
 
     def download(self):
         """
@@ -59,6 +63,16 @@ class DailyDownloadImporter(BaseImporter):
         r = requests.get(base_url, params=payload)
         with open(self.filename, 'wb') as code:
             code.write(r.content)
+        return
+
+    def insert_data(self):
+        print 'Beginning import'
+        csv_rules = {x[2]: x[3] for x in self.csv_rules}
+        for row in self.raw_data:
+            record = self.record(self.affiliate_id, row, csv_rules)
+            if record.is_relevent():
+                issue = record.run()
+        print 'COMPLETE'
         return
 
 
@@ -105,6 +119,7 @@ class BaseRecord(object):
             self.post_process()
         except NotImplementedError:
             pass
+        return self.object
 
     def is_relevent(self):
         return True
@@ -117,11 +132,15 @@ class DailyDownloadRecord(BaseRecord):
     def __init__(self, affiliate_id, *args, **kwargs):
         super(DailyDownloadRecord, self).__init__(*args, **kwargs)
         self.affiliate_id = affiliate_id
+        self.look_ahead = 10
 
     def is_relevent(self):
-        if self.raw_record['category'] == 'Comics' \
-            and self.raw_record['publisher'] in current_app.config['SUPPORTED_PUBS']:
-            return True
+        if self.raw_record['category'] == 'Comics':
+            if self.raw_record['publisher'] in current_app.config['SUPPORTED_PUBS']:
+                release_date = self.pre_current_tfaw_release_date(self.raw_record)
+                if release_date['current_tfaw_release_date'] > (datetime.now().date() - timedelta(days=7)) \
+                    and release_date['current_tfaw_release_date'] < (datetime.now().date() + timedelta(days=self.look_ahead)):
+                    return True
         return False
 
     def make_object(self):
@@ -201,79 +220,30 @@ class DailyDownloadRecord(BaseRecord):
         result = datetime.strptime(record[key], '%Y-%m-%d %H:%M:%S')
         return {key: result}
 
-    def post_check_parent_status(self, issue):
+    def post_parent_status(self, issue):
         similar_issues = _comics.issues.filter(
             _comics.issues.__model__.title == issue.title,
-            _comics.issues.__model__.issue_number==issue.issue_number,
+            _comics.issues.__model__.issue_number == issue.issue_number,
             _comics.issues.__model__.diamond_id != issue.diamond_id
         )
-        print similar_issues
+        match = re.search(r'\d+', issue.diamond_id)
+        current_issue_number = int(match.group())
+        is_parent = True
+        for i in similar_issues:
+            match = re.search(r'\d+', i.diamond_id)
+            if int(match.group()) < current_issue_number:
+                is_parent = False
+        if is_parent:
+            issue.is_parent = True
+            _comics.issues.save(issue)
+            for i in similar_issues:
+                i.is_parent = False
+                _comics.issues.save(i)
+        return is_parent
 
     def post_cover_image(self, issue):
         created = _comics.issues.set_cover_image_from_url(issue, issue.big_image)
         return created
 
 if __name__ == "__main__":
-    csv_rules = [
-        (0, 'ProductID', 'product_id', True),
-        (1, 'Name', 'complete_title', True),
-        (2, 'MerchantID', 'merchant_id', False),
-        (3, 'Merchant', 'merchant', False),
-        (4, 'Link', 'a_link', True),
-        (5, 'Thumbnail', 'thumbnail', True),
-        (6, 'BigImage', 'big_image', True),
-        (7, 'Price', 'price', False),
-        (8, 'RetailPrice', 'retail_price', True),
-        (9, 'Category', 'sas_category', False),
-        (10, 'SubCategory', 'sas_subcategory', False),
-        (11, 'Description', 'description', True),
-        (12, 'OnSaleDate', 'current_tfaw_release_date', True),
-        (13, 'Genre', 'genre', True),
-        (14, 'People', 'people', True),
-        (15, 'Theme', 'theme', False),
-        (16, 'Popularity', 'popularity', True),
-        (17, 'LastUpdated', 'last_updated', True),
-        (18, 'status', 'status', False),
-        (19, 'manufacturer', 'publisher', True),
-        (20, 'partnumber', 'diamond_id', True),
-        (21, 'merchantCategory', 'category', True),
-        (22, 'merchantSubcategory', 'merchant_subcategory', False),
-        (23, 'shortDescription', 'short_description', False),
-        (24, 'ISBN', 'isbn', False),
-        (25, 'UPC', 'upc', True)
-    ]
-
-    record = {
-        'status': 'instock',
-        'last_updated': '2013-10-07 07:00:22',
-        'people': 'Brian Azzarello;Eduardo Risso;Dave Johnson',
-        'isbn': '1401222870',
-        'category': 'Comics',
-        'big_image': 'http://affimg.tfaw.com/covers_tfaw/400/ap/apr090260d.jpg',
-        'merchant_id': '8908',
-        'theme': '100 Bullets',
-        'short_description': '',
-        'thumbnail': 'http://affimg.tfaw.com/covers_tfaw/100/ap/apr090260d.jpg',
-        'merchant': 'Things From Another World',
-        'complete_title': 'Fantomex Max #1 (of 4)',
-        'description': 'This is a pretty sweet description of the issue',
-        'price': '17.99',
-        'merchant_subcategory': '',
-        'a_link': 'http://www.shareasale.com/m-pr.cfm?merchantID=8908&userID=YOURUSERID&productID=466299720',
-        'genre': 'Crime',
-        'sas_category': 'Books/Reading',
-        'retail_price': '2.99',
-        'diamond_id': 'APR090260D',
-        'publisher': 'DC Comics',
-        'product_id': '466299720',
-        'popularity': '0',
-        'upc': '978140122287151999',
-        'sas_subcategory': 'Misc.',
-        'current_tfaw_release_date': '2013-10-09'
-    }
-    csv_rules = {x[2]: x[3] for x in csv_rules}
-    my_record = DailyDownloadRecord('782419', record, csv_rules)
-    record = my_record.pre_process()
-    print record
-    # print my_record.is_relevent()
-
+    print 'WHOOPS!'
