@@ -51,9 +51,7 @@ class TestCommand(Command):
             csv_rules=csv_rules,
             record=DailyDownloadRecord
         )
-        import_instance.download()
-        import_instance.load()
-        import_instance.insert_data()
+        import_instance.run()
         return
 
 

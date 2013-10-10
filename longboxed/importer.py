@@ -36,13 +36,13 @@ class BaseImporter(object):
     def run(self):
         self.download()
         self.load()
-        self.insert_data()
+        self.process()
         return
 
     def download(self):
         raise NotImplementedError
 
-    def insert_data(self):
+    def process(self):
         raise NotImplementedError
 
 
@@ -96,7 +96,7 @@ class BaseRecord(object):
 
     def get_processors(self, tag):
         processors = [x[0] for x in inspect.getmembers(self, predicate=inspect.ismethod) \
-            if tag in x[0] and x[0] and x[0] not in ['pre_process', 'post_process', 'get_processors']]
+            if tag in x[0] and x[0] and x[0] not in ['pre_process', 'post_process', 'get_processors', 'process']]
         return processors
 
     def pre_process(self):
@@ -115,18 +115,43 @@ class BaseRecord(object):
             results[method] = result
         return results
 
-    def make_object(self):
+    def process(self):
         raise NotImplementedError
 
     def run(self):
         try:
             self.pre_process()
-            self.make_object()
+            self.process()
             self.post_process()
         return self.object
 
     def is_relevent(self):
         return True
+
+
+class WeeklyReleaseRecord(BaseRecord):
+    def __init__(self, date, supported_publishers, *args, **kwargs):
+        super(WeeklyReleaseRecord, self).__init__(*args, **kwargs)
+        self.date = date
+        self.supported_publishers = supported_publishers
+
+    def is_relevent(self):
+        try:
+            if self.raw_record['publisher'] in self.supported_publishers:
+                if self.raw_record['discount_code'] in ['D', 'E']:
+                    return True
+            return False
+        except:
+            return False
+
+    def process(self, release):
+        issue = _comics.issues.first(diamond_id=self.raw_record['diamond_id'])
+        if release:
+            issue.on_sale_date = self.date
+        else:
+            issue.on_sale_date = None
+        _comics.issues.save(issue)
+        return 
 
 
 class DailyDownloadRecord(BaseRecord):
@@ -147,7 +172,7 @@ class DailyDownloadRecord(BaseRecord):
                     return True
         return False
 
-    def make_object(self):
+    def process(self):
         if not self.processed_record:
             raise Exception
         issue_dict = deepcopy(self.processed_record)
