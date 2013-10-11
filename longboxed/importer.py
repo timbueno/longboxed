@@ -30,10 +30,12 @@ class BaseImporter(object):
         self.processed_data = []
 
     def run(self):
-        self.processed_data = None
+        print 'Beginning process'
+        self.processed_data = []
         content = self.download()
         self.raw_data = self.load(content)
         self.process(self.raw_data)
+        print 'Process Complete'
         return
 
     def download(self):
@@ -50,9 +52,10 @@ class DailyDownloadImporter(BaseImporter):
     """
     Imports the daily download from TFAW
     """
-    def __init__(self, affiliate_id, *args, **kwargs):
+    def __init__(self, affiliate_id, supported_publishers, *args, **kwargs):
         super(DailyDownloadImporter, self).__init__(*args, **kwargs)
         self.affiliate_id = affiliate_id
+        self.supported_publishers = supported_publishers
 
     def download(self):
         """
@@ -65,27 +68,23 @@ class DailyDownloadImporter(BaseImporter):
             't': '',
             'z': 'gz'
         }
-        # Download the file
         r = requests.get(base_url, params=payload)
-        # with open(self.filename, 'wb') as code:
-        #     code.write(r.content)
         return r.content
 
     def load(self, content):
         fieldnames = [x[2] for x in self.csv_rules]
         with GzipFile(fileobj=StringIO(content)) as f:
             reader = DictReader(f, fieldnames=fieldnames, delimiter=self.delimiter)
-        return [row for row in reader]
+            data = [row for row in reader]
+        return data
 
     def process(self, raw_data):
-        print 'Beginning import'
         csv_rules = {x[2]: x[3] for x in self.csv_rules}
         for row in raw_data:
-            record = self.record(self.affiliate_id, row, csv_rules)
+            record = self.record(self.affiliate_id, self.supported_publishers, 10, row, csv_rules)
             if record.is_relevent():
                 issue = record.run()
                 self.processed_data.append(issue)
-        print 'COMPLETE'
         return
 
 

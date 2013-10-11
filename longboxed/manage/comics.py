@@ -8,6 +8,7 @@
 import csv
 from StringIO import StringIO
 
+from flask import current_app
 from flask.ext.script import Command, Option, prompt, prompt_bool
 
 # from ..core import db
@@ -17,6 +18,10 @@ from ..services import comics
 
 
 class TestCommand(Command):
+    def run(self):
+        pass
+
+class ImportDatabase(Command):
     def run(self):
         csv_rules = [
             (0, 'ProductID', 'product_id', True),
@@ -48,6 +53,7 @@ class TestCommand(Command):
         ]
         import_instance = DailyDownloadImporter(
             affiliate_id='782419',
+            supported_publishers=current_app.config['SUPPORTED_PUBS'],
             csv_rules=csv_rules,
             record=DailyDownloadRecord
         )
