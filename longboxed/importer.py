@@ -1,4 +1,4 @@
-import gzip
+# import gzip
 import inspect
 import re
 
@@ -6,10 +6,13 @@ from copy import deepcopy
 from csv import DictReader
 from datetime import datetime, timedelta
 from decimal import Decimal
+from gzip import GzipFile
 from HTMLParser import HTMLParser
+from StringIO import StringIO
 
 import requests
 
+from bs4 import BeautifulSoup
 from flask import current_app
 
 from .services import comics as _comics
@@ -26,23 +29,20 @@ class BaseImporter(object):
         self.raw_data = []
         self.processed_data = []
 
-    def load(self):
-        fieldnames = [x[2] for x in self.csv_rules]
-        with gzip.open(self.filename, 'rb') as f:
-            reader = DictReader(f, fieldnames=fieldnames, delimiter=self.delimiter)
-            self.raw_data = [row for row in reader]
-        return self.raw_data
-
     def run(self):
-        self.download()
-        self.load()
-        self.process()
+        self.processed_data = None
+        content = self.download()
+        self.raw_data = self.load(content)
+        self.process(self.raw_data)
         return
 
     def download(self):
         raise NotImplementedError
 
-    def process(self):
+    def load(self, content):
+        raise NotImplementedError
+
+    def process(self, raw_content_dict):
         raise NotImplementedError
 
 
@@ -67,20 +67,87 @@ class DailyDownloadImporter(BaseImporter):
         }
         # Download the file
         r = requests.get(base_url, params=payload)
-        with open(self.filename, 'wb') as code:
-            code.write(r.content)
-        return
+        # with open(self.filename, 'wb') as code:
+        #     code.write(r.content)
+        return r.content
 
-    def insert_data(self):
+    def load(self, content):
+        fieldnames = [x[2] for x in self.csv_rules]
+        with GzipFile(fileobj=StringIO(content)) as f:
+            reader = DictReader(f, fieldnames=fieldnames, delimiter=self.delimiter)
+        return [row for row in reader]
+
+    def process(self, raw_data):
         print 'Beginning import'
         csv_rules = {x[2]: x[3] for x in self.csv_rules}
-        for row in self.raw_data:
+        for row in raw_data:
             record = self.record(self.affiliate_id, row, csv_rules)
             if record.is_relevent():
                 issue = record.run()
+                self.processed_data.append(issue)
         print 'COMPLETE'
         return
 
+
+class WeeklyReleasesImporter(BaseImporter):
+    """
+    Processes releases
+    """
+    def __init__(self, affiliate_id, supported_publishers, *args, **kwargs):
+        super(WeeklyReleasesImporter, self).__init__(*args, **kwargs)
+        self.affiliate_id = affiliate_id
+        self.supported_publishers = supported_publishers
+
+    def download(self, week):
+        """
+        Gets file containing a list of shippments from Diamond Distributers.
+        This file is served from TFAW's servers. Three files are available at 
+        any given time; thisweek, nextweek, twoweeks. They describe shipments 
+        pertaining to their respective timeframes.
+
+        :param week: String designating which diamond list to download 
+                     Options: 'thisweek', 'nextweek', 'twoweeks'
+        """
+        if week not in ['thisweek', 'nextweek', 'twoweeks']:
+            raise Exception('Not a valid input for week selection')
+        base_url = 'http://www.tfaw.com/intranet/diamondlists_raw.php'
+        payload = {
+            'mode': week,
+            'uid': self.affiliate_id,
+            'show%5B%5D': 'Comics',
+            'display': 'text_raw'
+        }
+        r = requests.get(base_url, params=payload)
+
+        return r.content
+
+    def load(self, content):
+        """
+        Turns returned content from a request for a Diamond list into someting
+        we can work with. It discards any items that do not have a vender matching
+        a vender in 'SUPPORTED_DIAMOND_PUBS' settings variable. It also discards any
+        item whose discount code is not a D or and E.
+
+        :param raw_content: html content returned from TFAWs servers, diamond list
+        """
+        html = BeautifulSoup(content)
+        f = StringIO(html.pre.string.strip(' \t\n\r'))
+        incsv = csv.DictReader(f)
+        return [x for x in incsv]
+
+    def process(self, raw_content_dict):
+        print 'Beginning scheduling'
+        csv_rules = {x[2]: x[3] for x in self.csv_rules}
+        date = (datetime.now().date() + timedelta(days=-1))
+        already_scheduled = _comics.issues.find_issue_with_date(date)
+        for issue in already_scheduled:
+            issue.on_sale_date = None
+            _comics.issues.save(issue)
+        for row in raw_content_dict:
+            record = self.record(date, self.supported_publishers, row, csv_rules)
+            if record.is_relevent():
+                record.run()
+        print 'Finished scheduling'
 
 class BaseRecord(object):
     """
@@ -105,8 +172,7 @@ class BaseRecord(object):
         for method in self.pre_processes:
             result = getattr(self, method)(temp)
             temp.update(result)
-        self.processed_record = temp
-        return self.processed_record
+        return temp
 
     def post_process(self):
         results = {}
@@ -120,10 +186,13 @@ class BaseRecord(object):
 
     def run(self):
         try:
-            self.pre_process()
-            self.process()
-            self.post_process()
-        return self.object
+            record = self.pre_process()
+            self.object = self.process(record)
+            if self.object:
+                results = self.post_process()
+        except:
+            pass
+        return True
 
     def is_relevent(self):
         return True
@@ -132,8 +201,8 @@ class BaseRecord(object):
 class WeeklyReleaseRecord(BaseRecord):
     def __init__(self, date, supported_publishers, *args, **kwargs):
         super(WeeklyReleaseRecord, self).__init__(*args, **kwargs)
-        self.date = date
         self.supported_publishers = supported_publishers
+        self.date = date
 
     def is_relevent(self):
         try:
@@ -146,36 +215,36 @@ class WeeklyReleaseRecord(BaseRecord):
 
     def process(self, release):
         issue = _comics.issues.first(diamond_id=self.raw_record['diamond_id'])
-        if release:
-            issue.on_sale_date = self.date
-        else:
-            issue.on_sale_date = None
-        _comics.issues.save(issue)
-        return 
+        return issue
 
+    def post_set_release_date(self):
+        self.object.on_sale_date = self.date
+        _comics.issues.save(self.object)
+        return True
 
 class DailyDownloadRecord(BaseRecord):
     """
     Represents a single record in the daily download
     """
-    def __init__(self, affiliate_id, *args, **kwargs):
+    def __init__(self, affiliate_id, supported_publishers, look_ahead=10, *args, **kwargs):
         super(DailyDownloadRecord, self).__init__(*args, **kwargs)
         self.affiliate_id = affiliate_id
-        self.look_ahead = 10
+        self.supported_publishers = supported_publishers
+        self.look_ahead = look_ahead
 
     def is_relevent(self):
         if self.raw_record['category'] == 'Comics':
-            if self.raw_record['publisher'] in current_app.config['SUPPORTED_PUBS']:
+            if self.raw_record['publisher'] in self.supported_publishers:
                 release_date = self.pre_current_tfaw_release_date(self.raw_record)
                 if release_date['current_tfaw_release_date'] > (datetime.now().date() - timedelta(days=7)) \
                     and release_date['current_tfaw_release_date'] < (datetime.now().date() + timedelta(days=self.look_ahead)):
                     return True
         return False
 
-    def process(self):
-        if not self.processed_record:
+    def process(self, record):
+        if not record:
             raise Exception
-        issue_dict = deepcopy(self.processed_record)
+        issue_dict = deepcopy(record)
         publisher = _comics.insert_publisher(
             raw_publisher = issue_dict['publisher']
         )
@@ -188,8 +257,7 @@ class DailyDownloadRecord(BaseRecord):
             title_object = title,
             publisher_object = publisher
         )
-        self.object = issue
-        return self.object
+        return issue
 
     def is_float(self, number):
         try: 
