@@ -33,12 +33,11 @@ class BaseImporter(object):
 
     def run(self):
         print 'Beginning process'
-        self.processed_data = []
         content = self.download()
         self.raw_data = self.load(content)
-        self.process(self.raw_data)
+        self.processed_data = self.process(self.raw_data)
         print 'Process Complete'
-        return
+        return self.processed_data
 
     def download(self):
         raise NotImplementedError
@@ -83,12 +82,13 @@ class DailyDownloadImporter(BaseImporter):
 
     def process(self, raw_data):
         csv_rules = {x[2]: x[3] for x in self.csv_rules}
+        data = []
         for row in raw_data:
             record = self.record(self.affiliate_id, self.supported_publishers, self.days, row, csv_rules)
             if record.is_relevent():
                 issue = record.run()
-                self.processed_data.append(issue)
-        return
+                data.append(issue)
+        return data
 
 
 class WeeklyReleasesImporter(BaseImporter):
@@ -141,7 +141,7 @@ class WeeklyReleasesImporter(BaseImporter):
         return [x for x in incsv]
 
     def process(self, raw_content_dict):
-        print 'Beginning scheduling'
+        data = []
         csv_rules = {x[2]: x[3] for x in self.csv_rules}
         already_scheduled = _comics.issues.find_issue_with_date(self.date)
         for issue in already_scheduled:
@@ -150,8 +150,9 @@ class WeeklyReleasesImporter(BaseImporter):
         for row in raw_content_dict:
             record = self.record(self.date, self.supported_publishers, row, csv_rules)
             if record.is_relevent():
-                record.run()
-        print 'Finished scheduling'
+                result = record.run()
+                data.append(result)
+        return data
 
     def week_handler(self, week):
         if week not in ['thisweek', 'nextweek', 'twoweeks']:
@@ -208,7 +209,7 @@ class BaseRecord(object):
                 results = self.post_process()
         except:
             pass
-        return True
+        return self.object
 
     def is_relevent(self):
         return True

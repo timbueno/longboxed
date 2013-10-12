@@ -31,7 +31,8 @@ class TestCommand(Command):
             csv_rules=current_app.config['RELEASE_CSV_RULES'],
             record=WeeklyReleaseRecord
         )
-        release_instance.run()
+        scheduled_releases = release_instance.run()
+        
         return
 
 
@@ -44,7 +45,7 @@ class ImportDatabase(Command):
             csv_rules=current_app.config['CSV_RULES'],
             record=DailyDownloadRecord
         )
-        import_instance.run()
+        imported_issues = import_instance.run()
         return
 
 
