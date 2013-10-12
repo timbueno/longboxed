@@ -13,48 +13,27 @@ from flask.ext.script import Command, Option, prompt, prompt_bool
 
 # from ..core import db
 from ..helpers import current_wednesday, mail_content, two_wednesdays, next_wednesday
-from ..importer import DailyDownloadImporter, DailyDownloadRecord
+from ..importer import DailyDownloadImporter, DailyDownloadRecord, WeeklyReleasesImporter, WeeklyReleaseRecord
 from ..services import comics
 
 
 class TestCommand(Command):
     def run(self):
-        pass
+        release_instance = WeeklyReleasesImporter(
+            affiliate_id=current_app.config['AFFILIATE_ID'],
+            supported_publishers=current_app.config['SUPPORTED_DIAMOND_PUBS'],
+            csv_rules=current_app.config['RELEASE_CSV_RULES'],
+            record=WeeklyReleaseRecord
+        )
+        release_instance.run()
+        return
 
 class ImportDatabase(Command):
     def run(self):
-        csv_rules = [
-            (0, 'ProductID', 'product_id', True),
-            (1, 'Name', 'complete_title', True),
-            (2, 'MerchantID', 'merchant_id', False),
-            (3, 'Merchant', 'merchant', False),
-            (4, 'Link', 'a_link', True),
-            (5, 'Thumbnail', 'thumbnail', True),
-            (6, 'BigImage', 'big_image', True),
-            (7, 'Price', 'price', False),
-            (8, 'RetailPrice', 'retail_price', True),
-            (9, 'Category', 'sas_category', False),
-            (10, 'SubCategory', 'sas_subcategory', False),
-            (11, 'Description', 'description', True),
-            (12, 'OnSaleDate', 'current_tfaw_release_date', True),
-            (13, 'Genre', 'genre', True),
-            (14, 'People', 'people', True),
-            (15, 'Theme', 'theme', False),
-            (16, 'Popularity', 'popularity', True),
-            (17, 'LastUpdated', 'last_updated', True),
-            (18, 'status', 'status', False),
-            (19, 'manufacturer', 'publisher', True),
-            (20, 'partnumber', 'diamond_id', True),
-            (21, 'merchantCategory', 'category', True),
-            (22, 'merchantSubcategory', 'merchant_subcategory', False),
-            (23, 'shortDescription', 'short_description', False),
-            (24, 'ISBN', 'isbn', False),
-            (25, 'UPC', 'upc', True)
-        ]
         import_instance = DailyDownloadImporter(
-            affiliate_id='782419',
+            affiliate_id=current_app.config['AFFILIATE_ID'],
             supported_publishers=current_app.config['SUPPORTED_PUBS'],
-            csv_rules=csv_rules,
+            csv_rules=current_app.config['CSV_RULES'],
             record=DailyDownloadRecord
         )
         import_instance.run()

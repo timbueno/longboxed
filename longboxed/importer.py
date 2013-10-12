@@ -97,7 +97,7 @@ class WeeklyReleasesImporter(BaseImporter):
         self.affiliate_id = affiliate_id
         self.supported_publishers = supported_publishers
 
-    def download(self, week):
+    def download(self, week='thisweek'):
         """
         Gets file containing a list of shippments from Diamond Distributers.
         This file is served from TFAW's servers. Three files are available at 
@@ -131,13 +131,14 @@ class WeeklyReleasesImporter(BaseImporter):
         """
         html = BeautifulSoup(content)
         f = StringIO(html.pre.string.strip(' \t\n\r'))
-        incsv = csv.DictReader(f)
+        fieldnames = [x[2] for x in self.csv_rules]
+        incsv = DictReader(f, fieldnames=fieldnames)
         return [x for x in incsv]
 
     def process(self, raw_content_dict):
         print 'Beginning scheduling'
         csv_rules = {x[2]: x[3] for x in self.csv_rules}
-        date = (datetime.now().date() + timedelta(days=-1))
+        date = (datetime.now().date() + timedelta(days=-2))
         already_scheduled = _comics.issues.find_issue_with_date(date)
         for issue in already_scheduled:
             issue.on_sale_date = None
@@ -204,8 +205,9 @@ class WeeklyReleaseRecord(BaseRecord):
         self.date = date
 
     def is_relevent(self):
+        # print self.raw_record
         try:
-            if self.raw_record['publisher'] in self.supported_publishers:
+            if self.raw_record['publisher'].strip('*') in self.supported_publishers:
                 if self.raw_record['discount_code'] in ['D', 'E']:
                     return True
             return False
@@ -214,11 +216,12 @@ class WeeklyReleaseRecord(BaseRecord):
 
     def process(self, release):
         issue = _comics.issues.first(diamond_id=self.raw_record['diamond_id'])
+        # print issue, issue.on_sale_date
         return issue
 
-    def post_set_release_date(self):
-        self.object.on_sale_date = self.date
-        _comics.issues.save(self.object)
+    def post_set_release_date(self, issue):
+        issue.on_sale_date = self.date
+        _comics.issues.save(issue)
         return True
 
 class DailyDownloadRecord(BaseRecord):
