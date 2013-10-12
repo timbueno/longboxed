@@ -18,8 +18,14 @@ from ..services import comics
 
 
 class TestCommand(Command):
-    def run(self):
+    def get_options(self):
+        return [
+            Option('-w', '--week', dest='week', required=True, choices=['thisweek', 'nextweek', 'twoweeks']),
+        ]
+
+    def run(self, week):
         release_instance = WeeklyReleasesImporter(
+            week=week,
             affiliate_id=current_app.config['AFFILIATE_ID'],
             supported_publishers=current_app.config['SUPPORTED_DIAMOND_PUBS'],
             csv_rules=current_app.config['RELEASE_CSV_RULES'],
@@ -28,9 +34,11 @@ class TestCommand(Command):
         release_instance.run()
         return
 
+
 class ImportDatabase(Command):
     def run(self):
         import_instance = DailyDownloadImporter(
+            days=20,
             affiliate_id=current_app.config['AFFILIATE_ID'],
             supported_publishers=current_app.config['SUPPORTED_PUBS'],
             csv_rules=current_app.config['CSV_RULES'],

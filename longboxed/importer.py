@@ -15,7 +15,9 @@ import requests
 from bs4 import BeautifulSoup
 from flask import current_app
 
+from .helpers import current_wednesday, two_wednesdays, next_wednesday
 from .services import comics as _comics
+
 
 class BaseImporter(object):
     """
@@ -52,8 +54,9 @@ class DailyDownloadImporter(BaseImporter):
     """
     Imports the daily download from TFAW
     """
-    def __init__(self, affiliate_id, supported_publishers, *args, **kwargs):
+    def __init__(self, days, affiliate_id, supported_publishers, *args, **kwargs):
         super(DailyDownloadImporter, self).__init__(*args, **kwargs)
+        self.days = days
         self.affiliate_id = affiliate_id
         self.supported_publishers = supported_publishers
 
@@ -81,7 +84,7 @@ class DailyDownloadImporter(BaseImporter):
     def process(self, raw_data):
         csv_rules = {x[2]: x[3] for x in self.csv_rules}
         for row in raw_data:
-            record = self.record(self.affiliate_id, self.supported_publishers, 10, row, csv_rules)
+            record = self.record(self.affiliate_id, self.supported_publishers, self.days, row, csv_rules)
             if record.is_relevent():
                 issue = record.run()
                 self.processed_data.append(issue)
@@ -92,12 +95,14 @@ class WeeklyReleasesImporter(BaseImporter):
     """
     Processes releases
     """
-    def __init__(self, affiliate_id, supported_publishers, *args, **kwargs):
+    def __init__(self, week, affiliate_id, supported_publishers, *args, **kwargs):
         super(WeeklyReleasesImporter, self).__init__(*args, **kwargs)
+        self.week = week
+        self.date = self.week_handler(week)
         self.affiliate_id = affiliate_id
         self.supported_publishers = supported_publishers
 
-    def download(self, week='thisweek'):
+    def download(self):
         """
         Gets file containing a list of shippments from Diamond Distributers.
         This file is served from TFAW's servers. Three files are available at 
@@ -107,11 +112,11 @@ class WeeklyReleasesImporter(BaseImporter):
         :param week: String designating which diamond list to download 
                      Options: 'thisweek', 'nextweek', 'twoweeks'
         """
-        if week not in ['thisweek', 'nextweek', 'twoweeks']:
+        if self.week not in ['thisweek', 'nextweek', 'twoweeks']:
             raise Exception('Not a valid input for week selection')
         base_url = 'http://www.tfaw.com/intranet/diamondlists_raw.php'
         payload = {
-            'mode': week,
+            'mode': self.week,
             'uid': self.affiliate_id,
             'show%5B%5D': 'Comics',
             'display': 'text_raw'
@@ -138,16 +143,27 @@ class WeeklyReleasesImporter(BaseImporter):
     def process(self, raw_content_dict):
         print 'Beginning scheduling'
         csv_rules = {x[2]: x[3] for x in self.csv_rules}
-        date = (datetime.now().date() + timedelta(days=-2))
-        already_scheduled = _comics.issues.find_issue_with_date(date)
+        already_scheduled = _comics.issues.find_issue_with_date(self.date)
         for issue in already_scheduled:
             issue.on_sale_date = None
             _comics.issues.save(issue)
         for row in raw_content_dict:
-            record = self.record(date, self.supported_publishers, row, csv_rules)
+            record = self.record(self.date, self.supported_publishers, row, csv_rules)
             if record.is_relevent():
                 record.run()
         print 'Finished scheduling'
+
+    def week_handler(self, week):
+        if week not in ['thisweek', 'nextweek', 'twoweeks']:
+            raise Exception('Not a valid input for week selection')
+        if week == 'thisweek':
+            date = current_wednesday()
+        if week == 'nextweek':
+            date = next_wednesday()
+        if week == 'twoweeks':
+            date = two_wednesdays()
+            # raise NotImplementedError
+        return date
 
 class BaseRecord(object):
     """
@@ -205,7 +221,6 @@ class WeeklyReleaseRecord(BaseRecord):
         self.date = date
 
     def is_relevent(self):
-        # print self.raw_record
         try:
             if self.raw_record['publisher'].strip('*') in self.supported_publishers:
                 if self.raw_record['discount_code'] in ['D', 'E']:
@@ -214,10 +229,16 @@ class WeeklyReleaseRecord(BaseRecord):
         except:
             return False
 
-    def process(self, release):
-        issue = _comics.issues.first(diamond_id=self.raw_record['diamond_id'])
-        # print issue, issue.on_sale_date
+    def process(self, record):
+        issue = _comics.issues.first(diamond_id=record['diamond_id'])
         return issue
+
+    def pre_massage_diamond_id(self, record, key='diamond_id'):
+        if record[key][-1:].isalpha():
+            diamond_id = record[key][:-1]
+        else:
+            diamond_id = record[key]
+        return {key: diamond_id}
 
     def post_set_release_date(self, issue):
         issue.on_sale_date = self.date
