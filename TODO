@@ -8,13 +8,6 @@
 - Create profile page 
 - Forward user to 'Setup' page after registration
 - Create API
-- Group each users pull list haul each week into logical 'bundles' in the database so they can be returned to at a later date.
-    - User
-        -> Bundles
-            -> Bundle
-                -> Issue
-                -> Issue
-                -> ...
 - Use Title subscriber count for something cool
     - Count users in Title.users backref to determine subscriber count
 - Weekly email reminders using user's bundles of comics. Mailed every wednesday early in the morning.
@@ -24,7 +17,10 @@
 - Dark Horse not being imported correctly
     - is_diamond_id() returning False
     - Follow up with TFAW
-- Update salts
 - Analytics
-- Save pictures to AmazonS3 Storage
 - Impliment new design
+
+
+## Todo Release Checklist
+- Change Salts
+- Swich Image Store to Amazon S3
