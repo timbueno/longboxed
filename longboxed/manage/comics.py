@@ -6,6 +6,7 @@
     comic management commands
 """
 import csv
+from pprint import pprint
 from StringIO import StringIO
 
 from flask import current_app
@@ -14,7 +15,7 @@ from flask.ext.script import Command, Option, prompt, prompt_bool
 # from ..core import db
 from ..helpers import current_wednesday, mail_content, two_wednesdays, next_wednesday
 from ..importer import DailyDownloadImporter, DailyDownloadRecord, WeeklyReleasesImporter, WeeklyReleaseRecord
-from ..services import comics
+from ..services import comics, bundle
 
 
 class TestCommand(Command):
@@ -35,6 +36,10 @@ class TestCommand(Command):
         
         return
 
+class DisplayAttributesCommand(Command):
+    def run(self):
+        b = bundle.first(id=4)
+        pprint(b.__dict__)
 
 class ImportDatabase(Command):
     def run(self):

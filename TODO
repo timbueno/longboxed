@@ -17,9 +17,10 @@
 - Dark Horse not being imported correctly
     - is_diamond_id() returning False
     - Follow up with TFAW
-- Analytics
 - Impliment new design
 
+- Short URL service
+- Analytics
 
 ## Todo Release Checklist
 - Change Salts

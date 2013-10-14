@@ -13,7 +13,7 @@ from longboxed.manage import CreateNewRoleCommand, CreateDefaultRolesCommand, Cr
                              AddSuperUserRoleCommand, ListUsersCommand, ListRolesCommand, \
                              UpdateDatabaseCommand, ScheduleReleasesCommand, CrossCheckCommand, \
                              TestCommand, SetCoverImageCommand, UserBundlesCommand, \
-                             MailBundlesCommand, ImportDatabase
+                             MailBundlesCommand, ImportDatabase, DisplayAttributesCommand
 
 manager = Manager(create_app())
 manager.add_command('create_role', CreateNewRoleCommand())
@@ -35,6 +35,7 @@ manager.add_command('bundle_issues', UserBundlesCommand())
 manager.add_command('mail_bundles', MailBundlesCommand())
 
 manager.add_command('test', TestCommand())
+manager.add_command('display_attr', DisplayAttributesCommand())
 
 if __name__ == '__main__':
     manager.run()
