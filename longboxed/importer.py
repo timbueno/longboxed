@@ -6,6 +6,7 @@ from copy import deepcopy
 from csv import DictReader
 from datetime import datetime, timedelta
 from decimal import Decimal
+from functools import wraps
 from gzip import GzipFile
 from HTMLParser import HTMLParser
 from StringIO import StringIO
@@ -18,14 +19,21 @@ from flask import current_app
 from .helpers import current_wednesday, two_wednesdays, next_wednesday
 from .services import comics as _comics
 
+def dl_report(fn):
+    @wraps
+    def wrapper(self, *args, **kwargs):
+        print 'Starting download...'
+        content = fn(self)
+        print 'Finished download'
+        return content
+    return wrapper
 
 class BaseImporter(object):
     """
     Base csv importer class
     """
-    def __init__(self, csv_rules, record, delimiter='|', filename='latest_db.gz'):
+    def __init__(self, csv_rules, record, delimiter='|'):
         self.delimiter = delimiter
-        self.filename = filename
         self.record = record
         self.csv_rules = csv_rules
         self.raw_data = []
@@ -59,6 +67,7 @@ class DailyDownloadImporter(BaseImporter):
         self.affiliate_id = affiliate_id
         self.supported_publishers = supported_publishers
 
+    @dl_report
     def download(self):
         """
         Gets latest Daily Download file from TFAW's servers. This file
@@ -102,7 +111,7 @@ class WeeklyReleasesImporter(BaseImporter):
         self.affiliate_id = affiliate_id
         self.supported_publishers = supported_publishers
 
-    def download(self):
+    def download(self, *args, **kwargs):
         """
         Gets file containing a list of shippments from Diamond Distributers.
         This file is served from TFAW's servers. Three files are available at 
