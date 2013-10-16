@@ -12,13 +12,16 @@ from StringIO import StringIO
 from flask import current_app
 from flask.ext.script import Command, Option, prompt, prompt_bool
 
-# from ..core import db
-from ..helpers import current_wednesday, mail_content, two_wednesdays, next_wednesday
+from ..helpers import mail_content
 from ..importer import DailyDownloadImporter, DailyDownloadRecord, WeeklyReleasesImporter, WeeklyReleaseRecord
 from ..services import comics, bundle
 
 
 class TestCommand(Command):
+    def run(self):
+        pass
+
+class ScheduleReleasesCommand(Command):
     def get_options(self):
         return [
             Option('-w', '--week', dest='week', required=True, choices=['thisweek', 'nextweek', 'twoweeks']),
@@ -36,15 +39,16 @@ class TestCommand(Command):
         
         return
 
-class DisplayAttributesCommand(Command):
-    def run(self):
-        b = bundle.first(id=4)
-        pprint(b.__dict__)
-
 class ImportDatabase(Command):
-    def run(self):
+    def get_options(self):
+        return [
+            Option('--days', '-d', dest='days', default=21, type=int)
+        ]
+
+    def run(self, days):
+        print 'Importing the next %d days worth of comic books...' % days
         import_instance = DailyDownloadImporter(
-            days=20,
+            days=days,
             affiliate_id=current_app.config['AFFILIATE_ID'],
             supported_publishers=current_app.config['SUPPORTED_PUBS'],
             csv_rules=current_app.config['CSV_RULES'],
@@ -122,25 +126,25 @@ class UpdateDatabaseCommand(Command):
         print 'Done Adding to DB'
 
 
-class ScheduleReleasesCommand(Command):
-    """Automatically schedule releases from Diamond Release file"""
+# class ScheduleReleasesCommand(Command):
+#     """Automatically schedule releases from Diamond Release file"""
     
-    def get_options(self):
-        return [
-            Option('-w', '--week', dest='week', required=True, choices=['thisweek', 'nextweek', 'twoweeks']),
-        ]
+#     def get_options(self):
+#         return [
+#             Option('-w', '--week', dest='week', required=True, choices=['thisweek', 'nextweek', 'twoweeks']),
+#         ]
 
-    def run(self, week):
-        print 'Starting scheduling'
-        if week == 'thisweek':
-            date = current_wednesday()
-        if week == 'nextweek':
-            date = next_wednesday()
-        if week == 'twoweeks':
-            date = two_wednesdays()
-            raise NotImplementedError
-        content = comics.get_shipping_from_TFAW(week)
-        shipping = comics.get_issue_dict_shipping(content)
-        diamond_ids = [x['ITEMCODE'] for x in shipping]
-        comics.compare_shipping_with_database(diamond_ids, date)
-        print 'Done Scheduling'
+#     def run(self, week):
+#         print 'Starting scheduling'
+#         if week == 'thisweek':
+#             date = current_wednesday()
+#         if week == 'nextweek':
+#             date = next_wednesday()
+#         if week == 'twoweeks':
+#             date = two_wednesdays()
+#             raise NotImplementedError
+#         content = comics.get_shipping_from_TFAW(week)
+#         shipping = comics.get_issue_dict_shipping(content)
+#         diamond_ids = [x['ITEMCODE'] for x in shipping]
+#         comics.compare_shipping_with_database(diamond_ids, date)
+#         print 'Done Scheduling'
