@@ -1,4 +1,3 @@
-# import gzip
 import inspect
 import re
 
@@ -19,14 +18,6 @@ from flask import current_app
 from .helpers import current_wednesday, two_wednesdays, next_wednesday
 from .services import comics as _comics
 
-def dl_report(fn):
-    @wraps
-    def wrapper(self, *args, **kwargs):
-        print 'Starting download...'
-        content = fn(self)
-        print 'Finished download'
-        return content
-    return wrapper
 
 class BaseImporter(object):
     """
@@ -40,11 +31,11 @@ class BaseImporter(object):
         self.processed_data = []
 
     def run(self):
-        print 'Beginning process'
+        print 'Beginning process: ', datetime.now()
         content = self.download()
         self.raw_data = self.load(content)
         self.processed_data = self.process(self.raw_data)
-        print 'Process Complete'
+        print 'Process Complete: ', datetime.now()
         return self.processed_data
 
     def download(self):
@@ -57,6 +48,25 @@ class BaseImporter(object):
         raise NotImplementedError
 
 
+def daily_download_report(fn):
+    @wraps(fn)
+    def wrapper(self, raw_data):
+        now = datetime.now()
+        issue_count = _comics.issues.count()
+        title_count = _comics.titles.count()
+        publisher_count = _comics.publishers.count()
+        data = fn(self, raw_data)
+        print '~~~~~~~~~~~~~~~~~~~~~~~~'
+        print 'Database Update Report'
+        print '~~~~~~~~~~~~~~~~~~~~~~~~'
+        print 'Created Issues    : ', _comics.issues.count() - issue_count
+        print 'Created Titles    : ', _comics.titles.count() - title_count
+        print 'Created Publishers: ', _comics.publishers.count() - publisher_count
+        print '~~~~~~~~~~~~~~~~~~~~~~~~'
+        return data
+    return wrapper
+
+
 class DailyDownloadImporter(BaseImporter):
     """
     Imports the daily download from TFAW
@@ -67,7 +77,6 @@ class DailyDownloadImporter(BaseImporter):
         self.affiliate_id = affiliate_id
         self.supported_publishers = supported_publishers
 
-    @dl_report
     def download(self):
         """
         Gets latest Daily Download file from TFAW's servers. This file
@@ -89,6 +98,7 @@ class DailyDownloadImporter(BaseImporter):
             data = [row for row in reader]
         return data
 
+    @daily_download_report
     def process(self, raw_data):
         csv_rules = {x[2]: x[3] for x in self.csv_rules}
         data = []
@@ -96,7 +106,8 @@ class DailyDownloadImporter(BaseImporter):
             record = self.record(self.affiliate_id, self.supported_publishers, self.days, row, csv_rules)
             if record.is_relevent():
                 issue = record.run()
-                data.append(issue)
+                # data.append(issue)
+                data.append(record)
         return data
 
 
@@ -189,7 +200,7 @@ class BaseRecord(object):
 
     def get_processors(self, tag):
         processors = [x[0] for x in inspect.getmembers(self, predicate=inspect.ismethod) \
-            if tag in x[0] and x[0] and x[0] not in ['pre_process', 'post_process', 'get_processors', 'process']]
+            if tag in x[0] and x[0] not in ['pre_process', 'post_process', 'get_processors', 'process']]
         return processors
 
     def pre_process(self):
@@ -231,6 +242,11 @@ class WeeklyReleaseRecord(BaseRecord):
         self.date = date
 
     def is_relevent(self):
+        """
+        Strips the publisher string of an asterisk (*) and chesk to see if it is a
+        publisher in the supported publishers attribute. Also limits relevency to
+        issues with a D or an E in the discount code slot.
+        """
         try:
             if self.raw_record['publisher'].strip('*') in self.supported_publishers:
                 if self.raw_record['discount_code'] in ['D', 'E']:
@@ -240,10 +256,17 @@ class WeeklyReleaseRecord(BaseRecord):
             return False
 
     def process(self, record):
+        """
+        Gets an issue object from the database, returns None if issue with
+        given diamond id is not present.
+        """
         issue = _comics.issues.first(diamond_id=record['diamond_id'])
         return issue
 
     def pre_massage_diamond_id(self, record, key='diamond_id'):
+        """
+        Removes a trailing letter (A-Z) from a diamond id if its present
+        """
         if record[key][-1:].isalpha():
             diamond_id = record[key][:-1]
         else:
@@ -251,6 +274,9 @@ class WeeklyReleaseRecord(BaseRecord):
         return {key: diamond_id}
 
     def post_set_release_date(self, issue):
+        """
+        Sets release data of issue object to the class's date attribute
+        """
         issue.on_sale_date = self.date
         _comics.issues.save(issue)
         return True
@@ -275,6 +301,10 @@ class DailyDownloadRecord(BaseRecord):
         return False
 
     def process(self, record):
+        """
+        Inserts an issue into the database. This requires creating / getting
+        both a publisher object and a title object first.
+        """
         if not record:
             raise Exception
         issue_dict = deepcopy(record)
@@ -322,14 +352,23 @@ class DailyDownloadRecord(BaseRecord):
         return m
 
     def pre_retail_price(self, record, key='retail_price'):
+        """
+        Converts the retail price string into a float object
+        """
         result = float(record[key]) if self.is_float(record[key]) else None
         return {key: result}
 
     def pre_a_link(self, record, key='a_link'):
+        """
+        Replaces YOURUSERID with the SAS affiliate id
+        """
         result = record[key].replace('YOURUSERID', self.affiliate_id)
         return {key: result}
 
     def pre_diamond_id(self, record, key='diamond_id'):
+        """
+        Splits a diamond id into two objects: base diamond id and discount code
+        """
         if record[key][-1:].isalpha():
             diamond_id = record[key][:-1]
             discount_code = record[key][-1:]
@@ -339,18 +378,36 @@ class DailyDownloadRecord(BaseRecord):
         return {key: diamond_id, 'discount_code': discount_code}
 
     def pre_description(self, record, key='description'):
+        """
+        Converts HTML entities in the description field
+
+        http://stackoverflow.com/questions/18220631/encoding-a-string-with-ascii-characters-find-and-replace
+        """
         result = HTMLParser().unescape(record[key])
         return {key: result}
 
     def pre_current_tfaw_release_date(self, record, key='current_tfaw_release_date'):
+        """
+        Converts the text representation of the release date attribute to a
+        datetime object.
+        """
         result = datetime.strptime(record[key], '%Y-%m-%d').date()
         return {key: result}
 
     def pre_last_updated(self, record, key='last_updated'):
+        """
+        Converts the text representaiton of the last_updated attribute to a 
+        datetime object.
+        """
         result = datetime.strptime(record[key], '%Y-%m-%d %H:%M:%S')
         return {key: result}
 
     def post_parent_status(self, issue):
+        """
+        Checks to see if the imported issue is the parent issue in a grouping
+        of issues. This is how we determine which issue to display when it 
+        has alternative covers.
+        """
         similar_issues = _comics.issues.filter(
             _comics.issues.__model__.title == issue.title,
             _comics.issues.__model__.issue_number == issue.issue_number,
@@ -375,6 +432,9 @@ class DailyDownloadRecord(BaseRecord):
         return is_parent
 
     def post_cover_image(self, issue):
+        """
+        Downloads and processes the cover image of the issue object.
+        """
         created = _comics.issues.set_cover_image_from_url(issue, issue.big_image)
         return created
 
