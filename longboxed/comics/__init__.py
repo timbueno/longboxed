@@ -70,6 +70,9 @@ class IssueService(Service):
         does not already exist. Width OR height must be provided. It is not
         necessary to provide both.
 
+        Default Image (We should act on this in the future)
+        http://affimg.tfaw.com/covers_tfaw/400/no/nocover.jpg
+
         :param issue: :class:`Issue` object class
         :param width: Width of desired thumbnail image
         :param height: Height of desired thumbnail image
