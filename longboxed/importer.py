@@ -186,6 +186,7 @@ class WeeklyReleasesImporter(BaseImporter):
             # raise NotImplementedError
         return date
 
+
 class BaseRecord(object):
     """
     Base record class
@@ -280,6 +281,7 @@ class WeeklyReleaseRecord(BaseRecord):
         issue.on_sale_date = self.date
         _comics.issues.save(issue)
         return True
+
 
 class DailyDownloadRecord(BaseRecord):
     """

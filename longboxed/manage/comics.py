@@ -36,7 +36,6 @@ class ScheduleReleasesCommand(Command):
             record=WeeklyReleaseRecord
         )
         scheduled_releases = release_instance.run()
-        
         return
 
 class ImportDatabase(Command):
