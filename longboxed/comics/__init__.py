@@ -46,7 +46,7 @@ class TitleService(Service):
 class IssueService(Service):
     __model__ = Issue
 
-    def set_cover_image_from_url(self, issue, url, overwrite=False):
+    def set_cover_image_from_url(self, issue, url, overwrite=False, default=False):
         """
         Downloads a jpeg file from a url and stores it in the image store.
 

@@ -56,13 +56,21 @@ def daily_download_report(fn):
         title_count = _comics.titles.count()
         publisher_count = _comics.publishers.count()
         data = fn(self, raw_data)
-        print '~~~~~~~~~~~~~~~~~~~~~~~~'
-        print 'Database Update Report'
-        print '~~~~~~~~~~~~~~~~~~~~~~~~'
-        print 'Created Issues    : ', _comics.issues.count() - issue_count
-        print 'Created Titles    : ', _comics.titles.count() - title_count
-        print 'Created Publishers: ', _comics.publishers.count() - publisher_count
-        print '~~~~~~~~~~~~~~~~~~~~~~~~'
+        summary = """
+        ~~~~~~~~~~~~~~~~~~~~~~~~
+        Database Update Report
+        ~~~~~~~~~~~~~~~~~~~~~~~~
+        Created Issues:     %d
+        Created Titles:     %d
+        Created Publishers: %d
+        ~~~~~~~~~~~~~~~~~~~~~~~~
+        Issues in DB:       %d
+        ~~~~~~~~~~~~~~~~~~~~~~~~""" % (_comics.issues.count() - issue_count, \
+                                       _comics.titles.count() - title_count, \
+                                       _comics.publishers.count() - publisher_count, \
+                                       _comics.issues.count()
+                                      )
+        print summary
         return data
     return wrapper
 
@@ -106,8 +114,8 @@ class DailyDownloadImporter(BaseImporter):
             record = self.record(self.affiliate_id, self.supported_publishers, self.days, row, csv_rules)
             if record.is_relevent():
                 issue = record.run()
-                # data.append(issue)
-                data.append(record)
+                if issue:
+                    data.append(record)
         return data
 
 
@@ -229,7 +237,9 @@ class BaseRecord(object):
             if self.object:
                 results = self.post_process()
         except:
-            pass
+            print 'Something went wrong, skipping record.'
+            print record
+            return None
         return self.object
 
     def is_relevent(self):
@@ -262,6 +272,9 @@ class WeeklyReleaseRecord(BaseRecord):
         given diamond id is not present.
         """
         issue = _comics.issues.first(diamond_id=record['diamond_id'])
+        if not issue:
+            print 'Issue Not Found: %s | %s | %s' % (record['diamond_id'], record['publisher'], \
+                                           record['complete_title'])
         return issue
 
     def pre_massage_diamond_id(self, record, key='diamond_id'):
