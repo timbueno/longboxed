@@ -74,7 +74,7 @@ def daily_download_report(fn):
                                        _comics.publishers.count() - publisher_count, \
                                        _comics.issues.count()
                                       )
-        print summary
+        process_logger.debug(summary)
         return data
     return wrapper
 
@@ -241,8 +241,8 @@ class BaseRecord(object):
             if self.object:
                 results = self.post_process()
         except Exception, err:
-            print 'Something went wrong, skipping record.'
-            print err
+            process_logger.debug('Something went wrong, skipping record.')
+            process_logger(err)
             return None
         return self.object
 
