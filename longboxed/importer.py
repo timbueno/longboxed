@@ -242,7 +242,7 @@ class BaseRecord(object):
                 results = self.post_process()
         except Exception, err:
             process_logger.debug('Something went wrong, skipping record.')
-            process_logger(err)
+            process_logger.debug(err)
             return None
         return self.object
 
