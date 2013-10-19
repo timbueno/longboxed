@@ -46,7 +46,7 @@ class TitleService(Service):
 class IssueService(Service):
     __model__ = Issue
 
-    def set_cover_image_from_url(self, issue, url, overwrite=False):
+    def set_cover_image_from_url(self, issue, url, overwrite=False, default=False):
         """
         Downloads a jpeg file from a url and stores it in the image store.
 
@@ -69,6 +69,9 @@ class IssueService(Service):
         Creates a thumbnail image from the original if one of the same size
         does not already exist. Width OR height must be provided. It is not
         necessary to provide both.
+
+        Default Image (We should act on this in the future)
+        http://affimg.tfaw.com/covers_tfaw/400/no/nocover.jpg
 
         :param issue: :class:`Issue` object class
         :param width: Width of desired thumbnail image
@@ -348,6 +351,52 @@ class ComicService(object):
                         if release_date.date() > (datetime.now().date() - timedelta(days=7)) and release_date.date() < (datetime.now().date() + timedelta(days=look_ahead)):
                             comics.append(item)
         return comics
+
+    def get_raw_issues2(self, ffile, look_ahead):
+        with gzip.open(ffile, 'rb') as f:
+            comics = []
+            fieldname_setup = [
+                (0, 'ProductID', 'product_id', True),
+                (1, 'Name', 'complete_title', True),
+                (2, 'MerchantID', 'merchant_id', False),
+                (3, 'Merchant', 'merchant', False),
+                (4, 'Link', 'link', True),
+                (5, 'Thumbnail', 'thumbnail', True),
+                (6, 'BigImage', 'big_image', True),
+                (7, 'Price', 'price', False),
+                (8, 'RetailPrice', 'retail_price', True),
+                (9, 'Category', 'sas_category', False),
+                (10, 'SubCategory', 'sas_subcategory', False),
+                (11, 'Description', 'description', True),
+                (12, 'OnSaleDate', 'current_tfaw_release_date', True),
+                (13, 'Genre', 'genre', True),
+                (14, 'People', 'people', True),
+                (15, 'Theme', 'theme', False),
+                (16, 'Popularity', 'popularity', True),
+                (17, 'LastUpdated', 'last_updated', True),
+                (18, 'status', 'status', False),
+                (19, 'manufacturer', 'publisher', True),
+                (20, 'partnumber', 'diamond_id', True),
+                (21, 'merchantCategory', 'category', True),
+                (22, 'merchantSubcategory', 'merchant_subcategory', False),
+                (23, 'shortDescription', 'short_description', False),
+                (24, 'ISBN', 'isbn', False),
+                (25, 'UPC', 'upc', True)
+            ]
+            fieldnames = [x[2] for x in fieldname_setup]
+            reader = csv.DictReader(f, fieldnames=fieldnames, delimiter='|')
+            for item in reader:
+                if item['category'] == 'Comics':
+                    # item = [element for element in item]
+                    if item['publisher'] in app.config['SUPPORTED_PUBS'] and self.is_diamond_id(item['diamond_id']):
+                        release_date = datetime.strptime(item['current_tfaw_release_date'], '%Y-%m-%d')
+                        if release_date.date() > (datetime.now().date() - timedelta(days=7)) and release_date.date() < (datetime.now().date() + timedelta(days=look_ahead)):
+                            comics.append(item)
+            return comics
+
+
+    def new_extract_issue(self_raw_issue):
+        pass
 
 
     def extract_issue_information(self, raw_issue):

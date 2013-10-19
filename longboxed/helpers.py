@@ -97,9 +97,19 @@ def get_week(date, multiplier=0):
     The 'multiplier' argument provides the ability to navigate multiple weeks into 
     the future and past"""
     day_idx = (date.weekday() + 1) % 7 # Turn sunday into 0, monday into 1, etc.
-    sunday = (date - timedelta(days=day_idx)) + (multiplier * timedelta(7))
+    sunday = (date - timedelta(days=day_idx)) + (multiplier * timedelta(days=7))
     saturday = (sunday + timedelta(days=6))
     return (sunday, saturday)
+
+
+def next_n_weeks(date, n=1):
+    """
+    Returns the first sunday and last saturday of the range. This is useful to 
+    provide a lower and upper bound on SQL queries.
+    """
+    first_sunday, first_saturday = get_week(date)
+    last_saturday = first_saturday + (n * timedelta(days=7))
+    return (first_sunday, last_saturday)
 
 
 def mail_content(recipients, sender, subject, content, html=None, attachment=None):
