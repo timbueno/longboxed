@@ -14,13 +14,21 @@ import logging.config
 from celery import Celery
 from flask import Flask
 from flask.ext.security import SQLAlchemyUserDatastore
+from flask.ext.security.forms import ConfirmRegisterForm, PasswordConfirmFormMixin
 from sqlalchemy_imageattach.context import push_store_context, pop_store_context
+from wtforms import TextField
+from wtforms.validators import Required
 
 from . import signals
 from .core import bootstrap, db, mail, security, store
 from .helpers import register_blueprints
 from .middleware import HTTPMethodOverrideMiddleware
 from .models import User, Role
+
+
+class ExtendedConfirmRegisterForm(ConfirmRegisterForm, PasswordConfirmFormMixin):
+    first_name = TextField('First Name', [Required()])
+    last_name = TextField('Last Name', [Required()])
 
 
 def create_app(package_name, package_path, settings_override=None, debug_override=None, register_security_blueprint=True):
@@ -46,7 +54,8 @@ def create_app(package_name, package_path, settings_override=None, debug_overrid
     mail.init_app(app)
     #: Setup Flask-Security
     security.init_app(app, SQLAlchemyUserDatastore(db, User, Role),
-                      register_blueprint=register_security_blueprint)
+                      register_blueprint=register_security_blueprint,
+                      confirm_register_form=ExtendedConfirmRegisterForm)
 
     # Register all blueprints
     register_blueprints(app, package_name, package_path)
