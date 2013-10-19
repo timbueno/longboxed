@@ -8,6 +8,7 @@ from decimal import Decimal
 from functools import wraps
 from gzip import GzipFile
 from HTMLParser import HTMLParser
+from logging import getLogger
 from StringIO import StringIO
 
 import requests
@@ -17,6 +18,9 @@ from flask import current_app
 
 from .helpers import current_wednesday, two_wednesdays, next_wednesday
 from .services import comics as _comics
+
+
+process_logger = getLogger('issue_processing')
 
 
 class BaseImporter(object):
@@ -236,9 +240,9 @@ class BaseRecord(object):
             self.object = self.process(record)
             if self.object:
                 results = self.post_process()
-        except:
+        except Exception, err:
             print 'Something went wrong, skipping record.'
-            print record
+            print err
             return None
         return self.object
 
@@ -273,8 +277,9 @@ class WeeklyReleaseRecord(BaseRecord):
         """
         issue = _comics.issues.first(diamond_id=record['diamond_id'])
         if not issue:
-            print 'Issue Not Found: %s | %s | %s' % (record['diamond_id'], record['publisher'], \
+            message = 'Issue Not Found: %s | %s | %s' % (record['diamond_id'], record['publisher'], \
                                            record['complete_title'])
+            process_logger.debug(message)
         return issue
 
     def pre_massage_diamond_id(self, record, key='diamond_id'):
