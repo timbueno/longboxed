@@ -14,16 +14,17 @@ import logging.config
 from celery import Celery
 from flask import Flask
 from flask.ext.security import SQLAlchemyUserDatastore
+from flask.ext.social.datastore import SQLAlchemyConnectionDatastore
 from flask.ext.security.forms import ConfirmRegisterForm, PasswordConfirmFormMixin
 from sqlalchemy_imageattach.context import push_store_context, pop_store_context
 from wtforms import TextField
 from wtforms.validators import Required
 
 from . import signals
-from .core import bootstrap, db, mail, security, store
+from .core import bootstrap, db, mail, security, store, social
 from .helpers import register_blueprints
 from .middleware import HTTPMethodOverrideMiddleware
-from .models import User, Role
+from .models import Connection, User, Role
 
 
 class ExtendedConfirmRegisterForm(ConfirmRegisterForm, PasswordConfirmFormMixin):
@@ -56,6 +57,8 @@ def create_app(package_name, package_path, settings_override=None, debug_overrid
     security.init_app(app, SQLAlchemyUserDatastore(db, User, Role),
                       register_blueprint=register_security_blueprint,
                       confirm_register_form=ExtendedConfirmRegisterForm)
+
+    app.social = social.init_app(app, SQLAlchemyConnectionDatastore(db, Connection))
 
     # Register all blueprints
     register_blueprints(app, package_name, package_path)

@@ -1,0 +1,33 @@
+{% extends "layouts/base.html" %}
+{% set title = 'Settings | Longboxed' %}
+
+{% block main_content %}
+{% macro show_provider_button(provider_id, display_name, conn) %}
+    {% if conn %}
+    <form action="{{ url_for('social.remove_connection', provider_id=conn.provider_id, provider_user_id=conn.provider_user_id) }}" method="DELETE">
+      <input type="submit" value="Disconnect {{ display_name }}" />
+    </form>
+    {% else %}
+    <form action="{{ url_for('social.connect', provider_id=provider_id) }}" method="POST">
+      <input type="submit" value="Connect {{ display_name }}" />
+    </form>
+    {% endif %}
+{% endmacro %}
+
+{{ show_provider_button('twitter', 'Twitter', twitter_conn) }}
+
+{{ show_provider_button('facebook', 'Facebook', facebook_conn) }}
+
+{{ show_provider_button('foursquare', 'foursquare', foursquare_conn) }}
+
+{% if google_conn %}
+<form action="{{ url_for('social.remove_connection', provider_id='google', provider_user_id=google_conn.provider_user_id) }}?__METHOD__=DELETE" name='google_disconnect_form' method="POST">
+  <input type="submit" name="disconnect_google" value="Remove Google Connection" />
+</form>
+{% else %}
+<form action="{{ url_for('social.connect', provider_id='google') }}" name='google_connect_form' method="POST">
+  <input type="submit" name="connect_google" value="Connect with Google" />
+</form>
+{% endif %}
+
+{% endblock %}

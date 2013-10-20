@@ -11,6 +11,7 @@ import werkzeug
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security
+from flask.ext.social import Social
 from flask_mail import Mail
 from sqlalchemy_imageattach.stores.fs import HttpExposedFileSystemStore
 from sqlalchemy_imageattach.stores.s3 import S3Store
@@ -25,6 +26,9 @@ db = SQLAlchemy()
 
 #: Flask-Security extension instance
 security = Security()
+
+#: Flask-Social exetension instance
+social = Social()
 
 #: Flask Mail Extension Instance
 mail = Mail()
