@@ -121,6 +121,9 @@ class RoleAdmin(SuperUserBase):
 
 
 class ConnectionAdmin(SuperUserBase):
+    # column_searchable_list = ('user.email',)
+    column_list = ('provider_id', 'display_name', 'user')
+    # column_searchable_list=('user',)
     def __init__(self, session):
         # Just call parent class with predefined model.
         super(ConnectionAdmin, self).__init__(Connection, session)

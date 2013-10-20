@@ -15,5 +15,6 @@ bp = Blueprint('users', __name__)
 def profile():
     return render_template(
         'profile.html',
+        facebook_conn=current_app.social.facebook.get_connection(),
         google_conn=current_app.social.google.get_connection()
     )
