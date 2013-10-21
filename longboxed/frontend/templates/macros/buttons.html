@@ -1,11 +1,11 @@
 {% macro social_connect_button(provider_id, display_name, conn) %}
     {% if conn %}
     <form action="{{ url_for('social.remove_connection', provider_id=conn.provider_id, provider_user_id=conn.provider_user_id) }}?__METHOD__=DELETE" name='{{ provider_id }}_disconnect_form' method="POST">
-        <button class='zocial {{ provider_id }}' style="font-size: 12px">Disconnect {{ display_name }}</button>
+        <button class='zocial {{ provider_id }}'>Disconnect {{ display_name }}</button>
     </form>
     {% else %}
     <form action="{{ url_for('social.connect', provider_id=provider_id) }}" method="POST">
-        <button class='zocial {{ provider_id }}' style="font-size: 12px">Connect with {{ display_name }}</button>
+        <button class='zocial {{ provider_id }}'>Connect with {{ display_name }}</button>
     </form>
     {% endif %}
 {% endmacro %}
