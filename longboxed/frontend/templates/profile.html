@@ -1,21 +1,9 @@
 {% extends "layouts/base.html" %}
 {% set title = 'Settings | Longboxed' %}
+{% from "macros/buttons.html" import social_connect_button %}
 
-
-{% macro show_provider_button(provider_id, display_name, conn) %}
-    {% if conn %}
-    <form action="{{ url_for('social.remove_connection', provider_id=conn.provider_id, provider_user_id=conn.provider_user_id) }}?__METHOD__=DELETE" name='{{ provider_id }}_disconnect_form' method="POST">
-        <input type="submit" name="disconnect_{{ provider_id }}" value="Disconnect {{ display_name }}" />
-    </form>
-    {% else %}
-    <form action="{{ url_for('social.connect', provider_id=provider_id) }}" method="POST">
-        <input type="submit" name="connect_{{ provider_id }}" value="Connect {{ display_name }}" />
-    </form>
-    {% endif %}
-{% endmacro %}
-
-{{ show_provider_button('twitter', 'Twitter', twitter_conn) }}
-{{ show_provider_button('facebook', 'Facebook', facebook_conn) }}
-{{ show_provider_button('google', 'Google', google_conn) }}
-
+{% block main_content %}
+{{ social_connect_button('twitter', 'Twitter', twitter_conn) }}
+{{ social_connect_button('google', 'Google', google_conn) }}
+{{ social_connect_button('facebook', 'Facebook', facebook_conn) }}
 {% endblock %}

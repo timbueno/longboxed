@@ -19,6 +19,6 @@ def profile():
     return render_template(
         'profile.html',
         twitter_conn=twitter.get_connection(),
-        facebook_conn=current_app.social.facebook.get_connection(),
-        google_conn=current_app.social.google.get_connection()
+        google_conn=current_app.social.google.get_connection(),
+        facebook_conn=current_app.social.facebook.get_connection()
     )
