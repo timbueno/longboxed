@@ -47,7 +47,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     #ansible.playbook = "devops/setup_database.yml"
     #ansible.playbook = "devops/deploy_app.yml"
 
-    ansible.inventory_file = "devops/vagrant_hosts"
+    ansible.inventory_path = "devops/vagrant_hosts"
     ansible.verbose = false
   end
 end
