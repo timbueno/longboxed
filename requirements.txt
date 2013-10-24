@@ -36,6 +36,7 @@ celery-with-redis==3.0
 docutils==0.11
 facebook-sdk==0.4.0
 google-api-python-client==1.2
+gunicorn==18.0
 httplib2==0.8
 itsdangerous==0.23
 kombu==2.5.13
