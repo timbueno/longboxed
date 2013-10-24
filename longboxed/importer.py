@@ -35,11 +35,11 @@ class BaseImporter(object):
         self.processed_data = []
 
     def run(self):
-        print 'Beginning process: ', datetime.now()
+        process_logger.debug('Beginning process: %s', datetime.now())
         content = self.download()
         self.raw_data = self.load(content)
         self.processed_data = self.process(self.raw_data)
-        print 'Process Complete: ', datetime.now()
+        process_logger.debug('Process Complete: %s', datetime.now())
         return self.processed_data
 
     def download(self):
@@ -63,13 +63,14 @@ def daily_download_report(fn):
         summary = """
         ~~~~~~~~~~~~~~~~~~~~~~~~
         Database Update Report
+        Time: %s
         ~~~~~~~~~~~~~~~~~~~~~~~~
         Created Issues:     %d
         Created Titles:     %d
         Created Publishers: %d
         ~~~~~~~~~~~~~~~~~~~~~~~~
         Issues in DB:       %d
-        ~~~~~~~~~~~~~~~~~~~~~~~~""" % (_comics.issues.count() - issue_count, \
+        ~~~~~~~~~~~~~~~~~~~~~~~~""" % (datetime.now(), _comics.issues.count() - issue_count, \
                                        _comics.titles.count() - title_count, \
                                        _comics.publishers.count() - publisher_count, \
                                        _comics.issues.count()
@@ -315,8 +316,8 @@ class DailyDownloadRecord(BaseRecord):
         if self.raw_record['category'] == 'Comics':
             if self.raw_record['publisher'] in self.supported_publishers:
                 release_date = self.pre_current_tfaw_release_date(self.raw_record)
-                if release_date['current_tfaw_release_date'] > (datetime.now().date() - timedelta(days=7)) \
-                    and release_date['current_tfaw_release_date'] < (datetime.now().date() + timedelta(days=self.look_ahead)):
+                if release_date['prospective_release_date'] > (datetime.now().date() - timedelta(days=7)) \
+                    and release_date['prospective_release_date'] < (datetime.now().date() + timedelta(days=self.look_ahead)):
                     return True
         return False
 
@@ -406,7 +407,7 @@ class DailyDownloadRecord(BaseRecord):
         result = HTMLParser().unescape(record[key])
         return {key: result}
 
-    def pre_current_tfaw_release_date(self, record, key='current_tfaw_release_date'):
+    def pre_current_tfaw_release_date(self, record, key='prospective_release_date'):
         """
         Converts the text representation of the release date attribute to a
         datetime object.

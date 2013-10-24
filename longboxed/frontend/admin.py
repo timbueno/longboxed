@@ -17,7 +17,7 @@ from flask.ext.admin.contrib.sqlamodel import ModelView
 from ..core import db
 from ..helpers import current_wednesday, last_wednesday, next_wednesday 
 from ..services import comics as _comics
-from ..models import Issue, Publisher, Title, User, Role, Bundle
+from ..models import Connection, Issue, Publisher, Title, User, Role, Bundle
 
 
 class LongboxedAdminIndexView(AdminIndexView):
@@ -39,7 +39,7 @@ class IssueAdmin(AdministratorBase):
     # List of columns that can be sorted
     column_sortable_list = ('issue_number', 'complete_title', 'on_sale_date', ('title',Title.name), ('publisher', Publisher.name))
     column_searchable_list = ('complete_title', 'diamond_id')
-    column_list = ('on_sale_date', 'diamond_id', 'issue_number', 'issues', 'complete_title', 'title', 'publisher')
+    column_list = ('on_sale_date', 'prospective_release_date', 'diamond_id', 'issue_number', 'issues', 'complete_title', 'title', 'publisher')
 
     def __init__(self, session):
         # Just call parent class with predefined model.
@@ -120,6 +120,15 @@ class RoleAdmin(SuperUserBase):
         super(RoleAdmin, self).__init__(Role, session)
 
 
+class ConnectionAdmin(SuperUserBase):
+    # column_searchable_list = ('user.email',)
+    column_list = ('provider_id', 'display_name', 'user')
+    # column_searchable_list=('user',)
+    def __init__(self, session):
+        # Just call parent class with predefined model.
+        super(ConnectionAdmin, self).__init__(Connection, session)
+
+
 def init_app(app):
     admin = Admin(app, index_view=LongboxedAdminIndexView())
     admin.add_view(UserAdmin(db.session))
@@ -128,3 +137,4 @@ def init_app(app):
     admin.add_view(TitleAdmin(db.session))
     admin.add_view(RoleAdmin(db.session))
     admin.add_view(BundleAdmin(db.session))
+    admin.add_view(ConnectionAdmin(db.session))

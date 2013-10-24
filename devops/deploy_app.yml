@@ -1,7 +1,7 @@
 ---
 
 - hosts: webservers
-  user: vagrant
+  user: tim
   sudo: True
 
   vars_files:
@@ -21,12 +21,12 @@
     - name: Pip | Install dependencies into virtualenv
       action: pip requirements=${webapps_dir}/${app_name}/src/requirements.txt virtualenv=${webapps_dir}/${app_name}/venv state=present
 
-    - name: MySQL | Make sure application database exists in MySQL
-      mysql_db: name=${app_name}
-                login_host=localhost
-                login_user=root
-                login_password=${mysql_root_password}
-                state=present
+    # - name: MySQL | Make sure application database exists in MySQL
+    #   mysql_db: name=${app_name}
+    #             login_host=localhost
+    #             login_user=root
+    #             login_password=${mysql_root_password}
+    #             state=present
 
 
     - name: Supervisor | Create supervisor program config

@@ -1,0 +1,9 @@
+{% extends "layouts/base.html" %}
+{% set title = 'Settings | Longboxed' %}
+{% from "macros/buttons.html" import social_connect_button %}
+
+{% block main_content %}
+{{ social_connect_button('twitter', 'Twitter', twitter_conn) }}
+{{ social_connect_button('google', 'Google', google_conn) }}
+{{ social_connect_button('facebook', 'Facebook', facebook_conn) }}
+{% endblock %}
