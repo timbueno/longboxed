@@ -16,6 +16,7 @@ import requests
 from bs4 import BeautifulSoup
 from flask import current_app
 
+from .core import db
 from .helpers import current_wednesday, two_wednesdays, next_wednesday
 from .services import comics as _comics
 
@@ -244,6 +245,8 @@ class BaseRecord(object):
         except Exception, err:
             process_logger.debug('Something went wrong, skipping record.')
             process_logger.debug(err)
+            print 'Rolling back...'
+            db.session.rollback()
             return None
         return self.object
 
@@ -405,7 +408,7 @@ class DailyDownloadRecord(BaseRecord):
         http://stackoverflow.com/questions/18220631/encoding-a-string-with-ascii-characters-find-and-replace
         """
         result = HTMLParser().unescape(record[key])
-        return {key: None}
+        return {key: result}
 
     def pre_current_tfaw_release_date(self, record, key='prospective_release_date'):
         """
