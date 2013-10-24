@@ -405,7 +405,7 @@ class DailyDownloadRecord(BaseRecord):
         http://stackoverflow.com/questions/18220631/encoding-a-string-with-ascii-characters-find-and-replace
         """
         result = HTMLParser().unescape(record[key])
-        return {key: result}
+        return {key: None}
 
     def pre_current_tfaw_release_date(self, record, key='prospective_release_date'):
         """
