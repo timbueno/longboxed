@@ -1,7 +1,7 @@
 ---
 
 - hosts: webservers
-  user: vagrant
+  user: tim
   sudo: yes
   sudo_user: postgres
   gather_facts: no

@@ -7,8 +7,8 @@
   vars:
     application: longboxed
 
-  vars_files:
-      - vars/initial_provision_vars.yml
+  # vars_files:
+  #     - vars/initial_provision_vars.yml
 
   tasks:
     - name: System | Add supervisor group to system
@@ -44,6 +44,7 @@
         - nginx
         - zlib1g-dev
         - redis-server
+        - libmagickwand-dev
 
     - name: pip | Install pip
       action: easy_install name=pip
