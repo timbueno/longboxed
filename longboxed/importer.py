@@ -470,7 +470,7 @@ class DailyDownloadRecord(BaseRecord):
             _comics.issues.__model__.issue_number == issue.issue_number
         )
         similar_issues = sorted(similar_issues)
-        for index, issue in similar_issues:
+        for index, issue in enumerate(similar_issues):
             if index == 0:
                 issue.is_parent = True
                 if len(similar_issues) > 1:
