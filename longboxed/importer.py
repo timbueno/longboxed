@@ -446,11 +446,11 @@ class DailyDownloadRecord(BaseRecord):
                 is_parent = False
         if is_parent:
             issue.is_parent = True
-            if similar_issues:
-                issue.has_alternates = True
-                for i in similar_issues:
-                    i.is_parent = False
-                    i.has_alternates = True
+        if similar_issues:
+            issue.has_alternates = True
+            for i in similar_issues:
+                i.is_parent = False
+                i.has_alternates = True
                     _comics.issues.save(i)
             _comics.issues.save(issue)
         return is_parent
