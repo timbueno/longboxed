@@ -5,6 +5,8 @@
 
     Comics module
 """
+import re
+
 from sqlalchemy_imageattach.entity import Image, image_attachment
 
 from ..core import db
@@ -109,6 +111,11 @@ class Issue(db.Model):
 
     def __str__(self):
         return self.complete_title
+
+    def __cmp__(self, other_issue):
+        id1 = int(re.search(r'\d+', self.diamond_id).group())
+        id2 = int(re.search(r'\d+', other_issue.diamond_id).group())
+        return id1 - id2
 
 
 class IssueCover(db.Model, Image):
