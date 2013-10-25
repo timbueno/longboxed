@@ -451,7 +451,7 @@ class DailyDownloadRecord(BaseRecord):
             for i in similar_issues:
                 i.is_parent = False
                 i.has_alternates = True
-                    _comics.issues.save(i)
+                _comics.issues.save(i)
         _comics.issues.save(issue)
         return is_parent
 
