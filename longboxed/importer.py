@@ -461,9 +461,9 @@ class DailyDownloadRecord(BaseRecord):
         of issues. This is how we determine which issue to display when it 
         has alternative covers.
         """
-        def compare_diamond_id(id1, id2):
-            id1 = int(re.search(r'\d+', id1).group())
-            id2 = int(re.search(r'\d+', id2).group())
+        def compare_diamond_id(issue1, issue2):
+            id1 = int(re.search(r'\d+', issue1.diamond_id).group())
+            id2 = int(re.search(r'\d+', issue2.diamond_id).group())
             return id1 - id2
         similar_issues = _comics.issues.filter(
             _comics.issues.__model__.title == issue.title,
