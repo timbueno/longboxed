@@ -426,34 +426,72 @@ class DailyDownloadRecord(BaseRecord):
         result = datetime.strptime(record[key], '%Y-%m-%d %H:%M:%S')
         return {key: result}
 
+    # def post_parent_status(self, issue):
+    #     """
+    #     Checks to see if the imported issue is the parent issue in a grouping
+    #     of issues. This is how we determine which issue to display when it 
+    #     has alternative covers.
+    #     """
+    #     similar_issues = _comics.issues.filter(
+    #         _comics.issues.__model__.title == issue.title,
+    #         _comics.issues.__model__.issue_number == issue.issue_number,
+    #         _comics.issues.__model__.diamond_id != issue.diamond_id
+    #     )
+    #     match = re.search(r'\d+', issue.diamond_id)
+    #     current_issue_number = int(match.group())
+    #     is_parent = True
+    #     for i in similar_issues:
+    #         match = re.search(r'\d+', i.diamond_id)
+    #         if int(match.group()) < current_issue_number:
+    #             is_parent = False
+    #     if is_parent:
+    #         issue.is_parent = True
+    #     if similar_issues:
+    #         issue.has_alternates = True
+    #         for i in similar_issues:
+    #             i.is_parent = False
+    #             i.has_alternates = True
+    #             _comics.issues.save(i)
+    #     _comics.issues.save(issue)
+    #     return is_parent
+
     def post_parent_status(self, issue):
         """
         Checks to see if the imported issue is the parent issue in a grouping
         of issues. This is how we determine which issue to display when it 
         has alternative covers.
         """
+        def compare_diamond_id(id1, id2):
+            id1 = int(re.search(r'\d+', id1).group())
+            id2 = int(re.search(r'\d+', id2).group())
+            return id1 - id2
         similar_issues = _comics.issues.filter(
             _comics.issues.__model__.title == issue.title,
-            _comics.issues.__model__.issue_number == issue.issue_number,
-            _comics.issues.__model__.diamond_id != issue.diamond_id
+            _comics.issues.__model__.issue_number == issue.issue_number
         )
-        match = re.search(r'\d+', issue.diamond_id)
-        current_issue_number = int(match.group())
-        is_parent = True
-        for i in similar_issues:
-            match = re.search(r'\d+', i.diamond_id)
-            if int(match.group()) < current_issue_number:
-                is_parent = False
-        if is_parent:
-            issue.is_parent = True
-        if similar_issues:
-            issue.has_alternates = True
-            for i in similar_issues:
-                i.is_parent = False
-                i.has_alternates = True
-                _comics.issues.save(i)
-        _comics.issues.save(issue)
-        return is_parent
+        similar_issues = sorted(similar_issues, cmp=compare_diamond_id)
+        for index, issue in similar_issues:
+            if index == 0:
+                issue.is_parent = True
+                if len(similar_issues) > 1:
+                    issue.has_alternates = True
+            else:
+                issue.is_parent = False
+                issue.has_alternates = True
+            _comics.issues.save(issue)
+        return True
+
+    def determine_parent(issue, similar_issues):
+        def compare_diamond_id(id1, id2):
+            id1 = int(re.search(r'\d+', id1).group())
+            id2 = int(re.search(r'\d+', id2).group())
+            return id1 - id2
+        for x in similar_issues:
+            if x.diamond_id == parent_diamond_id):
+                print "i found it!"
+                break
+        else:
+            x = None
 
     def post_cover_image(self, issue):
         """
