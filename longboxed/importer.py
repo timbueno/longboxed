@@ -481,17 +481,17 @@ class DailyDownloadRecord(BaseRecord):
             _comics.issues.save(issue)
         return True
 
-    def determine_parent(issue, similar_issues):
-        def compare_diamond_id(id1, id2):
-            id1 = int(re.search(r'\d+', id1).group())
-            id2 = int(re.search(r'\d+', id2).group())
-            return id1 - id2
-        for x in similar_issues:
-            if x.diamond_id == parent_diamond_id):
-                print "i found it!"
-                break
-        else:
-            x = None
+    # def determine_parent(issue, similar_issues):
+    #     def compare_diamond_id(id1, id2):
+    #         id1 = int(re.search(r'\d+', id1).group())
+    #         id2 = int(re.search(r'\d+', id2).group())
+    #         return id1 - id2
+    #     for x in similar_issues:
+    #         if x.diamond_id == parent_diamond_id):
+    #             print "i found it!"
+    #             break
+    #     else:
+    #         x = None
 
     def post_cover_image(self, issue):
         """
