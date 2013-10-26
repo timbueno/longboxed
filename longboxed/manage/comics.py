@@ -6,7 +6,6 @@
     comic management commands
 """
 import csv
-import warnings
 from StringIO import StringIO
 
 from flask import current_app
@@ -14,7 +13,7 @@ from flask.ext.script import Command, Option, prompt, prompt_bool
 
 from ..helpers import mail_content
 from ..importer import DailyDownloadImporter, DailyDownloadRecord, WeeklyReleasesImporter, WeeklyReleaseRecord
-from ..services import comics, bundle
+from ..services import comics
 
 
 class TestCommand(Command):
@@ -28,9 +27,6 @@ class ScheduleReleasesCommand(Command):
         ]
 
     def run(self, week):
-        # Suppress argparse warnings caused by running gunicorn's argparser
-                # "inside" Flask-Script which imports it too...
-        warnings.filterwarnings("ignore")
         release_instance = WeeklyReleasesImporter(
             week=week,
             affiliate_id=current_app.config['AFFILIATE_ID'],
