@@ -30,7 +30,7 @@ class ScheduleReleasesCommand(Command):
     def run(self, week):
         # Suppress argparse warnings caused by running gunicorn's argparser
                 # "inside" Flask-Script which imports it too...
-        warnings.filterwarnings("ignore", "^.*argparse.*$")
+        warnings.filterwarnings("ignore", "UserWarning")
         release_instance = WeeklyReleasesImporter(
             week=week,
             affiliate_id=current_app.config['AFFILIATE_ID'],
