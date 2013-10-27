@@ -10,5 +10,5 @@ dd
 /devops/vars/app_deployment_vars.yml
 /devops/vars/initial_provision_vars.yml
 /logs/*
+!/logs/folder_create
 /store
-/longboxed/settings.py

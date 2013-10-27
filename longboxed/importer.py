@@ -16,6 +16,7 @@ import requests
 from bs4 import BeautifulSoup
 from flask import current_app
 
+from .core import db
 from .helpers import current_wednesday, two_wednesdays, next_wednesday
 from .services import comics as _comics
 
@@ -244,6 +245,8 @@ class BaseRecord(object):
         except Exception, err:
             process_logger.debug('Something went wrong, skipping record.')
             process_logger.debug(err)
+            print 'Rolling back...'
+            db.session.rollback()
             return None
         return self.object
 
@@ -429,28 +432,25 @@ class DailyDownloadRecord(BaseRecord):
         of issues. This is how we determine which issue to display when it 
         has alternative covers.
         """
+        # def compare_diamond_id(issue1, issue2):
+        #     id1 = int(re.search(r'\d+', issue1.diamond_id).group())
+        #     id2 = int(re.search(r'\d+', issue2.diamond_id).group())
+        #     return id1 - id2
         similar_issues = _comics.issues.filter(
             _comics.issues.__model__.title == issue.title,
-            _comics.issues.__model__.issue_number == issue.issue_number,
-            _comics.issues.__model__.diamond_id != issue.diamond_id
+            _comics.issues.__model__.issue_number == issue.issue_number
         )
-        match = re.search(r'\d+', issue.diamond_id)
-        current_issue_number = int(match.group())
-        is_parent = True
-        for i in similar_issues:
-            match = re.search(r'\d+', i.diamond_id)
-            if int(match.group()) < current_issue_number:
-                is_parent = False
-        if is_parent:
-            issue.is_parent = True
-            if similar_issues:
+        similar_issues = sorted(similar_issues)
+        for index, issue in enumerate(similar_issues):
+            if index == 0:
+                issue.is_parent = True
+                if len(similar_issues) > 1:
+                    issue.has_alternates = True
+            else:
+                issue.is_parent = False
                 issue.has_alternates = True
-                for i in similar_issues:
-                    i.is_parent = False
-                    i.has_alternates = True
-                    _comics.issues.save(i)
             _comics.issues.save(issue)
-        return is_parent
+        return True
 
     def post_cover_image(self, issue):
         """

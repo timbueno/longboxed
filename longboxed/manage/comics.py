@@ -6,7 +6,6 @@
     comic management commands
 """
 import csv
-from pprint import pprint
 from StringIO import StringIO
 
 from flask import current_app
@@ -14,7 +13,7 @@ from flask.ext.script import Command, Option, prompt, prompt_bool
 
 from ..helpers import mail_content
 from ..importer import DailyDownloadImporter, DailyDownloadRecord, WeeklyReleasesImporter, WeeklyReleaseRecord
-from ..services import comics, bundle
+from ..services import comics
 
 
 class TestCommand(Command):
@@ -123,27 +122,3 @@ class UpdateDatabaseCommand(Command):
         days = int(days)
         comics.add_new_issues_to_database(days=days)
         print 'Done Adding to DB'
-
-
-# class ScheduleReleasesCommand(Command):
-#     """Automatically schedule releases from Diamond Release file"""
-    
-#     def get_options(self):
-#         return [
-#             Option('-w', '--week', dest='week', required=True, choices=['thisweek', 'nextweek', 'twoweeks']),
-#         ]
-
-#     def run(self, week):
-#         print 'Starting scheduling'
-#         if week == 'thisweek':
-#             date = current_wednesday()
-#         if week == 'nextweek':
-#             date = next_wednesday()
-#         if week == 'twoweeks':
-#             date = two_wednesdays()
-#             raise NotImplementedError
-#         content = comics.get_shipping_from_TFAW(week)
-#         shipping = comics.get_issue_dict_shipping(content)
-#         diamond_ids = [x['ITEMCODE'] for x in shipping]
-#         comics.compare_shipping_with_database(diamond_ids, date)
-#         print 'Done Scheduling'
