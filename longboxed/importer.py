@@ -339,10 +339,14 @@ class DailyDownloadRecord(BaseRecord):
             raw_title = issue_dict['title'],
             publisher_object = publisher
         )
+        creators = _comics.insert_creators(
+            raw_creators= issue_dict['people']
+        )
         issue = _comics.insert_issue(
             raw_issue_dict = issue_dict,
             title_object = title,
-            publisher_object = publisher
+            publisher_object = publisher,
+            creator_objects=creators
         )
         return issue
 

@@ -17,7 +17,7 @@ from flask.ext.admin.contrib.sqlamodel import ModelView
 from ..core import db
 from ..helpers import current_wednesday, last_wednesday, next_wednesday 
 from ..services import comics as _comics
-from ..models import Connection, Issue, Publisher, Title, User, Role, Bundle
+from ..models import Connection, Creator, Issue, Publisher, Title, User, Role, Bundle
 
 
 class LongboxedAdminIndexView(AdminIndexView):
@@ -99,6 +99,12 @@ class TitleAdmin(AdministratorBase):
         super(TitleAdmin, self).__init__(Title, session)
 
 
+class CreatorAdmin(AdministratorBase):
+    def __init__(self, session):
+        # Just call parent class with predefined model.
+        super(CreatorAdmin, self).__init__(Creator, session)
+
+
 class BundleAdmin(AdministratorBase):
     def __init__(self, session):
         # Just call parent class with predefined model.
@@ -135,6 +141,7 @@ def init_app(app):
     admin.add_view(IssueAdmin(db.session))
     admin.add_view(PublisherAdmin(db.session))
     admin.add_view(TitleAdmin(db.session))
+    admin.add_view(CreatorAdmin(db.session))
     admin.add_view(RoleAdmin(db.session))
     admin.add_view(BundleAdmin(db.session))
     admin.add_view(ConnectionAdmin(db.session))

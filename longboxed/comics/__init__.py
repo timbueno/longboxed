@@ -6,13 +6,14 @@
     longboxed comics package
 """
 from logging import getLogger
+from re import split
 
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy_imageattach.entity import store_context
 from requests import get
 
 from ..core import store, Service
-from .models import Bundle, Issue, Publisher, Title
+from .models import Bundle, Creator, Issue, Publisher, Title
 
 
 process_logger = getLogger('issue_processing')
@@ -28,6 +29,10 @@ class PublisherService(Service):
 
 class TitleService(Service):
     __model__ = Title
+
+
+class CreatorService(Service):
+    __model__ = Creator
 
 
 class IssueService(Service):
@@ -136,6 +141,7 @@ class ComicService(object):
         self.publishers = PublisherService()
         self.titles = TitleService()
         self.issues = IssueService()
+        self.creators = CreatorService()
 
     def insert_publisher(self, raw_publisher=None):
         """
@@ -164,7 +170,23 @@ class ComicService(object):
             process_logger.info('TITLE: %s' % (title.name))
         return title
 
-    def insert_issue(self, raw_issue_dict, title_object, publisher_object):
+    def insert_creators(self, raw_creators):
+        """
+        Inserts creators into the database if they do not already exist.
+        """
+        creator_list = []
+        people = split(';|,', raw_creators)
+        for person in people:
+            person = person.strip()
+            creator = self.creators.first(name=person)
+            if not creator:
+                creator = self.creators.create(name=person)
+                process_logger.info('CREATOR: %s' % (creator.name))
+            creator_list.append(creator)
+        return creator_list
+
+
+    def insert_issue(self, raw_issue_dict, title_object, publisher_object, creator_objects):
         """
         Inserts an issue into the database if it does not already
         exist. 
@@ -176,6 +198,7 @@ class ComicService(object):
         issue = self.issues.first(diamond_id=raw_issue_dict['diamond_id'])
         raw_issue_dict['title'] = title_object
         raw_issue_dict['publisher'] = publisher_object
+        raw_issue_dict['creators'] = creator_objects
         if issue:
             issue = self.issues.update(issue, **raw_issue_dict) # Update
         else:
