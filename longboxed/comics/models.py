@@ -6,6 +6,7 @@
     Comics module
 """
 import re
+from datetime import datetime
 
 from sqlalchemy_imageattach.entity import Image, image_attachment
 
@@ -15,6 +16,11 @@ from ..core import db
 #: Many-to-Many relationship for bundles and issues helper table
 issues_bundles = db.Table('issues_bundles',
     db.Column('bundle_id', db.Integer, db.ForeignKey('bundles.id')),
+    db.Column('issue_id', db.Integer, db.ForeignKey('issues.id'))
+)
+
+issues_creators = db.Table('issues_creators',
+    db.Column('creator_id', db.Integer, db.ForeignKey('creators.id')),
     db.Column('issue_id', db.Integer, db.ForeignKey('issues.id'))
 )
 
@@ -127,6 +133,29 @@ class IssueCover(db.Model, Image):
     issue_id = db.Column(db.Integer, db.ForeignKey('issues.id'), primary_key=True)
     issue = db.relationship('Issue')
 
+
+class Creator(db.Model):
+    """
+    Writers and/or Artists that create individual titles
+    """
+    __tablename__ = 'creators'
+
+    #: IDs
+    id = db.Column(db.Integer, primary_key=True)
+    #: Attributes
+    name = db.Column(db.String(255))
+    date_added = db.Column(db.DateTime(), default=datetime.utcnow)
+    # type = db.Column(db.String(255))
+    creator_type = db.Column(db.Enum('writer', 'artist', 'other', name='creator_type'))
+    issues = db.relationship(
+        'Issue',
+        secondary=issues_creators,
+        backref=db.backref('creators', lazy='joined'),
+        lazy='dynamic'
+    )
+
+    def __str__(self):
+        return self.name
 
 class Bundle(db.Model):
     """
