@@ -25,6 +25,11 @@ def before_request():
         g.user = None
 
 
+@route(bp, '/test')
+def test():
+    return render_template('layouts/longboxed_base.html')
+
+
 @route(bp, '/')
 def index():
     if not current_user.is_anonymous():
