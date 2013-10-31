@@ -3782,6 +3782,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
   background-color: transparent;
   border: 1px solid transparent;
   border-radius: 4px;
+  z-index: 1;
 }
 .navbar-toggle .icon-bar {
   display: block;
@@ -3938,6 +3939,13 @@ textarea.input-group-sm > .input-group-btn > .btn {
 .navbar-default .navbar-brand:focus {
   color: #000000;
   background-color: transparent;
+}
+@media (max-width: 768px) {
+  .navbar-default .navbar-brand {
+    text-align: center;
+    width: 100%;
+    position: absolute;
+  }
 }
 .navbar-default .navbar-text {
   color: #777777;

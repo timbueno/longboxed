@@ -148,7 +148,6 @@
 
 
 // Brand/project name
-
 .navbar-brand {
   float: left;
   padding: @navbar-padding-vertical @navbar-padding-horizontal;
@@ -182,6 +181,9 @@
   background-color: transparent;
   border: 1px solid transparent;
   border-radius: @border-radius-base;
+  // Place button above other elements
+  // Fix for centering the logo in collapsed mode
+  z-index: 1;
 
   // Bars
   .icon-bar {
@@ -363,6 +365,11 @@
     &:focus {
       color: @navbar-default-brand-hover-color;
       background-color: @navbar-default-brand-hover-bg;
+    }
+    @media (max-width: @grid-float-breakpoint) {
+      text-align: center;
+      width: 100%;
+      position: absolute;
     }
   }
 
