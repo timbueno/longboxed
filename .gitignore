@@ -12,3 +12,4 @@ dd
 /logs/*
 !/logs/folder_create
 /store
+codekit-config.json
