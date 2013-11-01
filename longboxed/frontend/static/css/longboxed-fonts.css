@@ -29,3 +29,7 @@
 .icon-longboxed-full:before {
 	content: "\e601";
 }
+
+body {
+	padding-top: 70px;
+}

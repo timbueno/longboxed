@@ -1,0 +1,6 @@
+{% extends 'layouts/longboxed_base.html' %}
+{% import 'macros/wtf.html' as wtf %}
+
+{% block content -%}
+{{ wtf.quick_form(login_user_form, url_for('security.login')) }}
+{%- endblock content %}
