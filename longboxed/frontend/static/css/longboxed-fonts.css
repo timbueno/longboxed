@@ -46,16 +46,6 @@ body {
 	background-repeat: no-repeat;
 	background-position: center center;
 	background-size: cover;
-	-webkit-filter: blur(2px);
+	-webkit-filter: blur(3px);
 	z-index: -10;
 }
-
-/*body { 
-  background: url(../img/slide-01.jpg) no-repeat center center fixed;
-  -webkit-filter: blur(2px);
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-  z-index: -10;
-}*/
