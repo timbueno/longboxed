@@ -1,8 +1,7 @@
 {% macro form_errors(form, hiddens=True) %}
   {%- if form.errors %}
-    {%- for fieldname, errors in form.errors.items() %}
-      {%- if bootstrap_is_hidden_field(form[fieldname]) and hiddens or
-             bootstrap_is_hidden_field(form[fieldname]) and hiddens != 'only' %}
+    {%- for fieldname, errors in form.errors.items() if form[fieldname].widget.input_type != 'hidden' %}
+      {%- if hiddens or hiddens != 'only' %}
         {%- for error in errors %}
           <p class="error">{{error}}</p>
         {%- endfor %}
@@ -53,7 +52,7 @@
 {%- elif field.type == 'SubmitField' -%}
   {# note: same issue as above - should check widget, not field type #}
   {% call _hz_form_wrap(horizontal_columns, form_type, True) %}
-    {{field(class='btn btn-%s' % button_map.get(field.name, 'default'))}}
+    {{field(class='btn btn-%s btn-outline-inverse btn-lg' % button_map.get(field.name, 'default'))}}
   {% endcall %}
 {% else -%}
   <div class="form-group {% if field.errors %} has-error{% endif %}">
