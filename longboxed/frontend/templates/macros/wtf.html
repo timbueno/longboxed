@@ -79,8 +79,8 @@
           {% endcall %}
         {%- endif %}
       {%- else -%}
-        {{field.label(class="control-label")|safe}}
-        {{field(class="form-control", **kwargs)|safe}}
+        <!-- {{field.label(class="control-label")|safe}} -->
+        {{field(class="form-control", placeholder=field.label.text, **kwargs)|safe}}
 
         {%- if field.errors %}
           {%- for error in field.errors %}
