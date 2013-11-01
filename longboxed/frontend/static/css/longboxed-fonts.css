@@ -33,3 +33,29 @@
 body {
 	padding-top: 70px;
 }
+
+.bgImageContainer {
+	position: absolute;
+
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+
+	background-image: url(../img/thorvhulk.jpg);
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: cover;
+	-webkit-filter: blur(2px);
+	z-index: -10;
+}
+
+/*body { 
+  background: url(../img/slide-01.jpg) no-repeat center center fixed;
+  -webkit-filter: blur(2px);
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  z-index: -10;
+}*/

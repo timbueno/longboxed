@@ -2,5 +2,9 @@
 {% import 'macros/wtf.html' as wtf %}
 
 {% block content -%}
+<div class="bgImageContainer">
+</div>
+<div class="container">
 {{ wtf.quick_form(login_user_form, url_for('security.login')) }}
+</div>
 {%- endblock content %}
