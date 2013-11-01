@@ -3932,6 +3932,13 @@ textarea.input-group-sm > .input-group-btn > .btn {
   background-color: #ffffff;
   border-color: #eeeeee;
 }
+@media (max-width: 768px) {
+  .navbar-default .navbar-brand-center {
+    text-align: center;
+    width: 100%;
+    position: absolute;
+  }
+}
 .navbar-default .navbar-brand {
   color: #000000;
 }
@@ -3942,9 +3949,8 @@ textarea.input-group-sm > .input-group-btn > .btn {
 }
 @media (max-width: 768px) {
   .navbar-default .navbar-brand {
-    text-align: center;
-    width: 100%;
-    position: absolute;
+    float: none;
+    display: inline-block;
   }
 }
 .navbar-default .navbar-text {

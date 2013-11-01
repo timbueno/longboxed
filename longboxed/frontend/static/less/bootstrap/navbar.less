@@ -359,13 +359,13 @@
   background-color: @navbar-default-bg;
   border-color: @navbar-default-border;
 
-  // .navbar-brand-center {
-  //   @media (max-width: @grid-float-breakpoint) {
-  //     // text-align: center;
-  //     width: 100%;
-  //     position: absolute;
-  //   }
-  // }
+  .navbar-brand-center {
+    @media (max-width: @grid-float-breakpoint) {
+      text-align: center;
+      width: 100%;
+      position: absolute;
+    }
+  }
 
   .navbar-brand {
     color: @navbar-default-brand-color;
@@ -376,9 +376,8 @@
     }
     // Position the logo in the center of the view if collapsed
     @media (max-width: @grid-float-breakpoint) {
-      text-align: center;
-      width: 100%;
-      position: absolute;
+      float: none;
+      display: inline-block;
     }
   }
 
