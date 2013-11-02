@@ -1,10 +1,37 @@
 {% extends 'layouts/longboxed_base.html' %}
 {% import 'macros/wtf.html' as wtf %}
 
+{% block styles %}
+{{ super() }}
+<style type="text/css">
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+</style>
+{% endblock styles %}
+
 {% block content -%}
 <div class="bgImageContainer">
 </div>
 <div class="container">
-{{ wtf.quick_form(login_user_form, url_for('security.login')) }}
+  <form action="{{ url_for('security.login') }}" class="form-signin"  method="POST" name="login_user_form">
+    <h2 class="form-signin-heading tk-proxima-nova-soft" style="font-weight: 700; letter-spacing: 5px">SIGN IN</h2>
+    {{ login_user_form.hidden_tag() }}
+    <div class="form-group">
+      {{ login_user_form.email(class="form-control", placeholder=login_user_form.email.label.text)|safe }}
+    </div>
+    <div class="form-group">
+      {{ login_user_form.password(class="form-control", placeholder=login_user_form.password.label.text)|safe }}
+    </div>
+    <div class="checkbox">
+      <label>
+        {{ login_user_form.remember|safe}} {{ login_user_form.remember.label.text|safe }}
+      </label>
+    </div>
+    {{ login_user_form.next }}
+    {{ login_user_form.submit(class="btn btn-outline-inverse btn-lg btn-block") }}
+  </form>
 </div>
 {%- endblock content %}

@@ -16,6 +16,11 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/longboxed-fonts.css') }}">
     {%- endblock styles %}
+    {%- block header_scripts %}
+    <script type="text/javascript" src="//use.typekit.net/btq6ejk.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+    {%- endblock header_scripts %}
+
     {%- endblock head %}
   </head>
   <body{% block body_attribs %}{% endblock body_attribs %}>
