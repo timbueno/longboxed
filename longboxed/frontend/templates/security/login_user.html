@@ -17,7 +17,7 @@
 </div>
 <div class="container">
   <form action="{{ url_for('security.login') }}" class="form-signin"  method="POST" name="login_user_form">
-    <h2 class="form-signin-heading tk-proxima-nova-soft" style="font-weight: 700; letter-spacing: 5px">SIGN IN</h2>
+    <h2 class="form-signin-heading" style="letter-spacing: 5px">SIGN IN</h2>
     {{ login_user_form.hidden_tag() }}
     <div class="form-group">
       {{ login_user_form.email(class="form-control", placeholder=login_user_form.email.label.text)|safe }}
