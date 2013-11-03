@@ -1,23 +1,12 @@
 {% extends 'layouts/longboxed_base.html' %}
 {% import 'macros/wtf.html' as wtf %}
 
-{% block styles %}
-{{ super() }}
-<style type="text/css">
-.form-signin {
-  max-width: 330px;
-  padding: 15px;
-  margin: 0 auto;
-}
-</style>
-{% endblock styles %}
-
 {% block content -%}
 <div class="bgImageContainer">
 </div>
 <div class="container">
   <form action="{{ url_for('security.login') }}" class="form-signin"  method="POST" name="login_user_form">
-    <h2 class="form-signin-heading" style="letter-spacing: 5px">SIGN IN</h2>
+    <h1 class="form-signin-heading">SIGN IN</h2>
     {{ login_user_form.hidden_tag() }}
     <div class="form-group">
       {{ login_user_form.email(class="form-control", placeholder=login_user_form.email.label.text)|safe }}
@@ -31,7 +20,7 @@
       </label>
     </div>
     {{ login_user_form.next }}
-    {{ login_user_form.submit(class="btn btn-outline-inverse btn-lg btn-block") }}
+    {{ login_user_form.submit(class="btn btn-outline-inverse btn-lg btn-block", value="LOGIN") }}
   </form>
 </div>
 {%- endblock content %}

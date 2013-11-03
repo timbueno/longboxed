@@ -15,31 +15,6 @@
 @import "bootstrap/forms.less";
 @import "bootstrap/buttons.less";
 
-// Button Overrides
-.btn-outline:hover,
-.btn-outline:focus,
-.btn-outline:active {
-    color: #fff;
-    background-color: #563d7c;
-    border-color: #563d7c;
-}
-
-/* Inverted outline button (white on dark) */
-.btn-outline-inverse {
-    color: #fff;
-    background-color: transparent;
-    border-color: #fff;
-}
-
-.btn-outline-inverse:hover,
-.btn-outline-inverse:focus,
-.btn-outline-inverse:active {
-    color: #000;
-    text-shadow: none;
-    background-color: #fff;
-    border-color: #fff;
-}
-
 // Components
 @import "bootstrap/component-animations.less";
 @import "bootstrap/glyphicons.less";
@@ -48,35 +23,6 @@
 @import "bootstrap/input-groups.less";
 @import "bootstrap/navs.less";
 @import "bootstrap/navbar.less";
-
-// Navbar Overrides
-
-// Positions the brand in the center of the nav
-// when nav is collapsed
-.navbar-default {
-    .navbar-brand-center {
-      @media (max-width: @grid-float-breakpoint) {
-        text-align: center;
-        width: 100%;
-        position: absolute;
-      }
-    }
-
-    .navbar-brand {
-      // Position the logo in the center of the view if collapsed
-      @media (max-width: @grid-float-breakpoint) {
-        float: none;
-        display: inline-block;
-      }
-    }
-}
-
-.navbar-toggle {
-  // Place button above other elements
-  // Fix for centering the logo in collapsed mode
-  z-index: 1;
-}
-
 @import "bootstrap/breadcrumbs.less";
 @import "bootstrap/pagination.less";
 @import "bootstrap/pager.less";
@@ -101,3 +47,14 @@
 // Utility classes
 @import "bootstrap/utilities.less";
 @import "bootstrap/responsive-utilities.less";
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+// Longboxed Overrides
+//
+@import "longboxed/core.less";
+@import "longboxed/icons.less";
+@import "longboxed/forms.less";
+@import "longboxed/buttons.less";
+
+
