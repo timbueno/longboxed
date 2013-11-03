@@ -28,7 +28,7 @@ def create_app(settings_override=None):
     admin.init_app(app)
 
     #: Flask-DebugToolbar
-    DebugToolbarExtension(app)
+    # DebugToolbarExtension(app)
 
     #: Register custom error handlers
     if not app.debug:

@@ -1,0 +1,64 @@
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <div class="navbar-brand-center">
+        <a class="navbar-brand" href="{{ url_for('dashboard.index') }}">
+          <span class="icon-longboxed-full"></span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav navbar-right">
+        {% if g.user %}
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ g.user.email }} <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li>
+              <a href="{{url_for('pull_list.p')}}">
+                <i class="fa fa-list-ul fa-fw"></i>
+                  Pull List
+              </a>
+            </li>
+            <li class="divider"></li>
+            <li class="dropdown-header">
+              Preferences
+            </li>
+            <li>
+              <a href="{{ url_for('dashboard.settings') }}">
+                <i class="fa fa-cog fa-fw"></i>
+                  Settings
+              </a>
+            </li>
+            {% if g.user.has_role('admin') or g.user.has_role('super') %}
+            <li>
+              <a href="{{ url_for('admin.index') }}">
+                <i class="fa fa-lock fa-fw"></i>
+                  Admin
+              </a>
+            </li>
+            {% endif %}
+            <li class="divider"></li>
+            <li>
+              <a href="/logout">
+                <i class="fa fa-power-off fa-fw"></i>
+                  Sign Out
+              </a>
+            </li>
+          </ul>
+        </li>
+        {% else %}
+        <li><a href="{{ url_for('security.login') }}">Login</a></li>
+        {% endif %}
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div>
+</nav>

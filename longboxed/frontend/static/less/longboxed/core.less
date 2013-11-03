@@ -1,0 +1,50 @@
+body {
+  padding-top: 70px;
+}
+
+h1, h2,
+.h1, .h2 {
+  letter-spacing: @headings-letter-spacing;
+}
+
+.bgImageContainer {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+
+    background-image: url(../img/thorvhulk.jpg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    -webkit-filter: blur(5px) grayscale(0.2);
+    z-index: -10;
+}
+
+// Positions the brand in the center of the nav
+// when nav is collapsed
+.navbar-default {
+    // Wraps brand and centers it when collapsed
+    .navbar-brand-center {
+      @media (max-width: @grid-float-breakpoint) {
+        text-align: center;
+        width: 100%;
+        position: absolute;
+      }
+    }
+    .navbar-brand {
+      // Position the logo in the center of the view if collapsed
+      @media (max-width: @grid-float-breakpoint) {
+        float: none;
+        display: inline-block;
+      }
+    }
+}
+
+.navbar-toggle {
+  // Place button above other elements
+  // Fix for centering the logo in collapsed mode
+  z-index: 1;
+}

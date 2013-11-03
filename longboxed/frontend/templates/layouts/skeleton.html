@@ -1,0 +1,42 @@
+{% block doc -%}
+<!DOCTYPE html>
+<html{% block html_attribs %}{% endblock html_attribs %}>
+{%- block html %}
+  <head>
+    {%- block head %}
+    <title>{% block title %}{% endblock title %}</title>
+
+    {%- block metas %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {%- endblock metas %}
+
+    {%- block styles %}
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}" media="screen">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/longboxed-fonts.css') }}"> -->
+    {%- endblock styles %}
+    {%- block header_scripts %}
+    <script type="text/javascript" src="//use.typekit.net/btq6ejk.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+    {%- endblock header_scripts %}
+
+    {%- endblock head %}
+  </head>
+  <body{% block body_attribs %}{% endblock body_attribs %}>
+    {% block body -%}
+    {% block navbar %}
+    {%- endblock navbar %}
+    <div class="content">
+    {% block content -%}
+    {%- endblock content %}
+    </div>
+    {% block scripts %}
+    <script src="//code.jquery.com/jquery.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    {%- endblock scripts %}
+    {%- endblock body %}
+  </body>
+{%- endblock html %}
+</html>
+{% endblock doc -%}
