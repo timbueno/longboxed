@@ -17,8 +17,8 @@ from flask.ext.security import SQLAlchemyUserDatastore
 from flask.ext.social.datastore import SQLAlchemyConnectionDatastore
 from flask.ext.security.forms import ConfirmRegisterForm, PasswordConfirmFormMixin
 from sqlalchemy_imageattach.context import push_store_context, pop_store_context
-from wtforms import TextField
-from wtforms.validators import Required
+# from wtforms import TextField
+# from wtforms.validators import Required
 
 from . import signals
 from .core import bootstrap, db, mail, security, store, social
@@ -28,8 +28,7 @@ from .models import Connection, User, Role
 
 
 class ExtendedConfirmRegisterForm(ConfirmRegisterForm, PasswordConfirmFormMixin):
-    first_name = TextField('First Name', [Required()])
-    last_name = TextField('Last Name', [Required()])
+    pass
 
 
 def create_app(package_name, package_path, settings_override=None, debug_override=None, register_security_blueprint=True):

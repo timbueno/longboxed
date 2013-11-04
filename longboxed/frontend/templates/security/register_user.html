@@ -1,15 +1,21 @@
-{% from "security/_macros.html" import render_field_with_errors, render_field %}
-{% include "security/_messages.html" %}
-<h1>Register</h1>
-<form action="{{ url_for_security('register') }}" method="POST" name="register_user_form">
-  {{ register_user_form.hidden_tag() }}
-  {{ render_field_with_errors(register_user_form.first_name) }}
-  {{ render_field_with_errors(register_user_form.last_name) }}
-  {{ render_field_with_errors(register_user_form.email) }}
-  {{ render_field_with_errors(register_user_form.password) }}
-  {% if register_user_form.password_confirm %}
-    {{ render_field_with_errors(register_user_form.password_confirm) }}
-  {% endif %}
-  {{ render_field(register_user_form.submit) }}
-</form>
-{% include "security/_menu.html" %}
+{% extends 'layouts/longboxed_base.html' %}
+
+{% block content -%}
+<div class="container">
+    <form action="{{ url_for_security('register') }}" method="POST" name="register_user_form">
+        <h1>Register</h1>
+        {{ register_user_form.hidden_tag() }}
+        <div class="form-group">
+        {{ register_user_form.email(class="form-control", placeholder=register_user_form.email.label.text) }}
+        </div>
+        <div class="form-group">
+        {{ register_user_form.password(class="form-control", placeholder=register_user_form.password.label.text) }}
+        </div>
+        <div class="form-group">
+        {{ register_user_form.password_confirm(class="form-control", placeholder=register_user_form.password_confirm.label.text) }}
+        </div>
+        {{ register_user_form.submit(class="btn btn-block") }}
+    </form>
+    {% include "security/_menu.html" %}
+</div>
+{%- endblock content %}
