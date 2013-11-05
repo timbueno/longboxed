@@ -1,16 +1,24 @@
-{% macro render_field_with_errors(field) %}
-  <p>
-    {{ field.label }} {{ field(**kwargs)|safe }}
-    {% if field.errors %}
-      <ul>
-      {% for error in field.errors %}
-        <li>{{ error }}</li>
-      {% endfor %}
-      </ul>
-    {% endif %}
-  </p>
+{% macro render_field(field) %}
+  <div class="form-group">
+  {{ field(**kwargs)|safe }}
+  </div>
 {% endmacro %}
 
-{% macro render_field(field) %}
-  <p>{{ field(**kwargs)|safe }}</p>
+{% macro render_field_with_errors(field) %}
+{% if field.widget.input_type == 'checkbox' %}
+<div class="checkbox">
+  <label>
+    {{ field() }} {{ field.label.text|safe }}
+  </label>
+</div>
+{% else %}
+<div class="form-group{% if field.errors %} has-error {% endif %}">
+  {{ field(**kwargs)|safe }}
+  {% if field.errors %}
+    {% for error in field.errors %}
+    <p class="alert alert-danger">{{ error }}</p>
+    {% endfor %}
+  {% endif %}
+</div>
+{% endif %}
 {% endmacro %}
