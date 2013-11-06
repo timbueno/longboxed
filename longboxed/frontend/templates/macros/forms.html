@@ -16,6 +16,7 @@
   {{ field(**kwargs)|safe }}
   {% if field.errors %}
     {% for error in field.errors %}
+    <br>
     <p class="alert alert-danger">{{ error }}</p>
     {% endfor %}
   {% endif %}
