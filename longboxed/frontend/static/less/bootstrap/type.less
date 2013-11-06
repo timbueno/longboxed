@@ -8,6 +8,7 @@
 
 p {
   margin: 0 0 (@line-height-computed / 2);
+  text-rendering: optimizeLegibility;
 }
 .lead {
   margin-bottom: @line-height-computed;
@@ -81,6 +82,7 @@ h1, h2, h3, h4, h5, h6,
   font-weight: @headings-font-weight;
   line-height: @headings-line-height;
   color: @headings-color;
+  text-rendering: optimizeLegibility;
 
   small,
   .small {
@@ -140,6 +142,7 @@ ul,
 ol {
   margin-top: 0;
   margin-bottom: (@line-height-computed / 2);
+  text-rendering: optimizeLegibility;
   ul,
   ol {
     margin-bottom: 0;
@@ -225,6 +228,7 @@ blockquote {
   padding: (@line-height-computed / 2) @line-height-computed;
   margin: 0 0 @line-height-computed;
   border-left: 5px solid @blockquote-border-color;
+  text-rendering: optimizeLegibility;
   p {
     font-size: (@font-size-base * 1.25);
     font-weight: 300;
