@@ -2,17 +2,19 @@
 {% from 'macros/forms.html' import render_field_with_errors %}
 
 {% block content -%}
-<div class="bgImageContainer">
+<div class="background-image-container">
 </div>
 <div class="container">
-  <form action="{{ url_for('security.login') }}" class="form--signin"  method="POST" name="login_user_form">
-    <h1 class="title">SIGN IN</h2>
-    {{ login_user_form.hidden_tag() }}
-    {{ render_field_with_errors(login_user_form.email, class="form-control text-box", placeholder='Email') }}
-    {{ render_field_with_errors(login_user_form.password, class="form-control text-box", placeholder='Password') }}
-    {{ render_field_with_errors(login_user_form.remember) }}
-    {{ login_user_form.next }}
-    {{ login_user_form.submit(class="btn btn-outline-inverse btn-lg btn-block", value="LOGIN") }}
-  </form>
+  <div class="col-md-4 col-md-offset-4">
+    <form action="{{ url_for('security.login') }}" class="form--signin"  method="POST" name="login_user_form">
+      <h1 class="title">SIGN IN</h2>
+      {{ login_user_form.hidden_tag() }}
+      {{ render_field_with_errors(login_user_form.email, class="form-control text-box", placeholder='Email') }}
+      {{ render_field_with_errors(login_user_form.password, class="form-control text-box", placeholder='Password') }}
+      {{ render_field_with_errors(login_user_form.remember) }}
+      {{ login_user_form.next }}
+      {{ login_user_form.submit(class="btn btn-outline-inverse btn-lg btn-block", value="LOGIN") }}
+    </form>
+  </div>
 </div>
 {%- endblock content %}
