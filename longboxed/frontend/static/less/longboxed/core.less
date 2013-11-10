@@ -7,7 +7,7 @@ h1, h2,
   letter-spacing: @headings-letter-spacing;
 }
 
-.bgImageContainer {
+.background-image-container {
     position: absolute;
 
     top: 0;
@@ -19,8 +19,19 @@ h1, h2,
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
-    -webkit-filter: blur(5px) grayscale(0.2) brightness(75%) contrast(125%);
+    //-webkit-filter: blur(5px) grayscale(0.2) brightness(75%) contrast(125%);
     z-index: -10;
+}
+
+.background-image-container:after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.45);
 }
 
 // Positions the brand in the center of the nav
