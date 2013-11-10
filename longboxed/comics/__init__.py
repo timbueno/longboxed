@@ -53,6 +53,8 @@ class IssueService(Service):
                 with store_context(store):
                     issue.cover_image.from_blob(r.content)
                     issue = self.save(issue)
+                    issue.cover_image.generate_thumbnail(height=600)
+                    issue = self.save(issue)
                     created_flag = True
         return created_flag
 

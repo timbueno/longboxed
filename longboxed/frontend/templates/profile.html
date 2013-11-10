@@ -1,0 +1,12 @@
+{% extends 'layouts/longboxed_base.html' %}
+{% from "macros/comics.html" import render_cover_row %}
+
+{% block content -%}
+<div class="container">
+    <div class="well">
+        {% for group in bundle|batch(4) %}
+            {{ render_cover_row(group) }}
+        {% endfor %}
+    </div>
+</div>
+{%- endblock content %}

@@ -1,0 +1,11 @@
+{% macro render_cover_row(issues, height=600) %}
+<div class="row">
+    {% for issue in issues %}
+    <div class="col-xs-3">
+        <a href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
+            <img src="{{ issue.cover_image.find_thumbnail(height=height).locate() }}" class="img-rounded img-responsive">
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endmacro %}
