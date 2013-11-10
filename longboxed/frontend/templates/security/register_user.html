@@ -2,15 +2,21 @@
 {% from 'macros/forms.html' import render_field_with_errors %}
 
 {% block content -%}
+<div class="background-image-container">
+</div>
 <div class="container">
-    <form action="{{ url_for_security('register') }}" method="POST" name="register_user_form">
-        <h1>Register</h1>
-        {{ register_user_form.hidden_tag() }}
-        {{ render_field_with_errors(register_user_form.email, class="form-control", placeholder='Email') }}
-        {{ render_field_with_errors(register_user_form.password, class="form-control", placeholder='Password') }}
-        {{ render_field_with_errors(register_user_form.password_confirm, class="form-control", placeholder='Confirm Password') }}
-        {{ register_user_form.submit(class="btn btn-block") }}
-    </form>
-    {% include "security/_menu.html" %}
+  <div class="row">
+    <div class="col-md-4 col-md-offset-4">
+      <form class="form--has-background" action="{{ url_for_security('register') }}" method="POST" name="register_user_form">
+          <h1 class="title">Register</h1>
+          {{ register_user_form.hidden_tag() }}
+          {{ render_field_with_errors(register_user_form.email, class="form-control text-box", placeholder='EMAIL') }}
+          {{ render_field_with_errors(register_user_form.password, class="form-control text-box", placeholder='PASSWORD') }}
+          {{ render_field_with_errors(register_user_form.password_confirm, class="form-control text-box", placeholder='CONFIRM PASSWORD') }}
+          {{ register_user_form.submit(class="btn btn-outline-inverse btn-lg btn-block", value="REGISTER") }}
+      </form>
+      {% include "security/_menu.html" %}
+    </div>
+  </div>
 </div>
 {%- endblock content %}
