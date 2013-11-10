@@ -255,7 +255,7 @@ html {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 body {
-  font-family: "proxima-nova-soft", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 1.428571429;
   color: #333333;
@@ -401,8 +401,8 @@ h6,
 .h4,
 .h5,
 .h6 {
-  font-family: "proxima-nova-soft", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: 700;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 500;
   line-height: 1.1;
   color: inherit;
   text-rendering: optimizeLegibility;
@@ -1626,7 +1626,7 @@ output {
   background-color: #ffffff;
   background-image: none;
   border: 1px solid #cccccc;
-  border-radius: 3px;
+  border-radius: 4px;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
@@ -2233,8 +2233,8 @@ input[type="button"].btn-block {
 }
 @font-face {
   font-family: 'Glyphicons Halflings';
-  src: url('../fonts/glyphicons/glyphicons-halflings-regular.eot');
-  src: url('../fonts/glyphicons/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+  src: url('../fonts/glyphicons-halflings-regular.eot');
+  src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
 }
 .glyphicon {
   position: relative;
@@ -3932,22 +3932,22 @@ textarea.input-group-sm > .input-group-btn > .btn {
   }
 }
 .navbar-default {
-  background-color: #ffffff;
-  border-color: #eeeeee;
+  background-color: #f8f8f8;
+  border-color: #e7e7e7;
 }
 .navbar-default .navbar-brand {
-  color: #000000;
+  color: #777777;
 }
 .navbar-default .navbar-brand:hover,
 .navbar-default .navbar-brand:focus {
-  color: #000000;
+  color: #5e5e5e;
   background-color: transparent;
 }
 .navbar-default .navbar-text {
   color: #777777;
 }
 .navbar-default .navbar-nav > li > a {
-  color: #000000;
+  color: #777777;
 }
 .navbar-default .navbar-nav > li > a:hover,
 .navbar-default .navbar-nav > li > a:focus {
@@ -3958,7 +3958,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
   color: #555555;
-  background-color: #eeeeee;
+  background-color: #e7e7e7;
 }
 .navbar-default .navbar-nav > .disabled > a,
 .navbar-default .navbar-nav > .disabled > a:hover,
@@ -3967,7 +3967,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
   background-color: transparent;
 }
 .navbar-default .navbar-toggle {
-  border-color: #ffffff;
+  border-color: #dddddd;
 }
 .navbar-default .navbar-toggle:hover,
 .navbar-default .navbar-toggle:focus {
@@ -3978,7 +3978,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 }
 .navbar-default .navbar-collapse,
 .navbar-default .navbar-form {
-  border-color: #eeeeee;
+  border-color: #e7e7e7;
 }
 .navbar-default .navbar-nav > .dropdown > a:hover .caret,
 .navbar-default .navbar-nav > .dropdown > a:focus .caret {
@@ -3988,7 +3988,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 .navbar-default .navbar-nav > .open > a,
 .navbar-default .navbar-nav > .open > a:hover,
 .navbar-default .navbar-nav > .open > a:focus {
-  background-color: #eeeeee;
+  background-color: #e7e7e7;
   color: #555555;
 }
 .navbar-default .navbar-nav > .open > a .caret,
@@ -3998,12 +3998,12 @@ textarea.input-group-sm > .input-group-btn > .btn {
   border-bottom-color: #555555;
 }
 .navbar-default .navbar-nav > .dropdown > a .caret {
-  border-top-color: #000000;
-  border-bottom-color: #000000;
+  border-top-color: #777777;
+  border-bottom-color: #777777;
 }
 @media (max-width: 767px) {
   .navbar-default .navbar-nav .open .dropdown-menu > li > a {
-    color: #000000;
+    color: #777777;
   }
   .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
   .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
@@ -4014,7 +4014,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
   .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
   .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
     color: #555555;
-    background-color: #eeeeee;
+    background-color: #e7e7e7;
   }
   .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a,
   .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:hover,
@@ -4024,7 +4024,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
   }
 }
 .navbar-default .navbar-link {
-  color: #000000;
+  color: #777777;
 }
 .navbar-default .navbar-link:hover {
   color: #333333;
@@ -6012,140 +6012,4 @@ td.visible-print {
   td.hidden-print {
     display: none !important;
   }
-}
-body {
-  padding-top: 70px;
-}
-h1,
-h2,
-.h1,
-.h2 {
-  letter-spacing: 3px;
-}
-.background-image-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background-image: url(../img/thorvhulk.jpg);
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: cover;
-  z-index: -10;
-}
-.background-image-container:after {
-  content: "";
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.45);
-}
-@media (max-width: 768px) {
-  .navbar-default .navbar-brand-center {
-    text-align: center;
-    width: 100%;
-    position: absolute;
-  }
-}
-@media (max-width: 768px) {
-  .navbar-default .navbar-brand {
-    float: none;
-    display: inline-block;
-  }
-}
-.navbar-toggle {
-  z-index: 1;
-}
-.title {
-  font-size: 3.5rem;
-  line-height: 6rem;
-  font-weight: 600;
-}
-.header {
-  font-size: 1.25rem;
-  line-height: 3rem;
-  font-weight: normal;
-}
-.body-copy {
-  font-size: 1.5rem;
-  line-height: 2rem;
-  font-weight: normal;
-}
-@font-face {
-  font-family: 'longboxed';
-  src: url('../fonts/longboxed/longboxed.eot');
-  src: url('../fonts/longboxed/longboxed.eot?#iefix') format('embedded-opentype'), url('../fonts/longboxed/longboxed.ttf') format('truetype'), url('../fonts/longboxed/longboxed.woff') format('woff'), url('../fonts/longboxed/longboxed.svg#longboxed') format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
-[class*="icon-"] {
-  font-family: 'longboxed';
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-  /* Better Font Rendering =========== */
-
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-.icon-longboxed-logo:before {
-  content: "\e600";
-}
-.icon-longboxed-full:before {
-  content: "\e601";
-}
-.form--has-background {
-  max-width: 330px;
-  padding: 15px;
-  margin: 0 auto;
-}
-.form--has-background .title {
-  color: #fff;
-  text-align: center;
-}
-.form--has-background .text-box {
-  font-size: 1.5rem;
-  line-height: 2rem;
-  font-weight: normal;
-  height: auto;
-  line-height: 2.25em;
-  background-color: #EEEEEE;
-  border: none;
-}
-.form--has-background label {
-  color: #ffffff;
-}
-.btn-outline {
-  color: #fff;
-  background-color: transparent;
-  border-color: #fff;
-}
-.btn-outline:hover,
-.btn-outline:focus,
-.btn-outline:active {
-  color: #fff;
-  background-color: #563d7c;
-  border-color: #563d7c;
-}
-/* Inverted outline button (white on dark) */
-.btn-outline-inverse {
-  color: #fff;
-  background-color: transparent;
-  border-color: #fff;
-  letter-spacing: 3px;
-}
-.btn-outline-inverse:hover,
-.btn-outline-inverse:focus,
-.btn-outline-inverse:active {
-  color: #000;
-  text-shadow: none;
-  background-color: #fff;
-  border-color: #fff;
 }
