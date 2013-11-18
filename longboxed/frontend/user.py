@@ -6,10 +6,12 @@
     User blueprints
 """
 from flask import current_app, Blueprint, render_template
-from flask.ext.security import login_required
+from flask.ext.security import current_user, login_required
 
 from . import route
-from ..services import comics as _comics
+# from ..services import comics as _comics
+# from ..services import bundle as _bundles
+from ..helpers import current_wednesday, refresh_bundle
 
 bp = Blueprint('users', __name__)
 
@@ -25,5 +27,6 @@ def social():
 
 @route(bp, '/profile')
 def profile():
-    bundle = list(_comics.issues.__model__.query.filter().limit(20))
-    return render_template('profile.html', bundle=bundle)
+    # bundle = list(_comics.issues.__model__.query.filter().limit(20))
+    bundle = refresh_bundle(current_user, current_wednesday())
+    return render_template('profile.html', bundles=[bundle])

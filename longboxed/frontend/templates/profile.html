@@ -3,10 +3,13 @@
 
 {% block content -%}
 <div class="container">
+    {% for bundle in bundles %}
     <div class="well">
-        {% for group in bundle|batch(4) %}
+        <h4>{{ bundle.release_date }}</h4>
+        {% for group in bundle.issues|batch(4) %}
             {{ render_cover_row(group) }}
         {% endfor %}
     </div>
+    {% endfor %}
 </div>
 {%- endblock content %}
