@@ -29,4 +29,4 @@ def social():
 def profile():
     # bundle = list(_comics.issues.__model__.query.filter().limit(20))
     bundle = refresh_bundle(current_user, current_wednesday())
-    return render_template('profile.html', bundles=[bundle])
+    return render_template('profile.html', bundles=current_user.bundles)
