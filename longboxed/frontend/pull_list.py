@@ -11,6 +11,7 @@ from flask import (Blueprint, jsonify, render_template, request)
 from flask.ext.login import current_user, login_required
 
 from . import route
+from ..helpers import current_wednesday, refresh_bundle
 from ..services import comics as _comics
 from ..services import users as _users
 
@@ -51,6 +52,7 @@ def remove_favorite():
         # Save updated user
         _users.save(current_user)
         html = render_template('favorites_list.html')
+        refresh_bundle(current_user, current_wednesday())
         return jsonify(success=True, html=html)
     except:
         print "Unexpected error:", sys.exc_info()[1]
@@ -71,6 +73,7 @@ def add_favorite():
         current_user.pull_list.append(new_title)
         _users.save(current_user)
         html = render_template('favorites_list.html')
+        refresh_bundle(current_user, current_wednesday())
         return jsonify(success=True, html=html)
     else:
         return jsonify(success=False, html=None)
