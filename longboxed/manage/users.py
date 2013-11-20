@@ -5,8 +5,6 @@
 
     user management commands
 """
-from datetime import datetime
-
 from flask import current_app, render_template
 from flask.ext.script import Command, prompt, prompt_pass
 from flask.ext.security.forms import RegisterForm
@@ -15,8 +13,8 @@ from werkzeug.datastructures import MultiDict
 from werkzeug.local import LocalProxy
 
 from ..core import db
-from ..helpers import current_wednesday, mail_content
-from ..services import bundle, comics, roles, users
+from ..helpers import current_wednesday, mail_content, refresh_bundle
+from ..services import comics, roles, users
 
 
 class UserBundlesCommand(Command):
@@ -28,17 +26,7 @@ class UserBundlesCommand(Command):
         issues_this_week = comics.issues.find_issue_with_date(date)
         for user in users.all():
             matches = [i for i in issues_this_week if i.title in user.pull_list and i.is_parent]
-            # Get existing bundle if there already is one
-            b = bundle.first(user=user, release_date=date)
-            if b:
-                b = bundle.update(b, issues=matches, last_updated=datetime.now())
-            else:
-                b = bundle.create(
-                        user=user,
-                        release_date=date,
-                        issues=matches,
-                        last_updated=datetime.now()
-                )
+            refresh_bundle(user, date, matches)
         return
 
 

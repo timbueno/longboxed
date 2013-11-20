@@ -135,9 +135,10 @@ def mail_content(recipients, sender, subject, content, html=None, attachment=Non
     mail.send(msg)
     return
 
-def refresh_bundle(user, date):
-    issues = comics.issues.find_issue_with_date(date)
-    matches = [i for i in issues if i.title in user.pull_list and i.is_parent]
+def refresh_bundle(user, date, matches=None):
+    if not matches:
+        issues = comics.issues.find_issue_with_date(date)
+        matches = [i for i in issues if i.title in user.pull_list and i.is_parent]
     b = bundle.first(user=user, release_date=date)
     if b:
         b = bundle.update(b, issues=matches, last_updated=datetime.now())
