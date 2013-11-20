@@ -5,7 +5,7 @@
 
     User blueprints
 """
-from flask import current_app, Blueprint, render_template
+from flask import current_app, Blueprint, redirect, render_template, url_for
 from flask.ext.security import current_user, login_required
 
 from . import route
@@ -26,11 +26,17 @@ def social():
         facebook_conn=current_app.social.facebook.get_connection()
     )
 
-@route(bp, '/profile')
-def profile():
+
+@route(bp, '/bundles')
+@login_required
+def bundles_redirect():
+    return redirect(url_for('users.bundles', page=1))
+
+@route(bp, '/bundles/<int:page>')
+@login_required
+def bundles(page):
     # bundle = list(_comics.issues.__model__.query.filter().limit(20))
     # bundle = refresh_bundle(current_user, current_wednesday())
     # bundles = current_user.bundles.order_by(Bundle.release_date.desc()).limit(5)
-    bundles = current_user.bundles.order_by(Bundle.release_date.desc()).paginate(page=1, per_page=5)
-    print bundles.pages
-    return render_template('profile.html', bundles=bundles.items)
+    bundles = current_user.bundles.order_by(Bundle.release_date.desc()).paginate(page=page, per_page=3)
+    return render_template('bundles.html', bundles=bundles)

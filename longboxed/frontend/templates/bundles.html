@@ -1,9 +1,10 @@
 {% extends 'layouts/longboxed_base.html' %}
-{% from "macros/comics.html" import render_cover_row %}
+{% from 'macros/comics.html' import render_cover_row %}
+{% from 'macros/general.html' import render_pagination %}
 
 {% block content -%}
 <div class="container">
-    {% for bundle in bundles %}
+    {% for bundle in bundles.items %}
     <div class="well">
         <h4>{{ bundle.release_date }}</h4>
         {% for group in bundle.issues|batch(4) %}
@@ -11,5 +12,6 @@
         {% endfor %}
     </div>
     {% endfor %}
+    {{ render_pagination(bundles, 'users.bundles') }}
 </div>
 {%- endblock content %}

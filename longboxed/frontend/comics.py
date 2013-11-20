@@ -45,7 +45,6 @@ def releases(date):
 def this_week():
     date = current_wednesday()
     date = date.strftime('%Y-%m-%d')
-    print date
     return redirect(url_for('comics.releases', date=date))
 
 
