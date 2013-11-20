@@ -17,7 +17,7 @@ from flask import Blueprint
 from flask.ext.mail import Message
 
 from .core import mail
-from .services import bundle, comics, users
+from .services import bundle, comics
 
 
 def register_blueprints(app, package_name, package_path):
