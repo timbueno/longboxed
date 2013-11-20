@@ -135,6 +135,7 @@ def mail_content(recipients, sender, subject, content, html=None, attachment=Non
     mail.send(msg)
     return
 
+
 def refresh_bundle(user, date, matches=None):
     if not matches:
         issues = comics.issues.find_issue_with_date(date)
@@ -150,6 +151,7 @@ def refresh_bundle(user, date, matches=None):
             last_updated=datetime.now()
         )
     return b
+
 
 class JsonSerializer(object):
     """A mixin that can be used to mark a SQLAlchemy model class which
