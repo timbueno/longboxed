@@ -12,8 +12,7 @@ from flask import abort, Blueprint, jsonify, render_template, redirect, request,
 from flask.ext.security import current_user
 
 from . import route
-from ..helpers import current_wednesday, last_wednesday, next_wednesday, get_week, \
-                      wednesday
+from ..helpers import current_wednesday, last_wednesday, next_wednesday, get_week
 from ..services import comics as _comics
 
 

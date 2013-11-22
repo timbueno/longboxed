@@ -2,6 +2,7 @@
 {% set active_page = 'pull_list' %}
 {% set title = 'Your Pull List | Longboxed' %}
 
+
 {% block main_content %}
     <div class="container">
         <h2>Your Favorite Comics</h2>
@@ -22,6 +23,14 @@
                             </div>
                         </form>
                     </div>
+                </div>
+                <div class="well">
+                    <form id="add_to_pull_list">
+                        {{ form.hidden_tag() }}
+                        {{ form.title.label }} {{ form.title(size=20) }}
+                        <!-- <input type="submit" value="Go"> -->
+                        <button id="submit_pull" class="btn btn-primary">Update</button>
+                    </form>
                 </div>
             <div class="span4">
         </div>
@@ -84,6 +93,7 @@
             });
         }
         favorites();
+
     </script>
 
     <script>
@@ -97,4 +107,6 @@
             comic_typeahead(data.titles);
         });
     </script>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/pull_list.js') }}"></script>
 {% endblock bootstrap_js_bottom %}

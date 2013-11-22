@@ -11,6 +11,7 @@ from flask import (Blueprint, jsonify, render_template, request)
 from flask.ext.login import current_user, login_required
 
 from . import route
+from ..forms import AddToPullList
 from ..helpers import current_wednesday, refresh_bundle
 from ..services import comics as _comics
 from ..services import users as _users
@@ -19,10 +20,11 @@ from ..services import users as _users
 bp = Blueprint('pull_list', __name__)
 
 
-@route(bp, '/pull_list')
+@route(bp, '/pull_list', methods=['GET', 'POST'])
 @login_required
 def p():
-    return render_template('pull_list.html')
+    form = AddToPullList()
+    return render_template('pull_list.html', form=form)
 
 
 @route(bp, '/ajax/typeahead')
@@ -59,6 +61,24 @@ def remove_favorite():
         return jsonify(success=False, html=None)
 
 
+@route(bp, '/ajax/add_to_pull_list', methods=['POST'])
+@login_required
+def add_to_pull_list():
+    form = AddToPullList()
+    print form.validate_on_submit()
+    # return '0'
+    if form.validate_on_submit():
+        new_title = _comics.titles.first(name=request.form['title'])
+        if new_title and new_title not in current_user.pull_list:
+            current_user.pull_list.append(new_title)
+            _users.save(current_user)
+            html = render_template('favorites_list.html')
+            refresh_bundle(current_user, current_wednesday())
+            return jsonify(success=True, html=html)
+        else:
+            return jsonify(success=False, html=None)
+
+
 @route(bp, '/ajax/add_favorite', methods=['POST'])
 @login_required
 def add_favorite():
@@ -68,7 +88,6 @@ def add_favorite():
     Add a favorite title to your pull list
     """
     new_title = _comics.titles.first(name=request.form['new_favorite'])
-    print new_title
     if new_title not in current_user.pull_list:
         current_user.pull_list.append(new_title)
         _users.save(current_user)
