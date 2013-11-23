@@ -1,0 +1,53 @@
+{% extends 'layouts/longboxed_base.html' %}
+<!-- {% from 'macros/forms.html' import render_field %} -->
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='alertify.core.css')}}" />
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='alertify.default.css')}}" />
+{% endblock styles %}
+
+{% block content -%}
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+            <form id="add_to_pull_list" class="">
+                {{ form.hidden_tag() }}
+                <div class="input-group">
+                    {{ form.title(class="form-control text-box", placeholder='ADD TITLE') }}
+                    <!-- <input type="submit" value="Go"> -->
+                    <span class="input-group-btn">
+                        <button id="submit_pull" class="btn btn-default"><i class="fa fa-plus"></i></button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% if g.user.pull_list %}
+    <ul id="titles-on-pull-list">
+        {% for title in g.user.pull_list %}
+        <li data-id="{{ title.id }}">{{ title.name }} <i class="fa fa-minus-square remove" data-id="{{ title.id }}" data-name="{{ title.name }}"></i></li>
+        {% endfor %}
+    </ul>
+    {% for title in g.user.pull_list -%}
+    <div style="height: 300px;" class="row">
+        <div class="col-xs-3 col-sm-1 col-sm-offset-2">
+            <h2><i class="fa fa-minus"></i></h2>
+        </div>
+        <div class="col-xs-6 col-sm-3">
+            <h2>{{ title.name }}</h2>
+        </div>
+        <div class="col-xs-3 col-sm-4">
+            <img src="{{ title.issues.first().cover_image.find_thumbnail(height=600).locate() }}" class="img-rounded img-responsive">
+        </div>
+    </div>
+    {%- endfor %}
+    {% endif %}
+</div>
+{%- endblock content %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='alertify.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/pull_list.js') }}"></script>
+{% endblock scripts %}
