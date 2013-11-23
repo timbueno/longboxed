@@ -1,64 +1,65 @@
-// $(document).ready(function() {
-    // $('.testbutton').click(function(){
-    //     var new_favorite = $("input#newfavorite").val();
-    //     $.post(
-    //         '/ajax/add_favorite',
-    //         {'new_favorite': new_favorite},
-    //         function(data){
-    //             if (data.success==true){
-    //                 $('div.favorites').html(data.html);
-    //                 remove_favorite();
-    //                 alertify.success('Successfully added \''+new_favorite+'\' to your Pull List!');
-    //                     $("input#newfavorite").val('');
-    //             }
-    //             else {
-    //                 alertify.log('\''+new_favorite+'\' is already on your Pull List');
-    //                 $("input#newfavorite").val('');
-    //             }
-    //         }
-    //     );
-    //     return false;
-    // });
-$('#submit_pull').click(function(){
-    var token = $("input#csrf_token").val();
-    console.log(token);
-    var title = $("input#title").val();
-    $.post(
-        '/ajax/add_to_pull_list',
-        {   
-            'csrf_token': token,
-            'title': title
-        }
-        // function(data){
-        //     console.log(data);
-        //     if (data.success==true){
-        //         $('div.favorites').html(data.html);
-        //         remove_favorite();
-        //         alertify.success('Successfully added \''+new_favorite+'\' to your Pull List!');
-        //             $("input#newfavorite").val('');
-        //     }
-        //     else {
-        //         alertify.log('\''+new_favorite+'\' is already on your Pull List');
-        //         $("input#newfavorite").val('');
-        //     }
-        // }
-    )
-    .done(function(response) {
-        console.log(response);
-        if (response.success==true){
-            $('div.favorites').html(response.html);
-            remove_favorite();
-            alertify.success('Successfully added \''+title+'\' to your Pull List!');
-                $("input#newfavorite").val('');
-        }
-        else {
-            alertify.log('\''+title+'\' is already on your Pull List');
-            $("input#newfavorite").val('');
-        }
-    })
-    .fail(function(response){
-        console.log('FAIL!');
+var add_to_pull_list = function(){
+    $('#submit_pull').click(function(){
+        var token = $("input#csrf_token").val();
+        var title = $("input#title").val();
+        $.post(
+            '/ajax/add_to_pull_list',
+            {   
+                'csrf_token': token,
+                'title': title
+            }
+        )
+        .done(function(response){
+            if (response.status=='success'){
+                $('div.favorites').html(response.data.html);
+                // remove_favorite();
+                alertify.success(response.message);
+                $("input#title").val('');
+                remove_from_pull_list();
+            }
+            else if (response.status=='fail'){
+                alertify.log(response.message);
+                $("input#title").val('');
+            }
+            else if (reponse.status=='error'){
+                alertify.error(response.message);
+            }
+        })
+        .fail(function(response){
+            alertify.error('Something went wrong...');
+        });
+        return false;
     });
-    return false;
-});
-// })
+}
+
+var remove_from_pull_list = function(){
+    $('#titles-on-pull-list li').each(function(){
+        var $liElem = $(this);
+        var $iElem = $(this).children('i');
+        var id = $liElem.attr('data-id');
+        // var $name = $pElem.attr('data-name');
+        $liElem.click(function(){
+            $.post(
+                '/ajax/remove_from_pull_list',
+                {'id': id}
+            )
+            .done(function(response) {
+                if (response.status=='success'){
+                    $liElem.remove();
+                    alertify.success(response.message);
+                }
+            });
+        });
+    });
+};
+
+
+// Setup the page
+add_to_pull_list();
+remove_from_pull_list();
+
+
+
+
+
+
