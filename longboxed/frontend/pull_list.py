@@ -47,8 +47,13 @@ def typeahead():
 
     Gets title names for all titles. This should go away someday
     """
-    titles = [
-        {'value': title.id, 'name': title.name} for title in _comics.titles.all()]
+    # titles = [
+    #     {
+    #         'value': title.id,
+    #         'name': title.name
+    #     }
+    #     for title in _comics.titles.all()
+    # ]
     titles = [title.name for title in _comics.titles.all()]
     return Response(dumps(titles), mimetype='application/json')
 

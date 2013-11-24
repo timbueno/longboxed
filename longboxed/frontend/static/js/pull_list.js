@@ -11,17 +11,18 @@ var add_to_pull_list = function(){
         )
         .done(function(response){
             if (response.status=='success'){
-                $('div.favorites').html(response.data.html);
+                // $('div.favorites').html(response.data.html);
                 // remove_favorite();
-                alertify.success(response.message);
                 $("input#title").val('');
+                alertify.success(response.message);
                 remove_from_pull_list();
             }
             else if (response.status=='fail'){
-                alertify.log(response.message);
                 $("input#title").val('');
+                alertify.log(response.message);
             }
             else {
+                $("input#title").val('');
                 alertify.error(response.message);
             }
         })
