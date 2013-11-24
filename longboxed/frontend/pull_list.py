@@ -6,8 +6,9 @@
     Pull List blueprints
 """
 import sys
+from json import dumps
 
-from flask import (Blueprint, jsonify, render_template, request)
+from flask import (Blueprint, jsonify, render_template, Response, request)
 from flask.ext.login import current_user, login_required
 
 from . import route
@@ -27,6 +28,17 @@ def p():
     return render_template('new_pull_list.html', form=form)
 
 
+# @route(bp, '/ajax/typeahead')
+# @login_required
+# def typeahead():
+#     """
+#     AJAX method
+
+#     Gets title names for all titles. This should go away someday
+#     """
+#     titles = [title.name for title in _comics.titles.all()]
+#     return jsonify(titles=titles)
+
 @route(bp, '/ajax/typeahead')
 @login_required
 def typeahead():
@@ -35,8 +47,10 @@ def typeahead():
 
     Gets title names for all titles. This should go away someday
     """
+    titles = [
+        {'value': title.id, 'name': title.name} for title in _comics.titles.all()]
     titles = [title.name for title in _comics.titles.all()]
-    return jsonify(titles=titles)
+    return Response(dumps(titles), mimetype='application/json')
 
 # @route(bp, '/ajax/remove_favorite', methods=['POST'])
 # @login_required
@@ -96,7 +110,7 @@ def remove_from_pull_list():
 @login_required
 def add_to_pull_list():
     form = AddToPullList()
-    response = {'status': 'fail', 'message': 'Not a valid title'}
+    response = {'status': 'fail', 'message': 'Title not being tracked by Longboxed'}
     if form.validate_on_submit():
         title = _comics.titles.first(name=request.form['title'])
         if title and title not in current_user.pull_list:

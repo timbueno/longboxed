@@ -30,7 +30,7 @@ var add_to_pull_list = function(){
         });
         return false;
     });
-}
+};
 
 var remove_from_pull_list = function(){
     $('#titles-on-pull-list li').each(function(){
@@ -53,11 +53,29 @@ var remove_from_pull_list = function(){
     });
 };
 
+var setup_typeahead = function(){
+    // $('.example-countries .typeahead').typeahead({                                
+    //   name: 'countries',                                                          
+    //   prefetch: '../data/countries.json',                                         
+    //   limit: 10                                                                   
+    // });
+    $('.typeahead').typeahead({
+        name: 'titles',
+        prefetch: '/ajax/typeahead',
+        limit: 10
+    }).each(function() {
+       if ($(this).hasClass('input-lg'))
+            $(this).prev('.tt-hint').addClass('hint-lg');
+       
+       if ($(this).hasClass('input-sm'))
+            $(this).prev('.tt-hint').addClass('hint-sm');
+    });
+};
 
 // Setup the page
 add_to_pull_list();
 remove_from_pull_list();
-
+setup_typeahead();
 
 
 
