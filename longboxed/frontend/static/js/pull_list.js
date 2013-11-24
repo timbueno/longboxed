@@ -21,7 +21,7 @@ var add_to_pull_list = function(){
                 alertify.log(response.message);
                 $("input#title").val('');
             }
-            else if (reponse.status=='error'){
+            else {
                 alertify.error(response.message);
             }
         })
