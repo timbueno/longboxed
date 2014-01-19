@@ -11,6 +11,7 @@ from flask.ext.debugtoolbar import DebugToolbarExtension
 from functools import wraps
 
 from .. import factory
+from ..helpers import pretty_date
 from . import assets
 from . import admin
 
@@ -21,6 +22,9 @@ def create_app(settings_override=None):
     :param settings_override: dictionary of settings to overide
     """
     app = factory.create_app(__name__, __path__, settings_override)
+    
+    #: Register custom Jinja2 filters
+    app.jinja_env.filters['pretty_date'] = pretty_date
 
     #: Init assets
     assets.init_app(app)

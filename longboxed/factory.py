@@ -22,7 +22,7 @@ from sqlalchemy_imageattach.context import push_store_context, pop_store_context
 
 from . import signals
 from .core import bootstrap, db, mail, security, store, social
-from .helpers import register_blueprints
+from .helpers import register_blueprints, pretty_date
 from .middleware import HTTPMethodOverrideMiddleware
 from .models import Connection, User, Role
 
@@ -41,6 +41,9 @@ def create_app(package_name, package_path, settings_override=None, debug_overrid
     :param debug_overide: :class:`Bool` value that overrides the debug settings
     """
     app = Flask(package_name, instance_relative_config=True)
+
+    # #: Register custom Jinja2 filters
+    # app.jinja_env.filters['pretty_date'] = pretty_date
 
     app.config.from_object('longboxed.settings')
     app.config.from_pyfile('settings.cfg', silent=True)
