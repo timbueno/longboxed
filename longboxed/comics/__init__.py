@@ -117,14 +117,17 @@ class IssueService(Service):
                     matches = [c for c in all_issues if c.title in current_user.pull_list]
         return (relevent_issues, matches)
 
-    def find_issue_with_date(self, date):
+    def find_issue_with_date(self, date, parent_only=False):
         """
         Gets all issue objects whose on_sale_date attribute matches 
         the given date.
 
         :param date: :class:`Date` object you wish to pull issues from
         """
-        titles = sorted(self.__model__.query.filter(self.__model__.on_sale_date == date))
+        if parent_only:
+            titles = sorted(self.__model__.query.filter(self.__model__.on_sale_date == date, self.__model__.is_parent == True))
+        else:
+            titles = sorted(self.__model__.query.filter(self.__model__.on_sale_date == date))
         return sorted(titles, key=lambda k: k.publisher.name)
 
 

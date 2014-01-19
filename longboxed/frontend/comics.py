@@ -20,14 +20,9 @@ bp = Blueprint('comics', __name__)
 
 @route(bp,'/comics')
 def comics():
-    start, end = get_week(datetime.today().date())
-    dates = {}
-    dates['today'] = end.strftime('%B %-d, %Y')
-    dates['lastweek'] = start.strftime('%B %-d, %Y')
-    dates['start'] = start
-    dates['end'] = end
-    comicList, matches = _comics.issues.find_relevent_issues_in_date_range(start, end, current_user)
-    return render_template('comics.html', dates=dates, comicList=comicList, calendarenable=1, matches=matches)
+    date = datetime.strptime('2013-11-20', '%Y-%m-%d')
+    issues = _comics.issues.find_issue_with_date(date, True)
+    return render_template('releases_test.html', issues=issues, date=date)
 
 
 @route(bp,'/releases/<date>')
