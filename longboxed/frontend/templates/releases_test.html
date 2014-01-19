@@ -36,8 +36,8 @@
           <div class="row">
           {%- for issue in row %}
             <div class="col-md-6 col-sm-6">
-              <div class="issue-bounding-box{% if issue.title in current_user.pull_list %}on_pull_list{% endif %}">
-                {{ render_comic_media_item(issue) }}
+              <div class="issue-bounding-box">
+                {{ render_comic_media_item(issue, current_user.pull_list) }}
               </div>
             </div>
           {%- endfor %}

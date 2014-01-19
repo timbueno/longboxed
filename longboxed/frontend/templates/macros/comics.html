@@ -10,10 +10,14 @@
 </div>
 {% endmacro %}
 
-{% macro render_comic_media_item(issue) %}
+{% macro render_comic_media_item(issue, pull_list=[]) %}
 <div class="media issue-media">
   <a class="pull-left" href="#">
-    <img class="media-object" src="http://placehold.it/100x100" alt="...">
+    <div class="media-object cover-square{% if issue.title in pull_list %} on-pull-list{% endif %}">
+      <div class="cover-in-square">
+        <img src="http://placehold.it/100x150" alt="...">
+      </div>
+    </div>
   </a>
   <div class="media-body">
     <a href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
