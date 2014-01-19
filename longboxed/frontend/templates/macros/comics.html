@@ -10,9 +10,9 @@
 </div>
 {% endmacro %}
 
-{% macro render_comic_media_item(issue, pull_list=[]) %}
+{% macro render_comic_media_item(issue, identifier=0, pull_list=[]) %}
 <div class="media issue-media">
-  <a class="pull-left" href="#">
+  <a class="{% if identifier % 2 == 1 %} pull-right{% else %} pull-left{% endif %}" href="#">
     <div class="media-object cover-square{% if issue.title in pull_list %} on-pull-list{% endif %}">
       <div class="cover-in-square">
         <img src="http://placehold.it/100x150" alt="...">
@@ -28,5 +28,33 @@
     <i class="fa fa-picture-o"></i>
     {% endif %}
   </div>
+</div>
+{% endmacro %}
+
+{% macro render_publisher_block(publisher_group, slide_id, pull_list=[]) %}
+<div class="slide story{% if slide_id % 2 == 1 %} light{% else %} dark{% endif %}">
+  <div class="container">
+    <div class="row clearfix">
+      <div class="col-12">
+        <h1>{{ publisher_group.grouper }}</h1>
+        <!-- <h4>thingmabob</h4> -->
+        <br>
+        <br>
+      </div><!-- /col-12 -->
+    </div><!-- /row -->
+    <div class="row clearfix">
+      {%- for row in publisher_group.list|sort(attribute='title.name')|batch(2) %}
+        <div class="row">
+        {%- for issue in row %}
+          <div class="col-md-6 col-sm-6">
+            <div class="issue-bounding-box">
+              {{ render_comic_media_item(issue, loop.index, pull_list) }}
+            </div>
+          </div>
+        {%- endfor %}
+        </div>
+      {%- endfor %}
+    </div><!-- /row -->
+  </div><!-- /container -->
 </div>
 {% endmacro %}

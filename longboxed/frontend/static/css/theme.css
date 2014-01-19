@@ -6187,6 +6187,19 @@ h2,
   background-attachment: relative;
   background-position: center center;
 }
+.light {
+  background-color: #ffffff;
+}
+.light .cover-square {
+  background-color: #ffffff;
+}
+.dark {
+  background-color: #2f2f2f;
+  color: #ffffff;
+}
+.dark .cover-square {
+  background-color: #2f2f2f;
+}
 @media (max-width: 767px) {
   #slide-1 {
     background-image: none;
@@ -6236,15 +6249,19 @@ h2,
   }
 }
 .cover-square {
-  background-color: #2f2f2f;
+  background-color: #cccccc;
   height: 150px;
   width: 150px;
   padding-top: 25px;
 }
 .on-pull-list {
-  background-color: #ffff00;
+  background-color: #d8ce8d;
 }
 .cover-in-square {
   width: 100px;
   margin: 0 auto;
+}
+.issue-media {
+  text-align: center;
+  box-shadow: 0 0 2px black;
 }

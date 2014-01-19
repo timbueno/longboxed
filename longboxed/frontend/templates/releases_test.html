@@ -1,5 +1,6 @@
 {% extends 'layouts/longboxed_base.html' %}
 {% from 'macros/comics.html' import render_comic_media_item %}
+{% from 'macros/comics.html' import render_publisher_block %}
 {% set active_page = 'comics' %}
 {% set title = 'Comics | Longboxed' %}
 
@@ -21,8 +22,13 @@
     </div><!-- /row -->
   </div><!-- /container -->
 </div>
+{% if True %}
+  {% for publisher_group in issues|groupby('publisher.name') %}
+    {{ render_publisher_block(publisher_group, loop.index, current_user.pull_list) }}
+  {% endfor %}
+{% endif %}
+{% if False %}
 <div class="container pt">
-  {% if True %}
   <div class="row">
     <div class="col-md-2"></div>
     <div class="col-md-8">
@@ -47,65 +53,6 @@
     </div>
     <div class="col-md-2"></div>
   </div>
-  {% endif %}
-  {% if False %}
-  <div class="row">
-    <div class="col-md-3"></div>
-    <div class="col-md-6">
-      {% for group in issues|groupby('publisher.name') %}
-      <h2>{{ group.grouper }}</h2>
-      <ul class="media-list">
-        {% for issue in group.list %}
-          {% if issue.is_parent %}
-          <li class="media">
-            <a class="pull-left" href="#">
-              <img class="media-object" src="http://placehold.it/100x100" alt="...">
-            </a>
-            <div class="media-body">
-              <h4 class="media-heading">
-                <a href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
-                  {{ issue.title.name }}
-                </a>
-              </h4>
-              <h4>{{ '%.4G'| format(issue.issue_number|float) }}</h4>
-              {% if issue.has_alternates %}
-              <i class="fa fa-picture-o"></i>
-              {% endif %}
-            </div>
-          </li>
-          {% endif %}
-        {% endfor %}
-      </ul>
-      {% endfor %}
-    </div>
-    <div class="col-md-3"></div>
-  </div>
-  {% endif %}
-  {% if False %}
-    {% for group in issues|groupby('publisher.name') %}
-    <div class="row">
-      <div class="col-md-12">
-        <h1>{{ group.grouper }}</h1>
-      </div>
-    </div>
-      {% for issue in group.list %}
-        {% if issue.is_parent %}
-        <div class="row">
-          <div class="col-md-6">
-            <a href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
-            {{ issue.title.name }}
-           </a>
-          </div>
-          <div class="col-md-6">
-            {{ '%.4G'| format(issue.issue_number|float) }}
-            {% if issue.has_alternates %}
-              <i class="fa fa-picture-o fa-fw"></i>
-            {% endif %}
-          </div>
-        </div>
-        {% endif %}
-      {% endfor %}
-    {% endfor %}
-  {% endif %}
 </div>
+{% endif %}
 {%- endblock content %}
