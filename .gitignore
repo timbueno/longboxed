@@ -13,3 +13,4 @@ dd
 !/logs/folder_create
 /store
 codekit-config.json
+longboxed/frontend/static/js/bower_components

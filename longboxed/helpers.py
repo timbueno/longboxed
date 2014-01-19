@@ -17,6 +17,7 @@ from flask import Blueprint
 from flask.ext.mail import Message
 
 from .core import mail
+from .services import bundle, comics
 
 
 def register_blueprints(app, package_name, package_path):
@@ -133,6 +134,23 @@ def mail_content(recipients, sender, subject, content, html=None, attachment=Non
         msg.attach(filename='checks.txt', content_type='text/plain', data=attachment)
     mail.send(msg)
     return
+
+
+def refresh_bundle(user, date, matches=None):
+    if not matches:
+        issues = comics.issues.find_issue_with_date(date)
+        matches = [i for i in issues if i.title in user.pull_list and i.is_parent]
+    b = bundle.first(user=user, release_date=date)
+    if b:
+        b = bundle.update(b, issues=matches, last_updated=datetime.now())
+    else:
+        b = bundle.create(
+            user=user,
+            release_date=date,
+            issues=matches,
+            last_updated=datetime.now()
+        )
+    return b
 
 
 class JsonSerializer(object):

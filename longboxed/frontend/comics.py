@@ -12,8 +12,7 @@ from flask import abort, Blueprint, jsonify, render_template, redirect, request,
 from flask.ext.security import current_user
 
 from . import route
-from ..helpers import current_wednesday, last_wednesday, next_wednesday, get_week, \
-                      wednesday
+from ..helpers import current_wednesday, last_wednesday, next_wednesday, get_week
 from ..services import comics as _comics
 
 
@@ -21,14 +20,9 @@ bp = Blueprint('comics', __name__)
 
 @route(bp,'/comics')
 def comics():
-    start, end = get_week(datetime.today().date())
-    dates = {}
-    dates['today'] = end.strftime('%B %-d, %Y')
-    dates['lastweek'] = start.strftime('%B %-d, %Y')
-    dates['start'] = start
-    dates['end'] = end
-    comicList, matches = _comics.issues.find_relevent_issues_in_date_range(start, end, current_user)
-    return render_template('comics.html', dates=dates, comicList=comicList, calendarenable=1, matches=matches)
+    date = datetime.strptime('2013-11-20', '%Y-%m-%d')
+    issues = _comics.issues.find_issue_with_date(date, True)
+    return render_template('releases_test.html', issues=issues, date=date)
 
 
 @route(bp,'/releases/<date>')
@@ -45,7 +39,6 @@ def releases(date):
 def this_week():
     date = current_wednesday()
     date = date.strftime('%Y-%m-%d')
-    print date
     return redirect(url_for('comics.releases', date=date))
 
 

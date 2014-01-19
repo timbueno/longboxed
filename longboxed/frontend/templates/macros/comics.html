@@ -1,0 +1,28 @@
+{% macro render_cover_row(issues, height=600) %}
+<div class="row">
+    {% for issue in issues %}
+    <div class="col-xs-3">
+        <a href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
+            <img src="{{ issue.cover_image.find_thumbnail(height=height).locate() }}" class="img-rounded img-responsive">
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endmacro %}
+
+{% macro render_comic_media_item(issue) %}
+<div class="media issue-media">
+  <a class="pull-left" href="#">
+    <img class="media-object" src="http://placehold.it/100x100" alt="...">
+  </a>
+  <div class="media-body">
+    <a href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
+      <h4 class="media-heading">{{ issue.title.name }}</h4>
+    </a>
+    <h4>{{ '%.4G'| format(issue.issue_number|float) }}</h4>
+    {% if issue.has_alternates %}
+    <i class="fa fa-picture-o"></i>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}

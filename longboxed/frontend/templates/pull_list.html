@@ -2,6 +2,7 @@
 {% set active_page = 'pull_list' %}
 {% set title = 'Your Pull List | Longboxed' %}
 
+
 {% block main_content %}
     <div class="container">
         <h2>Your Favorite Comics</h2>
@@ -12,7 +13,7 @@
                 </div>
             </div>
             <div class="span5">
-                <div class="well">
+   <!--              <div class="well">
                     <h3>Add more comics...</h3>
                     <div id="form">
                         <form id="newcomics">
@@ -22,6 +23,14 @@
                             </div>
                         </form>
                     </div>
+                </div> -->
+                <div class="well">
+                    <form id="add_to_pull_list">
+                        {{ form.hidden_tag() }}
+                        {{ form.title.label }} {{ form.title(size=20, class='') }}
+                        <!-- <input type="submit" value="Go"> -->
+                        <button id="submit_pull" class="btn btn-primary">Update</button>
+                    </form>
                 </div>
             <div class="span4">
         </div>
@@ -33,57 +42,58 @@
     {{ super() }}
 
     <script>
-        var remove_favorite = function(){
-            $('.testremove').each(
-                function(){
-                    var $pElem = $(this);
-                    var $id = $pElem.attr('data-id');
-                    var $name = $pElem.attr('data-name');
-                    $pElem.click(
-                        function(){
-                            $.post(
-                                '/ajax/remove_favorite',
-                                {'id': $id},
-                                function(data){
-                                    if (data.success==true){
-                                        $('div.favorites').html(data.html);
-                                        remove_favorite();
-                                        alertify.success('Successfully removed \''+$name+'\' from your Pull List!');
-                                    }
-                                    else {
-                                        alertify.error('Something went wrong...');
-                                    }
-                                }
-                            );
-                        }
-                    );
-                }
-            );
-        }
-        remove_favorite();
-        var favorites = function(){
-            $('.testbutton').click(function(){
-                var new_favorite = $("input#newfavorite").val();
-                $.post(
-                    '/ajax/add_favorite',
-                    {'new_favorite': new_favorite},
-                    function(data){
-                        if (data.success==true){
-                            $('div.favorites').html(data.html);
-                            remove_favorite();
-                            alertify.success('Successfully added \''+new_favorite+'\' to your Pull List!');
-                                $("input#newfavorite").val('');
-                        }
-                        else {
-                            alertify.log('\''+new_favorite+'\' is already on your Pull List');
-                            $("input#newfavorite").val('');
-                        }
-                    }
-                );
-                return false;
-            });
-        }
-        favorites();
+        // var remove_favorite = function(){
+        //     $('.testremove').each(
+        //         function(){
+        //             var $pElem = $(this);
+        //             var $id = $pElem.attr('data-id');
+        //             var $name = $pElem.attr('data-name');
+        //             $pElem.click(
+        //                 function(){
+        //                     $.post(
+        //                         '/ajax/remove_favorite',
+        //                         {'id': $id},
+        //                         function(data){
+        //                             if (data.success==true){
+        //                                 $('div.favorites').html(data.html);
+        //                                 remove_favorite();
+        //                                 alertify.success('Successfully removed \''+$name+'\' from your Pull List!');
+        //                             }
+        //                             else {
+        //                                 alertify.error('Something went wrong...');
+        //                             }
+        //                         }
+        //                     );
+        //                 }
+        //             );
+        //         }
+        //     );
+        // }
+        // remove_favorite();
+        // var favorites = function(){
+        //     $('.testbutton').click(function(){
+        //         var new_favorite = $("input#newfavorite").val();
+        //         $.post(
+        //             '/ajax/add_favorite',
+        //             {'new_favorite': new_favorite},
+        //             function(data){
+        //                 if (data.success==true){
+        //                     $('div.favorites').html(data.html);
+        //                     // remove_favorite();
+        //                     alertify.success('Successfully added \''+new_favorite+'\' to your Pull List!');
+        //                         $("input#newfavorite").val('');
+        //                 }
+        //                 else {
+        //                     alertify.log('\''+new_favorite+'\' is already on your Pull List');
+        //                     $("input#newfavorite").val('');
+        //                 }
+        //             }
+        //         );
+        //         return false;
+        //     });
+        // }
+        // favorites();
+
     </script>
 
     <script>
@@ -97,4 +107,6 @@
             comic_typeahead(data.titles);
         });
     </script>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/pull_list.js') }}"></script>
 {% endblock bootstrap_js_bottom %}

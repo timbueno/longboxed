@@ -1,7 +1,7 @@
 {% if g.user.pull_list %}
-<ul>
+<ul id="titles-on-pull-list">
     {% for title in g.user.pull_list %}
-    <li>{{ title.name }} <i class="icon-remove-circle testremove" data-id="{{ title.id }}" data-name="{{ title.name }}"></i></li>
+    <li data-id="{{ title.id }}">{{ title.name }} <i class="icon-remove-circle testremove" data-id="{{ title.id }}" data-name="{{ title.name }}"></i></li>
     {% endfor %}
 </ul>
 {% else %}
