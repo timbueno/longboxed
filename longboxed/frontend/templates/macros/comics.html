@@ -12,10 +12,11 @@
 
 {% macro render_comic_media_item(issue, identifier=0, pull_list=[]) %}
 <div class="media issue-media">
-  <a class="{% if identifier % 2 == 1 %} pull-right{% else %} pull-left{% endif %}" href="#">
+  <a class="{% if identifier % 2 == 1 %} pull-right{% else %} pull-left{% endif %}" href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
     <div class="media-object cover-square{% if issue.title in pull_list %} on-pull-list{% endif %}">
       <div class="cover-in-square">
-        <img src="http://placehold.it/100x150" alt="...">
+        <!-- <img src="http://placehold.it/100x150" alt="..."> -->
+        <img class="m_issue img-rounded" src={% if issue.cover_image %}"{{ issue.cover_image.find_thumbnail(width=100).locate() }}"{% else %}<img src="http://placehold.it/100x150" alt="...">{% endif %}> 
       </div>
     </div>
   </a>
