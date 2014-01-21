@@ -32,6 +32,19 @@
 </div>
 {% endmacro %}
 
+{% macro render_issue_media_item(issue) %}
+<div class="issue-media-item">
+  <div class="issue-content row">
+    <div class="cover-image col-sm-6">
+      other
+    </div> <!-- end cover-image -->
+    <div class="issue-info col-sm-6">
+      thing
+    </div> <!-- end issue-info -->
+  </div> <!-- end issue-content -->
+</div> <!-- end issue-media-item -->
+{% endmacro %}
+
 {% macro render_publisher_block(publisher_group, slide_id, pull_list=[]) %}
 <div class="slide story{% if slide_id % 2 == 1 %} light{% else %} dark{% endif %}">
   <div class="container">
@@ -43,14 +56,12 @@
         <br>
       </div><!-- /col-12 -->
     </div><!-- /row -->
-    <div class="row clearfix">
+    <div class="row">
       {%- for row in publisher_group.list|sort(attribute='title.name')|batch(2) %}
         <div class="row">
         {%- for issue in row %}
           <div class="col-md-6 col-sm-6">
-            <div class="issue-bounding-box">
-              {{ render_comic_media_item(issue, loop.index, pull_list) }}
-            </div>
+            {{ render_issue_media_item(issue) }}
           </div>
         {%- endfor %}
         </div>

@@ -6101,6 +6101,24 @@ h2,
 .icon-longboxed-full:before {
   content: "\e601";
 }
+.issue-media-item {
+  height: 150px;
+  padding: 10px;
+  background-color: blue;
+  width: 100%;
+  display: table;
+  table-layout: fixed;
+}
+.issue-content {
+  background-color: red;
+  display: table-cell;
+}
+.cover-image {
+  background-color: purple;
+}
+.issue-info {
+  background-color: green;
+}
 .form--has-background {
   max-width: 330px;
   padding: 15px;
