@@ -16,7 +16,7 @@
     <div class="media-object cover-square{% if issue.title in pull_list %} on-pull-list{% endif %}">
       <div class="cover-in-square">
         <!-- <img src="http://placehold.it/100x150" alt="..."> -->
-        <img class="m_issue img-rounded" src={% if issue.cover_image %}"{{ issue.cover_image.find_thumbnail(width=100).locate() }}"{% else %}<img src="http://placehold.it/100x150" alt="...">{% endif %}> 
+        <img class="m_issue img-rounded" src={% if issue.cover_image %}"{{ issue.cover_image.find_thumbnail(width=100).locate() }}"{% else %}<img src="http://placehold.it/100x150" alt="...">{% endif %}>
       </div>
     </div>
   </a>
@@ -32,17 +32,61 @@
 </div>
 {% endmacro %}
 
-{% macro render_issue_media_item(issue) %}
+{% macro render_issue_media_item(issue, current_user=None) %}
 <div class="issue-media-item">
   <div class="issue-content row">
-    <div class="cover-image col-sm-6">
-      other
+    <div class="cover-image col-sm-4">
+      {% if issue.cover_image %}
+        <img src="{{ issue.cover_image.find_thumbnail(width=100).locate() }}" class="img-responsive">
+      {% else %}
+        <img src="http://placehold.it/100x150" alt="...">
+      {% endif %}
     </div> <!-- end cover-image -->
-    <div class="issue-info col-sm-6">
-      thing
+    <div class="issue-info col-sm-8">
+      <div class="row issue-title">
+        <div class="col-xs-12">
+          <a href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
+            {{ issue.title.name }}
+          </a>
+        </div>
+      </div>
+      <div class="row issue-info-icons">
+        <div class="col-xs-4">
+          {% if issue.title in current_user.pull_list %}
+          <i class="fa fa-star enabled"></i>
+          {% else %}
+          <i class="fa fa-star-o disabled"></i>
+          {% endif %}
+        </div>
+        <div class="col-xs-4">
+          <i class="fa fa-thumbs-up"></i>
+        </div>
+        <div class="col-xs-4">
+          {% if issue.has_alternates %}
+          <i class="fa fa-picture-o"></i>
+          {% endif %}
+        </div>
+      </div> <!-- end issue-info-icons -->
     </div> <!-- end issue-info -->
   </div> <!-- end issue-content -->
 </div> <!-- end issue-media-item -->
+{% endmacro %}
+
+{% macro render_block(publisher_group, current_user=None) %}
+<div class="publisher-block">
+  <div class="container">
+    <h1>{{ publisher_group.grouper }}</h1>
+      {%- for row in publisher_group.list|sort(attribute='title.name')|batch(2) %}
+      <div class="row">
+        {% for issue in row -%}
+        <div class="col-sm-6 green">
+          {{ render_issue_media_item(issue, current_user) }}
+        </div>
+        {%- endfor %}
+      </div> <!-- end row -->
+      {%- endfor %}<!-- end row -->
+  </div> <!-- end container -->
+</div> <!-- end publisher-block -->
 {% endmacro %}
 
 {% macro render_publisher_block(publisher_group, slide_id, pull_list=[]) %}

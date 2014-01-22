@@ -1,7 +1,7 @@
 {% extends 'layouts/longboxed_base.html' %}
 {% from 'macros/comics.html' import render_comic_media_item %}
 {% from 'macros/comics.html' import render_issue_media_item %}
-{% from 'macros/comics.html' import render_publisher_block %}
+{% from 'macros/comics.html' import render_block %}
 {% set active_page = 'comics' %}
 {% set title = 'Comics | Longboxed' %}
 
@@ -24,6 +24,11 @@
   </div><!-- /container -->
 </div>
 {% if True %}
+  {% for publisher_group in issues|groupby('publisher.name') %}
+    {{ render_block(publisher_group, current_user) }}
+  {% endfor %}
+{% endif %}
+{% if False %}
   {% for publisher_group in issues|groupby('publisher.name') %}
     {{ render_publisher_block(publisher_group, loop.index, current_user.pull_list) }}
   {% endfor %}

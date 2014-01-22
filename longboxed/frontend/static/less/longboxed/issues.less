@@ -1,32 +1,71 @@
-// div {
-    // border: 1px solid #000000;
-// }
+.green {
+    background-color: green;
+}
+
+.publisher-block {
+    
+}
+
 
 .issue-media-item {
-    // width: 300px;
-    height: 150px;
-    padding: 10px;
+    height: 50px;
+    padding: 5px;
     background-color: blue;
     width: 100%;
     display: table;
-    table-layout: fixed;
+    // table-layout: fixed;
+
+    .issue-content {
+        height: 100%;
+        background-color: red;
+        padding: 5px;
+        display: table-cell;
+
+        .cover-image {
+            background-color: purple;
+            // padding-top: 10px;
+
+            img {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        .issue-info {
+            background-color: green;
+            height: 100%;
+            // padding-top: 10px;
+            // padding-bottom: 10px;
+
+            .issue-info-icons {
+                overflow:hidden;
+                height: 100%;
+                font-size: 2em;
+                text-align: center;
+                background-color: white;
+            }
+            .issue-title {
+                overflow:hidden;
+                height: 100%;
+                background-color: orange;
+                font-size: 20px;
+                text-align: center;
+                // display: block;
+                // margin-left: auto;
+                // margin-right: auto;
+                @media (max-width: @screen-sm-min) {
+                    font-size: 1.5em;
+                }
+            }
+        }
+    }
 }
 
-.issue-content {
-    background-color: red;
-    display: table-cell;
+.enabled {
+    color: black;
 }
 
-.cover-image {
-    background-color: purple;
-    // height: 50px;
-    // width: 50px;
-    // float: left;
-}
-
-.issue-info {
-    background-color: green;
-    // height: 50px;
-    // width: 50px;
-    // float: right;
+.disabled {
+    color: black;
 }
