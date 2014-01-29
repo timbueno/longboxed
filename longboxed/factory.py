@@ -21,7 +21,7 @@ from sqlalchemy_imageattach.context import push_store_context, pop_store_context
 # from wtforms.validators import Required
 
 from . import signals
-from .core import bootstrap, db, mail, security, store, social
+from .core import db, mail, security, store, social
 from .helpers import register_blueprints, pretty_date
 from .middleware import HTTPMethodOverrideMiddleware
 from .models import Connection, User, Role
@@ -52,7 +52,6 @@ def create_app(package_name, package_path, settings_override=None, debug_overrid
         app.debug = debug_override
 
     #: Setup Flask Extentions
-    bootstrap.init_app(app)
     db.init_app(app)
     mail.init_app(app)
     #: Setup Flask-Security
