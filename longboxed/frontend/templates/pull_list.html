@@ -42,61 +42,6 @@
     {{ super() }}
 
     <script>
-        // var remove_favorite = function(){
-        //     $('.testremove').each(
-        //         function(){
-        //             var $pElem = $(this);
-        //             var $id = $pElem.attr('data-id');
-        //             var $name = $pElem.attr('data-name');
-        //             $pElem.click(
-        //                 function(){
-        //                     $.post(
-        //                         '/ajax/remove_favorite',
-        //                         {'id': $id},
-        //                         function(data){
-        //                             if (data.success==true){
-        //                                 $('div.favorites').html(data.html);
-        //                                 remove_favorite();
-        //                                 alertify.success('Successfully removed \''+$name+'\' from your Pull List!');
-        //                             }
-        //                             else {
-        //                                 alertify.error('Something went wrong...');
-        //                             }
-        //                         }
-        //                     );
-        //                 }
-        //             );
-        //         }
-        //     );
-        // }
-        // remove_favorite();
-        // var favorites = function(){
-        //     $('.testbutton').click(function(){
-        //         var new_favorite = $("input#newfavorite").val();
-        //         $.post(
-        //             '/ajax/add_favorite',
-        //             {'new_favorite': new_favorite},
-        //             function(data){
-        //                 if (data.success==true){
-        //                     $('div.favorites').html(data.html);
-        //                     // remove_favorite();
-        //                     alertify.success('Successfully added \''+new_favorite+'\' to your Pull List!');
-        //                         $("input#newfavorite").val('');
-        //                 }
-        //                 else {
-        //                     alertify.log('\''+new_favorite+'\' is already on your Pull List');
-        //                     $("input#newfavorite").val('');
-        //                 }
-        //             }
-        //         );
-        //         return false;
-        //     });
-        // }
-        // favorites();
-
-    </script>
-
-    <script>
         var comic_typeahead = function(titles){
             $('.typeahead').typeahead({
                     source: titles

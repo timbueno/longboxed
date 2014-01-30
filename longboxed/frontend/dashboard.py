@@ -32,10 +32,7 @@ def test():
 
 @route(bp, '/')
 def index():
-    if not current_user.is_anonymous():
-        start, end = 1, 2
-        return render_template('main.html')
-    return render_template('main.html')
+    return render_template('index.html')
 
 
 @route(bp, '/settings', methods=['GET','POST'])
