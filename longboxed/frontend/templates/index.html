@@ -13,27 +13,38 @@
 <div class="container slide1">
     <div class="row centered">
         <div class="col-sm-8 col-sm-offset-2">
-            <h4>Keep track of each weeks releases. </h4>
+            <h4>Keep track of each week's releases. </h4>
             <p>See why LONGBOXED is the best resource to keep you up to date with your favorite comic books.</p>
         </div>
         <div class="col-sm-4">
             <i class="fa fa-star"></i>
             <h4>ALL YOUR FAVORITES</h4>
-            <p>Use your personalized insurance data to discover the cost of common medical procedures in your area.</p>
+            <p>Every popular title from all major pulishers is cataloged and tracked.</p>
         </div>
         <div class="col-sm-4">
             <i class="fa fa-list"></i>
             <h4>PULL LISTS</h4>
-            <p>Compare how much you would pay out of pocket for different providers, for the procedure you need.</p>
+            <p>Create a Pull List and be notified when issues on it are released!</p>
         </div>
         <div class="col-sm-4">
             <i class="fa fa-undo"></i>
             <h4>UPDATED DAILY</h4>
-            <p>Make the choice that fits your needs best, taking into account cost, convenience and quality.</p>
+            <p>Our catelog is constantly being updated to provide you with the most accurate information.</p>
         </div>
-        <br />
-        <br />
     </div>
-
+</div>
+<div class="slide2">
+    <div class="container">
+        <div class="row centered">
+            <div class="col-sm-8 col-sm-offset-2">
+                <h1>POPULAR THIS WEEK</h1>
+            </div>
+            {% for issue in issues %}
+            <div class="col-xs-6 col-sm-3">
+                <img class="m_issue img-rounded img-responsive" src={% if issue.cover_image %}"{{ issue.cover_image.locate() }}"{% endif %}> 
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 {%- endblock content %}

@@ -11,6 +11,7 @@ from flask.ext.wtf import Form
 from wtforms import BooleanField, SelectField, SelectMultipleField
 
 from . import route
+from ..helpers import current_wednesday
 from ..services import comics as _comics
 from ..services import users as _users
 
@@ -32,7 +33,10 @@ def test():
 
 @route(bp, '/')
 def index():
-    return render_template('index.html')
+    issues = _comics.issues.__model__.query.filter(_comics.issues.__model__.on_sale_date == current_wednesday(), _comics.issues.__model__.is_parent == True).order_by(_comics.issues.__model__.popularity).limit(4)
+    # issues = _comics.issues.find_issue_with_date(current_wednesday())
+    print [issues]
+    return render_template('index.html', issues=issues)
 
 
 @route(bp, '/settings', methods=['GET','POST'])
