@@ -10,10 +10,31 @@
         </div>
     </div>
 </div>
+<div class="week-links">
+    <div class="container">
+        <div class="row centered">
+            <div class="col-sm-4">
+                <a href="{{ url_for('comics.last_week') }}"}>
+                    <h4>Last Week</h4>
+                </a>
+            </div>
+            <div class="col-sm-4">
+                <a href="{{ url_for('comics.this_week') }}"}>
+                    <h2>This Week</h2>
+                </a>
+            </div>
+            <div class="col-sm-4">
+                <a href="{{ url_for('comics.next_week') }}"}>
+                    <h4>Next Week</h4>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="container slide1">
     <div class="row centered">
         <div class="col-sm-8 col-sm-offset-2">
-            <h4>Keep track of each week's releases. </h4>
+            <h2>Keep track of each week's releases. </h2>
             <p>See why LONGBOXED is the best resource to keep you up to date with your favorite comic books.</p>
         </div>
         <div class="col-sm-4">
@@ -37,13 +58,19 @@
     <div class="container">
         <div class="row centered">
             <div class="col-sm-8 col-sm-offset-2">
-                <h1>POPULAR THIS WEEK</h1>
+                <h2>POPULAR THIS WEEK</h2>
             </div>
-            {% for issue in issues %}
-            <div class="col-xs-6 col-sm-3">
-                <img class="m_issue img-rounded img-responsive" src={% if issue.cover_image %}"{{ issue.cover_image.locate() }}"{% endif %}> 
-            </div>
-            {% endfor %}
+            {% if issues %}
+                {% for issue in issues %}
+                <div class="col-xs-6 col-sm-3">
+                    <a class="thumbnail" href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
+                        <img class="img-responsive" src={% if issue.cover_image %}"{{ issue.cover_image.locate() }}"{% endif %} title="{{ issue.complete_title }}" alt="{{ issue.complete_title }}">
+                    </a>
+                </div>
+                {% endfor %}
+            {% else %}
+                <h1>NOTHING IS POPULAR THIS WEEK</h1>
+            {% endif %}
         </div>
     </div>
 </div>

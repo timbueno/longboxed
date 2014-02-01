@@ -1,64 +1,40 @@
 {% extends 'layouts/base.html' %}
-{% from 'macros/comics.html' import render_comic_media_item %}
-{% from 'macros/comics.html' import render_issue_media_item %}
 {% from 'macros/comics.html' import render_block %}
 {% set active_page = 'comics' %}
 {% set title = 'Comics | Longboxed' %}
 
 {% block content -%}
-<div class="slide story" id="slide-1" data-slide="1">
+<div class="header releases-header">
   <div class="container">
-    <div id="home-row-1" class="row clearfix">
-      <div class="col-12">
-        <h1>THIS WEEK</span></h1>
-        <h4>{{ date.strftime('%B %-d, %Y') }}</h4>
-        <br>
-        <br>
-      </div><!-- /col-12 -->
-    </div><!-- /row -->
-    <div id="home-row-2" class="row clearfix">
-      <div class="col-sm-4"><div class="home-hover navigation-slide" data-slide="4"><h1>{{ issues|length }}</h1></div><span>RELEASES</span></div>
-      <div class="col-sm-4"><div class="home-hover navigation-slide" data-slide="3"><h1>0</h1></div><span>ON YOUR PULL LIST</span></div>
-      <div class="col-sm-4"><div class="home-hover navigation-slide" data-slide="5"><h1>{{ date|pretty_date }}</h1></div><span>LAST UPDATED</span></div>
-    </div><!-- /row -->
-  </div><!-- /container -->
+    <div class="row centered">
+      <div class="col-sm-8 col-sm-offset-2">
+        <h1>{{ date.strftime('%B %-d, %Y') }}</h1>
+        <h1>RELEASES</h1>
+      </div>
+    </div>
+  </div>
 </div>
+<div class="subheader">
+  <div class="container">
+    <div class="row centered">
+      <div class="col-xs-4">
+        <h1>{{ issues|length }}</h1>
+        <span>RELEASES</span>
+      </div>
+      <div class="col-xs-4">
+        <h1>0</h1>
+        <span>ON YOUR PULL LIST</span>
+      </div>
+      <div class="col-xs-4">
+        <h1>{{ date|pretty_date }}</h1>
+        <span>LAST UPDATED</span>
+      </div>
+    </div> <!-- /row -->
+  </div> <!-- /container -->
+</div> <!-- /subheader -->
 {% if True %}
   {% for publisher_group in issues|groupby('publisher.name') %}
     {{ render_block(publisher_group, current_user) }}
   {% endfor %}
-{% endif %}
-{% if False %}
-  {% for publisher_group in issues|groupby('publisher.name') %}
-    {{ render_publisher_block(publisher_group, loop.index, current_user.pull_list) }}
-  {% endfor %}
-{% endif %}
-{% if False %}
-<div class="container pt">
-  <div class="row">
-    <div class="col-md-2"></div>
-    <div class="col-md-8">
-      {% for group in issues|groupby('publisher.name') %}
-      <div class="row">
-        <div class="col-md-12">
-          <h1>{{ group.grouper }}</h1>
-        </div>
-      </div>
-        {%- for row in group.list|sort(attribute='title.name')|batch(2) %}
-          <div class="row">
-          {%- for issue in row %}
-            <div class="col-md-6 col-sm-6">
-              <div class="issue-bounding-box">
-                {{ render_comic_media_item(issue, current_user.pull_list) }}
-              </div>
-            </div>
-          {%- endfor %}
-          </div>
-        {%- endfor %}
-      {% endfor %}
-    </div>
-    <div class="col-md-2"></div>
-  </div>
-</div>
 {% endif %}
 {%- endblock content %}

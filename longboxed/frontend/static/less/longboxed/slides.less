@@ -1,8 +1,19 @@
+.section (@scale: 2) {
+    padding-top: @scale*0.5em;
+    padding-bottom: @scale*1em;
+}
+
+.section-fix (@scale: 2) {
+    padding-top: @scale*1em !important;
+    padding-bottom: @scale*1em !important; 
+}
+
 .headerwrap {
+    .section;
 
     background: url(../img/header-bg.jpg) no-repeat center top;
-    margin-top: -10px;
-    padding-top:20px;
+    // margin-top: -10px;
+    // padding-top:20px;
     text-align:center;
     background-attachment: relative;
     background-position: center center;
@@ -36,14 +47,42 @@
     }
 }
 
+.week-links {
+    .section-fix;
+}
+
+.header {
+    .section;
+
+    background-color: #2f2f2f;
+
+    h1 {
+        color: white;
+        font-size: 6em;
+
+        @media (max-width: @screen-xs-min) {
+            font-size: 4em;
+        }
+    }
+}
+
+.subheader {
+    .section;
+
+    background-color: #aaaaaa;
+
+    h2 {
+        color: white;
+    }
+
+}
+
 .slide1 {
-    
-    padding-top: 2em;
-    padding-bottom: 1em;
+    .section;
 
     // icons
     i {
-        color: #FF851B;
+        color: #aaaaaa;
         font-size: 30px;
     }
 
@@ -53,29 +92,28 @@
 }
 
 .slide2{
-    background-color: #aaaaaa;
-    padding-top: 1em;
-    padding-bottom: 2em;
+    .section;
 
-    h1 {
+    background-color: #2f2f2f;
+
+    h2 {
         color: white;
         padding-bottom: 1em
     }
 }
 
 .footer {
+    .section;
+
     background-color: #2f2f2f;
-    padding-top: 3em;
-    padding-bottom:3em;
 
     h4 {
         color: white;
         text-transform: uppercase;
-        // padding-bottom: 20px;
     };
 
     i {
-        color: #FF851B;
+        color: #aaaaaa;
         font-size: 30px;
     }
 

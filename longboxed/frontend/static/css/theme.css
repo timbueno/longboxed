@@ -6018,9 +6018,17 @@ body {
 }
 h1,
 h2,
+h3,
+h4,
+h5,
 .h1,
-.h2 {
+.h2,
+.h3,
+.h4,
+.h5 {
   letter-spacing: 3px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 .centered {
   text-align: center;
@@ -6105,57 +6113,15 @@ h2,
   content: "\e601";
 }
 .green {
-  background-color: green;
+  border-style: solid;
+  border-width: 1px;
+  border-color: black;
 }
-.issue-media-item {
-  height: 50px;
-  padding: 5px;
-  background-color: blue;
-  width: 100%;
-  display: table;
+.issue-card {
+  margin: 1em;
 }
-.issue-media-item .issue-content {
-  height: 100%;
-  background-color: red;
-  padding: 5px;
-  display: table-cell;
-}
-.issue-media-item .issue-content .cover-image {
-  background-color: purple;
-}
-.issue-media-item .issue-content .cover-image img {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-.issue-media-item .issue-content .issue-info {
-  background-color: green;
-  height: 100%;
-}
-.issue-media-item .issue-content .issue-info .issue-info-icons {
-  overflow: hidden;
-  height: 100%;
-  font-size: 2em;
-  text-align: center;
-  background-color: white;
-}
-.issue-media-item .issue-content .issue-info .issue-title {
-  overflow: hidden;
-  height: 100%;
-  background-color: orange;
-  font-size: 20px;
-  text-align: center;
-}
-@media (max-width: 768px) {
-  .issue-media-item .issue-content .issue-info .issue-title {
-    font-size: 1.5em;
-  }
-}
-.enabled {
-  color: black;
-}
-.disabled {
-  color: black;
+.issue-card .issue-info-icons {
+  font-size: 1.5em;
 }
 .form--has-background {
   max-width: 330px;
@@ -6206,9 +6172,9 @@ h2,
   border-color: #fff;
 }
 .headerwrap {
+  padding-top: 1em;
+  padding-bottom: 2em;
   background: url(../img/header-bg.jpg) no-repeat center top;
-  margin-top: -10px;
-  padding-top: 20px;
   text-align: center;
   background-attachment: relative;
   background-position: center center;
@@ -6238,37 +6204,63 @@ h2,
   z-index: 10000;
   color: white;
 }
+.week-links {
+  padding-top: 2em !important;
+  padding-bottom: 2em !important;
+}
+.header {
+  padding-top: 1em;
+  padding-bottom: 2em;
+  background-color: #2f2f2f;
+}
+.header h1 {
+  color: white;
+  font-size: 6em;
+}
+@media (max-width: 480px) {
+  .header h1 {
+    font-size: 4em;
+  }
+}
+.subheader {
+  padding-top: 1em;
+  padding-bottom: 2em;
+  background-color: #aaaaaa;
+}
+.subheader h2 {
+  color: white;
+}
 .slide1 {
-  padding-top: 2em;
-  padding-bottom: 1em;
+  padding-top: 1em;
+  padding-bottom: 2em;
 }
 .slide1 i {
-  color: #FF851B;
+  color: #aaaaaa;
   font-size: 30px;
 }
 .slide1 p {
   margin-bottom: 2em;
 }
 .slide2 {
-  background-color: #aaaaaa;
   padding-top: 1em;
   padding-bottom: 2em;
+  background-color: #2f2f2f;
 }
-.slide2 h1 {
+.slide2 h2 {
   color: white;
   padding-bottom: 1em;
 }
 .footer {
+  padding-top: 1em;
+  padding-bottom: 2em;
   background-color: #2f2f2f;
-  padding-top: 3em;
-  padding-bottom: 3em;
 }
 .footer h4 {
   color: white;
   text-transform: uppercase;
 }
 .footer i {
-  color: #FF851B;
+  color: #aaaaaa;
   font-size: 30px;
 }
 .footer p {
