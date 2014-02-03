@@ -1,23 +1,40 @@
+// .test {
+//     background-color: @gray-light;
+//     // position: absolute;
+//     // height: 100%;
+//     // min-height: 100%;
+// }
+
+// .red {
+//     background-color: red;
+//     // height: 100%;
+//     // float: right;
+// }
+
+// .blue {
+//     background-color: blue;
+//     // height: 450px;
+//     // position: relative;
+// }
+
 .section (@scale: 2) {
-    padding-top: @scale*0.5em;
+    padding-top: @scale*1em;
     padding-bottom: @scale*1em;
 }
 
-.section-fix (@scale: 2) {
-    padding-top: @scale*1em !important;
-    padding-bottom: @scale*1em !important; 
-}
+// .section-fix (@scale: 2) {
+//     padding-top: @scale*1em !important;
+//     padding-bottom: @scale*1em !important; 
+// }
 
 .headerwrap {
     .section;
 
     background: url(../img/header-bg.jpg) no-repeat center top;
-    // margin-top: -10px;
-    // padding-top:20px;
     text-align:center;
     background-attachment: relative;
     background-position: center center;
-    min-height: 500px;
+    min-height: 450px;
     width: 100%;
 
     -webkit-background-size: 100%;
@@ -40,15 +57,30 @@
     -webkit-box-pack:center;
     -webkit-box-align:center;
 
+    // @media (max-width: @screen-xs-min) {
+    //     height: 500px;
+    // }
+
+    .logo {
+        color: white;
+        font-size: 8em;
+    }
+
     h1 {
-        font-size: 70px;
+        font-size: 8em;
         z-index: 10000;
         color: white;
+
+        @media (max-width: @screen-xs-min) {
+            font-size: 2em;
+            // line-height: 60px;
+        }
     }
 }
 
 .week-links {
-    .section-fix;
+    .section;
+    background-color: @gray-lighter
 }
 
 .header {
@@ -94,10 +126,11 @@
 .slide2{
     .section;
 
-    background-color: #2f2f2f;
+    // background-color: #2f2f2f;
+    background-color: @gray-lighter;
 
     h2 {
-        color: white;
+        color: #2f2f2f;
         padding-bottom: 1em
     }
 }
@@ -105,7 +138,8 @@
 .footer {
     .section;
 
-    background-color: #2f2f2f;
+    // background-color: #2f2f2f;
+    background-color: @gray-dark;
 
     h4 {
         color: white;

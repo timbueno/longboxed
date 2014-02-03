@@ -19,7 +19,7 @@ from ..services import comics
 
 class TestCommand(Command):
     def run(self):
-        issues = comics.issues.find_issue_with_date(datetime.strptime('2014-01-29', '%Y-%m-%d'))
+        issues = comics.issues.find_issue_with_date(datetime.strptime('2014-02-05', '%Y-%m-%d'))
         print 'Starting thumbnail generation'
         for issue in issues:
             print issue.title.name

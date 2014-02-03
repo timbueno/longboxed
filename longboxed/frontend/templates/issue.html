@@ -2,7 +2,7 @@
 {% set title = issue.complete_title+' | Longboxed' %}
 
 {% block content %}
-    <div class="container">
+    <!-- <div class="container">
         <div class="issueContainer">
             <div class="row">
                 <div class="span4">
@@ -78,5 +78,80 @@
                 </div>
             </div>
         </div>
+    </div> -->
+<div class="container">
+    <div class='full-issue-content'>
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-1">
+                <img class="thumbnail img-responsive" src={% if issue.cover_image %}"{{ issue.cover_image.locate() }}"{% endif %}> 
+            </div>
+            <div class="col-sm-6">
+                <h2>{{ issue.complete_title }}</h2>
+                <h4>
+                    <a href="{{ url_for('comics.publisher', pub_id=issue.publisher.id) }}">{{ issue.publisher.name }}</a> - 
+                    <a href="#" class="add2cal" data-id="{{ issue.diamond_id }}"><i class="icon-calendar"></i></a> <a href="{{ issue.a_link }}"><i class="icon-shopping-cart"></i></a>
+                </h4>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>Title</td>
+                            <td><a href="{{ url_for('comics.title', title_id=issue.title.id) }}">{{ issue.title.name }}</a></td>
+                        </tr>
+                        <tr>
+                            <td>Release Date</td>
+                            {% if issue.on_sale_date %}
+                            <td>{{ issue.on_sale_date.strftime('%-m/%-d/%y') }}</td>
+                            {% else %}
+                            <td>Unknown</td>
+                            {% endif %}
+                        </tr>
+                        <tr>
+                            <td>Price</td>
+                            <td>${{ issue.retail_price }}</td>
+                        </tr>
+                        <tr>
+                            <td>Distributor Code</td>
+                            <td>{{ issue.diamond_id }}</td>
+                        </tr>
+                        <tr>
+                            <td>Description</td>
+                            <td>
+                                <p>
+                                    {{ issue.description }}
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Issue Number</td>
+                            <td>
+                                <p>
+                                    {{ '%d' | format(issue.issue_number) }}
+                                </p>
+                            </td>
+                        </tr>
+    <!--                     <tr>
+                            <td>Alternate Covers</td>
+                            <td>
+                                <p>
+                                    {% for i in issue.alternates %}
+                                        <a href="{{ url_for('comics.issue', diamond_id=i.diamond_id) }}">{{ i.complete_title }}</a>
+                                        <br>
+                                    {% endfor %}
+                                </p>
+                            </td>
+                        </tr> -->
+                        <!-- <tr>
+                            <td>Is Parent</td>
+                            <td>
+                                <p>
+                                    {{ issue.is_parent }}
+                                </p>
+                            </td>
+                        </tr> -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
+</div> <!-- container -->
 {% endblock %}
