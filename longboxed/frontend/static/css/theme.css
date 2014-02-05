@@ -6149,6 +6149,10 @@ h5,
 .issue-card .issue-info-icons {
   font-size: 1.5em;
 }
+.add-title-section {
+  padding-top: 2em;
+  padding-bottom: 2em;
+}
 .form--has-background {
   max-width: 330px;
   padding: 15px;

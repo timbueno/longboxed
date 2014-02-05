@@ -23,9 +23,9 @@ bp = Blueprint('pull_list', __name__)
 
 @route(bp, '/pull_list', methods=['GET', 'POST'])
 @login_required
-def p():
+def pull_list():
     form = AddToPullList()
-    return render_template('new_pull_list.html', form=form)
+    return render_template('pull_list.html', form=form)
 
 
 # @route(bp, '/ajax/typeahead')
