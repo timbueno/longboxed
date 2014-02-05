@@ -6118,8 +6118,26 @@ h5,
   border-color: black;
 }
 .full-issue-content {
-  padding-top: 2em;
-  padding-bottom: 2em;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+@media (max-width: 480px) {
+  .full-issue-content {
+    padding-top: 0em;
+    padding-bottom: 0em;
+  }
+}
+@media (max-width: 480px) {
+  .full-issue-content .cover-image {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+}
+@media (max-width: 480px) {
+  .full-issue-content .issue-table {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
 }
 .full-issue-content img {
   display: block;

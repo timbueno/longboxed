@@ -17,10 +17,6 @@
 //     // position: relative;
 // }
 
-.section (@scale: 2) {
-    padding-top: @scale*1em;
-    padding-bottom: @scale*1em;
-}
 
 // .section-fix (@scale: 2) {
 //     padding-top: @scale*1em !important;
@@ -28,7 +24,7 @@
 // }
 
 .headerwrap {
-    .section;
+    .section(2);
 
     background: url(../img/header-bg.jpg) no-repeat center top;
     text-align:center;
@@ -79,12 +75,12 @@
 }
 
 .week-links {
-    .section;
+    .section(2);
     background-color: @gray-lighter
 }
 
 .header {
-    .section;
+    .section(2);
 
     background-color: #2f2f2f;
 
@@ -99,7 +95,7 @@
 }
 
 .subheader {
-    .section;
+    .section(2);
 
     background-color: #aaaaaa;
 
@@ -110,7 +106,7 @@
 }
 
 .slide1 {
-    .section;
+    .section(2);
 
     // icons
     i {
@@ -124,7 +120,7 @@
 }
 
 .slide2{
-    .section;
+    .section(2);
 
     // background-color: #2f2f2f;
     background-color: @gray-lighter;
@@ -136,7 +132,7 @@
 }
 
 .footer {
-    .section;
+    .section(2);
 
     // background-color: #2f2f2f;
     background-color: @gray-dark;

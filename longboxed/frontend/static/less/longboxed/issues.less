@@ -6,12 +6,29 @@
 }
 
 .full-issue-content {
-    .section;
+    .section(1);
+
+    @media (max-width: @screen-xs-min) {
+        .section(0);
+    }
+
+    .cover-image {
+        @media (max-width: @screen-xs-min) {
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+    }
+
+    .issue-table {
+        @media (max-width: @screen-xs-min) {
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+    }
 
     img {
         display: block;
         margin: auto;
-
     }
 }
 
