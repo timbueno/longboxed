@@ -6118,11 +6118,28 @@ h5,
   text-transform: uppercase;
 }
 #footer i {
-  color: #aaaaaa;
   font-size: 30px;
 }
 #footer p {
   color: white;
+}
+#footer .twitter {
+  color: white;
+}
+#footer .twitter:hover {
+  color: #4099ff;
+}
+#footer .facebook {
+  color: white;
+}
+#footer .facebook:hover {
+  color: #3b5999;
+}
+#footer .mail {
+  color: white;
+}
+#footer .mail:hover {
+  color: #4099ff;
 }
 .title {
   font-size: 3.5rem;
