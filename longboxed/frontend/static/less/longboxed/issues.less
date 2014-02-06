@@ -44,3 +44,40 @@
 .add-title-section {
     .section(2);
 }
+
+.pull-list-with-bundles {
+    .bundles {
+        a {
+            &:link{
+                color: @gray-dark;
+                text-decoration: none;
+            }
+            &:visited{
+                color: @gray-dark;
+                text-decoration: none;
+            }
+            &:hover{
+                color: @gray-dark;
+                text-decoration: none;
+            }
+            &:active{
+                color: @gray-dark;
+                text-decoration: none;
+            }
+        }
+
+        .hover-change {
+            background-color: @gray-lighter;
+
+            &:hover {
+                background-color: @gray-light;
+                color: white;
+            }
+        }
+
+        .pull-list-thumbnail {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+    }
+}

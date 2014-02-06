@@ -6055,14 +6055,14 @@ h5,
   height: 100%;
   background-color: rgba(0, 0, 0, 0.45);
 }
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   .navbar-default .navbar-brand-center {
     text-align: center;
     width: 100%;
     position: absolute;
   }
 }
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   .navbar-default .navbar-brand {
     float: none;
     display: inline-block;
@@ -6152,6 +6152,33 @@ h5,
 .add-title-section {
   padding-top: 2em;
   padding-bottom: 2em;
+}
+.pull-list-with-bundles .bundles a:link {
+  color: #2e2e2e;
+  text-decoration: none;
+}
+.pull-list-with-bundles .bundles a:visited {
+  color: #2e2e2e;
+  text-decoration: none;
+}
+.pull-list-with-bundles .bundles a:hover {
+  color: #2e2e2e;
+  text-decoration: none;
+}
+.pull-list-with-bundles .bundles a:active {
+  color: #2e2e2e;
+  text-decoration: none;
+}
+.pull-list-with-bundles .bundles .hover-change {
+  background-color: #eeeeee;
+}
+.pull-list-with-bundles .bundles .hover-change:hover {
+  background-color: #999999;
+  color: white;
+}
+.pull-list-with-bundles .bundles .pull-list-thumbnail {
+  padding-left: 10px;
+  padding-right: 10px;
 }
 .form--has-background {
   max-width: 330px;
