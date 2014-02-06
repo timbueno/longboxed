@@ -24,11 +24,13 @@
   </head>
   <body{% block body_attribs %}{% endblock body_attribs %}>
     {% block body -%}
-    {% block navbar %}
-    {%- endblock navbar %}
-    <div class="content">
-    {% block content -%}
-    {%- endblock content %}
+    <div id="wrap">
+        {% block navbar %}
+        {%- endblock navbar %}
+        <div class="content">
+        {% block content -%}
+        {%- endblock content %}
+        </div>
     </div>
     {% block footer -%}
     {%- endblock footer %}

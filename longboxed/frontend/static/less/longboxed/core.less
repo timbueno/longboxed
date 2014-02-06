@@ -1,4 +1,12 @@
+html {
+  /* Necessary for sticky footer */
+  height: 100%;
+}
+
 body {
+  /* Necessary for sticky footer */
+  height: 100%;
+  /* Push down body to clear sticky navbar */
   padding-top: 50px;
 }
 
@@ -7,6 +15,24 @@ h1, h2, h3, h4, h5,
   letter-spacing: @headings-letter-spacing;
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto;
+  /* Negative indent footer by its height */
+  margin: 0 auto -160px;
+  /* Pad bottom by footer height */
+  padding: 0 0 160px;
+
+  @media (max-width: @screen-xs-min) {
+    /* Negative indent footer by its height */
+    margin: 0 auto -300px;
+    /* Pad bottom by footer height */
+    padding: 0 0 300px;
+
+  }
 }
 
 .centered {
@@ -68,4 +94,31 @@ h1, h2, h3, h4, h5,
   // Place button above other elements
   // Fix for centering the logo in collapsed mode
   z-index: 1;
+}
+
+
+#footer {
+    .section(2);
+
+    height: 160px;
+    @media (max-width: @screen-xs-min) {
+      height: 300px;
+    }
+
+    // background-color: #2f2f2f;
+    background-color: @gray-dark;
+
+    h4 {
+        color: white;
+        text-transform: uppercase;
+    };
+
+    i {
+        color: #aaaaaa;
+        font-size: 30px;
+    }
+
+    p {
+        color: white;
+    };
 }

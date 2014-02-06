@@ -6013,7 +6013,17 @@ td.visible-print {
     display: none !important;
   }
 }
+html {
+  /* Necessary for sticky footer */
+
+  height: 100%;
+}
 body {
+  /* Necessary for sticky footer */
+
+  height: 100%;
+  /* Push down body to clear sticky navbar */
+
   padding-top: 50px;
 }
 h1,
@@ -6029,6 +6039,27 @@ h5,
   letter-spacing: 3px;
   margin-top: 10px;
   margin-bottom: 10px;
+}
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto;
+  /* Negative indent footer by its height */
+
+  margin: 0 auto -160px;
+  /* Pad bottom by footer height */
+
+  padding: 0 0 160px;
+}
+@media (max-width: 480px) {
+  #wrap {
+    /* Negative indent footer by its height */
+  
+    margin: 0 auto -300px;
+    /* Pad bottom by footer height */
+  
+    padding: 0 0 300px;
+  }
 }
 .centered {
   text-align: center;
@@ -6070,6 +6101,28 @@ h5,
 }
 .navbar-toggle {
   z-index: 1;
+}
+#footer {
+  padding-top: 2em;
+  padding-bottom: 2em;
+  height: 160px;
+  background-color: #2e2e2e;
+}
+@media (max-width: 480px) {
+  #footer {
+    height: 300px;
+  }
+}
+#footer h4 {
+  color: white;
+  text-transform: uppercase;
+}
+#footer i {
+  color: #aaaaaa;
+  font-size: 30px;
+}
+#footer p {
+  color: white;
 }
 .title {
   font-size: 3.5rem;
@@ -6316,20 +6369,4 @@ h5,
 .slide2 h2 {
   color: #2f2f2f;
   padding-bottom: 1em;
-}
-.footer {
-  padding-top: 2em;
-  padding-bottom: 2em;
-  background-color: #2e2e2e;
-}
-.footer h4 {
-  color: white;
-  text-transform: uppercase;
-}
-.footer i {
-  color: #aaaaaa;
-  font-size: 30px;
-}
-.footer p {
-  color: white;
 }
