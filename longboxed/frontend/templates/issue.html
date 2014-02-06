@@ -1,5 +1,5 @@
 {% extends "layouts/base.html" %}
-{% set title = issue.complete_title+' | Longboxed' %}
+{% block title %}{{ issue.complete_title }} | Longboxed{% endblock title %}
 
 {% block content %}
 <div class="container">

@@ -1,7 +1,6 @@
 {% extends 'layouts/base.html' %}
 {% from 'macros/comics.html' import render_block %}
-{% set active_page = 'comics' %}
-{% set title = 'Comics | Longboxed' %}
+{% block title %}Releases for {{ date }} | Longboxed{% endblock title %}
 
 {% block content -%}
 <div class="header releases-header">
