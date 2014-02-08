@@ -65,6 +65,7 @@ var add_to_pull_list = function(){
 //     //   prefetch: '../data/countries.json',                                         
 //     //   limit: 10                                                                   
 //     // });
+//     console.log('here!');
 //     $('.typeahead').typeahead({
 //         name: 'titles',
 //         prefetch: '/ajax/typeahead',
