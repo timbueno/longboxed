@@ -6271,6 +6271,9 @@ h5,
 .form--has-background label {
   color: #ffffff;
 }
+.title-input {
+  margin-bottom: 22px;
+}
 .btn-outline {
   color: #fff;
   background-color: transparent;
