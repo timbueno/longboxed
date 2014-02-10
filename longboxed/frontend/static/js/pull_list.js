@@ -75,9 +75,12 @@ var add_to_pull_list = function(){
 
 // instantiate the bloodhound suggestion engine
 var titles = new Bloodhound({
-  datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.title); },
-  queryTokenizer: Bloodhound.tokenizers.whitespace,
-  prefetch: '/ajax/typeahead'
+    datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.title); },
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    prefetch: {
+        url: '/ajax/typeahead',
+        ttl: 0
+    }
 });
  
 // initialize the bloodhound suggestion engine
@@ -100,13 +103,6 @@ $('.typeahead').typeahead(null,
         suggestion: suggestion_template
     }
 });
-
-
-// Handlebars.compile([
-//             '<p class="suggest-publisher">{{publisher}}</p>',
-//             '<p class="suggest-title">{{title}}</p>',
-//             '<p class="suggest-description">Wow look how cool this is.</p>'
-//         ].join(''))
 
 // Setup the page
 add_to_pull_list();
