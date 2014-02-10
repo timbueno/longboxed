@@ -37,16 +37,28 @@ var add_to_pull_list = function(){
                 $("input#title").val('');
                 $('.typeahead').typeahead('val', '');
                 $(".alert-box").append(
-                    "<div class=\"alert alert-success alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button><strong>"+response.data.title+"</strong> has been added to your Pull List!</div>"
+                    "<div class=\"alert alert-success alert-dismissable title-"+response.data.title_id+"\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button><strong>"+response.data.title+"</strong> has been added to your Pull List!</div>"
                 );
                 remove_from_pull_list();
+                // Fade out alert after 5 Seconds
+                window.setTimeout(function() {
+                    $(".title-"+response.data.title_id).fadeTo(500, 0).slideUp(500, function(){
+                        $(this).remove(); 
+                    });
+                }, 5000);
             }
             else if (response.status=='fail'){
                 $("input#title").val('');
                 $('.typeahead').typeahead('val', '');
                 $(".alert-box").append(
-                    "<div class=\"alert alert-warning alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>"+response.message+"</div>"
+                    "<div class=\"alert alert-warning alert-dismissable title-"+response.data.title_id+"\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>"+response.message+"</div>"
                 );
+                // Fade out alert afer 5 Seconds
+                window.setTimeout(function() {
+                    $(".title-"+response.data.title_id).fadeTo(500, 0).slideUp(500, function(){
+                        $(this).remove(); 
+                    });
+                }, 5000);
             }
             else {
                 $("input#title").val('');
@@ -75,7 +87,7 @@ titles.initialize();
 var suggestion_template = Handlebars.compile([
     '<p class="suggest-publisher">{{publisher}}</p>',
     '<p class="suggest-title">{{title}}</p>',
-    '<p class="suggest-description">0 Subscribers</p>'
+    '<p class="suggest-description">{{users}} Subscribers</p>'
 ].join(''));
  
 // instantiate the typeahead UI

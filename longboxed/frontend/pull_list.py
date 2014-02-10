@@ -28,17 +28,6 @@ def pull_list():
     return render_template('pull_list.html', form=form)
 
 
-# @route(bp, '/ajax/typeahead')
-# @login_required
-# def typeahead():
-#     """
-#     AJAX method
-
-#     Gets title names for all titles. This should go away someday
-#     """
-#     titles = [title.name for title in _comics.titles.all()]
-#     return jsonify(titles=titles)
-
 @route(bp, '/ajax/typeahead')
 @login_required
 def typeahead():
@@ -47,44 +36,16 @@ def typeahead():
 
     Gets title names for all titles. This should go away someday
     """
-    # titles = [
-    #     {
-    #         'value': title.id,
-    #         'name': title.name
-    #     }
-    #     for title in _comics.titles.all()
-    # ]
-    # titles = [title.name for title in _comics.titles.all()]
     titles = [
         {
+            'id': title.id,
             'title': title.name,
             'publisher': title.publisher.name,
+            'users': title.users.count()
         }
         for title in _comics.titles.all()
     ]
     return Response(dumps(titles), mimetype='application/json')
-
-# @route(bp, '/ajax/remove_favorite', methods=['POST'])
-# @login_required
-# def remove_favorite():
-#     """
-#     AJAX method
-
-#     Remove a favorite title from your pull list
-#     """
-#     try:
-#         # Get the index of the book to delete
-#         title = _comics.titles.get(long(request.form['id']))
-#         # Delete comic at desired index
-#         current_user.pull_list.remove(title)
-#         # Save updated user
-#         _users.save(current_user)
-#         html = render_template('favorites_list.html')
-#         refresh_bundle(current_user, current_wednesday())
-#         return jsonify(success=True, html=html)
-#     except:
-#         print "Unexpected error:", sys.exc_info()[1]
-#         return jsonify(success=False, html=None)
 
 
 @route(bp, '/ajax/remove_from_pull_list', methods=['POST'])
@@ -149,22 +110,3 @@ def add_to_pull_list():
                 }
             }
     return jsonify(response)
-
-
-# @route(bp, '/ajax/add_favorite', methods=['POST'])
-# @login_required
-# def add_favorite():
-#     """
-#     AJAX method
-
-#     Add a favorite title to your pull list
-#     """
-#     new_title = _comics.titles.first(name=request.form['new_favorite'])
-#     if new_title not in current_user.pull_list:
-#         current_user.pull_list.append(new_title)
-#         _users.save(current_user)
-#         html = render_template('favorites_list.html')
-#         refresh_bundle(current_user, current_wednesday())
-#         return jsonify(success=True, html=html)
-#     else:
-#         return jsonify(success=False, html=None)
