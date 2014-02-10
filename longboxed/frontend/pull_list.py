@@ -54,7 +54,14 @@ def typeahead():
     #     }
     #     for title in _comics.titles.all()
     # ]
-    titles = [title.name for title in _comics.titles.all()]
+    # titles = [title.name for title in _comics.titles.all()]
+    titles = [
+        {
+            'title': title.name,
+            'publisher': title.publisher.name,
+        }
+        for title in _comics.titles.all()
+    ]
     return Response(dumps(titles), mimetype='application/json')
 
 # @route(bp, '/ajax/remove_favorite', methods=['POST'])

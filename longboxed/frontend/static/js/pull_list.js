@@ -35,6 +35,7 @@ var add_to_pull_list = function(){
                     "<li class=\"list-group-item\" data-id="+response.data.title_id+" data-name=\""+response.data.title+"\" >"+response.data.title+"<i class=\"fa fa-times pull-right remove-button\"></i></li>"
                 ); 
                 $("input#title").val('');
+                $('.typeahead').typeahead('val', '');
                 $(".alert-box").append(
                     "<div class=\"alert alert-success alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button><strong>"+response.data.title+"</strong> has been added to your Pull List!</div>"
                 );
@@ -42,6 +43,7 @@ var add_to_pull_list = function(){
             }
             else if (response.status=='fail'){
                 $("input#title").val('');
+                $('.typeahead').typeahead('val', '');
                 $(".alert-box").append(
                     "<div class=\"alert alert-warning alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>"+response.message+"</div>"
                 );
@@ -59,25 +61,40 @@ var add_to_pull_list = function(){
     });
 };
 
-// var setup_typeahead = function(){
-//     // $('.example-countries .typeahead').typeahead({                                
-//     //   name: 'countries',                                                          
-//     //   prefetch: '../data/countries.json',                                         
-//     //   limit: 10                                                                   
-//     // });
-//     console.log('here!');
-//     $('.typeahead').typeahead({
-//         name: 'titles',
-//         prefetch: '/ajax/typeahead',
-//         limit: 10
-//     }).each(function() {
-//        if ($(this).hasClass('input-lg'))
-//             $(this).prev('.tt-hint').addClass('hint-lg');
-       
-//        if ($(this).hasClass('input-sm'))
-//             $(this).prev('.tt-hint').addClass('hint-sm');
-//     });
-// };
+// instantiate the bloodhound suggestion engine
+var titles = new Bloodhound({
+  datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.title); },
+  queryTokenizer: Bloodhound.tokenizers.whitespace,
+  prefetch: '/ajax/typeahead'
+});
+ 
+// initialize the bloodhound suggestion engine
+titles.initialize();
+
+// Compile the Template
+var suggestion_template = Handlebars.compile([
+    '<p class="suggest-publisher">{{publisher}}</p>',
+    '<p class="suggest-title">{{title}}</p>',
+    '<p class="suggest-description">0 Subscribers</p>'
+].join(''));
+ 
+// instantiate the typeahead UI
+$('.typeahead').typeahead(null, 
+{
+    name: 'titles',
+    displayKey: 'title',
+    source: titles.ttAdapter(),
+    templates: {
+        suggestion: suggestion_template
+    }
+});
+
+
+// Handlebars.compile([
+//             '<p class="suggest-publisher">{{publisher}}</p>',
+//             '<p class="suggest-title">{{title}}</p>',
+//             '<p class="suggest-description">Wow look how cool this is.</p>'
+//         ].join(''))
 
 // Setup the page
 add_to_pull_list();
