@@ -4,15 +4,22 @@
 
 {% block content -%}
 <div class="headerwrap">
-    <div class="container">
-        <div class="row centered blue">
-            <div class="visible-xs test">
-                <span class="icon-longboxed-logo logo"></span>
-            </div>
-            <div class="red">
+    <div class="container centered">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="visible-xs">
+                    <span class="icon-longboxed-logo logo"></span>
+                </div>
                 <h1>Never miss an issue again</h1>
             </div>
         </div>
+        {% if not g.user %}
+        <a href="{{ url_for('security.register') }}">
+            <button type="button" class="btn btn-outline-inverse btn-lg">
+                Get Started
+            </button>
+        </a>
+        {% endif %}
     </div>
 </div>
 <div class="week-links">
