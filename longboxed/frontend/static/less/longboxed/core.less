@@ -7,7 +7,7 @@ body {
   /* Necessary for sticky footer */
   height: 100%;
   /* Push down body to clear sticky navbar */
-  padding-top: 50px;
+  // padding-top: 50px;
 }
 
 h1, h2, h3, h4, h5,
@@ -73,6 +73,9 @@ h1, h2, h3, h4, h5,
 // Positions the brand in the center of the nav
 // when nav is collapsed
 .navbar-default {
+  // places content immediately below non-fixed navbar
+  margin-bottom: 0px;
+
     // Wraps brand and centers it when collapsed
     .navbar-brand-center {
       @media (max-width: @screen-xs-min) {

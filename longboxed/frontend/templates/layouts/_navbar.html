@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+<nav class="navbar navbar-default" role="navigation">
   <!-- Brand and toggle get grouped for better mobile display -->
   <div class="container">
     <div class="navbar-header">
@@ -28,17 +28,11 @@
                   Pull List
               </a>
             </li>
+            {% if g.user.has_role('admin') or g.user.has_role('super') %}
             <li class="divider"></li>
             <li class="dropdown-header">
-              Preferences
+              Admin
             </li>
-            <li>
-              <a href="{{ url_for('dashboard.settings') }}">
-                <i class="fa fa-cog fa-fw"></i>
-                  Settings
-              </a>
-            </li>
-            {% if g.user.has_role('admin') or g.user.has_role('super') %}
             <li>
               <a href="{{ url_for('admin.index') }}">
                 <i class="fa fa-lock fa-fw"></i>
