@@ -6024,7 +6024,6 @@ body {
   height: 100%;
   /* Push down body to clear sticky navbar */
 
-  padding-top: 50px;
 }
 h1,
 h2,
@@ -6085,6 +6084,9 @@ h5,
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.45);
+}
+.navbar-default {
+  margin-bottom: 0px;
 }
 @media (max-width: 480px) {
   .navbar-default .navbar-brand-center {
