@@ -15,6 +15,7 @@
         {{ render_field_with_errors(login_user_form.remember) }}
         {{ login_user_form.next }}
         {{ login_user_form.submit(class="btn btn-outline-inverse btn-lg btn-block", value="LOGIN") }}
+        <a class="note pull-right" href="{{ url_for('security.register') }}"><small>Need to register?</small></a>
       </form>
     </div>
   </div>

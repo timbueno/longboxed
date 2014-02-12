@@ -6257,6 +6257,9 @@ h5,
   padding: 15px;
   margin: 0 auto;
 }
+.form--has-background .note {
+  color: #fff;
+}
 .form--has-background .title {
   color: #fff;
   text-align: center;
