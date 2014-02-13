@@ -461,7 +461,10 @@ class DailyDownloadRecord(BaseRecord):
         Downloads and processes the cover image of the issue object.
         """
         created = _comics.issues.set_cover_image_from_url(issue, issue.big_image)
+        for thumbnail_width in current_app.config['THUMBNAIL_WIDTHS']:
+            thumbnail = _comics.issues.find_or_create_thumbnail(issue, thumbnail_width)
         return created
+
 
 if __name__ == "__main__":
     print 'WHOOPS!'

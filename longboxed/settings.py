@@ -16,6 +16,8 @@ AWS_S3_BUCKET = 'longboxed'
 AWS_ACCESS_KEY_ID = '***REMOVED***'
 AWS_SECRET_KEY = '***REMOVED***'
 
+THUMBNAIL_WIDTHS = [100, 250, 500]
+
 # Longboxed Specific Variables
 AFFILIATE_ID = '782419'
 SUPPORTED_PUBS = ['Marvel Comics', 'DC Comics', 'Dark Horse', 'IDW Publishing',\
