@@ -17,45 +17,50 @@
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse navbar-ex1-collapse">
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="{{ url_for('comics.this_week') }}">This Week</a></li>
-        <li><a href="{{ url_for('comics.next_week') }}">Next Week</a></li>
-        {% if g.user %}
-        <li><a href="{{ url_for('pull_list.pull_list') }}">Your Pull List</a></li>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cog"></i></a>
-          <ul class="dropdown-menu">
-            <li>
-              <a href="{{url_for('pull_list.pull_list')}}">
-                <i class="fa fa-list-ul fa-fw"></i>
-                  Pull List
-              </a>
-            </li>
-            {% if g.user.has_role('admin') or g.user.has_role('super') %}
-            <li class="divider"></li>
-            <li class="dropdown-header">
-              Admin
-            </li>
-            <li>
-              <a href="{{ url_for('admin.index') }}">
-                <i class="fa fa-lock fa-fw"></i>
-                  Admin
-              </a>
-            </li>
-            {% endif %}
-            <li class="divider"></li>
-            <li>
-              <a href="/logout">
-                <i class="fa fa-sign-out fa-fw"></i>
-                  Sign Out
-              </a>
-            </li>
-          </ul>
-        </li>
-        {% else %}
-        <li><a href="{{ url_for('security.login') }}">Login</a></li>
+      <div class="navbar-right">
+        <ul class="nav navbar-nav">
+          <li><a href="{{ url_for('comics.this_week') }}">This Week</a></li>
+          <li><a href="{{ url_for('comics.next_week') }}">Next Week</a></li>
+          {% if g.user %}
+          <li><a href="{{ url_for('pull_list.pull_list') }}">Your Pull List</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cog"></i></a>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="{{url_for('pull_list.pull_list')}}">
+                  <i class="fa fa-list-ul fa-fw"></i>
+                    Pull List
+                </a>
+              </li>
+              {% if g.user.has_role('admin') or g.user.has_role('super') %}
+              <li class="divider"></li>
+              <li class="dropdown-header">
+                Admin
+              </li>
+              <li>
+                <a href="{{ url_for('admin.index') }}">
+                  <i class="fa fa-lock fa-fw"></i>
+                    Admin
+                </a>
+              </li>
+              {% endif %}
+              <li class="divider"></li>
+              <li>
+                <a href="/logout">
+                  <i class="fa fa-sign-out fa-fw"></i>
+                    Sign Out
+                </a>
+              </li>
+            </ul>
+          </li>
+          {% endif %}
+        </ul>
+        {% if not g.user %}
+        <form class="navbar-form navbar-right" action="{{ url_for('security.login') }}">
+          <button class="btn btn-default">Sign In</button>
+        </form>
         {% endif %}
-      </ul>
+      </div>
     </div><!-- /.navbar-collapse -->
   </div>
 </nav>
