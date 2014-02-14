@@ -6107,6 +6107,7 @@ h5,
 #footer {
   padding-top: 2em;
   padding-bottom: 2em;
+  border-top: 1px solid #404040;
   height: 160px;
   background-color: #2e2e2e;
 }
@@ -6389,6 +6390,7 @@ h5,
 .slide2 {
   padding-top: 2em;
   padding-bottom: 2em;
+  border-top: 1px solid #e0e0e0;
   background-color: #eeeeee;
 }
 .slide2 h2 {
