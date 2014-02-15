@@ -77,21 +77,26 @@ h1, h2, h3, h4, h5,
   margin-bottom: 0px;
   // background:transparent;
 
-    // Wraps brand and centers it when collapsed
-    .navbar-brand-center {
-      @media (max-width: @screen-xs-min) {
-        text-align: center;
-        width: 100%;
-        position: absolute;
-      }
+  // Wraps brand and centers it when collapsed
+  .navbar-brand-center {
+    @media (max-width: @screen-xs-min) {
+      text-align: center;
+      width: 100%;
+      position: absolute;
     }
-    .navbar-brand {
-      // Position the logo in the center of the view if collapsed
-      @media (max-width: @screen-xs-min) {
-        float: none;
-        display: inline-block;
-      }
+  }
+  .navbar-brand {
+    // Position the logo in the center of the view if collapsed
+    @media (max-width: @screen-xs-min) {
+      float: none;
+      display: inline-block;
     }
+  }
+
+}
+
+.inline {
+  display: inline-block;
 }
 
 .navbar-toggle {

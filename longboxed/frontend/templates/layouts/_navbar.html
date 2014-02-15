@@ -19,39 +19,38 @@
     <div class="collapse navbar-collapse navbar-ex1-collapse">
       <div class="navbar-right">
         <ul class="nav navbar-nav">
-          <li><a href="{{ url_for('comics.this_week') }}">This Week</a></li>
-          <li><a href="{{ url_for('comics.next_week') }}">Next Week</a></li>
+          <li>
+            <a href="{{ url_for('comics.this_week') }}">
+              <span class="hidden-xs">This Week</span>
+              <span class="visible-xs"><i class="fa fa-arrow-circle-o-down fa-fw"></i> This Week</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('comics.next_week') }}">
+              <span class="hidden-xs">Next Week</span>
+              <span class="visible-xs"><i class="fa fa-arrow-circle-o-right fa-fw"></i> Next Week</span>
+            </a>
+          </li>
           {% if g.user %}
-          <li><a href="{{ url_for('pull_list.pull_list') }}">Your Pull List</a></li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cog"></i></a>
-            <ul class="dropdown-menu">
-              <li>
-                <a href="{{url_for('pull_list.pull_list')}}">
-                  <i class="fa fa-list-ul fa-fw"></i>
-                    Pull List
-                </a>
-              </li>
-              {% if g.user.has_role('admin') or g.user.has_role('super') %}
-              <li class="divider"></li>
-              <li class="dropdown-header">
-                Admin
-              </li>
-              <li>
-                <a href="{{ url_for('admin.index') }}">
-                  <i class="fa fa-lock fa-fw"></i>
-                    Admin
-                </a>
-              </li>
-              {% endif %}
-              <li class="divider"></li>
-              <li>
-                <a href="/logout">
-                  <i class="fa fa-sign-out fa-fw"></i>
-                    Sign Out
-                </a>
-              </li>
-            </ul>
+          <li>
+            <a href="{{ url_for('pull_list.pull_list') }}">
+              <span class="hidden-xs">Your Pull List</span>
+              <span class="visible-xs"><i class="fa fa-list fa-fw"></i> Your Pull List</span>
+            </a>
+          </li>
+            {% if g.user.has_role('admin') or g.user.has_role('super') %}
+            <li>
+              <a href="{{ url_for('admin.index') }}">
+                <span class="hidden-xs"><i class="fa fa-wrench fa-fw"></i></span>
+                <span class="visible-xs"><i class="fa fa-wrench fa-fw"></i> Administration</span>
+              </a>
+            </li>
+            {% endif %}
+          <li>
+            <a href="/logout">
+              <span class="hidden-xs"><i class="fa fa-sign-out fa-fw"></i></span>
+              <span class="visible-xs"><i class="fa fa-sign-out fa-fw"></i> Sign Out</span>
+            </a>
           </li>
           {% endif %}
         </ul>

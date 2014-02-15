@@ -6101,6 +6101,9 @@ h5,
     display: inline-block;
   }
 }
+.inline {
+  display: inline-block;
+}
 .navbar-toggle {
   z-index: 1;
 }
