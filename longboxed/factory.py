@@ -22,7 +22,7 @@ from sqlalchemy_imageattach.context import push_store_context, pop_store_context
 
 from . import signals
 from .core import db, mail, security, store, social
-from .helpers import register_blueprints, pretty_date
+from .helpers import register_blueprints
 from .middleware import HTTPMethodOverrideMiddleware
 from .models import Connection, User, Role
 
