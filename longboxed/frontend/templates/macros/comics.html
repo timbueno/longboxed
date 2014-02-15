@@ -21,7 +21,7 @@
     <div class="col-xs-4 col-xs-offset-2">
       <a href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
       {% if issue.cover_image %}
-        <img src="" class="img-responsive">
+        <img src="{{ issue.cover_image.find_thumbnail(width=250).locate() }}" class="img-responsive">
       {% else %}
         <img src="http://placehold.it/100x150" alt="...">
       {% endif %}
