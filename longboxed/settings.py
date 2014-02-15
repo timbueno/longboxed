@@ -11,7 +11,7 @@ from os import environ
 DEBUG = True
 DEBUG_TB_INTERCEPT_REDIRECTS = False
 
-USE_AWS = True
+USE_AWS = False
 AWS_S3_BUCKET = 'longboxed'
 AWS_ACCESS_KEY_ID = '***REMOVED***'
 AWS_SECRET_KEY = '***REMOVED***'
