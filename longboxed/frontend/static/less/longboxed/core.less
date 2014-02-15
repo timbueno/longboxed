@@ -1,0 +1,151 @@
+html {
+  /* Necessary for sticky footer */
+  height: 100%;
+}
+
+body {
+  /* Necessary for sticky footer */
+  height: 100%;
+  /* Push down body to clear sticky navbar */
+  // padding-top: 50px;
+}
+
+h1, h2, h3, h4, h5,
+.h1, .h2, .h3, .h4, .h5 {
+  letter-spacing: @headings-letter-spacing;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto;
+  /* Negative indent footer by its height */
+  margin: 0 auto -160px;
+  /* Pad bottom by footer height */
+  padding: 0 0 160px;
+
+  @media (max-width: @screen-xs-min) {
+    /* Negative indent footer by its height */
+    margin: 0 auto -300px;
+    /* Pad bottom by footer height */
+    padding: 0 0 300px;
+
+  }
+}
+
+.centered {
+    text-align: center;
+}
+
+.section (@padding-scale: 1) {
+    padding-top: @padding-scale*1em;
+    padding-bottom: @padding-scale*1em;
+}
+
+.background-image-container {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+
+    background-image: url(../img/thorvhulk.jpg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    z-index: -10;
+}
+
+.background-image-container:after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.45);
+}
+
+// Positions the brand in the center of the nav
+// when nav is collapsed
+.navbar-default {
+  // places content immediately below non-fixed navbar
+  margin-bottom: 0px;
+  // background:transparent;
+
+  // Wraps brand and centers it when collapsed
+  .navbar-brand-center {
+    @media (max-width: @screen-xs-min) {
+      text-align: center;
+      width: 100%;
+      position: absolute;
+    }
+  }
+  .navbar-brand {
+    // Position the logo in the center of the view if collapsed
+    @media (max-width: @screen-xs-min) {
+      float: none;
+      display: inline-block;
+    }
+  }
+
+}
+
+.navbar-toggle {
+  // Place button above other elements
+  // Fix for centering the logo in collapsed mode
+  z-index: 1;
+}
+
+
+#footer {
+    .section(2);
+    border-top: 1px solid lighten(#000, 25%);
+
+    height: 160px;
+    @media (max-width: @screen-xs-min) {
+      height: 300px;
+    }
+
+    // background-color: #2f2f2f;
+    background-color: @gray-dark;
+
+    h4 {
+        color: white;
+        text-transform: uppercase;
+    };
+
+    i {
+        // color: #aaaaaa;
+        font-size: 30px;
+    }
+
+    p {
+        color: white;
+    };
+
+    .twitter {
+      color: white;
+      &:hover {
+        color: #4099ff;
+      }
+    }
+
+    .facebook {
+      color: white;
+      &:hover {
+        color: #3b5999;
+      }
+    }
+    
+    .mail {
+      color: white;
+      &:hover {
+        color: #4099ff;
+      }
+    }
+}

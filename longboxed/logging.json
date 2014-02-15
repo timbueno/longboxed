@@ -1,0 +1,98 @@
+{ 
+	"version": 1, 
+	"formatters": { 
+		"long": {
+			"format": "%(asctime)s %(levelname)-5.5s [%(name)s][%(threadName)s] %(message)s"
+		},
+		"short": {
+			"format": "%(message)s"
+		},
+		"comic_format": {
+			"format" : "%(asctime)s %(message)s"
+		}
+	},
+	"filters":{
+		"log_only_debug":{
+			"()": "longboxed.factory.LogOnlyLevel",
+			"level": "DEBUG"
+		},
+		"log_only_info":{
+			"()": "longboxed.factory.LogOnlyLevel",
+			"level": "INFO"
+		},
+		"log_only_error":{
+			"()": "longboxed.factory.LogOnlyLevel",
+			"level": "ERROR"
+		}
+	}, 
+	"handlers": {
+		"console": {
+			"class": "logging.StreamHandler", 
+			"formatter": "long",
+			"stream": "ext://sys.stderr"
+		},
+		"debug_handler": {
+			"level": "DEBUG",
+			"filters": ["log_only_debug"],
+			"class": "logging.StreamHandler",
+			"stream": "ext://sys.stderr",
+			"formatter": "short"
+		},
+		"file": { 
+			"class": "logging.handlers.RotatingFileHandler",
+			"formatter": "long", 
+			"filename": "logs/frontend.log",
+			"maxBytes": 16384,
+			"backupCount": 5
+		},
+		"info_handler": { 
+			"level": "INFO",
+			"class": "logging.handlers.RotatingFileHandler",
+			"formatter": "long", 
+			"filename": "logs/info.log",
+			"maxBytes": 16384,
+			"backupCount": 5
+		},
+		"database_modifications": {
+			"level": "INFO",
+			"filters": ["log_only_info"],
+			"class": "logging.handlers.RotatingFileHandler",
+			"formatter": "comic_format",
+			"filename": "logs/db_modifications.log",
+			"maxBytes": 163840,
+			"backupCount": 5
+		},
+		"comic_processing": {
+			"level": "ERROR",
+			"filters": ["log_only_error"],
+			"class": "logging.handlers.RotatingFileHandler",
+			"formatter": "comic_format",
+			"filename": "logs/comic_processing.log",
+			"maxBytes": 163840,
+			"backupCount": 5
+		}
+	}, 
+	"loggers": { 
+		"frontend": {
+			"level": "DEBUG",
+			"handlers": ["debug_handler", "info_handler"]
+		},
+		"api": {
+			"level": "INFO",
+			"handlers": ["info_handler"]
+		},
+		"issue_processing": {
+			"level": "DEBUG",
+			"handlers": ["debug_handler", "database_modifications", "comic_processing"]
+		},
+		"sqlalchemy.engine": {
+			"propagate": true
+		},
+		"werkzeug": {
+			"propagate": true
+		}
+	}, 
+	"root": {
+		"level": "ERROR"
+	}
+}

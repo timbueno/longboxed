@@ -8,7 +8,7 @@
 import requests
 
 from ..core import Service
-from .models import User
+from .models import Role, User
 
 class UsersService(Service):
     __model__ = User
@@ -35,3 +35,7 @@ class UsersService(Service):
             calendars.append((calid, name, primary))
 
         return (default_cal, calendars)
+
+
+class RolesService(Service):
+    __model__ = Role

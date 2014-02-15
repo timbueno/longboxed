@@ -1,100 +1,107 @@
 {% extends "layouts/base.html" %}
-{% set active_page = 'pull_list' %}
-{% set title = 'Your Pull List | Longboxed' %}
+{% from 'macros/forms.html' import render_field_with_errors %}
+{% block title %}Your Pull List | Longboxed{% endblock title %}
 
-{% block main_content %}
+{% block styles %}
+{{ super() }}
+<!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/typeahead-bootstrap.css')}}" /> -->
+{% endblock styles %}
+
+{% block content %}
+<div class="add-title-section">
     <div class="container">
-        <h2>Your Favorite Comics</h2>
-        <div class="row-fluid">
-            <div class="span7">
-                <div class="well favorites">
-                    {% include "favorites_list.html" %}
-                </div>
-            </div>
-            <div class="span5">
-                <div class="well">
-                    <h3>Add more comics...</h3>
-                    <div id="form">
-                        <form id="newcomics">
-                            <input type="text" name="newfavorite" id="newfavorite" class="input-xlarge typeahead" data-provide="typeahead" autocomplete="off">
-                            <div>
-                                <button class="btn btn-primary testbutton">Update</button>
-                            </div>
-                        </form>
+        <div class="row title-input">
+            <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+                <form class="">
+                    {{ form.hidden_tag() }}
+                    <div class="input-group input-group-lg">
+                        {{ form.title(class="form-control text-box typeahead input-lg", placeholder='ADD TITLE') }}
+                        <span class="input-group-btn">
+                            <button id="submit_pull" class="btn btn-default btn-lg"><i class="fa fa-plus"></i></button>
+                        </span>
                     </div>
+                </form>
+    <!--             <form class="form">
+                    {{ form.hidden_tag() }}
+                    {{ render_field_with_errors(form.title, class="typeahead input-lg") }}
+                </form> -->
+            </div> <!-- col -->
+        </div> <!-- row -->
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+                <div class="alert-box">
                 </div>
-            <div class="span4">
-        </div>
-    </div>  
+            </div> <!-- col -->
+        </div> <!-- row -->
+    </div> <!-- container -->
+</div> <!-- add-title-section -->
+<div class="pull-list-with-bundles">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 col-md-offset-2 pull-list">
+                <div class="panel panel-default">
+                    <div class="panel-heading centered">
+                        <h3>Titles</h3>
+                    </div>
+                    <ul id="user-pull-list" class="list-group">
+                        {% for title in g.user.pull_list %}
+                            <li class="list-group-item" data-id={{ title.id }} data-name="{{ title.name }}">
+                                {{ title.name }}
+                                <i class="fa fa-times pull-right remove-button"></i>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div> <!-- pull-list -->
+            <div class="col-md-5 bundles">
+                <div class="panel panel-default">
+                    <div class="panel-heading centered">
+                        <h3>Recent Bundles</h3>
+                    </div>
+                </div> <!-- panel -->
+                {% for bundle in g.user.bundles %}
+                    {% if bundle.issues %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading centered">
+                            <h4>{{ bundle.release_date }}</h4>
+                        </div>
+                        <div class="panel-body row">
+                        {% for issue in bundle.issues %}
+                            <div class="col-xs-3 pull-list-thumbnail">
+                                <a class="thumbnail" href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
+                                    <img class="img-responsive" src={% if issue.cover_image %}"{{ issue.cover_image.locate() }}"{% endif %} title="{{ issue.complete_title }}">
+                                </a>
+                            </div>
+                        {% endfor %}
+                        </div>
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ loop.index }}">
+                            <div class="panel-heading centered hover-change">
+                                <h4>View List</h4>
+                            </div>
+                        </a>
+                        <div id="collapse{{ loop.index }}" class="panel-collapse collapse">
+                            <ul class="list-group centered">
+                                {% for issue in bundle.issues %}
+                                <a href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
+                                    <li class="list-group-item">
+                                        {{ issue.complete_title }}
+                                    </li>
+                                </a>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div> <!-- bundles -->
+        </div> <!-- row -->
+    </div> <!-- container -->
+</div> <!-- pull-list-with-bundles -->
 {% endblock %}
 
-{%- block bootstrap_js_bottom %}
-
-    {{ super() }}
-
-    <script>
-        var remove_favorite = function(){
-            $('.testremove').each(
-                function(){
-                    var $pElem = $(this);
-                    var $id = $pElem.attr('data-id');
-                    var $name = $pElem.attr('data-name');
-                    $pElem.click(
-                        function(){
-                            $.post(
-                                '/ajax/remove_favorite',
-                                {'id': $id},
-                                function(data){
-                                    if (data.success==true){
-                                        $('div.favorites').html(data.html);
-                                        remove_favorite();
-                                        alertify.success('Successfully removed \''+$name+'\' from your Pull List!');
-                                    }
-                                    else {
-                                        alertify.error('Something went wrong...');
-                                    }
-                                }
-                            );
-                        }
-                    );
-                }
-            );
-        }
-        remove_favorite();
-        var favorites = function(){
-            $('.testbutton').click(function(){
-                var new_favorite = $("input#newfavorite").val();
-                $.post(
-                    '/ajax/add_favorite',
-                    {'new_favorite': new_favorite},
-                    function(data){
-                        if (data.success==true){
-                            $('div.favorites').html(data.html);
-                            remove_favorite();
-                            alertify.success('Successfully added \''+new_favorite+'\' to your Pull List!');
-                                $("input#newfavorite").val('');
-                        }
-                        else {
-                            alertify.log('\''+new_favorite+'\' is already on your Pull List');
-                            $("input#newfavorite").val('');
-                        }
-                    }
-                );
-                return false;
-            });
-        }
-        favorites();
-    </script>
-
-    <script>
-        var comic_typeahead = function(titles){
-            $('.typeahead').typeahead({
-                    source: titles
-                }
-            );
-        }
-        $.get('/ajax/typeahead', function(data){
-            comic_typeahead(data.titles);
-        });
-    </script>
-{% endblock bootstrap_js_bottom %}
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='js/handlebars-v1.3.0.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/typeahead.bundle.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/pull_list.js') }}"></script>
+{% endblock scripts %}

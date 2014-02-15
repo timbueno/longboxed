@@ -24,3 +24,6 @@ fi
 # VirtualenvWrapper setup
 export WORKON_HOME=$HOME/.virtualenvs
 source /usr/local/bin/virtualenvwrapper.sh
+
+# Database Setup
+export DATABASE_URL="postgres://app_user:password@localhost/longboxed"

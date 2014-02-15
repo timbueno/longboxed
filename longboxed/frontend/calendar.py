@@ -11,7 +11,7 @@ import sys
 
 from dateutil import tz
 from flask import Blueprint, jsonify, request
-from flask.ext.login import current_user, login_required
+from flask.ext.security import current_user, login_required
 import requests
 
 from . import route
@@ -91,5 +91,4 @@ def events_on_day(cal, day):
     r = response.json()
     if 'items' in r:
         return r['items']
-    # print 'NO EVENTS FOUND'
     return None

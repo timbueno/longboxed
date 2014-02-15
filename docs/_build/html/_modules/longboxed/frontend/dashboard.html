@@ -1,0 +1,229 @@
+
+
+  
+  
+ 
+  
+  
+ 
+
+
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>longboxed.frontend.dashboard &mdash; Longboxed 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-3.0.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-3.0.0/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-3.0.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Longboxed 0.1.1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">Longboxed</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.1</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a href="../../../index.html"
+     class="dropdown-toggle"
+     data-toggle="dropdown">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+    ><ul class="simple">
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      
+  <h1>Source code for longboxed.frontend.dashboard</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    longboxed.frontend.dashboard</span>
+<span class="sd">    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+
+<span class="sd">    Frontend blueprints</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c"># import sys</span>
+<span class="c"># from datetime import datetime, timedelta</span>
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span><span class="n">redirect</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">url_for</span>
+<span class="kn">from</span> <span class="nn">flask.ext.security</span> <span class="kn">import</span> <span class="p">(</span><span class="n">current_user</span><span class="p">,</span> <span class="n">login_required</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">flask.ext.wtf</span> <span class="kn">import</span> <span class="n">Form</span>
+<span class="kn">from</span> <span class="nn">wtforms</span> <span class="kn">import</span> <span class="n">BooleanField</span><span class="p">,</span> <span class="n">SelectField</span><span class="p">,</span> <span class="n">SelectMultipleField</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">route</span>
+<span class="kn">from</span> <span class="nn">..services</span> <span class="kn">import</span> <span class="n">comics</span> <span class="k">as</span> <span class="n">_comics</span>
+<span class="kn">from</span> <span class="nn">..services</span> <span class="kn">import</span> <span class="n">users</span> <span class="k">as</span> <span class="n">_users</span>
+
+
+<span class="n">bp</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s">&#39;dashboard&#39;</span><span class="p">,</span> <span class="n">__name__</span><span class="p">)</span>
+
+<span class="nd">@bp.before_app_request</span>
+<div class="viewcode-block" id="before_request"><a class="viewcode-back" href="../../../frontend.html#longboxed.frontend.dashboard.before_request">[docs]</a><span class="k">def</span> <span class="nf">before_request</span><span class="p">():</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">is_anonymous</span><span class="p">():</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">current_user</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="bp">None</span>
+
+</div>
+<span class="nd">@route</span><span class="p">(</span><span class="n">bp</span><span class="p">,</span> <span class="s">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">is_anonymous</span><span class="p">():</span>
+        <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;main.html&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;main.html&#39;</span><span class="p">)</span>
+
+
+<span class="nd">@route</span><span class="p">(</span><span class="n">bp</span><span class="p">,</span> <span class="s">&#39;/settings&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">,</span><span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">settings</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">current_user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s">&#39;display_favs&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+                <span class="n">current_user</span><span class="o">.</span><span class="n">display_pull_list</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">current_user</span><span class="o">.</span><span class="n">display_pull_list</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">current_user</span><span class="o">.</span><span class="n">default_cal</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s">&#39;cals&#39;</span><span class="p">]</span>
+
+            <span class="n">pubs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">long</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">getlist</span><span class="p">(</span><span class="s">&#39;publishers&#39;</span><span class="p">)]</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">_comics</span><span class="o">.</span><span class="n">publishers</span><span class="o">.</span><span class="n">get_all</span><span class="p">(</span><span class="o">*</span><span class="n">pubs</span><span class="p">)</span>
+            <span class="n">current_user</span><span class="o">.</span><span class="n">publishers</span> <span class="o">=</span> <span class="n">p</span>
+            <span class="n">_users</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">current_user</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;index&#39;</span><span class="p">))</span>
+
+    <span class="c"># Default calendars</span>
+    <span class="n">calendars</span> <span class="o">=</span> <span class="n">_users</span><span class="o">.</span><span class="n">get_calendar_info</span><span class="p">(</span><span class="n">current_user</span><span class="p">)</span> <span class="c"># Get a users calendar</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">cal</span> <span class="ow">in</span> <span class="n">calendars</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">cal</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cal</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="c"># Set the default calendar</span>
+    <span class="n">default_cal</span> <span class="o">=</span> <span class="n">current_user</span><span class="o">.</span><span class="n">default_cal</span>
+
+    <span class="c"># Get all publishers</span>
+    <span class="n">pubs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">p</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">_comics</span><span class="o">.</span><span class="n">publishers</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">]</span> <span class="c">#########</span>
+    <span class="n">pubs</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="c"># Get user defaults</span>
+    <span class="n">user_pubs</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">current_user</span><span class="o">.</span><span class="n">publishers</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span><span class="s">&#39;&#39;</span><span class="p">]</span>
+
+
+
+    <span class="k">class</span> <span class="nc">ExampleForm</span><span class="p">(</span><span class="n">Form</span><span class="p">):</span>
+        <span class="n">display_favs</span> <span class="o">=</span> <span class="n">BooleanField</span><span class="p">(</span>
+                            <span class="s">&#39;Display Favorites&#39;</span><span class="p">,</span>
+                            <span class="n">description</span><span class="o">=</span><span class="s">u&#39;If a comic on your favorites list matches an issue out that week, display it inline with the other books.&#39;</span><span class="p">,</span> 
+                            <span class="n">default</span> <span class="o">=</span> <span class="n">current_user</span><span class="o">.</span><span class="n">display_pull_list</span><span class="p">)</span>
+        <span class="n">cals</span> <span class="o">=</span> <span class="n">SelectField</span><span class="p">(</span>
+                    <span class="s">u&#39;Calendars&#39;</span><span class="p">,</span>
+                    <span class="n">description</span><span class="o">=</span><span class="s">u&#39;Set the calendar the you want to add comics to.&#39;</span><span class="p">,</span>
+                    <span class="n">choices</span><span class="o">=</span><span class="n">c</span><span class="p">,</span>
+                    <span class="n">default</span><span class="o">=</span><span class="n">default_cal</span><span class="p">)</span>
+        <span class="n">publishers</span> <span class="o">=</span> <span class="n">SelectMultipleField</span><span class="p">(</span>
+            <span class="s">u&#39;Publishers&#39;</span><span class="p">,</span>
+            <span class="p">{</span><span class="s">&#39;title&#39;</span><span class="p">:</span><span class="s">&#39;Select Publishers&#39;</span><span class="p">},</span>
+            <span class="n">description</span><span class="o">=</span><span class="s">u&#39;Publishers to display (selecting none displays all)&#39;</span><span class="p">,</span>
+            <span class="n">choices</span><span class="o">=</span><span class="n">pubs</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">user_pubs</span>
+        <span class="p">)</span>
+
+    <span class="n">form</span> <span class="o">=</span> <span class="n">ExampleForm</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;settings.html&#39;</span><span class="p">,</span><span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, Tim Bueno.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

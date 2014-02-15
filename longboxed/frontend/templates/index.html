@@ -1,0 +1,68 @@
+{% extends "layouts/base.html" %}
+{% block title %}Longboxed | Never miss an issue again{% endblock title %}
+
+
+{% block content -%}
+<div class="headerwrap">
+    <div class="container centered">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="visible-xs">
+                    <span class="icon-longboxed-logo logo"></span>
+                </div>
+                <h1>Never miss an issue again</h1>
+            </div>
+        </div>
+        {% if not g.user %}
+        <a href="{{ url_for('security.register') }}" role="button" class="btn btn-outline-inverse btn-lg">
+            Get Started
+        </a>
+        {% endif %}
+    </div>
+</div>
+<div class="slide1">
+    <div class="container">
+        <div class="row centered">
+            <div class="col-sm-8 col-sm-offset-2">
+                <h2>Keep track of each week's releases</h2>
+                <p>See why LONGBOXED is the best resource to keep you up to date with your favorite comic books.</p>
+            </div>
+            <div class="col-sm-4">
+                <i class="fa fa-star"></i>
+                <h4>ALL YOUR FAVORITES</h4>
+                <p>Every popular title from all major publishers is cataloged and tracked.</p>
+            </div>
+            <div class="col-sm-4">
+                <i class="fa fa-list"></i>
+                <h4>CREATE A PULL LIST</h4>
+                <p>Create a Pull List and be notified when issues on it are released!</p>
+            </div>
+            <div class="col-sm-4">
+                <i class="fa fa-undo"></i>
+                <h4>UPDATED DAILY</h4>
+                <p>Our catalog is constantly being updated to provide you with the most accurate information.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="slide2">
+    <div class="container">
+        <div class="row centered">
+            <div class="col-sm-8 col-sm-offset-2">
+                <h2>POPULAR THIS WEEK</h2>
+            </div>
+            {% if issues %}
+                {% for issue in issues %}
+                <div class="col-xs-6 col-sm-3">
+                    <a class="thumbnail" href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
+                        <img class="img-responsive" src={% if issue.cover_image %}"{{ issue.cover_image.find_thumbnail(width=250).locate() }}"{% endif %} title="{{ issue.complete_title }}" alt="{{ issue.complete_title }}">
+                    </a>
+                </div>
+                {% endfor %}
+            {% else %}
+                <h1>NOTHING IS POPULAR THIS WEEK</h1>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{%- endblock content %}

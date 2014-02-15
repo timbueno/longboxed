@@ -1,5 +1,6 @@
 venv
 .vagrant
+.DS_Store
 base_files
 openid_store
 celerybeat-schedule
@@ -8,3 +9,8 @@ celerybeat-schedule
 dd
 /devops/vars/app_deployment_vars.yml
 /devops/vars/initial_provision_vars.yml
+/logs/*
+!/logs/folder_create
+/store
+codekit-config.json
+longboxed/frontend/static/js/bower_components

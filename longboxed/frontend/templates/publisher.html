@@ -1,0 +1,18 @@
+{% extends "layouts/base.html" %}
+{% set title = publisher.name+' | Longboxed' %}
+
+{% block content %}
+    <div class="container">
+       <h2>{{ publisher.name }}</h2>
+
+       <br>
+
+       {% for title in titles|sort(attribute='name') %}
+
+       <a href="{{ url_for('comics.title', title_id=title.id) }}">{{ title.name }}</a>
+       <br>
+
+       {% endfor %}
+
+    </div>
+{% endblock %}

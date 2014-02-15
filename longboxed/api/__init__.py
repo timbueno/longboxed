@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-    overholt.api
+    longboxed.api
     ~~~~~~~~~~~~~
 
-    overholt api application package
+    longboxed api application package
 """
 
 from functools import wraps

@@ -1,0 +1,14 @@
+{% extends 'admin/model/edit.html' %}
+
+{% block body %}
+    <div class="row-fluid">
+        <div class="span6">
+            <div class="coverImage">
+               <img class="m_issue img-rounded" src={% if model.cover_image %}"{{ model.cover_image.locate() }}"{% endif %}> 
+            </div>
+        </div>
+        <div class="span6">
+            {{ super() }}
+        </div>
+    </div>
+{% endblock %}

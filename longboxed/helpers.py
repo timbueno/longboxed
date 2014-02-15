@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     longboxed.helpers
-    ~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~
 
     longboxed helpers module
 """
@@ -9,8 +9,15 @@
 import pkgutil
 import importlib
 
-from flask import Blueprint
+from datetime import datetime, timedelta
+from HTMLParser import HTMLParser
 from json import JSONEncoder as BaseJSONEncoder
+
+from flask import Blueprint
+from flask.ext.mail import Message
+
+from .core import mail
+from .services import bundle, comics
 
 
 def register_blueprints(app, package_name, package_path):
@@ -40,6 +47,154 @@ class JSONEncoder(BaseJSONEncoder):
         if isinstance(obj, JsonSerializer):
             return obj.to_json()
         return super(JSONEncoder, self).default(obj)
+
+
+class MLStripper(HTMLParser):
+    def __init__(self):
+        self.reset()
+        self.fed = []
+    def handle_data(self, d):
+        self.fed.append(d)
+    def get_data(self):
+        return ''.join(self.fed)
+
+
+def strip_tags(html):
+    """Strips a string of all html tags"""
+    s = MLStripper()
+    s.feed(html)
+    return s.get_data()
+
+def wednesday(date, multiplier=0):
+    """Given a date, returns a Date() object containing the week's wednesday.
+    A week is defined as Sunday thru Saturday. The 'multiplier' argument 
+    provides the ability navigate multiple weeks into the future and past
+
+    :param date: :class:`Date` object used to center in on desired week
+    :param multiplier: :class:`int` object that moves the date forward or backward
+    """
+    sunday, saturday = get_week(date, multiplier)
+    return sunday + timedelta(days=3)
+
+def current_wednesday():
+    """Gets the current weeks wednesday"""
+    return wednesday(datetime.today().date())
+
+def next_wednesday():
+    """Gets next weeks wendesday"""
+    return wednesday(datetime.today().date(), 1)
+
+def two_wednesdays():
+    """Gets two wednesdays from now"""
+    return wednesday(datetime.today().date(), 2)
+
+def last_wednesday():
+    """Get last week's Wednesday as a :class:`Date` object"""
+    return wednesday(datetime.today().date(), -1)
+
+
+def get_week(date, multiplier=0):
+    """Returns Sunday and Saturday of the week the 'date' argument is currently in.
+    The 'multiplier' argument provides the ability to navigate multiple weeks into 
+    the future and past"""
+    day_idx = (date.weekday() + 1) % 7 # Turn sunday into 0, monday into 1, etc.
+    sunday = (date - timedelta(days=day_idx)) + (multiplier * timedelta(days=7))
+    saturday = (sunday + timedelta(days=6))
+    return (sunday, saturday)
+
+
+def next_n_weeks(date, n=1):
+    """
+    Returns the first sunday and last saturday of the range. This is useful to 
+    provide a lower and upper bound on SQL queries.
+    """
+    first_sunday, first_saturday = get_week(date)
+    last_saturday = first_saturday + (n * timedelta(days=7))
+    return (first_sunday, last_saturday)
+
+
+def mail_content(recipients, sender, subject, content, html=None, attachment=None):
+    """
+    Generic function allowing for easy sending of email. A :class:`Mail`
+    from :module:`longboxed.core` must be in the applications context
+
+    :param recipients: list of email address strings
+    :param sender: sending email address
+    :param subject: message subject string
+    :param content: html content
+    :param attachment: plain text attachment
+    """
+    msg = Message(subject,
+                  sender=sender,
+                  recipients=recipients,
+                  body=content,
+                  html=html
+    )
+    if attachment:
+        msg.attach(filename='checks.txt', content_type='text/plain', data=attachment)
+    mail.send(msg)
+    return
+
+
+def refresh_bundle(user, date, matches=None):
+    if not matches:
+        issues = comics.issues.find_issue_with_date(date)
+        matches = [i for i in issues if i.title in user.pull_list and i.is_parent]
+    b = bundle.first(user=user, release_date=date)
+    if b:
+        b = bundle.update(b, issues=matches, last_updated=datetime.now())
+    else:
+        b = bundle.create(
+            user=user,
+            release_date=date,
+            issues=matches,
+            last_updated=datetime.now()
+        )
+    return b
+
+
+def pretty_date(time=False):
+    """
+    Get a datetime object or a int() Epoch timestamp and return a
+    pretty string like 'an hour ago', 'Yesterday', '3 months ago',
+    'just now', etc
+    """
+    from datetime import datetime
+    now = datetime.now()
+    if type(time) is int:
+        diff = now - datetime.fromtimestamp(time)
+    elif isinstance(time,datetime):
+        diff = now - time 
+    elif not time:
+        diff = now - now
+    second_diff = diff.seconds
+    day_diff = diff.days
+
+    if day_diff < 0:
+        return ''
+
+    if day_diff == 0:
+        if second_diff < 10:
+            return "just now"
+        if second_diff < 60:
+            return str(second_diff) + " seconds ago"
+        if second_diff < 120:
+            return  "a minute ago"
+        if second_diff < 3600:
+            return str( second_diff / 60 ) + " minutes ago"
+        if second_diff < 7200:
+            return "an hour ago"
+        if second_diff < 86400:
+            return str( second_diff / 3600 ) + " hours ago"
+    if day_diff == 1:
+        return "Yesterday"
+    if day_diff < 7:
+        return str(day_diff) + " days ago"
+    if day_diff < 31:
+        return str(day_diff/7) + " weeks ago"
+    if day_diff < 365:
+        return str(day_diff/30) + " months ago"
+    return str(day_diff/365) + " years ago"
 
 
 class JsonSerializer(object):

@@ -6,36 +6,48 @@
     launchpad frontend application package
 """
 
+from flask import render_template
+from flask.ext.debugtoolbar import DebugToolbarExtension
 from functools import wraps
 
-from flask import render_template
-
 from .. import factory
+from ..helpers import pretty_date
 from . import assets
+from . import admin
 
 
 def create_app(settings_override=None):
-    """Returns the Longboxed dashboard application instance"""
+    """Returns the Longboxed dashboard application instance
+
+    :param settings_override: dictionary of settings to overide
+    """
     app = factory.create_app(__name__, __path__, settings_override)
+    
+    #: Register custom Jinja2 filters
+    app.jinja_env.filters['pretty_date'] = pretty_date
 
-    # Init assets
+    #: Init assets
     assets.init_app(app)
+    #: Flask-Admin
+    admin.init_app(app)
 
-    # Register custom error handlers
+    #: Flask-DebugToolbar
+    # DebugToolbarExtension(app)
+
+    #: Register custom error handlers
     if not app.debug:
         for e in [500, 404]:
-            print 'IN CREATE_APP_FRONTEND'
-            # app.errorhandler(e)(handle_error)
+            app.errorhandler(e)(handle_error)
 
     return app
 
 
-# def handle_error(e):
-#     print e
-#     return render_template('errors/%s.html' % e.code), e.code
+def handle_error(e):
+    return render_template('errors/%s.html' % e.code), e.code
 
 
 def route(bp, *args, **kwargs):
+    """Route decorator for use in blueprints"""
     def decorator(f):
         @bp.route(*args, **kwargs)
         @wraps(f)
