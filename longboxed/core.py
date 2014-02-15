@@ -8,7 +8,6 @@
 """
 import werkzeug
 
-from flask.ext.bootstrap import Bootstrap
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security
 from flask.ext.social import Social
@@ -17,9 +16,6 @@ from sqlalchemy_imageattach.stores.fs import HttpExposedFileSystemStore
 from sqlalchemy_imageattach.stores.s3 import S3Store
 
 from .settings import USE_AWS, AWS_S3_BUCKET, AWS_SECRET_KEY, AWS_ACCESS_KEY_ID
-
-#: Flask-Bootstrap extension instance
-bootstrap = Bootstrap()
 
 #: Flask-SQLAlchemy extension instance
 db = SQLAlchemy()

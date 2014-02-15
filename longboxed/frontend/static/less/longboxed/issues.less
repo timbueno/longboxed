@@ -1,0 +1,83 @@
+.green {
+    // background-color: green;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+}
+
+.full-issue-content {
+    .section(1);
+
+    @media (max-width: @screen-xs-min) {
+        .section(0);
+    }
+
+    .cover-image {
+        @media (max-width: @screen-xs-min) {
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+    }
+
+    .issue-table {
+        @media (max-width: @screen-xs-min) {
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+    }
+
+    img {
+        display: block;
+        margin: auto;
+    }
+}
+
+.issue-card {
+    margin: 1em;
+    // padding: 1em;
+
+    .issue-info-icons {
+        font-size: 1.5em;
+    }
+}
+
+.add-title-section {
+    .section(2);
+}
+
+.pull-list-with-bundles {
+    .bundles {
+        a {
+            &:link{
+                color: @gray-dark;
+                text-decoration: none;
+            }
+            &:visited{
+                color: @gray-dark;
+                text-decoration: none;
+            }
+            &:hover{
+                color: @gray-dark;
+                text-decoration: none;
+            }
+            &:active{
+                color: @gray-dark;
+                text-decoration: none;
+            }
+        }
+
+        .hover-change {
+            background-color: @gray-lighter;
+
+            &:hover {
+                background-color: @gray-light;
+                color: white;
+            }
+        }
+
+        .pull-list-thumbnail {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+    }
+}

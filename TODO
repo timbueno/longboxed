@@ -13,7 +13,6 @@
 - Weekly email reminders using user's bundles of comics. Mailed every wednesday early in the morning.
 - Schedule Celery import task
     - M, T, W, Th, F, Sat
-- Remove Flask-Bootstrap
 - Dark Horse not being imported correctly
     - is_diamond_id() returning False
     - Follow up with TFAW

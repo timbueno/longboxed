@@ -21,8 +21,8 @@ from sqlalchemy_imageattach.context import push_store_context, pop_store_context
 # from wtforms.validators import Required
 
 from . import signals
-from .core import bootstrap, db, mail, security, store, social
-from .helpers import register_blueprints
+from .core import db, mail, security, store, social
+from .helpers import register_blueprints, pretty_date
 from .middleware import HTTPMethodOverrideMiddleware
 from .models import Connection, User, Role
 
@@ -42,6 +42,9 @@ def create_app(package_name, package_path, settings_override=None, debug_overrid
     """
     app = Flask(package_name, instance_relative_config=True)
 
+    # #: Register custom Jinja2 filters
+    # app.jinja_env.filters['pretty_date'] = pretty_date
+
     app.config.from_object('longboxed.settings')
     app.config.from_pyfile('settings.cfg', silent=True)
     app.config.from_object(settings_override)
@@ -49,7 +52,6 @@ def create_app(package_name, package_path, settings_override=None, debug_overrid
         app.debug = debug_override
 
     #: Setup Flask Extentions
-    bootstrap.init_app(app)
     db.init_app(app)
     mail.init_app(app)
     #: Setup Flask-Security

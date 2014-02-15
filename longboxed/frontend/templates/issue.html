@@ -1,23 +1,31 @@
 {% extends "layouts/base.html" %}
-{% set title = issue.complete_title+' | Longboxed' %}
+{% block title %}{{ issue.complete_title }} | Longboxed{% endblock title %}
 
-{% block main_content %}
-    <div class="container">
-        <div class="issueContainer">
-            <div class="row">
-                <div class="span4">
-                    <div class="coverImage">
-                       <img class="m_issue img-rounded" src={% if issue.cover_image %}"{{ issue.cover_image.locate() }}"{% endif %}> 
+{% block content %}
+<div class="container">
+    <div class='full-issue-content'>
+        <div class="row">
+            <div class="col-sm-5 cover-image">
+                <img class="img-responsive" src={% if issue.cover_image %}"{{ issue.cover_image.find_thumbnail(width=500).locate()  }}"{% endif %}> 
+            </div>
+            <div class="col-sm-7 issue-table">
+                <div class="panel panel-default">
+                    <div class="panel-heading centered">
+                        <h3>{{ issue.complete_title }}</h3>
                     </div>
-                </div>
-                <div class="span8">
-                    <h2>{{ issue.complete_title }}</h2>
-                    <h4>
-                        <a href="{{ url_for('comics.publisher', pub_id=issue.publisher.id) }}">{{ issue.publisher.name }}</a> - 
-                        <a href="#" class="add2cal" data-id="{{ issue.diamond_id }}"><i class="icon-calendar"></i></a> <a href="{{ issue.a_link }}"><i class="icon-shopping-cart"></i></a>
-                    </h4>
+                    <div class="panel-body">
+                        <p>{{ issue.description }}</p>
+                    </div>
                     <table class="table">
                         <tbody>
+                            <tr>
+                                <td>Publisher</td>
+                                <td>
+                                    <a href="{{ url_for('comics.publisher', pub_id=issue.publisher.id) }}">
+                                        {{ issue.publisher.name }}
+                                    </a>
+                                </td>
+                            </tr>
                             <tr>
                                 <td>Title</td>
                                 <td><a href="{{ url_for('comics.title', title_id=issue.title.id) }}">{{ issue.title.name }}</a></td>
@@ -39,44 +47,16 @@
                                 <td>{{ issue.diamond_id }}</td>
                             </tr>
                             <tr>
-                                <td>Description</td>
-                                <td>
-                                    <p>
-                                        {{ issue.description }}
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr>
                                 <td>Issue Number</td>
                                 <td>
-                                    <p>
-                                        {{ issue.issue_number }}
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Alternate Covers</td>
-                                <td>
-                                    <p>
-                                        {% for i in issue.alternates %}
-                                            <a href="{{ url_for('comics.issue', diamond_id=i.diamond_id) }}">{{ i.complete_title }}</a>
-                                            <br>
-                                        {% endfor %}
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Is Parent</td>
-                                <td>
-                                    <p>
-                                        {{ issue.is_parent }}
-                                    </p>
+                                    <p>{{ '%d' | format(issue.issue_number) }}</p>
                                 </td>
                             </tr>
                         </tbody>
-                    </table>
-                </div>
+                    </table> <!-- table -->
+                </div> <!-- panel -->
             </div>
         </div>
     </div>
+</div> <!-- container -->
 {% endblock %}

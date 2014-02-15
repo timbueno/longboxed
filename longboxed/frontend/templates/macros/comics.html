@@ -10,19 +10,65 @@
 </div>
 {% endmacro %}
 
-{% macro render_comic_media_item(issue) %}
-<div class="media issue-media">
-  <a class="pull-left" href="#">
-    <img class="media-object" src="http://placehold.it/100x100" alt="...">
-  </a>
-  <div class="media-body">
-    <a href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
-      <h4 class="media-heading">{{ issue.title.name }}</h4>
-    </a>
-    <h4>{{ '%.4G'| format(issue.issue_number|float) }}</h4>
-    {% if issue.has_alternates %}
-    <i class="fa fa-picture-o"></i>
-    {% endif %}
+{% macro render_issue_card(issue, current_user=None) %}
+<div class="issue-card green">
+  <div class="row">
+    <div class="col-xs-12">
+      <a class="centered" href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
+        <h4>{{ issue.title.name }}</h4>
+      </a>
+    </div>
+    <div class="col-xs-4 col-xs-offset-2">
+      <a href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
+      {% if issue.cover_image %}
+        <img src="{{ issue.cover_image.find_thumbnail(width=250).locate() }}" class="img-responsive">
+      {% else %}
+        <img src="http://placehold.it/100x150" alt="...">
+      {% endif %}
+      </a>
+    </div>
+    <div class="col-xs-4">
+      <div class="issue-info-icons row centered">
+        <div class="col-xs-12">
+        {% if issue.title in current_user.pull_list %}
+          <i class="fa fa-star enabled"></i>
+        {% else %}
+          <i class="fa fa-star-o disabled"></i>
+        {% endif %}
+        </div>
+        <div class="col-xs-12">
+          <i class="fa fa-thumbs-up"></i>
+        </div>
+        <div class="col-xs-12">
+        {% if issue.has_alternates %}
+          <i class="fa fa-picture-o"></i>
+        {% endif %}
+        </div>
+      </div>
+    </div>
   </div>
 </div>
+{% endmacro %}
+
+
+{% macro render_block(publisher_group, current_user=None) %}
+<div class="publisher-block">
+  <div class="container">
+    <h1>{{ publisher_group.grouper }}</h1>
+      {%- for row in publisher_group.list|sort(attribute='title.name')|batch(2) %}
+      <div class="row">
+        {% for issue in row -%}
+        <div class="col-sm-6 green">
+          {% if False %}
+          {{ render_issue_media_item(issue, current_user) }}
+          {% endif %}
+          {% if True %}
+          {{ render_issue_card(issue,current_user) }}
+          {% endif %}
+        </div>
+        {%- endfor %}
+      </div> <!-- end row -->
+      {%- endfor %}<!-- end row -->
+  </div> <!-- end container -->
+</div> <!-- end publisher-block -->
 {% endmacro %}

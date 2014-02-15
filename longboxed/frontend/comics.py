@@ -28,9 +28,9 @@ def comics():
 @route(bp,'/releases/<date>')
 def releases(date):
     try:
-        release_date = datetime.strptime(date, '%Y-%m-%d')
-        issues = _comics.issues.find_issue_with_date(release_date)
-        return render_template('releases.html', date=release_date, comicList=issues, calendarenable=1, matches=None)
+        date = datetime.strptime(date, '%Y-%m-%d')
+        issues = _comics.issues.find_issue_with_date(date, True)
+        return render_template('releases.html', date=date, issues=issues)
     except ValueError:
         return abort(404)
 

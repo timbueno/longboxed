@@ -1,79 +1,39 @@
-{% extends "layouts/base.html" %}
-{% set active_page = 'comics' %}
-{% set title = 'Comics | Longboxed' %}
+{% extends 'layouts/base.html' %}
+{% from 'macros/comics.html' import render_block %}
+{% block title %}Releases for {{ date }} | Longboxed{% endblock title %}
 
-{% block main_content %}
-<!-- Subhead
-================================================== -->
-<header class="jumbotron subhead">
+{% block content -%}
+<div class="header releases-header">
   <div class="container">
-    <h1 class="bigdate">{{ date.strftime('%B %-d, %Y') }}</h1>
-    <!-- <p class="lead">Bootstrap is built on responsive 12-column grids, layouts, and components.</p> -->
-  </div>
-</header>
-<div data-spy="scroll" data-target=".bs-docs-sidebar">
-    <div class="container">
-        <div class="belownavbar">
-            {% include 'showcomics.html' %}
-        </div>
+    <div class="row centered">
+      <div class="col-sm-8 col-sm-offset-2">
+        <h1>{{ date.strftime('%B %-d, %Y') }}</h1>
+        <h1>RELEASES</h1>
+      </div>
     </div>
+  </div>
 </div>
-
- {% endblock main_content %}
-
- {%- block bootstrap_js_bottom %}
-    
-    {{ super() }}
-
-    <!-- daterange picker javascript -->
-   //  <script type="text/javascript">
-   //  $('#reportrange').daterangepicker(
-   //      {
-   //          ranges: {
-   //              // 'Today': ['today', 'today'],
-   //              // 'Yesterday': ['yesterday', 'yesterday'],
-   //              'This Week': [Date.today().moveToDayOfWeek(0, -1), Date.today().moveToDayOfWeek(6)],
-   //              'Next Week': [Date.today().moveToDayOfWeek(0, -1).add({ days: 7}), Date.today().moveToDayOfWeek(6).add({ days: 7})],
-   //              'Last Week': [Date.today().moveToDayOfWeek(0, -1).add({ days: -7}), Date.today().moveToDayOfWeek(6).add({ days: -7})],
-   //              'Last 30 Days': [Date.today().add({ days: -29 }), 'today'],
-   //              'This Month': [Date.today().moveToFirstDayOfMonth(), Date.today().moveToLastDayOfMonth()],
-   //              'Last Month': [Date.today().moveToFirstDayOfMonth().add({ months: -1 }), Date.today().moveToFirstDayOfMonth().add({ days: -1 })]
-   //          }
-   //      },
-   //      function(start, end) {
-   // //          // reload sidebar
-   // //          $('div.comicsidenav').load('/get_comicsidebar', { 'start': start.toString('MMMM d, yyyy'), 'end': end.toString('MMMM d, yyyy') });
-   // //          // reload content
-   // //          $('div.comiclist').load('/get_comiclist', { 'start': start.toString('MMMM d, yyyy'), 'end': end.toString('MMMM d, yyyy') },function(){
-   // // attachpopover();});
-
-   //          // $.post( '/ajax/get_comicpage',
-   //          //         { 'start': start.toString('MMMM d, yyyy'),'end': end.toString('MMMM d, yyyy') },
-   //          //         function(data){
-   //          //             $('div.comicsidenav').html(data.nav);
-   //          //             $('div.comiclist').html(data.clist); 
-   //          //             $('div.favorite_matches').html(data.matches);
-   //          //             attachpopover();
-   //          //             add2cal();
-   //          //         }
-   //          // );
-
-   //          // update datepicker range
-   //          $('#reportrange span').html(start.toString('M/d/yy') + ' - ' + end.toString('M/d/yy'));
-   //          // update big date range
-   //          $('h1.bigdate').html(start.toString('MMMM d, yyyy') + ' - ' + end.toString('MMMM d, yyyy'));
-
-   //          // Scroll back to the top
-   //          // window.scrollTo(0,0);
-   //          $("html, body").animate({ scrollTop: 0 }, "slow");
-   //      }
-   //  );
-   </script>
-
-    <!-- Position the sidebar correctly for fixing -->
-    <script type="text/javascript">
-      // $('#comicsidebar').affix({
-      //       offset: 211
-      //    });
-    </script>
- {% endblock bootstrap_js_bottom %}
+<div class="subheader">
+  <div class="container">
+    <div class="row centered">
+      <div class="col-xs-4">
+        <h1>{{ issues|length }}</h1>
+        <span>RELEASES</span>
+      </div>
+      <div class="col-xs-4">
+        <h1>0</h1>
+        <span>ON YOUR PULL LIST</span>
+      </div>
+      <div class="col-xs-4">
+        <h1>{{ date|pretty_date }}</h1>
+        <span>LAST UPDATED</span>
+      </div>
+    </div> <!-- /row -->
+  </div> <!-- /container -->
+</div> <!-- /subheader -->
+{% if True %}
+  {% for publisher_group in issues|groupby('publisher.name') %}
+    {{ render_block(publisher_group, current_user) }}
+  {% endfor %}
+{% endif %}
+{%- endblock content %}

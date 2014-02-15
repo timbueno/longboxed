@@ -1,7 +1,7 @@
 {% extends "layouts/base.html" %}
 {% set title = comic_title.name+' | Longboxed' %}
 
-{% block main_content %}
+{% block content %}
     <div class="container">
        <h2>{{ comic_title.name }}</h2>
        <h3><a href="{{ url_for('comics.publisher', pub_id=comic_title.publisher.id ) }}">{{ comic_title.publisher.name }}</a></h3>

@@ -1,4 +1,4 @@
-{% extends 'layouts/longboxed_base.html' %}
+{% extends 'layouts/base.html' %}
 {% from 'macros/forms.html' import render_field_with_errors %}
 
 {% block content -%}
@@ -14,9 +14,12 @@
           {{ render_field_with_errors(register_user_form.password, class="form-control text-box", placeholder='PASSWORD') }}
           {{ render_field_with_errors(register_user_form.password_confirm, class="form-control text-box", placeholder='CONFIRM PASSWORD') }}
           {{ register_user_form.submit(class="btn btn-outline-inverse btn-lg btn-block", value="REGISTER") }}
+          <a class="note pull-right" href="{{ url_for('security.login') }}"><small>Already have an account?</small></a>
       </form>
-      {% include "security/_menu.html" %}
     </div>
   </div>
 </div>
 {%- endblock content %}
+
+{% block footer -%}
+{%- endblock footer%}

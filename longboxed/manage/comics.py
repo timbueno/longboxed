@@ -6,6 +6,7 @@
     comic management commands
 """
 import csv
+from datetime import datetime
 from StringIO import StringIO
 
 from flask import current_app
@@ -18,7 +19,13 @@ from ..services import comics
 
 class TestCommand(Command):
     def run(self):
-        pass
+        issues = comics.issues.find_issue_with_date(datetime.strptime('2014-02-12', '%Y-%m-%d'))
+        print 'Starting thumbnail generation'
+        for issue in issues:
+            print issue.title.name
+            comics.issues.find_or_create_thumbnail(issue, width=100)
+        print 'Done'
+        
 
 class ScheduleReleasesCommand(Command):
     def get_options(self):

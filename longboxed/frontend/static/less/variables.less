@@ -10,7 +10,7 @@
 // -------------------------
 
 @gray-darker:            lighten(#000, 13.5%); // #222
-@gray-dark:              lighten(#000, 20%);   // #333
+@gray-dark:              lighten(#000, 18%);   // #2f2f2f
 @gray:                   lighten(#000, 33.5%); // #555
 @gray-light:             lighten(#000, 60%);   // #999
 @gray-lighter:           lighten(#000, 93.5%); // #eee
@@ -28,6 +28,7 @@
 // -------------------------
 
 @body-bg:               #fff;
+// @body-bg:               #f5f5f5;
 @text-color:            @gray-dark;
 
 // Links
@@ -44,7 +45,7 @@
 @font-family-monospace:   Monaco, Menlo, Consolas, "Courier New", monospace;
 @font-family-base:        @font-family-sans-serif;
 
-@font-size-base:          14px;
+@font-size-base:          16px;
 @font-size-large:         ceil(@font-size-base * 1.25); // ~18px
 @font-size-small:         ceil(@font-size-base * 0.85); // ~12px
 
@@ -266,11 +267,13 @@
 
 @navbar-default-color:             #777;
 @navbar-default-bg:                #ffffff;
+// @navbar-default-bg:                #f5f5f5;
 @navbar-default-border:            darken(@navbar-default-bg, 6.5%);
 
 // Navbar links
 // @navbar-default-link-color:                #777;
-@navbar-default-link-color:                #000;
+// @navbar-default-link-color:                #000;
+@navbar-default-link-color:                @gray-dark;
 @navbar-default-link-hover-color:          #333;
 @navbar-default-link-hover-bg:             transparent;
 @navbar-default-link-active-color:         #555;
