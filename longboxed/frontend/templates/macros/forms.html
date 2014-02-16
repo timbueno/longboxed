@@ -8,7 +8,7 @@
 {% if field.widget.input_type == 'checkbox' %}
 <div class="checkbox">
   <label>
-    {{ field() }} {{ field.label.text|safe }}
+    {{ field(**kwargs) }} {{ field.label.text|safe }}
   </label>
 </div>
 {% else %}
