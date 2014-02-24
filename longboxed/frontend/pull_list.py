@@ -10,10 +10,12 @@ from json import dumps
 
 from flask import (Blueprint, jsonify, render_template, Response, request)
 from flask.ext.login import current_user, login_required
+from sqlalchemy import desc
 
 from . import route
 from ..forms import AddToPullList
 from ..helpers import current_wednesday, refresh_bundle
+from ..services import bundle as _bundles
 from ..services import comics as _comics
 from ..services import users as _users
 
@@ -25,7 +27,8 @@ bp = Blueprint('pull_list', __name__)
 @login_required
 def pull_list():
     form = AddToPullList()
-    return render_template('pull_list.html', form=form)
+    bundles = current_user.bundles.order_by(desc(_bundles.__model__.release_date)).limit(10)
+    return render_template('pull_list.html', form=form, bundles=bundles)
 
 
 @route(bp, '/ajax/typeahead')
