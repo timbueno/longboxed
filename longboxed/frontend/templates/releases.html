@@ -34,40 +34,41 @@
 {% if True %}
   {% for publisher in issues|groupby('publisher.name') %}
   <div class="container">
-  <h2>{{ publisher.grouper }}</h2>
-    {% for row in publisher.list|sort(attribute='title.name')|batch(2) %}
-      <div class="row">
-      {% for issue in row %}
-        <div class="col-sm-6">
-          <div class="media issue-card">
-            <a class="pull-left" href="#">
-              <img src="{{ issue.cover_image.find_thumbnail(width=100).locate() }}">
-            </a>
-            <div class="media-body">
-              <p class="media-heading">
-                {{ issue.complete_title|upper }}
-              </p>
-              <p class="action-buttons">
-                <i class="fa fa-star"></i>
-                <i class="fa fa-twitter"></i>
-                <i class="fa fa-facebook"></i>
-              </p>
+    <div class="row">
+      <div class="col-xs-12 col-lg-8 col-lg-offset-2">
+        <h2>{{ publisher.grouper }}</h2>
+        {% for row in publisher.list|sort(attribute='title.name')|batch(2) %}
+          <div class="row">
+          {% for issue in row %}
+            <div class="col-sm-6">
+              <div class="media issue-card">
+                <a class="pull-left" href="#">
+                  <img src="{{ issue.cover_image.find_thumbnail(width=100).locate() }}">
+                </a>
+                <div class="media-body">
+                  <div>
+                    <p class="media-heading text-fill">
+                      {{ issue.complete_title|upper }}
+                    </p>
+                  </div>
+                  <p class="action-buttons">
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-twitter"></i>
+                    <i class="fa fa-facebook"></i>
+                  </p>
+                </div>
+              </div>
             </div>
+          {% endfor %}
           </div>
+        {% endfor %}
         </div>
-      {% endfor %}
       </div>
-    {% endfor %}
   </div>
   {% endfor %}
 {% endif %}
-
-
-
-
-{% if False %}
-  {% for publisher_group in issues|groupby('publisher.name') %}
-    {{ render_block(publisher_group, current_user) }}
-  {% endfor %}
-{% endif %}
 {%- endblock content %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock scripts %}

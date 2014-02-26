@@ -6213,12 +6213,10 @@ h5,
 }
 .issue-card {
   background-color: #999999;
+  padding-right: 15px;
   margin-top: 10px;
   margin-bottom: 10px;
   height: 75px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
 }
 .issue-card img {
   width: 50px;
@@ -6229,6 +6227,9 @@ h5,
   padding-top: 10px;
   padding-bottom: 5px;
   margin-bottom: 0px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 .issue-card .action-buttons {
   color: white;
