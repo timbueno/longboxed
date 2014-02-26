@@ -48,13 +48,14 @@
                 <div class="media-body">
                   <div>
                     <p class="media-heading text-fill">
-                      {{ issue.complete_title|upper }}
+                      <a href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">{{ issue.title.name|upper }}</a>
                     </p>
                   </div>
                   <p class="action-buttons">
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-twitter"></i>
-                    <i class="fa fa-facebook"></i>
+                    <span>{{ issue.issue_number|int }}</span>
+                    <span class="fa fa-star"></span>
+                    <span class="fa fa-twitter"></span>
+                    <span class="fa fa-facebook"></span>
                   </p>
                 </div>
               </div>
