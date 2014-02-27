@@ -47,6 +47,33 @@
         span {
             padding-right: 10px;
         }
+        .card-buttons{
+            // &:last-child{
+            //     padding-right: 0px;
+            // }
+
+            text-align: right;
+
+            .on-pull-list {
+                color: yellow;
+            }
+            .fa-star {
+                &:hover {
+                  color: yellow;
+                }
+            }
+            .fa-twitter {
+                &:hover {
+                  color: #4099ff;
+                }
+            }
+            .fa-facebook {
+                padding-right: 0px;
+                &:hover {
+                  color: #3b5999;
+                }
+            }
+        }
     }
     a {
         color: white;
@@ -55,7 +82,7 @@
         }
     }
     background-color: @gray-light;
-    padding-right: 15px;
+    padding-right: 10px;
     margin-top: 10px;
     margin-bottom: 10px;
     height: 75px;
