@@ -51,20 +51,11 @@
                       <a href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">{{ issue.title.name|upper }}</a>
                     </p>
                   </div>
-<!--                   <p class="action-buttons">
-                    <span>{{ issue.issue_number|int }}</span>
-                    <span class="fa fa-star {%if issue.title in g.user.pull_list %}on-pull-list{% endif %}"></span>
-                    <span class="fa fa-twitter"></span>
-                    <span class="fa fa-facebook"></span>
-                  </p> -->
                   <div class="row action-buttons">
                     <div class="col-xs-4">
                       <span>{{ issue.issue_number|int }}</span>
                     </div>
-                    <div class="col-xs-2 centered">
-                      <!-- <span class="fa fa-star {%if issue.title in g.user.pull_list %}on-pull-list{% endif %}"></span> -->
-                    </div>
-                    <div class="col-xs-6 card-buttons">
+                    <div class="col-xs-8 card-buttons">
                       {% if g.user %}
                       <span class="fa fa-star add-remove-pull {%if issue.title in g.user.pull_list %}on-pull-list{% endif %}" data-titleid="{{ issue.title.id }}"></span>
                       {% endif %}
