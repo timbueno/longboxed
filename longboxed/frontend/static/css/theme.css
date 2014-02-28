@@ -6063,6 +6063,9 @@ h5,
 .centered {
   text-align: center;
 }
+.right {
+  text-alight: right;
+}
 .background-image-container {
   position: absolute;
   top: 0;
@@ -6213,7 +6216,7 @@ h5,
 }
 .issue-card {
   background-color: #999999;
-  padding-right: 15px;
+  padding-right: 10px;
   margin-top: 10px;
   margin-bottom: 10px;
   height: 75px;
@@ -6222,7 +6225,7 @@ h5,
   width: 50px;
 }
 .issue-card .media-heading {
-  font-size: 14px;
+  font-size: 16px;
   color: white;
   padding-top: 10px;
   padding-bottom: 5px;
@@ -6236,8 +6239,32 @@ h5,
   font-size: 20px;
   padding-bottom: 7px;
 }
-.issue-card .action-buttons i {
+.issue-card .action-buttons span {
   padding-right: 10px;
+}
+.issue-card .action-buttons .card-buttons {
+  text-align: right;
+}
+.issue-card .action-buttons .card-buttons .on-pull-list {
+  color: yellow;
+}
+.issue-card .action-buttons .card-buttons .fa-star:hover {
+  color: yellow;
+}
+.issue-card .action-buttons .card-buttons .fa-twitter:hover {
+  color: #4099ff;
+}
+.issue-card .action-buttons .card-buttons .fa-facebook {
+  padding-right: 0px;
+}
+.issue-card .action-buttons .card-buttons .fa-facebook:hover {
+  color: #3b5999;
+}
+.issue-card a {
+  color: white;
+}
+.issue-card a:link {
+  color: white;
 }
 .add-title-section {
   padding-top: 2em;

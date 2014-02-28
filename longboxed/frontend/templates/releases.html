@@ -65,7 +65,9 @@
                       <!-- <span class="fa fa-star {%if issue.title in g.user.pull_list %}on-pull-list{% endif %}"></span> -->
                     </div>
                     <div class="col-xs-6 card-buttons">
-                      <span class="fa fa-star {%if issue.title in g.user.pull_list %}on-pull-list{% endif %}"></span>
+                      {% if g.user %}
+                      <span class="fa fa-star add-remove-pull {%if issue.title in g.user.pull_list %}on-pull-list{% endif %}" data-titleid="{{ issue.title.id }}"></span>
+                      {% endif %}
                       <span class="fa fa-twitter"></span>
                       <span class="fa fa-facebook"></span>
                     </div>
@@ -85,4 +87,49 @@
 
 {% block scripts %}
 {{ super() }}
+<script>
+$(function() {
+
+  $( ".add-remove-pull" ).click(function() {
+    var $star = $(this);
+    var titleId = $(this).data("titleid")
+    if ($(this).hasClass('on-pull-list')) {
+      var iteration = 2
+    } else {
+      var iteration = $(this).data('iteration')||1
+    }
+    switch (iteration) {
+      case 1:
+        $.post(
+          '/ajax/add_to_pull_list',
+          {'id': titleId}
+        )
+        .done(function(response) {
+          $star.addClass( "on-pull-list" );
+        });
+        break;
+      case 2:
+        $.post(
+          '/ajax/remove_from_pull_list',
+          {'id': titleId}
+        )
+        .done(function(response) {
+          $star.removeClass( "on-pull-list" );
+        });
+        break;
+    }
+    iteration++;
+    if (iteration>2) iteration=1;
+    $(this).data('iteration', iteration);
+  });
+
+});
+</script>
 {% endblock scripts %}
+
+
+
+
+
+
+

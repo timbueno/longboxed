@@ -113,3 +113,32 @@ def add_to_pull_list():
                 }
             }
     return jsonify(response)
+
+
+@route(bp, '/ajax/click_add_to_pull_list', methods=['POST'])
+@login_required
+def click_add_to_pull_list():
+    response = {'status': 'fail', 'message': 'Title not being tracked by Longboxed'}
+    title = _comics.titles.get(request.form['id'])
+    if title and title not in current_user.pull_list:
+        current_user.pull_list.append(title)
+        _users.save(current_user)
+        refresh_bundle(current_user, current_wednesday())
+        response = {
+            'status': 'success',
+            'message': '<strong>'+title.name+'</strong> has been added to your pull list!',
+            'data': {
+                'title': title.name,
+                'title_id': title.id
+            }
+        }
+    else:
+        response = {
+            'status': 'fail',
+            'message': '<strong>'+title.name+'</strong> is already on your pull list!',
+            'data': {
+                'title': title.name,
+                'title_id': title.id
+            }
+        }
+    return jsonify(response)    
