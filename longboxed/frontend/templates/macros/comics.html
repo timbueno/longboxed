@@ -36,26 +36,3 @@
   </div>
 </div> <!-- issue-card -->
 {% endmacro %}
-
-
-{% macro render_block(publisher_group, current_user=None) %}
-<div class="publisher-block">
-  <div class="container">
-    <h1>{{ publisher_group.grouper }}</h1>
-      {%- for row in publisher_group.list|sort(attribute='title.name')|batch(2) %}
-      <div class="row">
-        {% for issue in row -%}
-        <div class="col-sm-6 green">
-          {% if False %}
-          {{ render_issue_media_item(issue, current_user) }}
-          {% endif %}
-          {% if True %}
-          {{ render_issue_card(issue,current_user) }}
-          {% endif %}
-        </div>
-        {%- endfor %}
-      </div> <!-- end row -->
-      {%- endfor %}<!-- end row -->
-  </div> <!-- end container -->
-</div> <!-- end publisher-block -->
-{% endmacro %}
