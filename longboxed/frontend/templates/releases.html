@@ -42,7 +42,7 @@
           {% for issue in row %}
             <div class="col-sm-6">
               <div class="media issue-card">
-                <a class="pull-left" href="#">
+                <a class="pull-left" href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
                   <img src="{{ issue.cover_image.find_thumbnail(width=100).locate() }}">
                 </a>
                 <div class="media-body">
