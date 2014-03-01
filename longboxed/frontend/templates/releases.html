@@ -13,24 +13,6 @@
     </div>
   </div>
 </div>
-<div class="subheader">
-  <div class="container">
-    <div class="row centered">
-      <div class="col-xs-4">
-        <h1>{{ issues|length }}</h1>
-        <span>RELEASES</span>
-      </div>
-      <div class="col-xs-4">
-        <h1>0</h1>
-        <span>ON YOUR PULL LIST</span>
-      </div>
-      <div class="col-xs-4">
-        <h1>{{ date|pretty_date }}</h1>
-        <span>LAST UPDATED</span>
-      </div>
-    </div> <!-- /row -->
-  </div> <!-- /container -->
-</div> <!-- /subheader -->
 {% if True %}
   {% for publisher in issues|groupby('publisher.name') %}
   <div class="container">
