@@ -1,5 +1,5 @@
 {% extends 'layouts/base.html' %}
-{% from 'macros/comics.html' import render_block %}
+{% from 'macros/comics.html' import issue_card %}
 {% block title %}Releases for {{ date }} | Longboxed{% endblock title %}
 
 {% block content -%}
@@ -23,30 +23,7 @@
           <div class="row">
           {% for issue in row %}
             <div class="col-sm-6">
-              <div class="media issue-card">
-                <a class="pull-left" href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
-                  <img src="{{ issue.cover_image.find_thumbnail(width=100).locate() }}">
-                </a>
-                <div class="media-body">
-                  <div>
-                    <p class="media-heading text-fill">
-                      <a href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">{{ issue.title.name|upper }}</a>
-                    </p>
-                  </div>
-                  <div class="row action-buttons">
-                    <div class="col-xs-4">
-                      <span>{{ issue.issue_number|int }}</span>
-                    </div>
-                    <div class="col-xs-8 card-buttons">
-                      {% if g.user %}
-                      <span class="fa fa-star add-remove-pull {%if issue.title in g.user.pull_list %}on-pull-list{% endif %}" data-titleid="{{ issue.title.id }}"></span>
-                      {% endif %}
-                      <span class="fa fa-twitter tweet" data-title="{{ issue.complete_title }}" data-url="{{ url_for('comics.issue', diamond_id=issue.diamond_id, _external=True) }}"></span>
-                      <span class="fa fa-facebook facebook" data-title="{{ issue.complete_title }}" data-url="{{ url_for('comics.issue', diamond_id=issue.diamond_id, _external=True) }}"></span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {{ issue_card(issue, g.user) }}
             </div>
           {% endfor %}
           </div>
