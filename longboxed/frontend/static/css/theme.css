@@ -6188,9 +6188,21 @@ h5,
 .icon-longboxed-full:before {
   content: "\e601";
 }
+.on-pull-list {
+  color: yellow !important;
+}
 .full-issue-content {
   padding-top: 1em;
   padding-bottom: 1em;
+}
+.full-issue-content .fa {
+  color: #2e2e2e;
+}
+.full-issue-content p {
+  margin-top: 11px;
+}
+.full-issue-content .tweet {
+  padding-right: 10px;
 }
 @media (max-width: 480px) {
   .full-issue-content {
@@ -6244,9 +6256,6 @@ h5,
 }
 .issue-card .action-buttons .card-buttons {
   text-align: right;
-}
-.issue-card .action-buttons .card-buttons .on-pull-list {
-  color: yellow;
 }
 .issue-card .action-buttons .card-buttons .fa-star:hover {
   color: yellow;

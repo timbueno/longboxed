@@ -1,5 +1,20 @@
+.on-pull-list {
+    color: yellow !important;
+}
+
 .full-issue-content {
     .section(1);
+
+    .fa {
+        color: @gray-dark;
+    }
+
+    p {
+        margin-top: 11px;
+    }
+    .tweet {
+        padding-right: 10px;
+    }
 
     @media (max-width: @screen-xs-min) {
         .section(0);
@@ -54,9 +69,6 @@
 
             text-align: right;
 
-            .on-pull-list {
-                color: yellow;
-            }
             .fa-star {
                 &:hover {
                   color: yellow;

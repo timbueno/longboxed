@@ -12,7 +12,7 @@ from flask import abort, Blueprint, jsonify, render_template, redirect, request,
 from flask.ext.security import current_user
 
 from . import route
-from ..helpers import current_wednesday, last_wednesday, next_wednesday, get_week
+from ..helpers import current_wednesday, last_wednesday, next_wednesday
 from ..services import comics as _comics
 
 
@@ -28,7 +28,12 @@ def comics():
 @route(bp,'/releases/<date>')
 def releases(date):
     try:
-        date = datetime.strptime(date, '%Y-%m-%d')
+        if isinstance(date, datetime):
+            pass
+        elif isinstance(date, unicode):
+            date = datetime.strptime(date, '%Y-%m-%d')
+        else:
+            return abort(404)
         issues = _comics.issues.find_issue_with_date(date, True)
         return render_template('releases.html', date=date, issues=issues)
     except ValueError:
