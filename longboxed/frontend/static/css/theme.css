@@ -6192,7 +6192,7 @@ hr {
   content: "\e601";
 }
 .on-pull-list {
-  color: yellow !important;
+  color: #ffd700 !important;
 }
 .full-issue-content {
   padding-top: 1em;
@@ -6261,7 +6261,7 @@ hr {
   text-align: right;
 }
 .issue-card .action-buttons .card-buttons .fa-star:hover {
-  color: yellow;
+  color: #ffd700;
 }
 .issue-card .action-buttons .card-buttons .fa-twitter:hover {
   color: #4099ff;
