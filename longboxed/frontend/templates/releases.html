@@ -19,6 +19,7 @@
     <div class="row">
       <div class="col-xs-12 col-lg-8 col-lg-offset-2">
         <h2>{{ publisher.grouper }}</h2>
+        <hr>
         {% for row in publisher.list|sort(attribute='title.name')|batch(2) %}
           <div class="row">
           {% for issue in row %}
