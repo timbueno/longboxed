@@ -5,7 +5,14 @@
 
     Core module contains basic classes that all applications
     depend on
+
+    USE_AWS must be set as an environment variable.
+    Values can be: 
+        'True'   to use AWS for an image store
+        'False'  for development / local image store
 """
+import os
+
 import werkzeug
 
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -15,7 +22,7 @@ from flask_mail import Mail
 from sqlalchemy_imageattach.stores.fs import HttpExposedFileSystemStore
 from sqlalchemy_imageattach.stores.s3 import S3Store
 
-from .settings import USE_AWS, AWS_S3_BUCKET, AWS_SECRET_KEY, AWS_ACCESS_KEY_ID
+from .settings import ProdConfig
 
 #: Flask-SQLAlchemy extension instance
 db = SQLAlchemy()
@@ -30,8 +37,8 @@ social = Social()
 mail = Mail()
 
 #: Image Filesystem
-if USE_AWS:
-    store = S3Store(AWS_S3_BUCKET, AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
+if os.environ.get('USE_AWS') == 'True':
+    store = S3Store(ProdConfig.AWS_S3_BUCKET, ProdConfig.AWS_ACCESS_KEY_ID, ProdConfig.AWS_SECRET_KEY)
 else:
     store = HttpExposedFileSystemStore('store', 'images')
 
