@@ -4,6 +4,11 @@
     ~~~~
 
     longboxed wsgi module
+
+    APP_ENV must be set as an environment variable.
+    Values can be: 
+        'prod' for production
+        'dev'  for development
 """
 import os
 
