@@ -12,11 +12,12 @@ from flask import jsonify
 
 from ..core import LongboxedError, LongboxedFormError
 from ..helpers import JSONEncoder
+from ..settings import ProdConfig
 from .. import factory
 
-def create_app(settings_override=None):
+def create_app(config_object=ProdConfig):
     """Returns the Longboxed API application instance"""
-    app = factory.create_app(__name__, __path__, settings_override)
+    app = factory.create_app(__name__, __path__, config_object)
 
     # Set the default JSON JSONEncoder
     app.json_encoder = JSONEncoder
