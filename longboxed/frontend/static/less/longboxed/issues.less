@@ -55,7 +55,7 @@
         overflow: hidden;
     }
     .action-buttons {
-        color: white;
+        color: #CBCACB;
         font-size: 20px;
         padding-bottom: 7px;
 
@@ -88,19 +88,20 @@
         }
     }
     a {
-        color: white;
+        color: @gray-dark;
         &:link {
-            color: white;
+            color: @gray-dark;
         }
     }
-    background-color: @gray-light;
+    background-color: #EEEEEE;
     padding-right: 10px;
     margin-top: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
     height: 75px;
-    // white-space: nowrap; 
-    // text-overflow: ellipsis;
-    // overflow: hidden;
+
+    @media (max-width: @screen-xs-min) {
+        margin-bottom: 15px;
+    }
 }
 
 .add-title-section {
