@@ -6362,10 +6362,10 @@ hr {
   margin: auto;
 }
 .issue-card {
-  background-color: #999999;
+  background-color: #EEEEEE;
   padding-right: 10px;
   margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
   height: 75px;
 }
 .issue-card img {
@@ -6382,7 +6382,7 @@ hr {
   overflow: hidden;
 }
 .issue-card .action-buttons {
-  color: white;
+  color: #CBCACB;
   font-size: 20px;
   padding-bottom: 7px;
 }
@@ -6405,10 +6405,15 @@ hr {
   color: #3b5999;
 }
 .issue-card a {
-  color: white;
+  color: #2e2e2e;
 }
 .issue-card a:link {
-  color: white;
+  color: #2e2e2e;
+}
+@media (max-width: 480px) {
+  .issue-card {
+    margin-bottom: 15px;
+  }
 }
 .add-title-section {
   padding-top: 2em;
@@ -6546,6 +6551,7 @@ hr {
   padding-top: 2em;
   padding-bottom: 2em;
   background-color: #2f2f2f;
+  margin-bottom: 30px;
 }
 .header h1 {
   color: white;
