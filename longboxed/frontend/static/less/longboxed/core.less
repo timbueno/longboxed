@@ -52,31 +52,61 @@ hr {
     padding-bottom: @padding-scale*1em;
 }
 
-.background-image-container {
-    position: absolute;
-
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-
-    background-image: url(../img/thorvhulk.jpg);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover;
-    z-index: -10;
-}
-
-.background-image-container:after {
-  content: "";
-  display: block;
+.background-mixin (@image-path: "../img/backgrounds/thor-hulk.jpg", @alpha: 0.45) {
   position: absolute;
+
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.45);
+  bottom: 0;
+  right: 0;
+
+  background-image: url(@image-path);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  z-index: -10;
+
+  &:after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,@alpha);
+  }
 }
+
+.batman-exclamation-bg {
+  .background-mixin("../img/backgrounds/batman-exclamation.jpg");
+}
+
+.daredevil-bg {
+  .background-mixin("../img/backgrounds/daredevil.jpg", 0);
+}
+
+.thorhulk-bg {
+  .background-mixin();
+}
+
+.batman-superman-bg {
+  .background-mixin("../img/backgrounds/batman-superman.jpg");
+}
+
+.flash-bg {
+  .background-mixin("../img/backgrounds/flash.jpg", 0.25);
+}
+
+.black-spiderman-bg {
+  .background-mixin("../img/backgrounds/black-spiderman.jpg", 0.25);
+}
+
+.wolverine-bg {
+  .background-mixin("../img/backgrounds/wolverine.jpg")
+}
+
+
 
 // Positions the brand in the center of the nav
 // when nav is collapsed
