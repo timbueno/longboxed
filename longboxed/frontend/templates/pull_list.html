@@ -96,7 +96,7 @@
                 {% if True %}
                 {% for bundle in bundles %}
                     {% if bundle.issues %}
-                    <h4>{{ bundle.release_date }}</h4>
+                    <h4>{{ bundle.release_date }} | {{ bundle.issues|length }} Issues</h4>
                     <hr>
                     {% for issue in bundle.issues %}
                     {{ issue_card(issue, g.user) }}
