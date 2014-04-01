@@ -8,13 +8,47 @@
 
     {%- block metas %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-title" content="Longboxed">
     {%- endblock metas %}
 
     {%- block styles %}
     <!-- Bootstrap -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}" media="screen">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css">
-    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/longboxed-fonts.css') }}"> -->
+
+    <!-- iPad, iOS 7, retina -->
+    <link href="{{ url_for('static', filename='img/longboxed-76@2x.png') }}"
+          sizes="152x152"
+          rel="apple-touch-icon">
+    <!-- iPad, iOS 6, retina -->
+    <link href="{{ url_for('static', filename='img/longboxed-72@2x.png') }}"
+          sizes="144x144"
+          rel="apple-touch-icon">
+    <!-- iPhone, iOS 7, retina -->
+    <link href="{{ url_for('static', filename='img/longboxed-60@2x.png') }}"
+          sizes="120x120"
+          rel="apple-touch-icon">
+    <!-- iPhone ,iOS 6, retina -->
+    <link href="{{ url_for('static', filename='img/longboxed-Small@2x.png') }}"
+          sizes="114x114"
+          rel="apple-touch-icon">
+    <!-- iPad, iOS 7 -->
+    <link href="{{ url_for('static', filename='img/longboxed-76.png') }}"
+          sizes="76x76"
+          rel="apple-touch-icon">
+    <!-- iPad, iOS 6 -->
+    <link href="{{ url_for('static', filename='img/longboxed-72.png') }}"
+          sizes="72x72"
+          rel="apple-touch-icon">
+    <!-- iPhone, iOS 7 -->
+    <link href="{{ url_for('static', filename='img/longboxed-60.png') }}"
+          sizes="60x60"
+          rel="apple-touch-icon">
+    <!-- iPhone, iOS 6 -->
+    <link href="{{ url_for('static', filename='img/longboxed-Small.png') }}"
+          sizes="57x57"
+          rel="apple-touch-icon">
+
     {%- endblock styles %}
     {%- block header_scripts %}
     <script type="text/javascript" src="//use.typekit.net/btq6ejk.js"></script>
