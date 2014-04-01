@@ -1,5 +1,7 @@
 {% extends "layouts/base.html" %}
 {% from 'macros/forms.html' import render_field_with_errors %}
+{% from 'macros/comics.html' import issue_card %}
+
 {% block title %}Your Pull List | Longboxed{% endblock title %}
 
 {% block styles %}
@@ -21,10 +23,6 @@
                         </span>
                     </div>
                 </form>
-    <!--             <form class="form">
-                    {{ form.hidden_tag() }}
-                    {{ render_field_with_errors(form.title, class="typeahead input-lg") }}
-                </form> -->
             </div> <!-- col -->
         </div> <!-- row -->
         <div class="row">
@@ -38,7 +36,7 @@
 <div class="pull-list-with-bundles">
     <div class="container">
         <div class="row">
-            <div class="col-md-3 col-md-offset-2 pull-list">
+            <div class="col-sm-4 col-lg-3 col-lg-offset-2 pull-list">
                 <div class="panel panel-default">
                     <div class="panel-heading centered">
                         <h3>Titles</h3>
@@ -53,12 +51,13 @@
                     </ul>
                 </div>
             </div> <!-- pull-list -->
-            <div class="col-md-5 bundles">
+            <div class="col-sm-8 col-lg-5 bundles">
                 <div class="panel panel-default">
                     <div class="panel-heading centered">
                         <h3>Recent Bundles</h3>
                     </div>
                 </div> <!-- panel -->
+                {% if False %}
                 {% for bundle in bundles %}
                     {% if bundle.issues %}
                     <div class="panel panel-default">
@@ -93,6 +92,18 @@
                     </div>
                     {% endif %}
                 {% endfor %}
+                {% endif %}
+                {% if True %}
+                {% for bundle in bundles %}
+                    {% if bundle.issues %}
+                    <h4>{{ bundle.release_date }}</h4>
+                    <hr>
+                    {% for issue in bundle.issues %}
+                    {{ issue_card(issue, g.user) }}
+                    {% endfor %}
+                    {% endif %}
+                {% endfor %}
+                {% endif %}
             </div> <!-- bundles -->
         </div> <!-- row -->
     </div> <!-- container -->
@@ -104,4 +115,5 @@
 <script type="text/javascript" src="{{ url_for('static', filename='js/handlebars-v1.3.0.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/typeahead.bundle.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/pull_list.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/issue_actions.js') }}"></script>
 {% endblock scripts %}
