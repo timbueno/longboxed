@@ -16,14 +16,18 @@ class Config(object):
 
     # # USE_AWS = True
     USE_AWS = False
-    AWS_S3_BUCKET = 'longboxed'
-    AWS_ACCESS_KEY_ID = '***REMOVED***'
-    AWS_SECRET_KEY = '***REMOVED***'
+    # AWS_S3_BUCKET = 'longboxed'
+    AWS_S3_BUCKET = environ['AWS_S3_BUCKET']
+    # AWS_ACCESS_KEY_ID = '***REMOVED***'
+    AWS_ACCESS_KEY_ID = environ['AWS_ACCESS_KEY_ID']
+    # AWS_SECRET_KEY = '***REMOVED***'
+    AWS_SECRET_KEY = environ['AWS_SECRET_KEY']
 
     THUMBNAIL_WIDTHS = [100, 250, 500]
 
     # Longboxed Specific Variables
-    AFFILIATE_ID = '782419'
+    # AFFILIATE_ID = '782419'
+    AFFILIATE_ID = environ['AFFILIATE_ID']
     SUPPORTED_PUBS = ['Marvel Comics', 'DC Comics', 'Dark Horse', 'IDW Publishing',\
                       'Boom! Studios', 'Image Comics', 'Dynamite Entertainment', \
                       'Avatar Press', 'Abstract Studios','Archie Comics', \
@@ -36,7 +40,8 @@ class Config(object):
                               'IDW PUBLISHING']
 
     # Flask Application Configuration
-    SECRET_KEY = '***REMOVED***'
+    # SECRET_KEY = '***REMOVED***'
+    SECRET_KEY = environ['SECRET_KEY']
 
     # URIS
     # SQLALCHEMY_DATABASE_URI = 'postgres://app_user:password@localhost/longboxed'
@@ -103,9 +108,12 @@ class Config(object):
     SECURITY_POST_LOGIN_URL = '/'
 
     SECURITY_PASSWORD_HASH = 'bcrypt'
-    SECURITY_PASSWORD_SALT= '***REMOVED***'
-    SECURITY_REMEMBER_SALT = '***REMOVED***'
-    SECURITY_RESET_SALT = '***REMOVED***'
+    # SECURITY_PASSWORD_SALT= '***REMOVED***'
+    SECURITY_PASSWORD_SALT = environ['SECURITY_PASSWORD_SALT']
+    # SECURITY_REMEMBER_SALT = '***REMOVED***'
+    SECURITY_REMEMBER_SALT = environ['SECURITY_REMEMBER_SALT']
+    # SECURITY_RESET_SALT = '***REMOVED***'
+    SECURITY_RESET_SALT = environ['SECURITY_RESET_SALT']
     SECURITY_RESET_WITHIN = '5 days'
     SECURITY_CONFIRM_WITHIN = '5 days'
 
@@ -116,36 +124,57 @@ class Config(object):
     # Mail configuration
     MAIL_SERVER = 'smtp.mailgun.org'
     MAIL_PORT = 587
-    MAIL_USERNAME = 'postmaster@longboxed.com'
-    MAIL_PASSWORD = '***REMOVED***'
+    # MAIL_USERNAME = 'postmaster@longboxed.com'
+    MAIL_USERNAME = environ['MAIL_USERNAME']
+    # MAIL_PASSWORD = '***REMOVED***'
+    MAIL_PASSWORD = environ['MAIL_PASSWORD']
 
     # Bootstrap Configuration
-    BOOTSTRAP_USE_MINIFIED = True
-    BOOTSTRAP_FONTAWESOME = True
-    BOOTSTRAP_GOOGLE_ANALYTICS_ACCOUNT = 'UA-44481415-1'
+    # BOOTSTRAP_USE_MINIFIED = True
+    # BOOTSTRAP_FONTAWESOME = True
+    # BOOTSTRAP_GOOGLE_ANALYTICS_ACCOUNT = 'UA-44481415-1'
+    BOOTSTRAP_GOOGLE_ANALYTICS_ACCOUNT = environ['BOOTSTRAP_GOOGLE_ANALYTICS_ACCOUNT']
+
+    # SOCIAL_GOOGLE = {
+    #     'consumer_key': '200273015685.apps.googleusercontent.com',
+    #     'consumer_secret': '***REMOVED***',
+    #     'request_token_params': {
+    #         'scope': 'openid email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar'
+    #     }
+    # }
+
+    # SOCIAL_FACEBOOK = {
+    #     'consumer_key': '***REMOVED***',
+    #     'consumer_secret': '***REMOVED***'
+    # }
+
+    # SOCIAL_TWITTER = {
+    #     'consumer_key': '***REMOVED***',
+    #     'consumer_secret': '***REMOVED***',
+    # }
 
     SOCIAL_GOOGLE = {
-        'consumer_key': '200273015685.apps.googleusercontent.com',
-        'consumer_secret': '***REMOVED***',
+        'consumer_key': environ['GOOGLE_CONSUMER_KEY'],
+        'consumer_secret': environ['GOOGLE_CONSUMER_SECRET'],
         'request_token_params': {
             'scope': 'openid email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar'
         }
     }
 
     SOCIAL_FACEBOOK = {
-        'consumer_key': '***REMOVED***',
-        'consumer_secret': '***REMOVED***'
+        'consumer_key': environ['FACEBOOK_CONSUMER_KEY'],
+        'consumer_secret': environ['FACEBOOK_CONSUMER_SECRET']
     }
 
     SOCIAL_TWITTER = {
-        'consumer_key': '***REMOVED***',
-        'consumer_secret': '***REMOVED***',
+        'consumer_key': environ['TWITTER_CONSUMER_KEY'],
+        'consumer_secret': environ['TWITTER_CONSUMER_SECRET']
     }
 
-    # # Google OAuth Setup
-    GOOGLE_CLIENT_ID = '200273015685.apps.googleusercontent.com'
-    GOOGLE_CLIENT_SECRET = '***REMOVED***'
-    REDIRECT_URI = '/oauth2callback'  # one of the Redirect URIs from Google APIs console
+    # # # Google OAuth Setup
+    # GOOGLE_CLIENT_ID = '200273015685.apps.googleusercontent.com'
+    # GOOGLE_CLIENT_SECRET = '***REMOVED***'
+    # REDIRECT_URI = '/oauth2callback'  # one of the Redirect URIs from Google APIs console
 
 
 class ProdConfig(Config):
