@@ -57,46 +57,10 @@
                         <h3>Recent Bundles</h3>
                     </div>
                 </div> <!-- panel -->
-                {% if False %}
-                {% for bundle in bundles %}
-                    {% if bundle.issues %}
-                    <div class="panel panel-default">
-                        <div class="panel-heading centered">
-                            <h4>{{ bundle.release_date }}</h4>
-                        </div>
-                        <div class="panel-body row">
-                        {% for issue in bundle.issues %}
-                            <div class="col-xs-3 pull-list-thumbnail">
-                                <a class="thumbnail" href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
-                                    <img class="img-responsive" src={% if issue.cover_image %}"{{ issue.cover_image.locate() }}"{% endif %} title="{{ issue.complete_title }}">
-                                </a>
-                            </div>
-                        {% endfor %}
-                        </div>
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ loop.index }}">
-                            <div class="panel-heading centered hover-change">
-                                <h4>View List</h4>
-                            </div>
-                        </a>
-                        <div id="collapse{{ loop.index }}" class="panel-collapse collapse">
-                            <ul class="list-group centered">
-                                {% for issue in bundle.issues %}
-                                <a href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
-                                    <li class="list-group-item">
-                                        {{ issue.complete_title }}
-                                    </li>
-                                </a>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    {% endif %}
-                {% endfor %}
-                {% endif %}
                 {% if True %}
                 {% for bundle in bundles %}
                     {% if bundle.issues %}
-                    <h4>{{ bundle.release_date }} | {{ bundle.issues|length }} Issues</h4>
+                    <h4>{{ bundle.release_date }} | {{ bundle.issues|length }} Issue{% if bundle.issues|length > 1 %}s{% endif %}</h4>
                     <hr>
                     {% for issue in bundle.issues %}
                     {{ issue_card(issue, g.user) }}
