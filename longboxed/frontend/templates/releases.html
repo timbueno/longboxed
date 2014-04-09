@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html' %}
 {% from 'macros/comics.html' import issue_card %}
-{% block title %}Releases for {{ date }} | Longboxed{% endblock title %}
+{% block title %}Releases for {{ date.strftime('%Y-%m-%d') }} | Longboxed{% endblock title %}
 
 {% block content -%}
 <div class="header releases-header">
