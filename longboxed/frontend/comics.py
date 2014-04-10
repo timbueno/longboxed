@@ -88,29 +88,3 @@ def publisher(pub_id):
     publisher = _comics.publishers.get_or_404(id=pub_id)
     titles = publisher.titles.all()
     return render_template('publisher.html', publisher=publisher, titles=titles)
-
-
-
-@route(bp, '/ajax/get_comicpage', methods=['POST'])
-def get_comicpage():
-    start = datetime.strptime(request.form['start'], '%B %d, %Y')
-    end = datetime.strptime(request.form['end'], '%B %d, %Y')
-
-    comicList, matches = _comics.find_relevent_comics_in_date_range(start, end, current_user)
-
-    try:
-        nav = render_template('comicsidenav.html', comicList=comicList)
-    except:
-        nav = None
-    try:
-        clist = render_template('comiclist.html', comicList=comicList)
-    except:
-        clist = None
-    try:
-        if matches:
-            matches = render_template('favorite_matches.html', matches=matches)
-    except:
-        matches = None
-
-    # return the html as json for jquery to insert
-    return jsonify(nav=nav, clist=clist, matches=matches)
