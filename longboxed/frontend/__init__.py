@@ -28,7 +28,7 @@ def create_app(config_object=ProdConfig):
     app.jinja_env.filters['pretty_date'] = pretty_date
 
     #: Init assets
-    assets.init_app(app)
+    # assets.init_app(app)
     #: Flask-Admin
     admin.init_app(app)
 
