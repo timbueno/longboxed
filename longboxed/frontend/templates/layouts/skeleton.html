@@ -58,6 +58,7 @@
 
     {%- endblock styles %}
     {%- block header_scripts %}
+    <script type="text/javascript" src='/static/js/fastclick.js'></script>
     <script type="text/javascript" src="//use.typekit.net/btq6ejk.js"></script>
     <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
     {%- if not config['DEBUG'] %}
@@ -74,7 +75,7 @@
     {%- endblock header_scripts %}
     {%- endblock head %}
   </head>
-  <body{% block body_attribs %}{% endblock body_attribs %}>
+  <body {% block body_attribs %}{% endblock body_attribs %}>
     {% block body -%}
     <div id="wrap">
         {% block navbar %}
@@ -89,6 +90,11 @@
     {% block scripts %}
     <script src="//code.jquery.com/jquery.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script>
+    $(document).ready(function() {
+      FastClick.attach(document.body);
+    });
+    </script>
     {%- endblock scripts %}
     {%- endblock body %}
   </body>

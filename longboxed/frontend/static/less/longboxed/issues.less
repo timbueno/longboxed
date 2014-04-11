@@ -1,5 +1,18 @@
 .on-pull-list {
-    color: @color-gold !important;
+    &:extend(.fa, .fa-check all);
+    color: @brand-success;
+    &:hover{
+        &:extend(.fa, .fa-times all);
+        color: @brand-danger;
+    }
+
+}
+
+.not-on-pull-list {
+    &:extend(.fa, .fa-plus all);
+    &:hover{
+        color: @brand-success;
+    }
 }
 
 .full-issue-content {
@@ -63,23 +76,14 @@
             padding-right: 10px;
         }
         .card-buttons{
-            // &:last-child{
-            //     padding-right: 0px;
-            // }
-
             text-align: right;
 
-            .fa-star {
-                &:hover {
-                  color: @color-gold;
-                }
-            }
-            .fa-twitter {
+            .tweet {
                 &:hover {
                   color: #4099ff;
                 }
             }
-            .fa-facebook {
+            .facebook {
                 padding-right: 0px;
                 &:hover {
                   color: #3b5999;

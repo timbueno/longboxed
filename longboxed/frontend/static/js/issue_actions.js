@@ -4,7 +4,7 @@ $(function() {
     var $star = $(this);
     var titleId = $(this).data("titleid")
     if ($(this).hasClass('on-pull-list')) {
-      var iteration = 2
+      var iteration = 2;
     } else {
       var iteration = $(this).data('iteration')||1
     }
@@ -14,8 +14,8 @@ $(function() {
           '/ajax/add_to_pull_list',
           {'id': titleId}
         )
-        .done(function(response) {
-          $star.addClass( "on-pull-list" );
+        .done(function() {
+          $star.toggleClass( "on-pull-list not-on-pull-list" );
         });
         break;
       case 2:
@@ -23,8 +23,8 @@ $(function() {
           '/ajax/remove_from_pull_list',
           {'id': titleId}
         )
-        .done(function(response) {
-          $star.removeClass( "on-pull-list" );
+        .done(function() {
+          $star.toggleClass( "on-pull-list not-on-pull-list" );
         });
         break;
     }

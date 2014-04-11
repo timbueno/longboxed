@@ -27,7 +27,7 @@
       </div>
       <div class="col-xs-8 card-buttons">
         {% if current_user %}
-        <span class="fa fa-star add-remove-pull {%if issue.title in current_user.pull_list %}on-pull-list{% endif %}" data-titleid="{{ issue.title.id }}"></span>
+        <span class="add-remove-pull{% if issue.title in current_user.pull_list %} on-pull-list{% else %} not-on-pull-list{% endif %}" data-titleid="{{ issue.title.id }}"></span>
         {% endif %}
         <span class="fa fa-twitter tweet" data-title="{{ issue.complete_title }}" data-url="{{ url_for('comics.issue', diamond_id=issue.diamond_id, _external=True) }}"></span>
         <span class="fa fa-facebook facebook" data-title="{{ issue.complete_title }}" data-url="{{ url_for('comics.issue', diamond_id=issue.diamond_id, _external=True) }}"></span>
