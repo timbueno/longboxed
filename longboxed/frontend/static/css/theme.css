@@ -7670,13 +7670,13 @@ hr {
   content: "\e601";
 }
 .on-pull-list {
-  color: green;
+  color: #5cb85c;
 }
 .on-pull-list:hover {
-  color: red;
+  color: #d9534f;
 }
 .not-on-pull-list:hover {
-  color: green;
+  color: #5cb85c;
 }
 .full-issue-content {
   padding-top: 1em;

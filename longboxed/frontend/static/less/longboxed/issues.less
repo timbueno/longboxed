@@ -1,9 +1,9 @@
 .on-pull-list {
     &:extend(.fa, .fa-check all);
-    color: green;
+    color: @brand-success;
     &:hover{
         &:extend(.fa, .fa-times all);
-        color: red;
+        color: @brand-danger;
     }
 
 }
@@ -11,7 +11,7 @@
 .not-on-pull-list {
     &:extend(.fa, .fa-plus all);
     &:hover{
-        color: green;
+        color: @brand-success;
     }
 }
 
