@@ -1,31 +1,30 @@
 <div id="footer">
     <div class="container">
-
-        <div class="row centered">
-            <div class="col-sm-4">
-                <h4>LONGBOXED</h4>
-                <p>
-                    Proudly made in:
-                    <br>
-                    New York City, New York
-                </p>
-            </div><!-- /col-lg-4 -->
-            
-            <div class="col-sm-4">
-                <h4>Contact Us</h4>
-                <p>
-                    <a class="twitter" href="https://twitter.com/longboxed"><i class="fa fa-twitter"></i></a>
-                    <a class="facebook" href="https://www.facebook.com/longboxed"><i class="fa fa-facebook"></i></a>
-                    <a class="mail" href="mailto:contact@longboxed.com"><i class="fa fa-envelope"></i></a>
-                </p>
-            </div><!-- /col-lg-4 -->
-            
-            <div class="col-sm-4">
-                <h4>About</h4>
-                <p>Never miss an issue again.</p>
-            </div><!-- /col-lg-4 -->
-        
-        </div>
-    
+        <ul class="left-links">
+<!--             <li>
+                <a href="#" class="hidden-xs">About</a>
+            </li> -->
+            <li>
+                <a href="mailto:contact@longboxed.com" class="hidden-xs">Contact</a>
+                <a href="mailto:contact@longboxed.com" class="visible-xs"><i class="fa fa-envelope-o"></i></a>
+            </li>
+            <li>
+                <a href="http://blog.longboxed.com/" class="hidden-xs">Blog</a>
+                <a href="http://blog.longboxed.com/" class="visible-xs"><i class="fa fa-tumblr"></i></a>
+            </li>
+        </ul>
+        <a href="{{ url_for('dashboard.index') }}">
+            <span class="icon-longboxed-logo footer-logo"></span>
+        </a>
+        <ul class="right-links">
+            <li>
+                <a href="https://twitter.com/longboxed" class="hidden-xs">Twitter</a>
+                <a href="https://twitter.com/longboxed" class="visible-xs"><i class="fa fa-twitter"></i></a>
+            </li>
+            <li>
+                <a href="https://www.facebook.com/longboxed" class="hidden-xs">Facebook</a>
+                <a href="https://www.facebook.com/longboxed" class="visible-xs"><i class="fa fa-facebook"></i></a>
+            </li>
+        </ul>
     </div>
 </div>
