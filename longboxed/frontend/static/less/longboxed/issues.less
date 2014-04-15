@@ -1,17 +1,30 @@
 .on-pull-list {
-    &:extend(.fa, .fa-check all);
-    color: @brand-success;
+    .fa;
+    &:before{
+        content: @fa-var-check;
+        color: @brand-success;
+      }
     &:hover{
-        &:extend(.fa, .fa-times all);
-        color: @brand-danger;
+        &:before{
+            content: @fa-var-times;
+            color: @brand-danger;
+          }
     }
 
 }
 
 .not-on-pull-list {
-    &:extend(.fa, .fa-plus all);
+    color: @gray-dark;
+    text-decoration: none;
+    .fa;
+    &:before{
+        content: @fa-var-plus;
+      }
     &:hover{
-        color: @brand-success;
+        &:before{
+            content: @fa-var-plus;
+            color: @brand-success;
+        }
     }
 }
 
@@ -77,7 +90,9 @@
         }
         .card-buttons{
             text-align: right;
-
+            .add-remove-pull {
+                color: #ccc;
+            }
             .tweet {
                 &:hover {
                   color: #4099ff;
