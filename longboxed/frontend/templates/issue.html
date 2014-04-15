@@ -20,7 +20,7 @@
                                 {% if g.user %}
                                 {{ add_remove_pull_button(issue, current_user) }}
                                 {% else %}
-                                <a href="{{ url_for('security.login') }}" class="fa fa-star"></a>
+                                <a href="{{ url_for('security.login') }}" class="not-on-pull-list"></a>
                                 {% endif %}
                             </div>
                             <div class="col-xs-4">
