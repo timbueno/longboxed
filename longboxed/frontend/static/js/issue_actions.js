@@ -15,7 +15,9 @@ $(function() {
           {'id': titleId}
         )
         .done(function() {
-          $star.toggleClass( "on-pull-list not-on-pull-list" );
+          // $star.toggleClass( "on-pull-list not-on-pull-list" );
+          $star.removeClass( "not-on-pull-list" );
+          $star.addClass( "on-pull-list" );
         });
         break;
       case 2:
@@ -24,7 +26,9 @@ $(function() {
           {'id': titleId}
         )
         .done(function() {
-          $star.toggleClass( "on-pull-list not-on-pull-list" );
+          // $star.toggleClass( "on-pull-list not-on-pull-list" );
+          $star.removeClass( "on-pull-list" );
+          $star.addClass( "not-on-pull-list" );
         });
         break;
     }
