@@ -5960,23 +5960,16 @@ td.visible-print {
     display: none !important;
   }
 }
-/*!
- *  Font Awesome 4.0.3 by @davegandy - http://fontawesome.io - @fontawesome
- *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
- */
 /* FONT PATH
  * -------------------------- */
 @font-face {
   font-family: 'FontAwesome';
-  src: url('../fonts/fontawesome-webfont.eot?v=4.0.3');
-  src: url('../fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'), url('../fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'), url('../fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype'), url('../fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg');
+  src: url('../fonts/font-awesome/fontawesome-webfont.eot?v=4.0.3');
+  src: url('../fonts/font-awesome/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'), url('../fonts/font-awesome/fontawesome-webfont.woff?v=4.0.3') format('woff'), url('../fonts/font-awesome/fontawesome-webfont.ttf?v=4.0.3') format('truetype'), url('../fonts/font-awesome/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg');
   font-weight: normal;
   font-style: normal;
 }
-.fa,
-.on-pull-list,
-.on-pull-list:hover,
-.not-on-pull-list {
+.fa {
   display: inline-block;
   font-family: FontAwesome;
   font-style: normal;
@@ -5987,7 +5980,7 @@ td.visible-print {
 }
 /* makes the font 33% larger relative to the icon container */
 .fa-lg {
-  font-size: 1.3333333333333333em;
+  font-size: 1.33333333em;
   line-height: 0.75em;
   vertical-align: -15%;
 }
@@ -6004,12 +5997,12 @@ td.visible-print {
   font-size: 5em;
 }
 .fa-fw {
-  width: 1.2857142857142858em;
+  width: 1.28571429em;
   text-align: center;
 }
 .fa-ul {
   padding-left: 0;
-  margin-left: 2.142857142857143em;
+  margin-left: 2.14285714em;
   list-style-type: none;
 }
 .fa-ul > li {
@@ -6018,8 +6011,8 @@ td.visible-print {
 .fa-li {
   position: absolute;
   left: -2.14285714em;
-  width: 2.142857142857143em;
-  top: 0.14285714285714285em;
+  width: 2.14285714em;
+  top: 0.14285714em;
   text-align: center;
 }
 .fa-li.fa-lg {
@@ -6190,12 +6183,10 @@ td.visible-print {
 .fa-th-list:before {
   content: "\f00b";
 }
-.fa-check:before,
-.on-pull-list:before {
+.fa-check:before {
   content: "\f00c";
 }
-.fa-times:before,
-.on-pull-list:hover:before {
+.fa-times:before {
   content: "\f00d";
 }
 .fa-search-plus:before {
@@ -6452,8 +6443,7 @@ td.visible-print {
 .fa-compress:before {
   content: "\f066";
 }
-.fa-plus:before,
-.not-on-pull-list:before {
+.fa-plus:before {
   content: "\f067";
 }
 .fa-minus:before {
@@ -7697,12 +7687,50 @@ hr {
   content: "\e601";
 }
 .on-pull-list {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.on-pull-list.pull-left {
+  margin-right: .3em;
+}
+.on-pull-list.pull-right {
+  margin-left: .3em;
+}
+.on-pull-list:before {
+  content: "\f00c";
   color: #5cb85c;
 }
-.on-pull-list:hover {
+.on-pull-list:hover:before {
+  content: "\f00d";
   color: #d9534f;
 }
-.not-on-pull-list:hover {
+.not-on-pull-list {
+  color: #2e2e2e;
+  text-decoration: none;
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.not-on-pull-list.pull-left {
+  margin-right: .3em;
+}
+.not-on-pull-list.pull-right {
+  margin-left: .3em;
+}
+.not-on-pull-list:before {
+  content: "\f067";
+}
+.not-on-pull-list:hover:before {
+  content: "\f067";
   color: #5cb85c;
 }
 .full-issue-content {
@@ -7770,6 +7798,9 @@ hr {
 }
 .issue-card .action-buttons .card-buttons {
   text-align: right;
+}
+.issue-card .action-buttons .card-buttons .add-remove-pull {
+  color: #ccc;
 }
 .issue-card .action-buttons .card-buttons .tweet:hover {
   color: #4099ff;
