@@ -7473,8 +7473,6 @@ h5,
 .h4,
 .h5 {
   letter-spacing: 3px;
-  margin-top: 10px;
-  margin-bottom: 10px;
 }
 hr {
   margin-top: 11px;
@@ -7966,6 +7964,24 @@ hr {
 .slide2 h2 {
   color: #2f2f2f;
   padding-bottom: 1em;
+}
+.slide2 img {
+  max-width: 100%;
+  height: auto;
+  padding-bottom: 15px;
+  display: block;
+  margin: auto;
+}
+@media (max-width: 600px) {
+  .slide2 img {
+    max-height: 336px;
+  }
+}
+@media (max-width: 480px) {
+  .slide2 img {
+    max-width: 133px;
+    max-height: 200px;
+  }
 }
 /*
  * typehead.js-bootstrap3.less 0.1.5

@@ -107,4 +107,20 @@
         color: #2f2f2f;
         padding-bottom: 1em
     }
+
+    img {
+        .img-responsive;
+        padding-bottom: 15px;
+        display: block; // Centers image
+        margin: auto; // Centers image
+
+        @media (max-width: 600px) {
+            max-height:336px;
+        }
+
+        @media (max-width: @screen-xs-min) {
+            max-width:133px;
+            max-height:200px;
+        }
+    }
 }
