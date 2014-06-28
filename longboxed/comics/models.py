@@ -74,6 +74,7 @@ class Title(db.Model):
     def __str__(self):
         return self.name
 
+
 class Issue(db.Model):
     """
     Issue model class. Title and Publisher can both be referenced with
@@ -122,6 +123,18 @@ class Issue(db.Model):
         id1 = int(re.search(r'\d+', self.diamond_id).group())
         id2 = int(re.search(r'\d+', other_issue.diamond_id).group())
         return id1 - id2
+
+    def to_json(self):
+        i = {
+            'id': self.id,
+            'complete_title': self.complete_title,
+            'publisher': self.publisher.name,
+            'title': self.title.name,
+            'release_date': self.on_sale_date.strftime('%Y-%m-%d'),
+            'issue_number': self.issue_number,
+            'cover_image': self.cover_image.find_thumbnail(width=500).locate()
+        }
+        return i
 
 
 class IssueCover(db.Model, Image):
