@@ -5,7 +5,7 @@
 
     longboxed api application package
 """
-
+from datetime import datetime
 from functools import wraps
 
 from flask import jsonify
@@ -43,7 +43,7 @@ def route(bp, *args, **kwargs):
             if isinstance(rv, tuple):
                 sc = rv[1]
                 rv = rv[0]
-            return jsonify(dict(data=rv)), sc
+            return jsonify(dict(data=rv, datetime=datetime.utcnow().strftime('%s'))), sc
         return f
 
     return decorator
