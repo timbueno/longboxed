@@ -51,6 +51,15 @@ class Publisher(db.Model):
     def __str__(self):
         return self.name
 
+    def to_json(self):
+        p = {
+            'id': self.id,
+            'name': self.name,
+            'title_count': self.titles.count(),
+            'issue_count': self.comics.count()
+        }
+        return p
+
 class Title(db.Model):
     """
     Title Model class with backreferenced relationship, issues. Publisher 
@@ -74,6 +83,14 @@ class Title(db.Model):
     def __str__(self):
         return self.name
 
+    def to_json(self):
+        t = {
+            'id': self.id,
+            'name': self.name,
+            'publsher': self.publisher.name,
+            'issue_count': self.issues.count()
+        }
+        return t
 
 class Issue(db.Model):
     """
@@ -124,7 +141,7 @@ class Issue(db.Model):
         id2 = int(re.search(r'\d+', other_issue.diamond_id).group())
         return id1 - id2
 
-    def to_json(self):
+    def to_json(self, description=True):
         i = {
             'id': self.id,
             'complete_title': self.complete_title,
@@ -134,6 +151,8 @@ class Issue(db.Model):
             'issue_number': self.issue_number,
             'cover_image': self.cover_image.find_thumbnail(width=500).locate()
         }
+        if description:
+            i['description'] = self.description
         return i
 
 
