@@ -141,18 +141,19 @@ class Issue(db.Model):
         id2 = int(re.search(r'\d+', other_issue.diamond_id).group())
         return id1 - id2
 
-    def to_json(self, description=True):
+    def to_json(self):
         i = {
             'id': self.id,
             'complete_title': self.complete_title,
             'publisher': self.publisher.name,
             'title': self.title.name,
+            'price': self.retail_price,
+            'diamond_id': self.diamond_id,
             'release_date': self.on_sale_date.strftime('%Y-%m-%d'),
             'issue_number': self.issue_number,
-            'cover_image': self.cover_image.find_thumbnail(width=500).locate()
+            'cover_image': self.cover_image.find_thumbnail(width=500).locate(),
+            'description': self.description
         }
-        if description:
-            i['description'] = self.description
         return i
 
 
