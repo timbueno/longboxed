@@ -6,7 +6,7 @@
     Title endpoints
 """
 
-from flask import Blueprint
+from flask import Blueprint, request, url_for
 
 from ..services import comics
 from . import route
@@ -15,11 +15,29 @@ from . import route
 bp = Blueprint('titles', __name__, url_prefix='/titles')
 
 
+# @route(bp, '/')
+# def titles():
+#     titles = comics.titles.all()
+#     return {
+#         'titles': [title.to_json() for title in titles]
+#     }
+
 @route(bp, '/')
 def titles():
-    titles = comics.titles.all()
+    page = request.args.get('page', 1, type=int)
+    pagination = comics.titles.__model__.query.paginate(page, per_page=20, error_out=False)
+    titles = pagination.items
+    prev = None
+    if pagination.has_prev:
+        prev = url_for('.titles', page=page-1, _external=True)
+    next = None
+    if pagination.has_next:
+        next = url_for('.titles', page=page+1, _external=True)
     return {
-        'titles': [title.to_json() for title in titles]
+        'titles': [title.to_json() for title in titles],
+        'prev': prev,
+        'next': next,
+        'count': pagination.total
     }
 
 
