@@ -52,5 +52,5 @@ def get_issues_for_title(id):
     title = comics.titles.get(id)
     return {
         'title': title.name,
-        'issues': [issue.to_json(description=False) for issue in title.issues]
+        'issues': [issue.to_json() for issue in title.issues]
     }

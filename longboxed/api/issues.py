@@ -29,7 +29,7 @@ def issues_with_date():
     issues = comics.issues.find_issue_with_date(date, True)
     return {
         'date': date.strftime('%Y-%m-%d'),
-        'issues': [issue.to_json(description=False) for issue in issues if issue.is_parent]
+        'issues': [issue.to_json() for issue in issues if issue.is_parent]
     }
 
 
@@ -45,5 +45,5 @@ def this_week():
     issues = comics.issues.find_issue_with_date(date, True)
     return {
         'date': date.strftime('%Y-%m-%d'),
-        'issues': [issue.to_json(description=False) for issue in issues if issue.is_parent]
+        'issues': [issue.to_json() for issue in issues if issue.is_parent]
     }
