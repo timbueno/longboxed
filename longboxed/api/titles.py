@@ -6,7 +6,7 @@
     Title endpoints
 """
 
-from flask import Blueprint, request, url_for
+from flask import Blueprint, jsonify, request, url_for
 
 from ..services import comics
 from . import route
@@ -33,24 +33,24 @@ def titles():
     next = None
     if pagination.has_next:
         next = url_for('.titles', page=page+1, _external=True)
-    return {
+    return jsonify({
         'titles': [title.to_json() for title in titles],
         'prev': prev,
         'next': next,
         'count': pagination.total
-    }
+    })
 
 
 @route(bp, '/<int:id>')
 def get_title(id):
     title = comics.titles.get(id)
-    return title.to_json()
+    return jsonify(title.to_json())
 
 
 @route(bp, '/<int:id>/issues/')
 def get_issues_for_title(id):
     title = comics.titles.get(id)
-    return {
+    return jsonify({
         'title': title.name,
         'issues': [issue.to_json() for issue in title.issues]
-    }
+    })
