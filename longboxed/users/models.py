@@ -114,3 +114,12 @@ class User(db.Model, UserMixin):
 
     def __str__(self):
         return self.email
+
+    def to_json(self):
+        u = {
+            'id': self.id,
+            'email': self.email,
+            'roles': [role.name for role in self.roles],
+            'pull_list': [title.to_json() for title in self.pull_list]
+        }
+        return u
