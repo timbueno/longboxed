@@ -7,9 +7,7 @@
 """
 from datetime import datetime
 
-from flask import abort, Blueprint, jsonify, render_template, redirect, request, \
-                  url_for
-from flask.ext.security import current_user
+from flask import abort, Blueprint, render_template, redirect, url_for
 
 from . import route
 from ..helpers import current_wednesday, last_wednesday, next_wednesday
