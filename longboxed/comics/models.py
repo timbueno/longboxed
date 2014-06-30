@@ -211,6 +211,11 @@ class Bundle(db.Model):
         backref=db.backref('bundles', lazy='dynamic')
     )
 
-
-
-
+    def to_json(self):
+        b = {
+            'id': self.id,
+            'release_date': self.release_date.strftime('%Y-%m-%d'),
+            'last_updated': self.last_updated,
+            'issues': [issue.to_json() for issue in self.issues]
+        }
+        return b
