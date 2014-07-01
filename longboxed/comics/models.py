@@ -88,7 +88,8 @@ class Title(db.Model):
             'id': self.id,
             'name': self.name,
             'publsher': self.publisher.name,
-            'issue_count': self.issues.count()
+            'issue_count': self.issues.count(),
+            'subscribers': self.users.count()
         }
         return t
 
