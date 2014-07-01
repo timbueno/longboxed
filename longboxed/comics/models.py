@@ -87,7 +87,8 @@ class Title(db.Model):
         t = {
             'id': self.id,
             'name': self.name,
-            'publsher': self.publisher.name,
+            'publisher': {'id': self.publisher.id, 
+                          'name': self.publisher.name},
             'issue_count': self.issues.count(),
             'subscribers': self.users.count()
         }
@@ -146,8 +147,10 @@ class Issue(db.Model):
         i = {
             'id': self.id,
             'complete_title': self.complete_title,
-            'publisher': self.publisher.name,
-            'title': self.title.name,
+            'publisher': {'id': self.publisher.id,
+                          'name': self.publisher.name},
+            'title': {'id': self.title.id,
+                      'name': self.title.name},
             'price': self.retail_price,
             'diamond_id': self.diamond_id,
             'release_date': self.on_sale_date.strftime('%Y-%m-%d'),
