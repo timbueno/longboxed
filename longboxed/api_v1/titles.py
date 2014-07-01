@@ -15,13 +15,6 @@ from . import route
 bp = Blueprint('titles', __name__, url_prefix='/titles')
 
 
-# @route(bp, '/')
-# def titles():
-#     titles = comics.titles.all()
-#     return {
-#         'titles': [title.to_json() for title in titles]
-#     }
-
 @route(bp, '/')
 def titles():
     page = request.args.get('page', 1, type=int)
