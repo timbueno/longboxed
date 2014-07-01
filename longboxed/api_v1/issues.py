@@ -19,7 +19,7 @@ bp = Blueprint('issues', __name__, url_prefix='/issues')
 
 @route(bp, '/')
 def issues_with_date():
-    date = request.args.get('date')
+    date = request.json.get('date')
     if isinstance(date, datetime):
         pass
     elif isinstance(date, unicode):
