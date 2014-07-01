@@ -5,7 +5,6 @@
 
     longboxed api application package
 """
-from datetime import datetime
 from functools import wraps
 
 from flask import jsonify
@@ -30,25 +29,6 @@ def create_app(config_object=ProdConfig, register_security_blueprint=False):
 
     return app
 
-
-# def route(bp, *args, **kwargs):
-#     kwargs.setdefault('strict_slashes', False)
-
-#     def decorator(f):
-#         @bp.route(*args, **kwargs)
-#         @wraps(f)
-#         def wrapper(*args, **kwargs):
-#             sc = 200
-#             rv = f(*args, **kwargs)
-#             print 'IM HERE'
-#             if isinstance(rv, tuple):
-#                 print 'NOW were HERE'
-#                 sc = rv[1]
-#                 rv = rv[0]
-#             return jsonify(dict(data=rv, datetime=datetime.utcnow().strftime('%s'))), sc
-#         return f
-
-#     return decorator
 
 def route(bp, *args, **kwargs):
     kwargs.setdefault('strict_slashes', True)
