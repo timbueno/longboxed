@@ -5,10 +5,7 @@
 
     longboxed api errors
 """
-
 from flask import jsonify
-# from ..exceptions import ValidationError
-# from . import api
 
 
 def bad_request(message):
