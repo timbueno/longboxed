@@ -14,7 +14,7 @@ from . import route
 bp = Blueprint('publishers', __name__, url_prefix='/publishers')
 
 
-@route(bp, '/')
+@route(bp, '/', methods=['GET'])
 def publishers():
     publishers = comics.publishers.all()
     return jsonify({
@@ -22,13 +22,13 @@ def publishers():
     })
 
 
-@route(bp, '/<int:id>')
+@route(bp, '/<int:id>', methods=['GET'])
 def get_publisher(id):
     publisher = comics.publishers.get(id)
     return jsonify(publisher.to_json())
 
 
-@route(bp, '/<int:id>/titles/')
+@route(bp, '/<int:id>/titles/', methods=['GET'])
 def get_titles_for_publisher(id):
     publisher = comics.publishers.get(id)
     return jsonify({
