@@ -25,7 +25,7 @@ def login():
 @route(bp, '/<int:id>/pull_list/', methods=['GET'])
 @auth.login_required
 def get_user_pull_list(id):
-    if id is not g.current_user.id:
+    if id != g.current_user.id:
         return forbidden('You do not have permission to access this users pull list')
     return jsonify({
         'user': g.current_user.email,
@@ -36,7 +36,7 @@ def get_user_pull_list(id):
 @route(bp, '/<int:id>/pull_list/', methods=['POST'])
 @auth.login_required
 def add_title_to_pull_list(id):
-    if id is not g.current_user.id:
+    if id != g.current_user.id:
         return forbidden('You do not have permission to access this users pull list')
     title_id = request.args.get('title_id', type=int)
     if title_id:
@@ -58,7 +58,7 @@ def add_title_to_pull_list(id):
 @route(bp, '/<int:id>/pull_list/', methods=['DELETE'])
 @auth.login_required
 def remove_title_from_pull_list(id):
-    if id is not g.current_user.id:
+    if id != g.current_user.id:
         return forbidden('You do not have permission to access this users pull list')
     title_id = request.args.get('title_id', type=int)
     if title_id:
@@ -80,7 +80,7 @@ def remove_title_from_pull_list(id):
 @route(bp, '/<int:id>/bundles/', methods=['GET'])
 @auth.login_required
 def get_user_bundles(id):
-    if id is not g.current_user.id:
+    if id != g.current_user.id:
         return forbidden('You do not have permission to access this users pull list')
     page = request.args.get('page', 1, type=int)
     pagination = g.current_user.bundles.paginate(page, per_page=5, error_out=False)
