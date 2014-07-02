@@ -17,7 +17,7 @@ from . import route
 bp = Blueprint('issues', __name__, url_prefix='/issues')
 
 
-@route(bp, '/')
+@route(bp, '/', methods=['GET'])
 def issues_with_date():
     if 'date' not in request.args.keys():
         abort(404)
@@ -35,13 +35,13 @@ def issues_with_date():
     })
 
 
-@route(bp, '/<int:id>')
+@route(bp, '/<int:id>', methods=['GET'])
 def get_issue(id):
     issue = comics.issues.get(id)
     return jsonify(issue.to_json())
 
 
-@route(bp, '/thisweek/')
+@route(bp, '/thisweek/', methods=['GET'])
 def this_week():
     date = current_wednesday()
     issues = comics.issues.find_issue_with_date(date, True)
