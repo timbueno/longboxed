@@ -40,7 +40,6 @@ def add_title_to_pull_list(id):
         return forbidden('You do not have permission to access this users pull list')
     title_id = request.args.get('title_id', type=int)
     if title_id:
-        title_id = int(title_id)
         title = comics.titles.get_or_404(title_id)
     else:
         return bad_request('title_id: attribute not found')
@@ -62,7 +61,6 @@ def remove_title_from_pull_list(id):
         return forbidden('You do not have permission to access this users pull list')
     title_id = request.args.get('title_id', type=int)
     if title_id:
-        title_id = int(title_id)
         title = comics.titles.get_or_404(title_id)
     else:
         return bad_request('title_id: attribute not found')
