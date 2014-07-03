@@ -121,7 +121,6 @@ class User(db.Model, UserMixin):
             'email': self.email,
             'first_name': self.first_name,
             'last_name': self.last_name,
-            'roles': [role.name for role in self.roles],
-            'pull_list': [title.to_json() for title in self.pull_list]
+            'roles': [role.name for role in self.roles]
         }
         return u
