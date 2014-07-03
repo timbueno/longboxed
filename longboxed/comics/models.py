@@ -153,7 +153,7 @@ class Issue(db.Model):
                       'name': self.title.name},
             'price': self.retail_price,
             'diamond_id': self.diamond_id,
-            'release_date': self.on_sale_date.strftime('%Y-%m-%d'),
+            'release_date': self.on_sale_date.strftime('%Y-%m-%d') if self.on_sale_date else None,
             'issue_number': self.issue_number,
             'cover_image': self.cover_image.find_thumbnail(width=500).locate(),
             'description': self.description
