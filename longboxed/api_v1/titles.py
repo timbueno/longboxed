@@ -10,6 +10,7 @@ from flask import abort, Blueprint, jsonify, request, url_for
 from sqlalchemy.orm.exc import NoResultFound
 
 from ..services import comics
+from .errors import bad_request
 from . import route
 
 
@@ -43,17 +44,29 @@ def get_title(id):
 
 @route(bp, '/<int:id>/issues/')
 def get_issues_for_title(id):
-    title = comics.titles.get(id)
+    title = comics.titles.get_or_404(id)
+    page = request.args.get('page', 1, type=int)
+    pagination = title.issues.paginate(page, per_page=2, error_out=False)
+    issues = pagination.items
+    prev = None
+    if pagination.has_prev:
+        prev = url_for('.get_issues_for_title', id=id, page=page-1, _external=True)
+    next = None
+    if pagination.has_next:
+        next = url_for('.get_issues_for_title', id=id, page=page+1, _external=True)
     return jsonify({
         'title': title.name,
-        'issues': [issue.to_json() for issue in title.issues]
+        'prev': prev,
+        'next': next,
+        'count': pagination.total,
+        'issues': [issue.to_json() for issue in issues]
     })
 
 
 @route(bp, '/autocomplete/', methods=['GET'])
 def autocomplete():
     if 'query' not in request.args.keys():
-        abort(404)
+        return bad_request('Must submit a \'query\' parameter!')
     fragment = request.args.get('query')
     keywords = fragment.split()
     searchstring = '%%'.join(keywords)
@@ -64,8 +77,6 @@ def autocomplete():
         return jsonify({
                 'query': fragment,
                 'suggestions': [r.name for r in res],
-                'data': ['%s' % (r.name) for r in res]
-            })
+        })
     except NoResultFound:
-        return jsonify({'query': fragment, 'suggestions':[], 'data':[]})
-    return jsonify({'data': 'YOU DID IT!'})
+        return jsonify({'query': fragment, 'suggestions':[]})
