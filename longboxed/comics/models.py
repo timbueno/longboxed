@@ -67,6 +67,9 @@ class Title(db.Model):
     can also be accessed with the hidden 'publisher' attribute.
 
     Example: Saga, East Of West
+
+    Note: hybrid property is for sorting based on subscriber (user) number.
+    # http://stackoverflow.com/questions/22876946/how-to-order-by-count-of-many-to-many-relationship-in-sqlalchemy
     """
     __tablename__ = 'titles'
     #: IDs
