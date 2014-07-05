@@ -85,8 +85,8 @@ def get_user_bundles(id):
     page = request.args.get('page', 1, type=int)
     # pagination = g.current_user.bundles.paginate(page, per_page=5, error_out=False)
     pagination = Bundle.query.filter(Bundle.user == g.current_user, Bundle.release_date <= current_wednesday()) \
-        .order_by(Bundle.release_date.desc()) \
-        .paginate(page, per_page=5, error_out=False)
+                             .order_by(Bundle.release_date.desc()) \
+                             .paginate(page, per_page=5, error_out=False)
     bundles = pagination.items
     prev = None
     if pagination.has_prev:
@@ -99,3 +99,15 @@ def get_user_bundles(id):
         'next': next,
         'bundles': [bundle.to_json() for bundle in bundles]
     })
+
+
+@route(bp, '/<int:id>/bundles/latest', methods=['GET'])
+@auth.login_required
+def get_latest_bundles(id):
+    from ..comics.models import Bundle
+    if id != g.current_user.id:
+        return forbidden('You do not have permission to access this users pull list')
+    b = Bundle.query.filter(Bundle.release_date <= current_wednesday()) \
+                    .order_by(Bundle.release_date.desc()) \
+                    .first()
+    return jsonify(b.to_json())
