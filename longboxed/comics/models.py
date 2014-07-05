@@ -8,6 +8,7 @@
 import re
 from datetime import datetime
 
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_imageattach.entity import Image, image_attachment
 
 from ..core import db
@@ -82,6 +83,18 @@ class Title(db.Model):
 
     def __str__(self):
         return self.name
+
+    @hybrid_property
+    def num_subscribers(self):
+        return self.users.count()
+
+    @num_subscribers.expression
+    def _num_subscribers_expression(cls):
+        from ..users.models import titles_users
+        return (db.select([db.func.count(titles_users.c.user_id).label('num_subscribers')])
+                .where(titles_users.c.title_id == cls.id)
+                .label('total_subscribers')
+                )
 
     def to_json(self):
         t = {

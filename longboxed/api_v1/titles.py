@@ -10,8 +10,9 @@ from flask import abort, Blueprint, jsonify, request, url_for
 from sqlalchemy import asc, desc
 from sqlalchemy.sql import func
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm import lazyload
 
-from ..core import db
+# from ..core import db
 # from ..users.models import titles_users
 from ..helpers import current_wednesday
 from ..services import comics
@@ -80,15 +81,56 @@ def autocomplete():
     searchstring = '%%'.join(keywords)
     searchstring = '%%%s%%' % (searchstring)
     try:
-        Titles = comics.titles.__model__
-        res = Titles.query.filter(Titles.name.ilike(searchstring)).limit(20)
-        # print '\nHELOOOOO MARKER\n'
-
-        # from ..users.models import titles_users
-        # from ..comics.models import Title, Publisher
-        # # res = db.session.query(Title, func.count(titles_users.c.user_id).label('total')).join(titles_users).group_by(Title.id).order_by('total DESC')
+        # Titles = comics.titles.__model__
+        # res = Titles.query.filter(Titles.name.ilike(searchstring)).limit(20)
+        from ..comics.models import Title
+        # res = db.session.query(Title, func.count(titles_users.c.user_id).label('total')).join(titles_users).group_by(Title.id).order_by('total DESC')
         # res = db.session.query(Title, func.count(titles_users.c.user_id).label('total')).join(titles_users).group_by(Title.id).order_by('total DESC')
         # print res
+
+        # subq = (db.session.query(
+        #     Title.id.label('title_id'),
+        #     func.count(titles_users.c.user_id).label('num_subscribers'))
+        #     .outerjoin(titles_users).group_by(Title.id)
+        #     ).subquery('subq')
+
+        # res = (db.session.query(Title, subq.c.num_subscribers)
+        #     .join(subq, Title.id == subq.c.title_id)
+        #     .group_by(Title).order_by(subq.c.num_subscribers.desc())
+        #     )
+
+        # print res
+
+        # res = db.session.query(
+        #     Title,
+        #     func.count(titles_users.c.user_id).label('total')).\
+        #     filter(Title.name.ilike(searchstring)).\
+        #     options(lazyload(Title.publisher)).\
+        #     join(titles_users).\
+        #     group_by(Title).\
+        #     order_by('total DESC')
+
+        res = Title.query.filter(Title.name.ilike(searchstring)).\
+                         order_by(Title.num_subscribers.desc()).\
+                         limit(10).\
+                         all()
+
+        # print res[0].num_subscribers
+
+        # sub = db.session.query(
+        #         titles_users.c.title_id,
+        #         func.count(titles_users.c.title_id).label('count')
+        #     ).\
+        #     group_by(titles_users.c.title_id).\
+        #     having(func.count(titles_users.c.title_id) >= 0).\
+        #     subquery()
+
+        # res = db.session.query(Title, sub.c.count).\
+        #     join(
+        #         sub
+        #     ).order_by(
+        #         sub.c.count.desc()
+        #     ).all()
 
         return jsonify({
                 'query': fragment,
