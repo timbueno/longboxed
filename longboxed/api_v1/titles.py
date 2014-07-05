@@ -7,8 +7,13 @@
 """
 
 from flask import abort, Blueprint, jsonify, request, url_for
+from sqlalchemy import asc, desc
+from sqlalchemy.sql import func
 from sqlalchemy.orm.exc import NoResultFound
 
+from ..core import db
+# from ..users.models import titles_users
+from ..helpers import current_wednesday
 from ..services import comics
 from .errors import bad_request
 from . import route
@@ -44,9 +49,12 @@ def get_title(id):
 
 @route(bp, '/<int:id>/issues/')
 def get_issues_for_title(id):
+    from ..comics.models import Issue
     title = comics.titles.get_or_404(id)
     page = request.args.get('page', 1, type=int)
-    pagination = title.issues.paginate(page, per_page=2, error_out=False)
+    pagination = Issue.query.filter(Issue.title==title, Issue.on_sale_date <= current_wednesday()) \
+        .order_by(Issue.on_sale_date.desc()) \
+        .paginate(page, per_page=5, error_out=False)
     issues = pagination.items
     prev = None
     if pagination.has_prev:
@@ -74,9 +82,17 @@ def autocomplete():
     try:
         Titles = comics.titles.__model__
         res = Titles.query.filter(Titles.name.ilike(searchstring)).limit(20)
+        # print '\nHELOOOOO MARKER\n'
+
+        # from ..users.models import titles_users
+        # from ..comics.models import Title, Publisher
+        # # res = db.session.query(Title, func.count(titles_users.c.user_id).label('total')).join(titles_users).group_by(Title.id).order_by('total DESC')
+        # res = db.session.query(Title, func.count(titles_users.c.user_id).label('total')).join(titles_users).group_by(Title.id).order_by('total DESC')
+        # print res
+
         return jsonify({
                 'query': fragment,
-                'suggestions': [r.name for r in res],
+                'suggestions': [r.to_json() for r in res],
         })
     except NoResultFound:
         return jsonify({'query': fragment, 'suggestions':[]})
