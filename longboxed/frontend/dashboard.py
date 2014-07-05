@@ -35,7 +35,12 @@ def test():
 
 @route(bp, '/')
 def index():
-    issues = _comics.issues.__model__.query.filter(_comics.issues.__model__.on_sale_date == current_wednesday(), _comics.issues.__model__.is_parent == True).order_by(func.random()).limit(4)
+    Issue = _comics.issues.__model__
+    issues = Issue.query.filter(Issue.on_sale_date == current_wednesday(), Issue.is_parent == True).\
+                         order_by(Issue.num_subscribers.desc()).\
+                         limit(4).\
+                         all()
+    print issues[0].num_subscribers
     return render_template('splash.html', issues=issues)
 
 

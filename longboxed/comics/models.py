@@ -114,6 +114,9 @@ class Issue(db.Model):
     """
     Issue model class. Title and Publisher can both be referenced with
     the hidden 'publisher' and 'title' attributes
+
+    Note: hybrid property is for sorting based on subscriber (user) number.
+    # http://stackoverflow.com/questions/22876946/how-to-order-by-count-of-many-to-many-relationship-in-sqlalchemy
     """
     __tablename__ = 'issues'
     #: IDs
@@ -158,6 +161,18 @@ class Issue(db.Model):
         id1 = int(re.search(r'\d+', self.diamond_id).group())
         id2 = int(re.search(r'\d+', other_issue.diamond_id).group())
         return id1 - id2
+
+    @hybrid_property
+    def num_subscribers(self):
+        return self.title.users.count()
+
+    @num_subscribers.expression
+    def _num_subscribers_expression(cls):
+        from ..users.models import titles_users
+        return (db.select([db.func.count(titles_users.c.user_id).label('num_subscribers')])
+                .where(titles_users.c.title_id == cls.title_id)
+                .label('total_subscribers')
+                )
 
     def to_json(self):
         i = {
