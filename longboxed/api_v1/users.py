@@ -7,6 +7,7 @@
 """
 from flask import Blueprint, g, jsonify, request, url_for
 
+from ..helpers import current_wednesday
 from ..services import comics, users
 from .authentication import auth
 from .errors import bad_request, forbidden
@@ -78,10 +79,14 @@ def remove_title_from_pull_list(id):
 @route(bp, '/<int:id>/bundles/', methods=['GET'])
 @auth.login_required
 def get_user_bundles(id):
+    from ..comics.models import Bundle
     if id != g.current_user.id:
         return forbidden('You do not have permission to access this users pull list')
     page = request.args.get('page', 1, type=int)
-    pagination = g.current_user.bundles.paginate(page, per_page=5, error_out=False)
+    # pagination = g.current_user.bundles.paginate(page, per_page=5, error_out=False)
+    pagination = Bundle.query.filter(Bundle.user == g.current_user, Bundle.release_date <= current_wednesday()) \
+        .order_by(Bundle.release_date.desc()) \
+        .paginate(page, per_page=5, error_out=False)
     bundles = pagination.items
     prev = None
     if pagination.has_prev:
