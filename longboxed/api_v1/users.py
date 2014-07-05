@@ -107,7 +107,7 @@ def get_latest_bundles(id):
     from ..comics.models import Bundle
     if id != g.current_user.id:
         return forbidden('You do not have permission to access this users pull list')
-    b = Bundle.query.filter(Bundle.release_date <= current_wednesday()) \
+    b = Bundle.query.filter(Bundle.user == g.current_user, Bundle.release_date <= current_wednesday()) \
                     .order_by(Bundle.release_date.desc()) \
                     .first()
     return jsonify(b.to_json())
