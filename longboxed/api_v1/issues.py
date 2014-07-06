@@ -10,7 +10,7 @@ from datetime import datetime
 from flask import abort, Blueprint, jsonify, request
 
 from ..helpers import current_wednesday
-from ..services import comics
+from ..models import Issue
 from . import route
 
 
@@ -28,7 +28,7 @@ def issues_with_date():
         date = datetime.strptime(date, '%Y-%m-%d')
     else:
         return abort(404)
-    issues = comics.issues.find_issue_with_date(date, True)
+    issues = Issue.query.filter(Issue.on_sale_date==date, Issue.is_parent==True).all()
     return jsonify({
         'date': date.strftime('%Y-%m-%d'),
         'issues': [issue.to_json() for issue in issues if issue.is_parent]
@@ -37,15 +37,15 @@ def issues_with_date():
 
 @route(bp, '/<int:id>', methods=['GET'])
 def get_issue(id):
-    issue = comics.issues.get(id)
+    issue = Issue.query.get_or_404(id)
     return jsonify(issue.to_json())
 
 
 @route(bp, '/thisweek/', methods=['GET'])
 def this_week():
     date = current_wednesday()
-    issues = comics.issues.find_issue_with_date(date, True)
+    issues = Issue.query.filter(Issue.on_sale_date==date, Issue.is_parent==True).all()
     return jsonify({
         'date': date.strftime('%Y-%m-%d'),
-        'issues': [issue.to_json() for issue in issues if issue.is_parent]
+        'issues': [issue.to_json() for issue in issues]
     })
