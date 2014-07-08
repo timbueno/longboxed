@@ -18,7 +18,7 @@ bp = Blueprint('publishers', __name__, url_prefix='/publishers')
 def publishers():
     page = request.args.get('page', 1, type=int)
     pagination = Publisher.query.order_by(Publisher.name).\
-                           paginate(page, per_page=20, error_out=False)
+                           paginate(page, per_page=50, error_out=False)
     publishers = pagination.items
     prev = None
     if pagination.has_prev:
@@ -47,7 +47,7 @@ def get_titles_for_publisher(id):
     publisher = Publisher.query.get_or_404(id)
     page = request.args.get('page', 1, type=int)
     pagination = publisher.titles.order_by(Title.name).\
-                              paginate(page, per_page=20, error_out=False)
+                              paginate(page, per_page=50, error_out=False)
     titles = pagination.items
     prev = None
     if pagination.has_prev:
