@@ -25,7 +25,9 @@ def publishers():
 @route(bp, '/<int:id>', methods=['GET'])
 def get_publisher(id):
     publisher = Publisher.query.get_or_404(id)
-    return jsonify(publisher.to_json())
+    return jsonify({
+        'publisher': publisher.to_json()
+    })
 
 
 @route(bp, '/<int:id>/titles/', methods=['GET'])
