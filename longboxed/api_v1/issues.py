@@ -43,7 +43,7 @@ def issues_with_date():
         'prev': prev,
         'next': next,
         'count': pagination.total,
-        'issues': [issue.to_json() for issue in issues if issue.is_parent]
+        'issues': [issue.to_json() for issue in issues]
     })
 
 
