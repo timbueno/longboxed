@@ -21,7 +21,9 @@ bp = Blueprint('users', __name__, url_prefix='/users')
 @route(bp, '/login')
 @auth.login_required
 def login():
-    return jsonify(g.current_user.to_json())
+    return jsonify({
+        'user': g.current_user.to_json()
+    })
 
 
 @route(bp, '/<int:id>/pull_list/', methods=['GET'])
