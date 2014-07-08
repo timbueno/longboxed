@@ -21,7 +21,7 @@ bp = Blueprint('titles', __name__, url_prefix='/titles')
 @route(bp, '/')
 def get_titles():
     page = request.args.get('page', 1, type=int)
-    pagination = Title.query.paginate(page, per_page=20, error_out=False)
+    pagination = Title.query.paginate(page, per_page=50, error_out=False)
     titles = pagination.items
     prev = None
     if pagination.has_prev:
@@ -52,7 +52,7 @@ def get_issues_for_title(id):
     page = request.args.get('page', 1, type=int)
     pagination = Issue.query.filter(Issue.title==title, Issue.on_sale_date <= current_wednesday()) \
         .order_by(Issue.on_sale_date.desc()) \
-        .paginate(page, per_page=5, error_out=False)
+        .paginate(page, per_page=50, error_out=False)
     issues = pagination.items
     prev = None
     if pagination.has_prev:
@@ -80,7 +80,7 @@ def autocomplete():
     try:
         res = Title.query.filter(Title.name.ilike(searchstring)).\
                          order_by(Title.num_subscribers.desc()).\
-                         limit(10).\
+                         limit(20).\
                          all()
         return jsonify({
                 'query': fragment,
