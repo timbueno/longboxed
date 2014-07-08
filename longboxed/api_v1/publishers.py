@@ -16,9 +16,21 @@ bp = Blueprint('publishers', __name__, url_prefix='/publishers')
 
 @route(bp, '/', methods=['GET'])
 def publishers():
-    publishers = Publisher.query.all()
+    page = request.args.get('page', 1, type=int)
+    pagination = Publisher.query.order_by(Publisher.name).\
+                           paginate(page, per_page=20, error_out=False)
+    publishers = pagination.items
+    prev = None
+    if pagination.has_prev:
+        prev = page-1
+    next = None
+    if pagination.has_next:
+        next = page+1
     return jsonify({
-        'publishers': [publisher.to_json() for publisher in publishers]
+        'publishers': [publisher.to_json() for publisher in publishers],
+        'prev': prev,
+        'next': next,
+        'count': pagination.total
     })
 
 
