@@ -38,7 +38,9 @@ def issues_with_date():
 @route(bp, '/<int:id>', methods=['GET'])
 def get_issue(id):
     issue = Issue.query.get_or_404(id)
-    return jsonify(issue.to_json())
+    return jsonify({
+        'issue': issue.to_json()
+    })
 
 
 @route(bp, '/thisweek/', methods=['GET'])
