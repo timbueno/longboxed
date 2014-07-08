@@ -40,7 +40,9 @@ def get_titles():
 @route(bp, '/<int:id>')
 def get_title(id):
     title = Title.query.get_or_404(id)
-    return jsonify(title.to_json())
+    return jsonify({
+        'title': title.to_json()
+    })
 
 
 @route(bp, '/<int:id>/issues/')
