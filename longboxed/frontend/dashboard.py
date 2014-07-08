@@ -9,7 +9,6 @@ from flask import current_app, Blueprint, g, redirect, render_template, url_for
 from flask.ext.security import current_user, login_required
 from flask.ext.security.utils import logout_user
 from werkzeug.local import LocalProxy
-from sqlalchemy.sql.expression import func
 
 from . import route
 from ..forms import DeleteUserAccountForm, UserInformationForm
@@ -40,7 +39,6 @@ def index():
                          order_by(Issue.num_subscribers.desc()).\
                          limit(4).\
                          all()
-    print issues[0].num_subscribers
     return render_template('splash.html', issues=issues)
 
 
