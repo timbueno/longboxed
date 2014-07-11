@@ -10,7 +10,7 @@ from flask import Blueprint, jsonify, request
 from sqlalchemy.orm.exc import NoResultFound
 
 from ..helpers import current_wednesday
-from ..models import Title
+from ..models import Title, Issue
 from .errors import bad_request
 from . import route
 
@@ -21,7 +21,8 @@ bp = Blueprint('titles', __name__, url_prefix='/titles')
 @route(bp, '/')
 def get_titles():
     page = request.args.get('page', 1, type=int)
-    pagination = Title.query.paginate(page, per_page=50, error_out=False)
+    count = request.args.get('count', 50, type=int)
+    pagination = Title.query.paginate(page, per_page=count, error_out=False)
     titles = pagination.items
     prev = None
     if pagination.has_prev:
@@ -33,7 +34,8 @@ def get_titles():
         'titles': [title.to_json() for title in titles],
         'prev': prev,
         'next': next,
-        'count': pagination.total
+        'total': pagination.total,
+        'count': count
     })
 
 
@@ -47,12 +49,12 @@ def get_title(id):
 
 @route(bp, '/<int:id>/issues/')
 def get_issues_for_title(id):
-    from ..comics.models import Issue
     title = Title.query.get_or_404(id)
     page = request.args.get('page', 1, type=int)
+    count = request.args.get('count', 50, type=int)
     pagination = Issue.query.filter(Issue.title==title, Issue.on_sale_date <= current_wednesday()) \
         .order_by(Issue.on_sale_date.desc()) \
-        .paginate(page, per_page=50, error_out=False)
+        .paginate(page, per_page=count, error_out=False)
     issues = pagination.items
     prev = None
     if pagination.has_prev:
@@ -62,10 +64,11 @@ def get_issues_for_title(id):
         next = page+1
     return jsonify({
         'title': title.name,
+        'issues': [issue.to_json() for issue in issues],
         'prev': prev,
         'next': next,
-        'count': pagination.total,
-        'issues': [issue.to_json() for issue in issues]
+        'total': pagination.total,
+        'count': count
     })
 
 

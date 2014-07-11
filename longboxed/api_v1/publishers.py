@@ -17,8 +17,9 @@ bp = Blueprint('publishers', __name__, url_prefix='/publishers')
 @route(bp, '/', methods=['GET'])
 def publishers():
     page = request.args.get('page', 1, type=int)
+    count = request.args.get('count', 50, type=int)
     pagination = Publisher.query.order_by(Publisher.name).\
-                           paginate(page, per_page=50, error_out=False)
+                           paginate(page, per_page=count, error_out=False)
     publishers = pagination.items
     prev = None
     if pagination.has_prev:
@@ -30,7 +31,8 @@ def publishers():
         'publishers': [publisher.to_json() for publisher in publishers],
         'prev': prev,
         'next': next,
-        'count': pagination.total
+        'total': pagination.total,
+        'count': count
     })
 
 
@@ -46,8 +48,9 @@ def get_publisher(id):
 def get_titles_for_publisher(id):
     publisher = Publisher.query.get_or_404(id)
     page = request.args.get('page', 1, type=int)
+    count = request.args.get('count', 50, type=int)
     pagination = publisher.titles.order_by(Title.name).\
-                              paginate(page, per_page=50, error_out=False)
+                              paginate(page, per_page=count, error_out=False)
     titles = pagination.items
     prev = None
     if pagination.has_prev:
@@ -60,5 +63,6 @@ def get_titles_for_publisher(id):
         'titles': [title.to_json() for title in titles],
         'prev': prev,
         'next': next,
-        'count': pagination.total
+        'total': pagination.total,
+        'count': count
     })

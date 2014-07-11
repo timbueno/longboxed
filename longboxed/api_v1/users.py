@@ -85,9 +85,10 @@ def get_user_bundles(id):
     if id != g.current_user.id:
         return forbidden('You do not have permission to access this users pull list')
     page = request.args.get('page', 1, type=int)
+    count = request.args.get('count', 5, type=int)
     pagination = Bundle.query.filter(Bundle.user == g.current_user, Bundle.release_date <= current_wednesday()) \
                              .order_by(Bundle.release_date.desc()) \
-                             .paginate(page, per_page=5, error_out=False)
+                             .paginate(page, per_page=count, error_out=False)
     bundles = pagination.items
     prev = None
     if pagination.has_prev:
@@ -96,9 +97,11 @@ def get_user_bundles(id):
     if pagination.has_next:
         next = page+1
     return jsonify({
+        'bundles': [bundle.to_json() for bundle in bundles],
         'prev': prev,
         'next': next,
-        'bundles': [bundle.to_json() for bundle in bundles]
+        'total': pagination.total,
+        'count': count
     })
 
 
