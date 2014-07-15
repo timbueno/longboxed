@@ -54,6 +54,51 @@ class LongboxedFormError(Exception):
     def __init__(self, errors=None):
         self.errors = errors
 
+
+class CRUDMixin(object):
+    """Mixin that adds convenience methods for CRUD (create, read, update, delete)
+    operations.
+    """
+
+    def _preprocess_params(self, kwargs):
+        """Returns a preprocessed dictionary of parameters. Used by default
+        before creating a new instance or updating an existing instance.
+
+        :param kwargs: a dictionary of parameters
+        """
+        kwargs.pop('csrf_token', None)
+        return kwargs
+
+    @classmethod
+    def create(cls, **kwargs):
+        """Create a new record and save it the database."""
+        instance = cls.new(**kwargs)
+        return instance.save()
+
+    @classmethod
+    def new(cls, **kwargs):
+        """Create a new, unsaved record"""
+        return cls(**kwargs)
+
+    def update(self, commit=True, **kwargs):
+        """Update specific fields of a record."""
+        for attr, value in kwargs.iteritems():
+            setattr(self, attr, value)
+        return commit and self.save() or self
+
+    def save(self, commit=True):
+        """Save the record."""
+        db.session.add(self)
+        if commit:
+            db.session.commit()
+        return self
+
+    def delete(self, commit=True):
+        """Remove the record from the database."""
+        db.session.delete(self)
+        return commit and db.session.commit()
+
+
 class Service(object):
     """A :class:`Service` instance encapsulates common SQLAlchemy model
     operations in the context of a :class:`Flask` application.

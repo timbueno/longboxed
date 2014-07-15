@@ -11,9 +11,9 @@ import importlib
 
 from datetime import datetime, timedelta
 from HTMLParser import HTMLParser
-from json import JSONEncoder as BaseJSONEncoder
 
 from flask import Blueprint
+from flask.json import JSONEncoder as BaseJSONEncoder
 from flask.ext.mail import Message
 
 from .core import mail

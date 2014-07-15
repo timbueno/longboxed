@@ -8,6 +8,7 @@
 import re
 from datetime import datetime
 
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_imageattach.entity import Image, image_attachment
 
 from ..core import db
@@ -51,12 +52,24 @@ class Publisher(db.Model):
     def __str__(self):
         return self.name
 
+    def to_json(self):
+        p = {
+            'id': self.id,
+            'name': self.name,
+            'title_count': self.titles.count(),
+            'issue_count': self.comics.count()
+        }
+        return p
+
 class Title(db.Model):
     """
     Title Model class with backreferenced relationship, issues. Publisher 
     can also be accessed with the hidden 'publisher' attribute.
 
     Example: Saga, East Of West
+
+    Note: hybrid property is for sorting based on subscriber (user) number.
+    # http://stackoverflow.com/questions/22876946/how-to-order-by-count-of-many-to-many-relationship-in-sqlalchemy
     """
     __tablename__ = 'titles'
     #: IDs
@@ -74,10 +87,36 @@ class Title(db.Model):
     def __str__(self):
         return self.name
 
+    @hybrid_property
+    def num_subscribers(self):
+        return self.users.count()
+
+    @num_subscribers.expression
+    def _num_subscribers_expression(cls):
+        from ..users.models import titles_users
+        return (db.select([db.func.count(titles_users.c.user_id).label('num_subscribers')])
+                .where(titles_users.c.title_id == cls.id)
+                .label('total_subscribers')
+                )
+
+    def to_json(self):
+        t = {
+            'id': self.id,
+            'name': self.name,
+            'publisher': {'id': self.publisher.id, 
+                          'name': self.publisher.name},
+            'issue_count': self.issues.count(),
+            'subscribers': self.users.count()
+        }
+        return t
+
 class Issue(db.Model):
     """
     Issue model class. Title and Publisher can both be referenced with
     the hidden 'publisher' and 'title' attributes
+
+    Note: hybrid property is for sorting based on subscriber (user) number.
+    # http://stackoverflow.com/questions/22876946/how-to-order-by-count-of-many-to-many-relationship-in-sqlalchemy
     """
     __tablename__ = 'issues'
     #: IDs
@@ -122,6 +161,35 @@ class Issue(db.Model):
         id1 = int(re.search(r'\d+', self.diamond_id).group())
         id2 = int(re.search(r'\d+', other_issue.diamond_id).group())
         return id1 - id2
+
+    @hybrid_property
+    def num_subscribers(self):
+        return self.title.users.count()
+
+    @num_subscribers.expression
+    def _num_subscribers_expression(cls):
+        from ..users.models import titles_users
+        return (db.select([db.func.count(titles_users.c.user_id).label('num_subscribers')])
+                .where(titles_users.c.title_id == cls.title_id)
+                .label('total_subscribers')
+                )
+
+    def to_json(self):
+        i = {
+            'id': self.id,
+            'complete_title': self.complete_title,
+            'publisher': {'id': self.publisher.id,
+                          'name': self.publisher.name},
+            'title': {'id': self.title.id,
+                      'name': self.title.name},
+            'price': self.retail_price,
+            'diamond_id': self.diamond_id,
+            'release_date': self.on_sale_date.strftime('%Y-%m-%d') if self.on_sale_date else None,
+            'issue_number': self.issue_number,
+            'cover_image': self.cover_image.find_thumbnail(width=500).locate(),
+            'description': self.description
+        }
+        return i
 
 
 class IssueCover(db.Model, Image):
@@ -178,6 +246,11 @@ class Bundle(db.Model):
         backref=db.backref('bundles', lazy='dynamic')
     )
 
-
-
-
+    def to_json(self):
+        b = {
+            'id': self.id,
+            'release_date': self.release_date.strftime('%Y-%m-%d'),
+            'last_updated': self.last_updated,
+            'issues': [issue.to_json() for issue in self.issues]
+        }
+        return b

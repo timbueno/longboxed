@@ -5,22 +5,18 @@
 
     longboxed api application package
 """
-
 from functools import wraps
 
 from flask import jsonify
 
 from ..core import LongboxedError, LongboxedFormError
-from ..helpers import JSONEncoder
 from ..settings import ProdConfig
 from .. import factory
 
-def create_app(config_object=ProdConfig):
+def create_app(config_object=ProdConfig, register_security_blueprint=False):
     """Returns the Longboxed API application instance"""
-    app = factory.create_app(__name__, __path__, config_object)
-
-    # Set the default JSON JSONEncoder
-    app.json_encoder = JSONEncoder
+    app = factory.create_app(__name__, __path__, config_object,
+                             register_security_blueprint=register_security_blueprint)
 
     # Register custom error handlers
     app.errorhandler(LongboxedError)(on_longboxed_error)
@@ -31,18 +27,13 @@ def create_app(config_object=ProdConfig):
 
 
 def route(bp, *args, **kwargs):
-    kwargs.setdefault('strict_slashes', False)
+    kwargs.setdefault('strict_slashes', True)
 
     def decorator(f):
         @bp.route(*args, **kwargs)
         @wraps(f)
         def wrapper(*args, **kwargs):
-            sc = 200
-            rv = f(*args, **kwargs)
-            if isinstance(rv, tuple):
-                sc = rv[1]
-                rv = rv[0]
-            return jsonify(dict(data=rv)), sc
+            return f(*args, **kwargs)
         return f
 
     return decorator
