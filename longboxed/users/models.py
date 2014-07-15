@@ -63,7 +63,7 @@ class User(db.Model, UserMixin):
     # ids
     id = db.Column(db.Integer, primary_key=True)
     # Attributes
-    google_id = db.Column(db.String(255), unique=True)
+    # google_id = db.Column(db.String(255), unique=True)
     email = db.Column(db.String(255), unique=True)
     first_name = db.Column(db.String(255))
     last_name = db.Column(db.String(255))
@@ -114,3 +114,13 @@ class User(db.Model, UserMixin):
 
     def __str__(self):
         return self.email
+
+    def to_json(self):
+        u = {
+            'id': self.id,
+            'email': self.email,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'roles': [role.name for role in self.roles]
+        }
+        return u

@@ -1,5 +1,7 @@
 {% extends "layouts/base.html" %}
 {% from 'macros/forms.html' import render_field_with_errors %}
+{% from 'macros/comics.html' import issue_card %}
+
 {% block title %}Your Pull List | Longboxed{% endblock title %}
 
 {% block styles %}
@@ -21,10 +23,6 @@
                         </span>
                     </div>
                 </form>
-    <!--             <form class="form">
-                    {{ form.hidden_tag() }}
-                    {{ render_field_with_errors(form.title, class="typeahead input-lg") }}
-                </form> -->
             </div> <!-- col -->
         </div> <!-- row -->
         <div class="row">
@@ -38,7 +36,7 @@
 <div class="pull-list-with-bundles">
     <div class="container">
         <div class="row">
-            <div class="col-md-3 col-md-offset-2 pull-list">
+            <div class="col-sm-4 col-lg-3 col-lg-offset-2 pull-list">
                 <div class="panel panel-default">
                     <div class="panel-heading centered">
                         <h3>Titles</h3>
@@ -53,46 +51,23 @@
                     </ul>
                 </div>
             </div> <!-- pull-list -->
-            <div class="col-md-5 bundles">
+            <div class="col-sm-8 col-lg-5 bundles">
                 <div class="panel panel-default">
                     <div class="panel-heading centered">
                         <h3>Recent Bundles</h3>
                     </div>
                 </div> <!-- panel -->
-                {% for bundle in g.user.bundles %}
+                {% if True %}
+                {% for bundle in bundles %}
                     {% if bundle.issues %}
-                    <div class="panel panel-default">
-                        <div class="panel-heading centered">
-                            <h4>{{ bundle.release_date }}</h4>
-                        </div>
-                        <div class="panel-body row">
-                        {% for issue in bundle.issues %}
-                            <div class="col-xs-3 pull-list-thumbnail">
-                                <a class="thumbnail" href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
-                                    <img class="img-responsive" src={% if issue.cover_image %}"{{ issue.cover_image.locate() }}"{% endif %} title="{{ issue.complete_title }}">
-                                </a>
-                            </div>
-                        {% endfor %}
-                        </div>
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ loop.index }}">
-                            <div class="panel-heading centered hover-change">
-                                <h4>View List</h4>
-                            </div>
-                        </a>
-                        <div id="collapse{{ loop.index }}" class="panel-collapse collapse">
-                            <ul class="list-group centered">
-                                {% for issue in bundle.issues %}
-                                <a href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
-                                    <li class="list-group-item">
-                                        {{ issue.complete_title }}
-                                    </li>
-                                </a>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
+                    <h4>{{ bundle.release_date }} | {{ bundle.issues|length }} Issue{% if bundle.issues|length > 1 %}s{% endif %}</h4>
+                    <hr>
+                    {% for issue in bundle.issues %}
+                    {{ issue_card(issue, g.user) }}
+                    {% endfor %}
                     {% endif %}
                 {% endfor %}
+                {% endif %}
             </div> <!-- bundles -->
         </div> <!-- row -->
     </div> <!-- container -->
@@ -104,4 +79,5 @@
 <script type="text/javascript" src="{{ url_for('static', filename='js/handlebars-v1.3.0.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/typeahead.bundle.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/pull_list.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/issue_actions.js') }}"></script>
 {% endblock scripts %}

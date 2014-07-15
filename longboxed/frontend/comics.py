@@ -7,12 +7,10 @@
 """
 from datetime import datetime
 
-from flask import abort, Blueprint, jsonify, render_template, redirect, request, \
-                  url_for
-from flask.ext.security import current_user
+from flask import abort, Blueprint, render_template, redirect, url_for
 
 from . import route
-from ..helpers import current_wednesday, last_wednesday, next_wednesday, get_week
+from ..helpers import current_wednesday, last_wednesday, next_wednesday
 from ..services import comics as _comics
 
 
@@ -28,7 +26,12 @@ def comics():
 @route(bp,'/releases/<date>')
 def releases(date):
     try:
-        date = datetime.strptime(date, '%Y-%m-%d')
+        if isinstance(date, datetime):
+            pass
+        elif isinstance(date, unicode):
+            date = datetime.strptime(date, '%Y-%m-%d')
+        else:
+            return abort(404)
         issues = _comics.issues.find_issue_with_date(date, True)
         return render_template('releases.html', date=date, issues=issues)
     except ValueError:
@@ -83,29 +86,3 @@ def publisher(pub_id):
     publisher = _comics.publishers.get_or_404(id=pub_id)
     titles = publisher.titles.all()
     return render_template('publisher.html', publisher=publisher, titles=titles)
-
-
-
-@route(bp, '/ajax/get_comicpage', methods=['POST'])
-def get_comicpage():
-    start = datetime.strptime(request.form['start'], '%B %d, %Y')
-    end = datetime.strptime(request.form['end'], '%B %d, %Y')
-
-    comicList, matches = _comics.find_relevent_comics_in_date_range(start, end, current_user)
-
-    try:
-        nav = render_template('comicsidenav.html', comicList=comicList)
-    except:
-        nav = None
-    try:
-        clist = render_template('comiclist.html', comicList=comicList)
-    except:
-        clist = None
-    try:
-        if matches:
-            matches = render_template('favorite_matches.html', matches=matches)
-    except:
-        matches = None
-
-    # return the html as json for jquery to insert
-    return jsonify(nav=nav, clist=clist, matches=matches)

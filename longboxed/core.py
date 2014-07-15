@@ -5,7 +5,14 @@
 
     Core module contains basic classes that all applications
     depend on
+
+    USE_AWS must be set as an environment variable.
+    Values can be: 
+        'True'   to use AWS for an image store
+        'False'  for development / local image store
 """
+import os
+
 import werkzeug
 
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -15,7 +22,7 @@ from flask_mail import Mail
 from sqlalchemy_imageattach.stores.fs import HttpExposedFileSystemStore
 from sqlalchemy_imageattach.stores.s3 import S3Store
 
-from .settings import USE_AWS, AWS_S3_BUCKET, AWS_SECRET_KEY, AWS_ACCESS_KEY_ID
+from .settings import ProdConfig
 
 #: Flask-SQLAlchemy extension instance
 db = SQLAlchemy()
@@ -30,8 +37,8 @@ social = Social()
 mail = Mail()
 
 #: Image Filesystem
-if USE_AWS:
-    store = S3Store(AWS_S3_BUCKET, AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
+if os.environ.get('USE_AWS') == 'True':
+    store = S3Store(ProdConfig.AWS_S3_BUCKET, ProdConfig.AWS_ACCESS_KEY_ID, ProdConfig.AWS_SECRET_KEY)
 else:
     store = HttpExposedFileSystemStore('store', 'images')
 
@@ -46,6 +53,51 @@ class LongboxedFormError(Exception):
 
     def __init__(self, errors=None):
         self.errors = errors
+
+
+class CRUDMixin(object):
+    """Mixin that adds convenience methods for CRUD (create, read, update, delete)
+    operations.
+    """
+
+    def _preprocess_params(self, kwargs):
+        """Returns a preprocessed dictionary of parameters. Used by default
+        before creating a new instance or updating an existing instance.
+
+        :param kwargs: a dictionary of parameters
+        """
+        kwargs.pop('csrf_token', None)
+        return kwargs
+
+    @classmethod
+    def create(cls, **kwargs):
+        """Create a new record and save it the database."""
+        instance = cls.new(**kwargs)
+        return instance.save()
+
+    @classmethod
+    def new(cls, **kwargs):
+        """Create a new, unsaved record"""
+        return cls(**kwargs)
+
+    def update(self, commit=True, **kwargs):
+        """Update specific fields of a record."""
+        for attr, value in kwargs.iteritems():
+            setattr(self, attr, value)
+        return commit and self.save() or self
+
+    def save(self, commit=True):
+        """Save the record."""
+        db.session.add(self)
+        if commit:
+            db.session.commit()
+        return self
+
+    def delete(self, commit=True):
+        """Remove the record from the database."""
+        db.session.delete(self)
+        return commit and db.session.commit()
+
 
 class Service(object):
     """A :class:`Service` instance encapsulates common SQLAlchemy model

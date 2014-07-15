@@ -27,3 +27,7 @@ source /usr/local/bin/virtualenvwrapper.sh
 
 # Database Setup
 export DATABASE_URL="postgres://app_user:password@localhost/longboxed"
+
+# Environment Setup
+export APP_ENV="dev"
+export USE_AWS="False"

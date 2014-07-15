@@ -49,13 +49,15 @@
     <div class="container">
         <div class="row centered">
             <div class="col-sm-8 col-sm-offset-2">
-                <h2>POPULAR THIS WEEK</h2>
+                <h2 class="hidden-xs">POPULAR THIS WEEK</h2>
+                <h1 class="visible-xs">POPULAR THIS WEEK</h1>
+                <!-- <h2 class="visible-xs">THIS WEEK</h2> -->
             </div>
             {% if issues %}
                 {% for issue in issues %}
                 <div class="col-xs-6 col-sm-3">
-                    <a class="thumbnail" href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
-                        <img class="img-responsive" src={% if issue.cover_image %}"{{ issue.cover_image.find_thumbnail(width=250).locate() }}"{% endif %} title="{{ issue.complete_title }}" alt="{{ issue.complete_title }}">
+                    <a href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
+                        <img class="" src={% if issue.cover_image %}"{{ issue.cover_image.find_thumbnail(width=250).locate() }}"{% endif %} title="{{ issue.complete_title }}" alt="{{ issue.complete_title }}">
                     </a>
                 </div>
                 {% endfor %}

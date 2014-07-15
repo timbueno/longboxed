@@ -38,6 +38,12 @@
               <span class="visible-xs"><i class="fa fa-list fa-fw"></i> Your Pull List</span>
             </a>
           </li>
+          <li>
+            <a href="{{ url_for('dashboard.settings') }}">
+              <span class="hidden-xs"><i class="fa fa-cog fa-fw"></i></span>
+              <span class="visible-xs"><i class="fa fa-cog fa-fw"></i> Settings</span>
+            </a>
+          </li>
             {% if g.user.has_role('admin') or g.user.has_role('super') %}
             <li>
               <a href="{{ url_for('admin.index') }}">

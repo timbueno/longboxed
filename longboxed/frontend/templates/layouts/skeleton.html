@@ -8,21 +8,73 @@
 
     {%- block metas %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Apple Device Metas -->
+    <!-- <meta name="apple-mobile-web-app-capable" content="yes"> -->
+    <meta name="apple-mobile-web-app-title" content="Longboxed">
     {%- endblock metas %}
 
     {%- block styles %}
     <!-- Bootstrap -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}" media="screen">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css">
-    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/longboxed-fonts.css') }}"> -->
+
+    <!-- Favicons -->
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon"> 
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}"  type="image/x-icon"> 
+
+    <!-- iPad, iOS 7, retina -->
+    <link href="{{ url_for('static', filename='img/icons/longboxed-76@2x.png') }}"
+          sizes="152x152"
+          rel="apple-touch-icon">
+    <!-- iPad, iOS 6, retina -->
+    <link href="{{ url_for('static', filename='img/icons/longboxed-72@2x.png') }}"
+          sizes="144x144"
+          rel="apple-touch-icon">
+    <!-- iPhone, iOS 7, retina -->
+    <link href="{{ url_for('static', filename='img/icons/longboxed-60@2x.png') }}"
+          sizes="120x120"
+          rel="apple-touch-icon">
+    <!-- iPhone ,iOS 6, retina -->
+    <link href="{{ url_for('static', filename='img/icons/longboxed-Small@2x.png') }}"
+          sizes="114x114"
+          rel="apple-touch-icon">
+    <!-- iPad, iOS 7 -->
+    <link href="{{ url_for('static', filename='img/icons/longboxed-76.png') }}"
+          sizes="76x76"
+          rel="apple-touch-icon">
+    <!-- iPad, iOS 6 -->
+    <link href="{{ url_for('static', filename='img/icons/longboxed-72.png') }}"
+          sizes="72x72"
+          rel="apple-touch-icon">
+    <!-- iPhone, iOS 7 -->
+    <link href="{{ url_for('static', filename='img/icons/longboxed-60.png') }}"
+          sizes="60x60"
+          rel="apple-touch-icon">
+    <!-- iPhone, iOS 6 -->
+    <link href="{{ url_for('static', filename='img/icons/longboxed-Small.png') }}"
+          sizes="57x57"
+          rel="apple-touch-icon">
+
     {%- endblock styles %}
     {%- block header_scripts %}
+    <script type="text/javascript" src='/static/js/fastclick.js'></script>
     <script type="text/javascript" src="//use.typekit.net/btq6ejk.js"></script>
     <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+    {%- if not config['DEBUG'] %}
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-44481415-1', 'longboxed.com');
+      ga('send', 'pageview');
+    </script>
+    {%- endif %}
     {%- endblock header_scripts %}
     {%- endblock head %}
   </head>
-  <body{% block body_attribs %}{% endblock body_attribs %}>
+  <body {% block body_attribs %}{% endblock body_attribs %}>
     {% block body -%}
     <div id="wrap">
         {% block navbar %}
@@ -37,6 +89,11 @@
     {% block scripts %}
     <script src="//code.jquery.com/jquery.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script>
+    $(document).ready(function() {
+      FastClick.attach(document.body);
+    });
+    </script>
     {%- endblock scripts %}
     {%- endblock body %}
   </body>

@@ -1,0 +1,7 @@
+Welcome to Longboxed!
+Please confirm your account.
+
+You can confirm your email through the link below:
+<a href="{{ confirmation_link }}">Confirm my account</a>
+
+We are excited that you have decided to join Longboxed. Each week, Longboxed is updated with the latest releases to keep you informed about your favorite comic books! What are you waiting for? Confirm your account and <a href="http://www.longboxed.com/pull_list">create</a> a Pull List now!

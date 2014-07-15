@@ -1,12 +1,46 @@
-.green {
-    // background-color: green;
-    border-style: solid;
-    border-width: 1px;
-    border-color: black;
+.on-pull-list {
+    .fa;
+    &:before{
+        content: @fa-var-check;
+        color: @brand-success;
+      }
+    &:hover{
+        &:before{
+            content: @fa-var-times;
+            color: @brand-danger;
+          }
+    }
+
+}
+
+.not-on-pull-list {
+    color: @gray-dark;
+    text-decoration: none;
+    .fa;
+    &:before{
+        content: @fa-var-plus;
+      }
+    &:hover{
+        &:before{
+            content: @fa-var-plus;
+            color: @brand-success;
+        }
+    }
 }
 
 .full-issue-content {
     .section(1);
+
+    .fa {
+        color: @gray-dark;
+    }
+
+    p {
+        margin-top: 11px;
+    }
+    .tweet {
+        padding-right: 10px;
+    }
 
     @media (max-width: @screen-xs-min) {
         .section(0);
@@ -33,11 +67,60 @@
 }
 
 .issue-card {
-    margin: 1em;
-    // padding: 1em;
+    img {
+        width: 50px;
+    }
+    .media-heading {
+        font-size: 16px;
+        color: white;
+        padding-top: 10px;
+        padding-bottom: 5px;
+        margin-bottom: 0px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+    .action-buttons {
+        color: #ccc;
+        font-size: 20px;
+        padding-bottom: 7px;
 
-    .issue-info-icons {
-        font-size: 1.5em;
+        span {
+            padding-right: 10px;
+        }
+        .card-buttons{
+            text-align: right;
+            .add-remove-pull {
+                color: #ccc;
+            }
+            .tweet {
+                &:hover {
+                  color: #4099ff;
+                }
+            }
+            .facebook {
+                padding-right: 0px;
+                &:hover {
+                  color: #3b5999;
+                }
+            }
+        }
+    }
+    a {
+        color: @gray-dark;
+        &:link {
+            color: @gray-dark;
+        }
+    }
+    background-color: #EEEEEE;
+    // background-color: #ccc;
+    padding-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    height: 75px;
+
+    @media (max-width: @screen-xs-min) {
+        margin-bottom: 15px;
     }
 }
 

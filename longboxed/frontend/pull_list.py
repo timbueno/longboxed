@@ -10,10 +10,12 @@ from json import dumps
 
 from flask import (Blueprint, jsonify, render_template, Response, request)
 from flask.ext.login import current_user, login_required
+from sqlalchemy import desc
 
 from . import route
 from ..forms import AddToPullList
 from ..helpers import current_wednesday, refresh_bundle
+from ..services import bundle as _bundles
 from ..services import comics as _comics
 from ..services import users as _users
 
@@ -25,7 +27,8 @@ bp = Blueprint('pull_list', __name__)
 @login_required
 def pull_list():
     form = AddToPullList()
-    return render_template('pull_list.html', form=form)
+    bundles = current_user.bundles.order_by(desc(_bundles.__model__.release_date)).limit(10)
+    return render_template('pull_list.html', form=form, bundles=bundles)
 
 
 @route(bp, '/ajax/typeahead')
@@ -78,14 +81,19 @@ def remove_from_pull_list():
     return jsonify(response)
 
 
-
 @route(bp, '/ajax/add_to_pull_list', methods=['POST'])
 @login_required
 def add_to_pull_list():
     form = AddToPullList()
     response = {'status': 'fail', 'message': 'Title not being tracked by Longboxed'}
-    if form.validate_on_submit():
-        title = _comics.titles.first(name=request.form['title'])
+    title_id = request.form.get('id', False) # Support both adding methods
+    if form.validate_on_submit() or title_id:
+
+        if title_id:
+            title = _comics.titles.get(title_id)
+        else:
+            title = _comics.titles.first(name=request.form['title'])
+
         if title and title not in current_user.pull_list:
             current_user.pull_list.append(title)
             _users.save(current_user)
@@ -109,4 +117,4 @@ def add_to_pull_list():
                     'title_id': title.id
                 }
             }
-    return jsonify(response)
+    return jsonify(response)  

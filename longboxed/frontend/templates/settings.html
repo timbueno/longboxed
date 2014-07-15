@@ -1,0 +1,102 @@
+{% extends "layouts/base.html" %}
+{% from 'macros/forms.html' import render_field_with_errors %}
+{% block title %}Your Settings | Longboxed{% endblock title %}
+
+
+{% block content %}
+<div class="container">
+
+    <div class="row">
+        <div class="col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+            <form role="form" method="POST">
+                {{ user_info_form.hidden_tag() }}
+                <h2>Account Details</h2>
+                <div class="row">
+                    <div class="col-sm-6">
+                        {{ render_field_with_errors(user_info_form.first_name, class="form-control input-lg", placeholder=user_info_form.first_name.label.text) }}
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            {{ render_field_with_errors(user_info_form.last_name, class="form-control input-lg", placeholder=user_info_form.last_name.label.text) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="submit" value="Save" class="btn btn-primary btn-block btn-lg" tabindex="7">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+            <h2>Change Your Password</h2>
+            <a href="{{ url_for('security.change_password') }}">
+                Yes Please!
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+            <h2>Delete Your Account</h2>
+            <a href="#" data-toggle="modal" data-target="#delete_account_confirmation">
+                Yes, I would like to delete my account.
+            </a>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="delete_account_confirmation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="myModalLabel">Are You Sure?</h4>
+                </div>
+                <div class="modal-body">
+                    <p>This action cannot be undone.</p>
+                    <p>All information pertaining to this account will be permanantly deleted.</p>
+                    <p>We are sorry to see you go.</p>
+                </div>
+                <div class="modal-footer">
+                    <form action="{{ url_for('dashboard.delete_account') }}" method="POST">
+                        {{ user_info_form.hidden_tag() }}
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="checkbox">
+                                    {{ delete_user_account_form.delete_confirmation(class="checky") }}
+                                    <label class="pull-left">{{ delete_user_account_form.delete_confirmation.label.text|safe }}</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input type="submit" class="btn btn-primary btn-block disabled" id="submit_button" value="Delete Account">
+                                    </div>
+                                    <br class="visible-xs" /> <!-- seperates buttons in small viewport -->
+                                    <div class="col-sm-6">
+                                        <button type="button" class="btn btn-danger btn-block" data-dismiss="modal">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+</div>
+{% endblock content %}
+
+{% block scripts %}
+{{ super() }}
+<script type='text/javascript'>
+    $('.checky').click(function(){
+        $('#submit_button').toggleClass("disabled");
+    });
+</script>
+{% endblock scripts %}

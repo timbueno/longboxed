@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html' %}
-{% from 'macros/comics.html' import render_block %}
-{% block title %}Releases for {{ date }} | Longboxed{% endblock title %}
+{% from 'macros/comics.html' import issue_card %}
+{% block title %}Releases for {{ date.strftime('%Y-%m-%d') }} | Longboxed{% endblock title %}
 
 {% block content -%}
 <div class="header releases-header">
@@ -13,27 +13,30 @@
     </div>
   </div>
 </div>
-<div class="subheader">
-  <div class="container">
-    <div class="row centered">
-      <div class="col-xs-4">
-        <h1>{{ issues|length }}</h1>
-        <span>RELEASES</span>
-      </div>
-      <div class="col-xs-4">
-        <h1>0</h1>
-        <span>ON YOUR PULL LIST</span>
-      </div>
-      <div class="col-xs-4">
-        <h1>{{ date|pretty_date }}</h1>
-        <span>LAST UPDATED</span>
-      </div>
-    </div> <!-- /row -->
-  </div> <!-- /container -->
-</div> <!-- /subheader -->
 {% if True %}
-  {% for publisher_group in issues|groupby('publisher.name') %}
-    {{ render_block(publisher_group, current_user) }}
+  {% for publisher in issues|groupby('publisher.name') %}
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-lg-8 col-lg-offset-2">
+        <h2>{{ publisher.grouper }}</h2>
+        <hr>
+        {% for row in publisher.list|sort(attribute='title.name')|batch(2) %}
+          <div class="row">
+          {% for issue in row %}
+            <div class="col-sm-6">
+              {{ issue_card(issue, g.user) }}
+            </div>
+          {% endfor %}
+          </div>
+        {% endfor %}
+        </div>
+      </div>
+  </div>
   {% endfor %}
 {% endif %}
 {%- endblock content %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='js/issue_actions.js') }}"></script>
+{% endblock scripts %}

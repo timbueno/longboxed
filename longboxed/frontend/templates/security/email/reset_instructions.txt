@@ -1,0 +1,4 @@
+Reset Your Password at Longboxed
+
+You can reset your password through the link below:
+<a href="{{ reset_link }}">Click here to reset your password</a>
