@@ -149,7 +149,7 @@ class DevConfig(Config):
 
 class StagingConfig(Config):
     """Staging Configuration"""
-    DEBUG = True
+    DEBUG = False
     USE_AWS = True
 
     
