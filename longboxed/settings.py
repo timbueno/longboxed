@@ -145,4 +145,11 @@ class DevConfig(Config):
     DEBUG = True
     USE_AWS = False
     DEBUG_TB_INTERCEPT_REDIRECTS = False
+
+
+class StagingConfig(Config):
+    """Staging Configuration"""
+    DEBUG = False
+    USE_AWS = True
+
     

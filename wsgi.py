@@ -16,12 +16,16 @@ from werkzeug.serving import run_simple
 from werkzeug.wsgi import DispatcherMiddleware
 
 from longboxed import api_v1, frontend
-from longboxed.settings import ProdConfig, DevConfig
+from longboxed.settings import ProdConfig, DevConfig, StagingConfig
 
 
 if os.environ.get('APP_ENV') == 'prod':
     application = DispatcherMiddleware(frontend.create_app(ProdConfig), {
         '/api/v1': api_v1.create_app(ProdConfig)
+    })
+elif os.environ.get('APP_ENV') == 'stag':
+    application = DispatcherMiddleware(frontend.create_app(StagingConfig), {
+        '/api/v1': api_v1.create_app(StagingConfig)
     })
 else:
     application = DispatcherMiddleware(frontend.create_app(DevConfig), {
