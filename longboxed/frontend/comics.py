@@ -11,7 +11,7 @@ from flask import abort, Blueprint, render_template, redirect, url_for
 
 from . import route
 from ..helpers import current_wednesday, last_wednesday, next_wednesday
-from ..services import comics as _comics
+# from ..services import comics as _comics
 from ..models import Issue, Title, Publisher
 
 
