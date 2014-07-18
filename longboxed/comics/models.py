@@ -11,7 +11,7 @@ from datetime import datetime
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_imageattach.entity import Image, image_attachment
 
-from ..core import db
+from ..core import db, CRUDMixin
 
 
 #: Many-to-Many relationship for bundles and issues helper table
@@ -26,7 +26,7 @@ issues_creators = db.Table('issues_creators',
 )
 
 
-class Publisher(db.Model):
+class Publisher(db.Model, CRUDMixin):
     """
     Publisher model class with two back referenced relationships, titles and issues.
 
@@ -61,7 +61,7 @@ class Publisher(db.Model):
         }
         return p
 
-class Title(db.Model):
+class Title(db.Model, CRUDMixin):
     """
     Title Model class with backreferenced relationship, issues. Publisher 
     can also be accessed with the hidden 'publisher' attribute.
@@ -110,7 +110,7 @@ class Title(db.Model):
         }
         return t
 
-class Issue(db.Model):
+class Issue(db.Model, CRUDMixin):
     """
     Issue model class. Title and Publisher can both be referenced with
     the hidden 'publisher' and 'title' attributes
@@ -202,7 +202,7 @@ class IssueCover(db.Model, Image):
     issue = db.relationship('Issue')
 
 
-class Creator(db.Model):
+class Creator(db.Model, CRUDMixin):
     """
     Writers and/or Artists that create individual titles
     """
@@ -225,7 +225,7 @@ class Creator(db.Model):
     def __str__(self):
         return self.name
 
-class Bundle(db.Model):
+class Bundle(db.Model, CRUDMixin):
     """
     Bundle model class.
 
