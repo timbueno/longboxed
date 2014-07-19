@@ -15,9 +15,10 @@ from sqlalchemy import desc
 from . import route
 from ..forms import AddToPullList
 from ..helpers import current_wednesday, refresh_bundle
-from ..services import bundle as _bundles
-from ..services import comics as _comics
-from ..services import users as _users
+# from ..services import bundle as _bundles
+# from ..services import comics as _comics
+# from ..services import users as _users
+from ..models import Bundle, Title
 
 
 bp = Blueprint('pull_list', __name__)
@@ -27,7 +28,7 @@ bp = Blueprint('pull_list', __name__)
 @login_required
 def pull_list():
     form = AddToPullList()
-    bundles = current_user.bundles.order_by(desc(_bundles.__model__.release_date)).limit(10)
+    bundles = current_user.bundles.order_by(desc(Bundle.release_date)).limit(10)
     return render_template('pull_list.html', form=form, bundles=bundles)
 
 
@@ -39,6 +40,15 @@ def typeahead():
 
     Gets title names for all titles. This should go away someday
     """
+    # titles = [
+    #     {
+    #         'id': title.id,
+    #         'title': title.name,
+    #         'publisher': title.publisher.name,
+    #         'users': title.users.count()
+    #     }
+    #     for title in _comics.titles.all()
+    # ]
     titles = [
         {
             'id': title.id,
@@ -46,7 +56,7 @@ def typeahead():
             'publisher': title.publisher.name,
             'users': title.users.count()
         }
-        for title in _comics.titles.all()
+        for title in Title.query.all()
     ]
     return Response(dumps(titles), mimetype='application/json')
 
@@ -60,13 +70,15 @@ def remove_from_pull_list():
     Remove a favorite title from your pull list
     """
     try:
-        print request.form['id']
+        # print request.form['id']
         # Get the index of the book to delete
-        title = _comics.titles.get(long(request.form['id']))
+        # title = _comics.titles.get(long(request.form['id']))
+        title = Title.query.get(long(request.form['id']))
         # Delete comic at desired index
         current_user.pull_list.remove(title)
         # Save updated user
-        _users.save(current_user)
+        # _users.save(current_user)
+        current_user.save()
         refresh_bundle(current_user, current_wednesday())
         response = {
             'status': 'success',
@@ -90,15 +102,16 @@ def add_to_pull_list():
     if form.validate_on_submit() or title_id:
 
         if title_id:
-            title = _comics.titles.get(title_id)
+            # title = _comics.titles.get(title_id)
+            title = Title.query.get_or_404(title_id)
         else:
-            title = _comics.titles.first(name=request.form['title'])
+            # title = _comics.titles.first(name=request.form['title'])
+            title = Title.query.filter_by(name=request.form['title']).first_or_404()
 
         if title and title not in current_user.pull_list:
             current_user.pull_list.append(title)
-            _users.save(current_user)
-            # html = render_template('favorites_list.html')
-            # html = 'thing'
+            # _users.save(current_user)
+            current_user.save()
             refresh_bundle(current_user, current_wednesday())
             response = {
                 'status': 'success',
