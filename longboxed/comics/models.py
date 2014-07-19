@@ -8,10 +8,13 @@
 import re
 from datetime import datetime
 
-from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy_imageattach.entity import Image, image_attachment
+import requests
 
-from ..core import db, CRUDMixin
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy_imageattach.entity import Image, image_attachment, store_context
+
+from ..core import store, db, CRUDMixin
 
 
 #: Many-to-Many relationship for bundles and issues helper table
@@ -190,6 +193,49 @@ class Issue(db.Model, CRUDMixin):
             'description': self.description
         }
         return i
+
+    def set_cover_image_from_url(self, url, overwrite=False, default=False):
+        """
+        Downloads a jpeg file from a url and stores it in the image store.
+
+        :param issue: :class:`Issue` object class
+        :param url: URL to download the jpeg cover image format
+        :param overwrite: Boolean flag that overwrites an existing image
+        """
+        created_flag = False
+        if not self.cover_image.original or overwrite:
+            print self.complete_title
+            r = requests.get(url)
+            if r.status_code == 200 and r.headers['content-type'] == 'image/jpeg':
+                with store_context(store):
+                    self.cover_image.from_blob(r.content)
+                    self.save()
+                    self.cover_image.generate_thumbnail(height=600)
+                    self.save()
+                    created_flag = True
+        return created_flag
+
+    def find_or_create_thumbnail(self, width=None, height=None):
+        """
+        Creates a thumbnail image from the original if one of the same size
+        does not already exist. Width OR height must be provided. It is not
+        necessary to provide both.
+
+        Default Image (We should act on this in the future)
+        http://affimg.tfaw.com/covers_tfaw/400/no/nocover.jpg
+
+        :param issue: :class:`Issue` object class
+        :param width: Width of desired thumbnail image
+        :param height: Height of desired thumbnail image
+        """
+        assert width is not None or height is not None
+        with store_context(store):
+            try:
+                image = self.cover_image.find_thumbnail(width=width, height=height)
+            except NoResultFound:
+                image = self.cover_image.generate_thumbnail(width=width, height=height)
+            self.save()
+        return image
 
 
 class IssueCover(db.Model, Image):
