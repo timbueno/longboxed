@@ -9,11 +9,14 @@ from flask.ext.wtf import Form
 from wtforms import TextField
 from wtforms.validators import InputRequired, ValidationError
 
-from ..services import comics as _comics
+# from ..services import comics as _comics
+from ..models import Title
 
 
 def validate_title(form, field):
-    if not _comics.titles.first(name=field.data):
+    # if not _comics.titles.first(name=field.data):
+    #     raise ValidationError('Given title is not in Longboxed')
+    if not Title.query.filter_by(name=field.data).first():
         raise ValidationError('Given title is not in Longboxed')
 
 class AddToPullList(Form):
