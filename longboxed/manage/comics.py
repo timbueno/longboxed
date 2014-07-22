@@ -15,16 +15,12 @@ from flask.ext.script import Command, Option, prompt, prompt_bool
 from ..helpers import mail_content
 from ..importer import DailyDownloadImporter, DailyDownloadRecord, WeeklyReleasesImporter, WeeklyReleaseRecord
 from ..services import comics
+from ..models import Issue
 
 
 class TestCommand(Command):
     def run(self):
-        issues = comics.issues.find_issue_with_date(datetime.strptime('2014-02-12', '%Y-%m-%d'))
-        print 'Starting thumbnail generation'
-        for issue in issues:
-            print issue.title.name
-            comics.issues.find_or_create_thumbnail(issue, width=100)
-        print 'Done'
+        pass
         
 
 class ScheduleReleasesCommand(Command):
@@ -71,14 +67,16 @@ class SetCoverImageCommand(Command):
     """
     def run(self):
         diamond_id = prompt('Issue Diamond id')
-        issue = comics.issues.first(diamond_id=diamond_id)
+        # issue = comics.issues.first(diamond_id=diamond_id)
+        issue = Issue.query.filter_by(diamond_id=diamond_id).first()
         if issue:
             url = prompt('Url of jpg image for cover image')
             overwrite = False
             if issue.cover_image.original:
                 print 'Issue object already has a cover image set.'
                 overwrite = prompt_bool('Overwrite existing picture?')
-            success = comics.issues.set_cover_image_from_url(issue, url, overwrite)
+            # success = comics.issues.set_cover_image_from_url(issue, url, overwrite)
+            success = issue.set_cover_image_from_url(url, overwrite=overwrite)
             if success:
                 print 'Successfully set cover image'
             return
