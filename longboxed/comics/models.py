@@ -6,7 +6,10 @@
     Comics module
 """
 import re
+from copy import deepcopy
 from datetime import datetime
+from decimal import Decimal
+from HTMLParser import HTMLParser
 
 import requests
 
@@ -15,6 +18,13 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_imageattach.entity import Image, image_attachment, store_context
 
 from ..core import store, db, CRUDMixin
+# from ..helpers import is_float
+def is_float(number):
+    try: 
+        float(number)
+        return True
+    except (ValueError, TypeError):
+        return False
 
 
 #: Many-to-Many relationship for bundles and issues helper table
@@ -52,6 +62,14 @@ class Publisher(db.Model, CRUDMixin):
         lazy='dynamic'
     )
 
+    @classmethod
+    def from_raw(cls, record):
+        name = record.get('publisher')
+        publisher = cls.query.filter_by(name=name).first()
+        if not publisher:
+            publisher = cls.create(name=name)
+        return publisher
+
     def __str__(self):
         return self.name
 
@@ -63,6 +81,7 @@ class Publisher(db.Model, CRUDMixin):
             'issue_count': self.comics.count()
         }
         return p
+
 
 class Title(db.Model, CRUDMixin):
     """
@@ -86,6 +105,37 @@ class Title(db.Model, CRUDMixin):
         lazy='dynamic',
         order_by='Issue.on_sale_date'
     )
+
+    # @classmethod
+    # def from_raw(cls, record):
+    #     name = record.get('title')
+    #     title = cls.query.filter_by(name=name).first()
+    #     if not title:
+    #         title = cls.create(name=name)
+    #     return title
+
+    @classmethod
+    def from_raw(cls, record):
+        # Complete Title
+        try:
+            complete_title = record.get('complete_title')
+            # m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>(\d+))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', title).groupdict()
+            m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>([+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', complete_title).groupdict()
+            # i['complete_title'] = complete_title
+            # if m['issue_number']:
+            #     i['issue_number'] = Decimal(m['issue_number'])
+            # if m['issues']:
+            #     i['issues'] = Decimal(m['issues'])
+        except (AttributeError, TypeError):
+            m = None
+        finally:
+            pass 
+
+        name = m.get('title')
+        title = cls.query.filter_by(name=name).first()
+        if not title:
+            title = cls.create(name=name)
+        return title
 
     def __str__(self):
         return self.name
@@ -156,6 +206,102 @@ class Issue(db.Model, CRUDMixin):
     def alternates(self):
         return self.query.filter(Issue.title==self.title, Issue.issue_number==self.issue_number, \
                                  Issue.diamond_id!=self.diamond_id)
+
+    @classmethod
+    def from_raw(cls, record):
+        # Create Issue dictionary
+        i = deepcopy(record)
+        # i = {}
+
+        # Complete Title
+        try:
+            complete_title = record.get('complete_title')
+            # m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>(\d+))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', title).groupdict()
+            m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>([+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', complete_title).groupdict()
+            i['complete_title'] = complete_title
+            if m['issue_number']:
+                i['issue_number'] = Decimal(m['issue_number'])
+            if m['issues']:
+                i['issues'] = Decimal(m['issues'])
+        except (AttributeError, TypeError):
+            ### DO SOMETHING HERE
+            ### Maybe set i['key'] to none for values youre trying to set
+            m = None
+        finally:
+            pass 
+
+        # Retail Price
+        try:
+            retail_price = record.get('retail_price')
+            i['retail_price'] = float(retail_price) if is_float(retail_price) else None
+        except:
+            pass
+        finally:
+            pass
+
+        # Affiliate Link
+        try:
+            a_link = record.get('a_link')
+            i['a_link'] = a_link.replace('YOURUSERID', 'THINGAMABOB')
+        except:
+            pass
+        finally:
+            pass
+
+        # Diamond ID
+        try:
+            diamond_id = record.get('diamond_id')
+            if diamond_id[-1:].isalpha():
+                i['diamond_id'] = diamond_id[:-1]
+                i['discount_code'] = diamond_id[-1:]
+            else:
+                i['diamond_id'] = diamond_id
+                i['discount_code'] = None
+        except:
+            pass
+        finally:
+            pass
+
+        # Description
+        try:
+            description = record.get('description')
+            i['description'] = HTMLParser().unescape(description)
+        except:
+            pass
+        finally:
+            pass
+
+        # Prospective Release Date
+        try:
+            prospective_release_date = record.get('prospective_release_date')
+            i['prospective_release_date'] = datetime.strptime(prospective_release_date, '%Y-%m-%d').date()
+        except:
+            pass
+        finally:
+            pass
+
+        # Last Updated
+        try:
+            last_updated = record.get('last_updated')
+            i['last_updated'] = datetime.strptime(last_updated, '%Y-%m-%d %H:%M:%S')
+        except:
+            pass
+        finally:
+            pass
+
+        # Clean Dictionary
+        i.pop('publisher', None)
+        i.pop('title', None)
+        i.pop('creators', None)
+
+        # Create Issue object
+        issue = cls.query.filter_by(diamond_id=i['diamond_id']).first()
+        if issue:
+            issue.update(**i)
+        else:
+            issue = cls.create(**i)
+
+        return issue
 
     def __str__(self):
         return self.complete_title
@@ -267,6 +413,19 @@ class Creator(db.Model, CRUDMixin):
         backref=db.backref('creators', lazy='joined'),
         lazy='dynamic'
     )
+
+    @classmethod
+    def from_raw(cls, record):
+        creators_list = []
+        creators_string = record.get('people')
+        people = re.split(';|,', creators_string)
+        for person in people:
+            person = person.strip()
+            creator = cls.query.filter_by(name=person).first()
+            if not creator:
+                creator = cls.create(name=person)
+            creators_list.append(creator)
+        return creators_list
 
     def __str__(self):
         return self.name

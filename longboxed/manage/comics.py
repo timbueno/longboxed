@@ -8,6 +8,11 @@
 import csv
 from datetime import datetime
 from StringIO import StringIO
+from gzip import GzipFile
+from csv import DictReader
+from copy import deepcopy
+
+import requests
 
 from flask import current_app
 from flask.ext.script import Command, Option, prompt, prompt_bool
@@ -15,12 +20,45 @@ from flask.ext.script import Command, Option, prompt, prompt_bool
 from ..helpers import mail_content
 from ..importer import DailyDownloadImporter, DailyDownloadRecord, WeeklyReleasesImporter, WeeklyReleaseRecord
 from ..services import comics
-from ..models import Issue
+from ..models import Creator, Issue, Title, Publisher
 
 
 class TestCommand(Command):
     def run(self):
-        pass
+        base_url = 'http://www.tfaw.com/intranet/download-8908-daily.php'
+        payload = {
+            'aid': current_app.config['AFFILIATE_ID'],
+            't': '',
+            'z': 'gz'
+        }
+        r = requests.get(base_url, params=payload)
+
+        fieldnames = [x[2] for x in current_app.config['CSV_RULES']]
+        with GzipFile(fileobj=StringIO(r.content)) as f:
+            reader = DictReader(f, fieldnames=fieldnames, delimiter='|')
+            data = [row for row in reader]
+
+        raw_row = data[0]
+
+        r1 = deepcopy(raw_row)
+        r2 = deepcopy(raw_row)
+        r3 = deepcopy(raw_row)
+        r4 = deepcopy(raw_row)
+
+        publisher = Publisher.from_raw(r1)
+        title = Title.from_raw(r2)
+        issue = Issue.from_raw(r3)
+        creators = Creator.from_raw(r4)
+
+        title.publisher = publisher
+        title.save()
+
+        issue.title = title
+        issue.publisher = publisher
+        issue.creators = creators
+        issue.save()
+
+        return None
         
 
 class ScheduleReleasesCommand(Command):
