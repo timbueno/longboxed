@@ -60,12 +60,16 @@ class CRUDMixin(object):
     operations.
     """
 
-    def _preprocess_params(self, kwargs):
+    @classmethod
+    def _preprocess_params(cls, kwargs):
         """Returns a preprocessed dictionary of parameters. Used by default
         before creating a new instance or updating an existing instance.
 
         :param kwargs: a dictionary of parameters
         """
+        for k in kwargs.keys():
+            if not hasattr(cls, k):
+                kwargs.pop(k, None)
         kwargs.pop('csrf_token', None)
         return kwargs
 
@@ -78,11 +82,11 @@ class CRUDMixin(object):
     @classmethod
     def new(cls, **kwargs):
         """Create a new, unsaved record"""
-        return cls(**kwargs)
+        return cls(**cls._preprocess_params(kwargs))
 
     def update(self, commit=True, **kwargs):
         """Update specific fields of a record."""
-        for attr, value in kwargs.iteritems():
+        for attr, value in self._preprocess_params(kwargs).items():
             setattr(self, attr, value)
         return commit and self.save() or self
 
