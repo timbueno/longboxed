@@ -202,6 +202,14 @@ def pretty_date(time=False):
     return str(day_diff/365) + " years ago"
 
 
+# def is_float(number):
+#     try: 
+#         float(number)
+#         return True
+#     except (ValueError, TypeError):
+#         return False
+
+
 class JsonSerializer(object):
     """A mixin that can be used to mark a SQLAlchemy model class which
     implements a :func:`to_json` method. The :func:`to_json` method is used
