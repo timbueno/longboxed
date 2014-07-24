@@ -38,25 +38,35 @@ class TestCommand(Command):
             reader = DictReader(f, fieldnames=fieldnames, delimiter='|')
             data = [row for row in reader]
 
-        raw_row = data[0]
+        try:
+            for record in data:
+                if Issue.check_record_relevancy(record, current_app.config['SUPPORTED_PUBS'], 7):
+                    r1 = deepcopy(record)
+                    r2 = deepcopy(record)
+                    r3 = deepcopy(record)
+                    r4 = deepcopy(record)
 
-        r1 = deepcopy(raw_row)
-        r2 = deepcopy(raw_row)
-        r3 = deepcopy(raw_row)
-        r4 = deepcopy(raw_row)
+                    publisher = Publisher.from_raw(r1)
+                    title = Title.from_raw(r2)
+                    issue = Issue.from_raw(r3)
+                    creators = Creator.from_raw(r4)
 
-        publisher = Publisher.from_raw(r1)
-        title = Title.from_raw(r2)
-        issue = Issue.from_raw(r3)
-        creators = Creator.from_raw(r4)
+                    if title and publisher:
+                        title.publisher = publisher
+                        title.save()
 
-        title.publisher = publisher
-        title.save()
+                    if issue and title:
+                        issue.title = title
+                    if issue and publisher:
+                        issue.publisher = publisher
+                    if issue and creators:
+                        issue.creators = creators
+                    issue.save()
+        except:
+            print record
+                    # Issue.check_parent_status(issue.title, issue.issue_number)
 
-        issue.title = title
-        issue.publisher = publisher
-        issue.creators = creators
-        issue.save()
+                    # break
 
         return None
         
