@@ -6,8 +6,9 @@
     Comics module
 """
 import re
+import sys
 from copy import deepcopy
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 from HTMLParser import HTMLParser
 
@@ -292,16 +293,51 @@ class Issue(db.Model, CRUDMixin):
         # Clean Dictionary
         i.pop('publisher', None)
         i.pop('title', None)
-        i.pop('creators', None)
+        i.pop('people', None)
 
-        # Create Issue object
-        issue = cls.query.filter_by(diamond_id=i['diamond_id']).first()
-        if issue:
-            issue.update(**i)
-        else:
-            issue = cls.create(**i)
+        try:
+            # Create Issue object
+            issue = cls.query.filter_by(diamond_id=i['diamond_id']).first()
+            if issue:
+                issue.update(**i)
+            else:
+                issue = cls.create(**i)
+        except Exception, err:
+            print 'Issue failed creation: ', i.get('complete_title')
+            print 'Error: ', err
+            db.session.rollback()
+            raise
 
         return issue
+
+    @classmethod
+    def check_parent_status(cls, title, issue_number):
+        similar_issues = cls.query.filter(
+            cls.title == title,
+            cls.issue_number == issue_number
+        )
+        similar_issues = sorted(similar_issues)
+        for index, issue in enumerate(similar_issues):
+            if index == 0:
+                issue.is_parent = True
+                if len(similar_issues) > 1:
+                    issue.has_alternates = True
+            else:
+                issue.is_parent = False
+                issue.has_alternates = True
+            issue.save()
+        return
+
+    @staticmethod
+    def check_record_relevancy(record, supported_publishers, future_date):
+        if record.get('category') == 'Comics':
+            if record.get('publisher') in supported_publishers:
+                record_date_string = record.get('prospective_release_date')
+                release_date = datetime.strptime(record_date_string, '%Y-%m-%d').date()
+                if release_date > (datetime.now().date() - timedelta(days=7)) \
+                    and release_date < (datetime.now().date() + timedelta(days=future_date)):
+                    return True
+        return False
 
     def __str__(self):
         return self.complete_title
@@ -417,14 +453,18 @@ class Creator(db.Model, CRUDMixin):
     @classmethod
     def from_raw(cls, record):
         creators_list = []
-        creators_string = record.get('people')
-        people = re.split(';|,', creators_string)
-        for person in people:
-            person = person.strip()
-            creator = cls.query.filter_by(name=person).first()
-            if not creator:
-                creator = cls.create(name=person)
-            creators_list.append(creator)
+        try:
+            creators_string = record.get('people')
+            people = re.split(';|,', creators_string)
+            for person in people:
+                person = person.strip()
+                creator = cls.query.filter_by(name=person).first()
+                if not creator:
+                    creator = cls.create(name=person)
+                creators_list.append(creator)
+        except:
+            print 'Creator failed creation'
+            db.session.rollback()
         return creators_list
 
     def __str__(self):
