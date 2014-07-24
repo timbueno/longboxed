@@ -62,11 +62,10 @@ class TestCommand(Command):
                     if issue and creators:
                         issue.creators = creators
                     issue.save()
+
+                    Issue.check_parent_status(issue.title, issue.issue_number)
         except:
             print record
-                    # Issue.check_parent_status(issue.title, issue.issue_number)
-
-                    # break
 
         return None
         
