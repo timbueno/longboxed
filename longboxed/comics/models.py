@@ -65,11 +65,19 @@ class Publisher(db.Model, CRUDMixin):
 
     @classmethod
     def from_raw(cls, record):
-        name = record.get('publisher')
-        publisher = cls.query.filter_by(name=name).first()
-        if not publisher:
-            publisher = cls.create(name=name)
-        return publisher
+        created = 0
+        try:
+            name = record.get('publisher')
+            publisher = cls.query.filter_by(name=name).first()
+            if not publisher:
+                publisher = cls.create(name=name)
+                created = created + 1
+        except Exception, err:
+            print 'Publisher failed creation: ', record.get('publisher')
+            print 'Error: ', err
+            db.session.rollback()
+            publisher = None
+        return (publisher, created)
 
     def __str__(self):
         return self.name
@@ -132,11 +140,19 @@ class Title(db.Model, CRUDMixin):
         finally:
             pass 
 
-        name = m.get('title')
-        title = cls.query.filter_by(name=name).first()
-        if not title:
-            title = cls.create(name=name)
-        return title
+        created = 0
+        try:            
+            name = m.get('title')
+            title = cls.query.filter_by(name=name).first()
+            if not title:
+                title = cls.create(name=name)
+                created = created + 1
+        except Exception, err:
+            print 'Title failed creation: ', m.get('title')
+            print 'Error: ', err
+            db.session.rollback()
+            title = None
+        return (title, created)
 
     def __str__(self):
         return self.name
@@ -294,7 +310,10 @@ class Issue(db.Model, CRUDMixin):
         i.pop('publisher', None)
         i.pop('title', None)
         i.pop('people', None)
+        i.pop('creators', None)
 
+        # Create Issue Object
+        created = 0
         try:
             # Create Issue object
             issue = cls.query.filter_by(diamond_id=i['diamond_id']).first()
@@ -302,13 +321,13 @@ class Issue(db.Model, CRUDMixin):
                 issue.update(**i)
             else:
                 issue = cls.create(**i)
+                created = created + 1
         except Exception, err:
             print 'Issue failed creation: ', i.get('complete_title')
             print 'Error: ', err
             db.session.rollback()
-            raise
-
-        return issue
+            issue = None
+        return (issue, created)
 
     @classmethod
     def check_parent_status(cls, title, issue_number):
@@ -452,6 +471,7 @@ class Creator(db.Model, CRUDMixin):
 
     @classmethod
     def from_raw(cls, record):
+        created = 0
         creators_list = []
         try:
             creators_string = record.get('people')
@@ -461,11 +481,14 @@ class Creator(db.Model, CRUDMixin):
                 creator = cls.query.filter_by(name=person).first()
                 if not creator:
                     creator = cls.create(name=person)
+                    created = created + 1
                 creators_list.append(creator)
-        except:
-            print 'Creator failed creation'
+        except Exception, err:
+            print 'Creator failed creation: ', person
+            print 'Error: ', err
             db.session.rollback()
-        return creators_list
+            creators_list = []
+        return (creators_list, created)
 
     def __str__(self):
         return self.name
