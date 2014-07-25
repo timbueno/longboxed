@@ -6,90 +6,31 @@
     comic management commands
 """
 import csv
-from datetime import datetime
 from StringIO import StringIO
-from gzip import GzipFile
-from csv import DictReader
-from copy import deepcopy
-
-import requests
-
 from flask import current_app
 from flask.ext.script import Command, Option, prompt, prompt_bool
 
 from ..helpers import mail_content
-from ..importer import DailyDownloadImporter, DailyDownloadRecord, WeeklyReleasesImporter, WeeklyReleaseRecord
+from ..importer import NewDailyDownloadImporter, DailyDownloadImporter, DailyDownloadRecord, WeeklyReleasesImporter, WeeklyReleaseRecord
 from ..services import comics
-from ..models import Creator, Issue, Title, Publisher
+from ..models import Issue
 
 
 class TestCommand(Command):
-    def run(self):
-        base_url = 'http://www.tfaw.com/intranet/download-8908-daily.php'
-        payload = {
-            'aid': current_app.config['AFFILIATE_ID'],
-            't': '',
-            'z': 'gz'
-        }
-        r = requests.get(base_url, params=payload)
+    def get_options(self):
+        return [
+            Option('--days', '-d', dest='days', default=21, type=int)
+        ]
 
+    def run(self, days):
         fieldnames = [x[2] for x in current_app.config['CSV_RULES']]
-        with GzipFile(fileobj=StringIO(r.content)) as f:
-            reader = DictReader(f, fieldnames=fieldnames, delimiter='|')
-            data = [row for row in reader]
-
-        try:
-            new_publishers = 0
-            new_titles = 0
-            new_issues = 0
-            new_creators = 0
-
-            for record in data:
-                if Issue.check_record_relevancy(record, current_app.config['SUPPORTED_PUBS'], 7):
-                    # Attempt to create new models from raw records
-                    publisher, publishers_created = Publisher.from_raw(record)
-                    title, titles_created = Title.from_raw(record)
-                    issue, issues_created = Issue.from_raw(record)
-                    creators, creators_created = Creator.from_raw(record)
-
-                    # Update newly created model counts
-                    new_publishers = new_publishers + publishers_created
-                    new_titles = new_titles + titles_created
-                    new_issues = new_issues + issues_created
-                    new_creators = new_creators + creators_created
-
-                    if titles_created and publisher:
-                        title.publisher = publisher
-                        title.save()
-
-                    if issue:
-                        issue.title = title
-                        issue.publisher = publisher
-                        issue.creators = creators
-                        issue.save()
-
-                        issue.set_cover_image_from_url(issue.big_image)
-                        Issue.check_parent_status(issue.title, issue.issue_number)
-        except Exception:
-            print record
-        finally:
-            summary = """
-            ~~~~~~~~~~~~~~~~~~~~~~~~
-            Database Update Report
-            Time: %s
-            ~~~~~~~~~~~~~~~~~~~~~~~~
-            Created Issues:     %d
-            Created Titles:     %d
-            Created Publishers: %d
-            ~~~~~~~~~~~~~~~~~~~~~~~~
-            Issues in DB:       %d
-            ~~~~~~~~~~~~~~~~~~~~~~~~""" % (datetime.now(), new_issues, \
-                                           new_titles, \
-                                           new_publishers, \
-                                           Issue.query.count()
-                                          )
-            print summary
-
+        database_importer = NewDailyDownloadImporter()
+        database_importer.run(
+            csv_fieldnames = fieldnames,
+            supported_publishers = current_app.config['SUPPORTED_PUBS'],
+            affiliate_id = current_app.config['AFFILIATE_ID'],
+            days = days
+        )
         return
         
 
