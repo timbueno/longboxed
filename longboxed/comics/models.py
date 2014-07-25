@@ -439,7 +439,7 @@ class Creator(db.Model, CRUDMixin):
     issues = db.relationship(
         'Issue',
         secondary=issues_creators,
-        backref=db.backref('creators', lazy='joined'),
+        backref=db.backref('creators', lazy='dynamic'),
         lazy='dynamic'
     )
 
