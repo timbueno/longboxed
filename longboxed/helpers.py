@@ -17,8 +17,6 @@ from flask.json import JSONEncoder as BaseJSONEncoder
 from flask.ext.mail import Message
 
 from .core import mail
-# from .services import bundle, comics
-# from .services import comics
 from .models import Issue, Bundle
 
 
@@ -140,13 +138,10 @@ def mail_content(recipients, sender, subject, content, html=None, attachment=Non
 
 def refresh_bundle(user, date, matches=None):
     if not matches:
-        # issues = comics.issues.find_issue_with_date(date)
         issues = Issue.query.filter(Issue.on_sale_date==date, Issue.is_parent==True).all()
         matches = [i for i in issues if i.title in user.pull_list and i.is_parent]
-    # b = bundle.first(user=user, release_date=date)
     b = Bundle.query.filter(Bundle.user==user, Bundle.release_date==date).first()
     if b:
-        # b = bundle.update(b, issues=matches, last_updated=datetime.now())
         b.update(issues=matches, last_updated=datetime.now())
     else:
         b = Bundle.create(

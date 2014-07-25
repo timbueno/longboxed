@@ -16,7 +16,6 @@ from flask.ext.admin.contrib.sqlamodel import ModelView
 
 from ..core import db
 from ..helpers import current_wednesday, last_wednesday, next_wednesday 
-# from ..services import comics as _comics
 from ..models import Connection, Creator, Issue, Publisher, Title, User, Role, Bundle
 
 
@@ -52,10 +51,8 @@ class IssueAdmin(AdministratorBase):
 
     def set_on_sale_date(self, ids, date):
         try:
-            # issues = _comics.issues.get_all(*ids)
             issues = Issue.query.filter(Issue.id.in_(*ids)).all()
             for issue in issues:
-                # _comics.issues.update(issue, **{'on_sale_date': date})
                 issue.update(**{'on_sale_date': date})
         except Exception, ex:
             flash(gettext('Failed to set date %(error)s', error=str(ex)), 'error')
@@ -64,12 +61,9 @@ class IssueAdmin(AdministratorBase):
     @action('set_cover_image', lazy_gettext('Set Cover Image'), lazy_gettext('Are you sure you want to set the cover image?'))
     def set_cover_image(self, ids):
         try:
-            # issues = _comics.issues.get_all(*ids)
             issues = Issue.query.filter(Issue.id.in_(ids)).all()
             for issue in issues:
-                # _comics.issues.set_cover_image_from_url(issue, issue.big_image, True)
                 issue.set_cover_image_from_url(issue.big_image, True)
-                # _comics.issues.find_or_create_thumbnail(issue, width=250)
                 issue.find_or_create_thumbnail(width=250)
         except Exception, ex:
             flash(gettext('Failed to set cover image %(errors)s', error=str(ex)), 'error')

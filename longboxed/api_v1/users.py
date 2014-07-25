@@ -9,8 +9,6 @@ from flask import Blueprint, g, jsonify, request
 
 from ..models import Bundle, Title
 from ..helpers import current_wednesday
-# from ..services import users
-# from ..models import User
 from .authentication import auth
 from .errors import bad_request, forbidden
 from . import route

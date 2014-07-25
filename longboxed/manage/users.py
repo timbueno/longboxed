@@ -5,7 +5,7 @@
 
     user management commands
 """
-from flask import current_app, render_template
+from flask import current_app
 from flask.ext.script import Command, prompt, prompt_pass
 from flask.ext.security.forms import RegisterForm
 from flask.ext.security.registerable import register_user
@@ -13,8 +13,7 @@ from werkzeug.datastructures import MultiDict
 from werkzeug.local import LocalProxy
 
 from ..core import db
-from ..helpers import current_wednesday, mail_content, refresh_bundle
-# from ..services import comics, roles, users
+from ..helpers import current_wednesday, refresh_bundle
 from ..models import Issue, User, Role
 
 
@@ -35,27 +34,6 @@ class UserBundlesCommand(Command):
             matches = [i for i in issues_this_week if i.title in user.pull_list and i.is_parent]
             refresh_bundle(user, date, matches)
         return
-
-
-# class MailBundlesCommand(Command):
-#     """
-#     Mails bundles to users
-#     """
-#     def run(self):
-#         date = current_wednesday()
-#         users_to_mail = users.find(mail_bundles=True)
-#         for user in users_to_mail:
-#             b = user.bundles.filter_by(release_date=date).first()
-#             if b.issues:
-#                 html = render_template('mail/bundle_mail.html', issues=b.issues)
-#                 mail_content(
-#                     [user.email],
-#                     'bundles@longboxed.com',
-#                     'Your weekly comic book bundle!',
-#                     'Content',
-#                     html
-#                 )
-#         return
 
 
 class CreateNewRoleCommand(Command):
