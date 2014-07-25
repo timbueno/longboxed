@@ -65,6 +65,7 @@ class Publisher(db.Model, CRUDMixin):
 
     @classmethod
     def from_raw(cls, record):
+        record = deepcopy(record)
         created = 0
         try:
             name = record.get('publisher')
@@ -125,6 +126,7 @@ class Title(db.Model, CRUDMixin):
 
     @classmethod
     def from_raw(cls, record):
+        record = deepcopy(record)
         # Complete Title
         try:
             complete_title = record.get('complete_title')
@@ -225,7 +227,7 @@ class Issue(db.Model, CRUDMixin):
                                  Issue.diamond_id!=self.diamond_id)
 
     @classmethod
-    def from_raw(cls, record):
+    def from_raw(cls, record, sas_id='YOURUSERID'):
         # Create Issue dictionary
         i = deepcopy(record)
         # i = {}
@@ -241,29 +243,22 @@ class Issue(db.Model, CRUDMixin):
             if m['issues']:
                 i['issues'] = Decimal(m['issues'])
         except (AttributeError, TypeError):
-            ### DO SOMETHING HERE
-            ### Maybe set i['key'] to none for values youre trying to set
+            i['complete_title'] = ''
             m = None
-        finally:
-            pass 
 
         # Retail Price
         try:
             retail_price = record.get('retail_price')
             i['retail_price'] = float(retail_price) if is_float(retail_price) else None
-        except:
-            pass
-        finally:
-            pass
+        except Exception, err:
+            i['retail_price'] = 0.00
 
         # Affiliate Link
         try:
             a_link = record.get('a_link')
-            i['a_link'] = a_link.replace('YOURUSERID', 'THINGAMABOB')
-        except:
-            pass
-        finally:
-            pass
+            i['a_link'] = a_link.replace('YOURUSERID', sas_id)
+        except Exception, err:
+            i['a_link'] = None
 
         # Diamond ID
         try:
@@ -274,36 +269,30 @@ class Issue(db.Model, CRUDMixin):
             else:
                 i['diamond_id'] = diamond_id
                 i['discount_code'] = None
-        except:
-            pass
-        finally:
-            pass
+        except Exception, err:
+            i['diamond_id'] = None
+            i['discount_code'] = None
 
         # Description
         try:
             description = record.get('description')
             i['description'] = HTMLParser().unescape(description)
-        except:
-            pass
-        finally:
-            pass
+        except Exception, err:
+            i['description'] = None
 
         # Prospective Release Date
         try:
             prospective_release_date = record.get('prospective_release_date')
             i['prospective_release_date'] = datetime.strptime(prospective_release_date, '%Y-%m-%d').date()
-        except:
+        except Exception, err:
             pass
-        finally:
-            pass
+            # i['prospective_release_date'] = None
 
         # Last Updated
         try:
             last_updated = record.get('last_updated')
             i['last_updated'] = datetime.strptime(last_updated, '%Y-%m-%d %H:%M:%S')
-        except:
-            pass
-        finally:
+        except Exception, err:
             pass
 
         # Clean Dictionary
@@ -405,7 +394,6 @@ class Issue(db.Model, CRUDMixin):
         """
         created_flag = False
         if not self.cover_image.original or overwrite:
-            print self.complete_title
             r = requests.get(url)
             if r.status_code == 200 and r.headers['content-type'] == 'image/jpeg':
                 with store_context(store):
@@ -471,6 +459,7 @@ class Creator(db.Model, CRUDMixin):
 
     @classmethod
     def from_raw(cls, record):
+        record = deepcopy(record)
         created = 0
         creators_list = []
         try:

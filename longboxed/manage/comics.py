@@ -39,35 +39,58 @@ class TestCommand(Command):
             data = [row for row in reader]
 
         try:
+            new_publishers = 0
+            new_titles = 0
+            new_issues = 0
+            new_creators = 0
+
             for record in data:
                 if Issue.check_record_relevancy(record, current_app.config['SUPPORTED_PUBS'], 7):
-                    r1 = deepcopy(record)
-                    r2 = deepcopy(record)
-                    r3 = deepcopy(record)
-                    r4 = deepcopy(record)
+                    # Attempt to create new models from raw records
+                    publisher, publishers_created = Publisher.from_raw(record)
+                    title, titles_created = Title.from_raw(record)
+                    issue, issues_created = Issue.from_raw(record)
+                    creators, creators_created = Creator.from_raw(record)
 
-                    publisher = Publisher.from_raw(r1)
-                    title = Title.from_raw(r2)
-                    issue = Issue.from_raw(r3)
-                    creators = Creator.from_raw(r4)
+                    # Update newly created model counts
+                    new_publishers = new_publishers + publishers_created
+                    new_titles = new_titles + titles_created
+                    new_issues = new_issues + issues_created
+                    new_creators = new_creators + creators_created
 
-                    if title and publisher:
+                    if titles_created and publisher:
                         title.publisher = publisher
                         title.save()
 
-                    if issue and title:
+                    if issue:
                         issue.title = title
-                    if issue and publisher:
                         issue.publisher = publisher
-                    if issue and creators:
                         issue.creators = creators
-                    issue.save()
+                        issue.save()
 
-                    Issue.check_parent_status(issue.title, issue.issue_number)
-        except:
+                        issue.set_cover_image_from_url(issue.big_image)
+                        Issue.check_parent_status(issue.title, issue.issue_number)
+        except Exception:
             print record
+        finally:
+            summary = """
+            ~~~~~~~~~~~~~~~~~~~~~~~~
+            Database Update Report
+            Time: %s
+            ~~~~~~~~~~~~~~~~~~~~~~~~
+            Created Issues:     %d
+            Created Titles:     %d
+            Created Publishers: %d
+            ~~~~~~~~~~~~~~~~~~~~~~~~
+            Issues in DB:       %d
+            ~~~~~~~~~~~~~~~~~~~~~~~~""" % (datetime.now(), new_issues, \
+                                           new_titles, \
+                                           new_publishers, \
+                                           Issue.query.count()
+                                          )
+            print summary
 
-        return None
+        return
         
 
 class ScheduleReleasesCommand(Command):
