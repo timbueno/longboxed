@@ -116,27 +116,13 @@ class Title(db.Model, CRUDMixin):
         order_by='Issue.on_sale_date'
     )
 
-    # @classmethod
-    # def from_raw(cls, record):
-    #     name = record.get('title')
-    #     title = cls.query.filter_by(name=name).first()
-    #     if not title:
-    #         title = cls.create(name=name)
-    #     return title
-
     @classmethod
     def from_raw(cls, record):
         record = deepcopy(record)
         # Complete Title
         try:
             complete_title = record.get('complete_title')
-            # m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>(\d+))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', title).groupdict()
             m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>([+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', complete_title).groupdict()
-            # i['complete_title'] = complete_title
-            # if m['issue_number']:
-            #     i['issue_number'] = Decimal(m['issue_number'])
-            # if m['issues']:
-            #     i['issues'] = Decimal(m['issues'])
         except (AttributeError, TypeError):
             m = None
         finally:
