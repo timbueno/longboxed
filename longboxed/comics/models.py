@@ -216,7 +216,6 @@ class Issue(db.Model, CRUDMixin):
     def from_raw(cls, record, sas_id='YOURUSERID'):
         # Create Issue dictionary
         i = deepcopy(record)
-        # i = {}
 
         # Complete Title
         try:

@@ -1,24 +1,24 @@
-import inspect
-import re
+# import inspect
+# import re
 
-from copy import deepcopy
+# from copy import deepcopy
 from csv import DictReader
-from datetime import datetime, timedelta
-from decimal import Decimal
-from functools import wraps
+from datetime import datetime
+# from decimal import Decimal
+# from functools import wraps
 from gzip import GzipFile
-from HTMLParser import HTMLParser
+# from HTMLParser import HTMLParser
 from logging import getLogger
 from StringIO import StringIO
 
 import requests
 
 from bs4 import BeautifulSoup
-from flask import current_app
+# from flask import current_app
 
-from .core import db
-from .helpers import current_wednesday, two_wednesdays, next_wednesday, week_handler
-from .services import comics as _comics
+# from .core import db
+from .helpers import week_handler
+# from .services import comics as _comics
 from .models import Issue, Title, Publisher, Creator
 
 
@@ -184,61 +184,61 @@ class NewWeeklyReleasesImporter(object):
         return issues
 
 
-class BaseImporter(object):
-    """
-    Base csv importer class
-    """
-    def __init__(self, csv_rules, record, delimiter='|'):
-        self.delimiter = delimiter
-        self.record = record
-        self.csv_rules = csv_rules
-        self.raw_data = []
-        self.processed_data = []
+# class BaseImporter(object):
+#     """
+#     Base csv importer class
+#     """
+#     def __init__(self, csv_rules, record, delimiter='|'):
+#         self.delimiter = delimiter
+#         self.record = record
+#         self.csv_rules = csv_rules
+#         self.raw_data = []
+#         self.processed_data = []
 
-    def run(self):
-        process_logger.debug('Beginning process: %s', datetime.now())
-        content = self.download()
-        self.raw_data = self.load(content)
-        self.processed_data = self.process(self.raw_data)
-        process_logger.debug('Process Complete: %s', datetime.now())
-        return self.processed_data
+#     def run(self):
+#         process_logger.debug('Beginning process: %s', datetime.now())
+#         content = self.download()
+#         self.raw_data = self.load(content)
+#         self.processed_data = self.process(self.raw_data)
+#         process_logger.debug('Process Complete: %s', datetime.now())
+#         return self.processed_data
 
-    def download(self):
-        raise NotImplementedError
+#     def download(self):
+#         raise NotImplementedError
 
-    def load(self, content):
-        raise NotImplementedError
+#     def load(self, content):
+#         raise NotImplementedError
 
-    def process(self, raw_content_dict):
-        raise NotImplementedError
+#     def process(self, raw_content_dict):
+#         raise NotImplementedError
 
 
-def daily_download_report(fn):
-    @wraps(fn)
-    def wrapper(self, raw_data):
-        now = datetime.now()
-        issue_count = _comics.issues.count()
-        title_count = _comics.titles.count()
-        publisher_count = _comics.publishers.count()
-        data = fn(self, raw_data)
-        summary = """
-        ~~~~~~~~~~~~~~~~~~~~~~~~
-        Database Update Report
-        Time: %s
-        ~~~~~~~~~~~~~~~~~~~~~~~~
-        Created Issues:     %d
-        Created Titles:     %d
-        Created Publishers: %d
-        ~~~~~~~~~~~~~~~~~~~~~~~~
-        Issues in DB:       %d
-        ~~~~~~~~~~~~~~~~~~~~~~~~""" % (datetime.now(), _comics.issues.count() - issue_count, \
-                                       _comics.titles.count() - title_count, \
-                                       _comics.publishers.count() - publisher_count, \
-                                       _comics.issues.count()
-                                      )
-        process_logger.debug(summary)
-        return data
-    return wrapper
+# def daily_download_report(fn):
+#     @wraps(fn)
+#     def wrapper(self, raw_data):
+#         now = datetime.now()
+#         issue_count = _comics.issues.count()
+#         title_count = _comics.titles.count()
+#         publisher_count = _comics.publishers.count()
+#         data = fn(self, raw_data)
+#         summary = """
+#         ~~~~~~~~~~~~~~~~~~~~~~~~
+#         Database Update Report
+#         Time: %s
+#         ~~~~~~~~~~~~~~~~~~~~~~~~
+#         Created Issues:     %d
+#         Created Titles:     %d
+#         Created Publishers: %d
+#         ~~~~~~~~~~~~~~~~~~~~~~~~
+#         Issues in DB:       %d
+#         ~~~~~~~~~~~~~~~~~~~~~~~~""" % (datetime.now(), _comics.issues.count() - issue_count, \
+#                                        _comics.titles.count() - title_count, \
+#                                        _comics.publishers.count() - publisher_count, \
+#                                        _comics.issues.count()
+#                                       )
+#         process_logger.debug(summary)
+#         return data
+#     return wrapper
 
 
 # class DailyDownloadImporter(BaseImporter):
@@ -285,184 +285,184 @@ def daily_download_report(fn):
 #         return data
 
 
-class WeeklyReleasesImporter(BaseImporter):
-    """
-    Processes releases
-    """
-    def __init__(self, week, affiliate_id, supported_publishers, *args, **kwargs):
-        super(WeeklyReleasesImporter, self).__init__(*args, **kwargs)
-        self.week = week
-        self.date = self.week_handler(week)
-        self.affiliate_id = affiliate_id
-        self.supported_publishers = supported_publishers
+# class WeeklyReleasesImporter(BaseImporter):
+#     """
+#     Processes releases
+#     """
+#     def __init__(self, week, affiliate_id, supported_publishers, *args, **kwargs):
+#         super(WeeklyReleasesImporter, self).__init__(*args, **kwargs)
+#         self.week = week
+#         self.date = self.week_handler(week)
+#         self.affiliate_id = affiliate_id
+#         self.supported_publishers = supported_publishers
 
-    def download(self, *args, **kwargs):
-        """
-        Gets file containing a list of shippments from Diamond Distributers.
-        This file is served from TFAW's servers. Three files are available at 
-        any given time; thisweek, nextweek, twoweeks. They describe shipments 
-        pertaining to their respective timeframes.
+#     def download(self, *args, **kwargs):
+#         """
+#         Gets file containing a list of shippments from Diamond Distributers.
+#         This file is served from TFAW's servers. Three files are available at 
+#         any given time; thisweek, nextweek, twoweeks. They describe shipments 
+#         pertaining to their respective timeframes.
 
-        :param week: String designating which diamond list to download 
-                     Options: 'thisweek', 'nextweek', 'twoweeks'
-        """
-        if self.week not in ['thisweek', 'nextweek', 'twoweeks']:
-            raise Exception('Not a valid input for week selection')
-        base_url = 'http://www.tfaw.com/intranet/diamondlists_raw.php'
-        payload = {
-            'mode': self.week,
-            'uid': self.affiliate_id,
-            'show%5B%5D': 'Comics',
-            'display': 'text_raw'
-        }
-        r = requests.get(base_url, params=payload)
+#         :param week: String designating which diamond list to download 
+#                      Options: 'thisweek', 'nextweek', 'twoweeks'
+#         """
+#         if self.week not in ['thisweek', 'nextweek', 'twoweeks']:
+#             raise Exception('Not a valid input for week selection')
+#         base_url = 'http://www.tfaw.com/intranet/diamondlists_raw.php'
+#         payload = {
+#             'mode': self.week,
+#             'uid': self.affiliate_id,
+#             'show%5B%5D': 'Comics',
+#             'display': 'text_raw'
+#         }
+#         r = requests.get(base_url, params=payload)
 
-        return r.content
+#         return r.content
 
-    def load(self, content):
-        """
-        Turns returned content from a request for a Diamond list into someting
-        we can work with. It discards any items that do not have a vender matching
-        a vender in 'SUPPORTED_DIAMOND_PUBS' settings variable. It also discards any
-        item whose discount code is not a D or and E.
+#     def load(self, content):
+#         """
+#         Turns returned content from a request for a Diamond list into someting
+#         we can work with. It discards any items that do not have a vender matching
+#         a vender in 'SUPPORTED_DIAMOND_PUBS' settings variable. It also discards any
+#         item whose discount code is not a D or and E.
 
-        :param raw_content: html content returned from TFAWs servers, diamond list
-        """
-        html = BeautifulSoup(content)
-        f = StringIO(html.pre.string.strip(' \t\n\r'))
-        fieldnames = [x[2] for x in self.csv_rules]
-        incsv = DictReader(f, fieldnames=fieldnames)
-        return [x for x in incsv]
+#         :param raw_content: html content returned from TFAWs servers, diamond list
+#         """
+#         html = BeautifulSoup(content)
+#         f = StringIO(html.pre.string.strip(' \t\n\r'))
+#         fieldnames = [x[2] for x in self.csv_rules]
+#         incsv = DictReader(f, fieldnames=fieldnames)
+#         return [x for x in incsv]
 
-    def process(self, raw_content_dict):
-        data = []
-        csv_rules = {x[2]: x[3] for x in self.csv_rules}
-        already_scheduled = _comics.issues.find_issue_with_date(self.date)
-        for issue in already_scheduled:
-            issue.on_sale_date = None
-            _comics.issues.save(issue)
-        for row in raw_content_dict:
-            record = self.record(self.date, self.supported_publishers, row, csv_rules)
-            if record.is_relevent():
-                result = record.run()
-                data.append(result)
-        return data
+#     def process(self, raw_content_dict):
+#         data = []
+#         csv_rules = {x[2]: x[3] for x in self.csv_rules}
+#         already_scheduled = _comics.issues.find_issue_with_date(self.date)
+#         for issue in already_scheduled:
+#             issue.on_sale_date = None
+#             _comics.issues.save(issue)
+#         for row in raw_content_dict:
+#             record = self.record(self.date, self.supported_publishers, row, csv_rules)
+#             if record.is_relevent():
+#                 result = record.run()
+#                 data.append(result)
+#         return data
 
-    def week_handler(self, week):
-        if week not in ['thisweek', 'nextweek', 'twoweeks']:
-            raise Exception('Not a valid input for week selection')
-        if week == 'thisweek':
-            date = current_wednesday()
-        if week == 'nextweek':
-            date = next_wednesday()
-        if week == 'twoweeks':
-            date = two_wednesdays()
-            # raise NotImplementedError
-        return date
-
-
-class BaseRecord(object):
-    """
-    Base record class
-    """
-    def __init__(self, raw_record, csv_rules, pre_process_tag='pre', post_process_tag='post'):
-        self.raw_record = raw_record
-        self.csv_rules = csv_rules
-        self.pre_processes = self.get_processors(pre_process_tag)
-        self.post_processes = self.get_processors(post_process_tag)
-        self.processed_record = None
-        self.object = None
-
-    def get_processors(self, tag):
-        processors = [x[0] for x in inspect.getmembers(self, predicate=inspect.ismethod) \
-            if tag in x[0] and x[0] not in ['pre_process', 'post_process', 'get_processors', 'process']]
-        return processors
-
-    def pre_process(self):
-        temp = deepcopy(self.raw_record)
-        temp = {key: temp[key] for key in temp.keys() if self.csv_rules[key]}
-        for method in self.pre_processes:
-            result = getattr(self, method)(temp)
-            temp.update(result)
-        return temp
-
-    def post_process(self):
-        results = {}
-        for method in self.post_processes:
-            result = getattr(self, method)(self.object)
-            results[method] = result
-        return results
-
-    def process(self):
-        raise NotImplementedError
-
-    def run(self):
-        try:
-            record = self.pre_process()
-            self.object = self.process(record)
-            if self.object:
-                results = self.post_process()
-        except Exception, err:
-            process_logger.debug('Something went wrong, skipping record.')
-            process_logger.debug(err)
-            print 'Rolling back...'
-            db.session.rollback()
-            return None
-        return self.object
-
-    def is_relevent(self):
-        return True
+#     def week_handler(self, week):
+#         if week not in ['thisweek', 'nextweek', 'twoweeks']:
+#             raise Exception('Not a valid input for week selection')
+#         if week == 'thisweek':
+#             date = current_wednesday()
+#         if week == 'nextweek':
+#             date = next_wednesday()
+#         if week == 'twoweeks':
+#             date = two_wednesdays()
+#             # raise NotImplementedError
+#         return date
 
 
-class WeeklyReleaseRecord(BaseRecord):
-    def __init__(self, date, supported_publishers, *args, **kwargs):
-        super(WeeklyReleaseRecord, self).__init__(*args, **kwargs)
-        self.supported_publishers = supported_publishers
-        self.date = date
+# class BaseRecord(object):
+#     """
+#     Base record class
+#     """
+#     def __init__(self, raw_record, csv_rules, pre_process_tag='pre', post_process_tag='post'):
+#         self.raw_record = raw_record
+#         self.csv_rules = csv_rules
+#         self.pre_processes = self.get_processors(pre_process_tag)
+#         self.post_processes = self.get_processors(post_process_tag)
+#         self.processed_record = None
+#         self.object = None
 
-    def is_relevent(self):
-        """
-        Strips the publisher string of an asterisk (*) and chesk to see if it is a
-        publisher in the supported publishers attribute. Also limits relevency to
-        issues with a D or an E in the discount code slot.
-        """
-        try:
-            if self.raw_record['publisher'].strip('*') in self.supported_publishers:
-                if self.raw_record['discount_code'] in ['D', 'E']:
-                    return True
-            return False
-        except:
-            return False
+#     def get_processors(self, tag):
+#         processors = [x[0] for x in inspect.getmembers(self, predicate=inspect.ismethod) \
+#             if tag in x[0] and x[0] not in ['pre_process', 'post_process', 'get_processors', 'process']]
+#         return processors
 
-    def process(self, record):
-        """
-        Gets an issue object from the database, returns None if issue with
-        given diamond id is not present.
-        """
-        issue = _comics.issues.first(diamond_id=record['diamond_id'])
-        if not issue:
-            message = 'Issue Not Found: %s | %s | %s' % (record['diamond_id'], record['publisher'], \
-                                           record['complete_title'])
-            process_logger.debug(message)
-        return issue
+#     def pre_process(self):
+#         temp = deepcopy(self.raw_record)
+#         temp = {key: temp[key] for key in temp.keys() if self.csv_rules[key]}
+#         for method in self.pre_processes:
+#             result = getattr(self, method)(temp)
+#             temp.update(result)
+#         return temp
 
-    def pre_massage_diamond_id(self, record, key='diamond_id'):
-        """
-        Removes a trailing letter (A-Z) from a diamond id if its present
-        """
-        if record[key][-1:].isalpha():
-            diamond_id = record[key][:-1]
-        else:
-            diamond_id = record[key]
-        return {key: diamond_id}
+#     def post_process(self):
+#         results = {}
+#         for method in self.post_processes:
+#             result = getattr(self, method)(self.object)
+#             results[method] = result
+#         return results
 
-    def post_set_release_date(self, issue):
-        """
-        Sets release data of issue object to the class's date attribute
-        """
-        issue.on_sale_date = self.date
-        _comics.issues.save(issue)
-        return True
+#     def process(self):
+#         raise NotImplementedError
+
+#     def run(self):
+#         try:
+#             record = self.pre_process()
+#             self.object = self.process(record)
+#             if self.object:
+#                 results = self.post_process()
+#         except Exception, err:
+#             process_logger.debug('Something went wrong, skipping record.')
+#             process_logger.debug(err)
+#             print 'Rolling back...'
+#             db.session.rollback()
+#             return None
+#         return self.object
+
+#     def is_relevent(self):
+#         return True
+
+
+# class WeeklyReleaseRecord(BaseRecord):
+#     def __init__(self, date, supported_publishers, *args, **kwargs):
+#         super(WeeklyReleaseRecord, self).__init__(*args, **kwargs)
+#         self.supported_publishers = supported_publishers
+#         self.date = date
+
+#     def is_relevent(self):
+#         """
+#         Strips the publisher string of an asterisk (*) and chesk to see if it is a
+#         publisher in the supported publishers attribute. Also limits relevency to
+#         issues with a D or an E in the discount code slot.
+#         """
+#         try:
+#             if self.raw_record['publisher'].strip('*') in self.supported_publishers:
+#                 if self.raw_record['discount_code'] in ['D', 'E']:
+#                     return True
+#             return False
+#         except:
+#             return False
+
+#     def process(self, record):
+#         """
+#         Gets an issue object from the database, returns None if issue with
+#         given diamond id is not present.
+#         """
+#         issue = _comics.issues.first(diamond_id=record['diamond_id'])
+#         if not issue:
+#             message = 'Issue Not Found: %s | %s | %s' % (record['diamond_id'], record['publisher'], \
+#                                            record['complete_title'])
+#             process_logger.debug(message)
+#         return issue
+
+#     def pre_massage_diamond_id(self, record, key='diamond_id'):
+#         """
+#         Removes a trailing letter (A-Z) from a diamond id if its present
+#         """
+#         if record[key][-1:].isalpha():
+#             diamond_id = record[key][:-1]
+#         else:
+#             diamond_id = record[key]
+#         return {key: diamond_id}
+
+#     def post_set_release_date(self, issue):
+#         """
+#         Sets release data of issue object to the class's date attribute
+#         """
+#         issue.on_sale_date = self.date
+#         _comics.issues.save(issue)
+#         return True
 
 
 # class DailyDownloadRecord(BaseRecord):

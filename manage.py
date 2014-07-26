@@ -11,7 +11,7 @@ from flask.ext.script import Manager
 from longboxed.frontend import create_app
 from longboxed.manage import CreateNewRoleCommand, CreateDefaultRolesCommand, CreateUserCommand, \
                              AddSuperUserRoleCommand, ListUsersCommand, ListRolesCommand, \
-                             ScheduleReleasesCommand, CrossCheckCommand, \
+                             ScheduleReleasesCommand, \
                              TestCommand, SetCoverImageCommand, UserBundlesCommand, ImportDatabase
                              # MailBundlesCommand, ImportDatabase
 
@@ -25,7 +25,7 @@ manager.add_command('list_roles', ListRolesCommand())
 
 # manager.add_command('update_database', UpdateDatabaseCommand())
 manager.add_command('schedule_releases', ScheduleReleasesCommand())
-manager.add_command('cross_check', CrossCheckCommand())
+# manager.add_command('cross_check', CrossCheckCommand())
 
 manager.add_command('import_database', ImportDatabase())
 
