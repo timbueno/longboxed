@@ -11,7 +11,7 @@ from flask import current_app
 from flask.ext.script import Command, Option, prompt, prompt_bool
 
 from ..helpers import mail_content
-from ..importer import NewDailyDownloadImporter, NewWeeklyReleasesImporter, WeeklyReleasesImporter, WeeklyReleaseRecord
+from ..importer import NewDailyDownloadImporter, NewWeeklyReleasesImporter
 from ..services import comics
 from ..models import Issue
 
@@ -41,15 +41,33 @@ class ScheduleReleasesCommand(Command):
         ]
 
     def run(self, week):
-        release_instance = WeeklyReleasesImporter(
-            week=week,
-            affiliate_id=current_app.config['AFFILIATE_ID'],
-            supported_publishers=current_app.config['SUPPORTED_DIAMOND_PUBS'],
-            csv_rules=current_app.config['RELEASE_CSV_RULES'],
-            record=WeeklyReleaseRecord
+        fieldnames = [x[2] for x in current_app.config['RELEASE_CSV_RULES']]
+        issue_releaser = NewWeeklyReleasesImporter()
+        issue_releaser.run(
+            csv_fieldnames = fieldnames,
+            supported_publishers = current_app.config['SUPPORTED_DIAMOND_PUBS'],
+            affiliate_id = current_app.config['AFFILIATE_ID'],
+            week = week
         )
-        scheduled_releases = release_instance.run()
         return
+
+
+# class ScheduleReleasesCommand(Command):
+#     def get_options(self):
+#         return [
+#             Option('-w', '--week', dest='week', required=True, choices=['thisweek', 'nextweek', 'twoweeks']),
+#         ]
+
+#     def run(self, week):
+#         release_instance = WeeklyReleasesImporter(
+#             week=week,
+#             affiliate_id=current_app.config['AFFILIATE_ID'],
+#             supported_publishers=current_app.config['SUPPORTED_DIAMOND_PUBS'],
+#             csv_rules=current_app.config['RELEASE_CSV_RULES'],
+#             record=WeeklyReleaseRecord
+#         )
+#         scheduled_releases = release_instance.run()
+#         return
 
 # class ImportDatabase(Command):
 #     def get_options(self):
