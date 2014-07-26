@@ -333,6 +333,39 @@ class Issue(db.Model, CRUDMixin):
                     return True
         return False
 
+    @staticmethod
+    def check_release_relevancy(record, supported_publishers):
+        """
+        Strips the publisher string of an asterisk (*) and chesk to see if it is a
+        publisher in the supported publishers attribute. Also limits relevency to
+        issues with a D or an E in the discount code slot.
+        """
+        try:
+            if record['publisher'].strip('*') in supported_publishers:
+                if record['discount_code'] in ['D', 'E']:
+                    return True
+        except Exception:
+            pass
+        return False
+
+    @classmethod
+    def release_from_raw(cls, record, date):
+        if record['diamond_id'][-1:].isalpha():
+            diamond_id = record['diamond_id'][:-1]
+        else:
+            diamond_id = record['diamond_id']
+
+        issue = cls.query.filter_by(diamond_id=diamond_id).first()
+        if not issue:
+            print 'Issue not found: %s | %s | %s' % (record['diamond_id'], record['publisher'], \
+                                                     record['complete_title'])
+        else:
+            print 'Releasing:  %s' % issue.complete_title
+            issue.on_sale_date = date
+            issue.save()
+        return issue
+
+
     def __str__(self):
         return self.complete_title
 

@@ -93,6 +93,19 @@ def last_wednesday():
     return wednesday(datetime.today().date(), -1)
 
 
+def week_handler(week):
+    if week not in ['thisweek', 'nextweek', 'twoweeks']:
+        raise Exception('Not a valid input for week selection')
+    if week == 'thisweek':
+        date = current_wednesday()
+    if week == 'nextweek':
+        date = next_wednesday()
+    if week == 'twoweeks':
+        date = two_wednesdays()
+        # raise NotImplementedError
+    return date
+
+
 def get_week(date, multiplier=0):
     """Returns Sunday and Saturday of the week the 'date' argument is currently in.
     The 'multiplier' argument provides the ability to navigate multiple weeks into 

@@ -11,7 +11,7 @@ from flask import current_app
 from flask.ext.script import Command, Option, prompt, prompt_bool
 
 from ..helpers import mail_content
-from ..importer import NewDailyDownloadImporter, DailyDownloadImporter, DailyDownloadRecord, WeeklyReleasesImporter, WeeklyReleaseRecord
+from ..importer import NewDailyDownloadImporter, NewWeeklyReleasesImporter, WeeklyReleasesImporter, WeeklyReleaseRecord
 from ..services import comics
 from ..models import Issue
 
@@ -19,17 +19,17 @@ from ..models import Issue
 class TestCommand(Command):
     def get_options(self):
         return [
-            Option('--days', '-d', dest='days', default=21, type=int)
+            Option('-w', '--week', dest='week', required=True, choices=['thisweek', 'nextweek', 'twoweeks']),
         ]
 
-    def run(self, days):
-        fieldnames = [x[2] for x in current_app.config['CSV_RULES']]
-        database_importer = NewDailyDownloadImporter()
-        database_importer.run(
+    def run(self, week):
+        fieldnames = [x[2] for x in current_app.config['RELEASE_CSV_RULES']]
+        issue_releaser = NewWeeklyReleasesImporter()
+        issue_releaser.run(
             csv_fieldnames = fieldnames,
-            supported_publishers = current_app.config['SUPPORTED_PUBS'],
+            supported_publishers = current_app.config['SUPPORTED_DIAMOND_PUBS'],
             affiliate_id = current_app.config['AFFILIATE_ID'],
-            days = days
+            week = week
         )
         return
         
@@ -51,6 +51,25 @@ class ScheduleReleasesCommand(Command):
         scheduled_releases = release_instance.run()
         return
 
+# class ImportDatabase(Command):
+#     def get_options(self):
+#         return [
+#             Option('--days', '-d', dest='days', default=21, type=int)
+#         ]
+
+#     def run(self, days):
+#         print 'Importing the next %d days worth of comic books...' % days
+#         import_instance = DailyDownloadImporter(
+#             days=days,
+#             affiliate_id=current_app.config['AFFILIATE_ID'],
+#             supported_publishers=current_app.config['SUPPORTED_PUBS'],
+#             csv_rules=current_app.config['CSV_RULES'],
+#             record=DailyDownloadRecord
+#         )
+#         imported_issues = import_instance.run()
+#         return
+
+
 class ImportDatabase(Command):
     def get_options(self):
         return [
@@ -58,15 +77,15 @@ class ImportDatabase(Command):
         ]
 
     def run(self, days):
-        print 'Importing the next %d days worth of comic books...' % days
-        import_instance = DailyDownloadImporter(
-            days=days,
-            affiliate_id=current_app.config['AFFILIATE_ID'],
-            supported_publishers=current_app.config['SUPPORTED_PUBS'],
-            csv_rules=current_app.config['CSV_RULES'],
-            record=DailyDownloadRecord
+        fieldnames = [x[2] for x in current_app.config['CSV_RULES']]
+        database_importer = NewDailyDownloadImporter()
+        database_importer.run(
+            csv_fieldnames = fieldnames,
+            supported_publishers = current_app.config['SUPPORTED_PUBS'],
+            affiliate_id = current_app.config['AFFILIATE_ID'],
+            thumbnail_widths = current_app.config['THUMBNAIL_WIDTHS'],
+            days = days
         )
-        imported_issues = import_instance.run()
         return
 
 
@@ -78,7 +97,6 @@ class SetCoverImageCommand(Command):
     """
     def run(self):
         diamond_id = prompt('Issue Diamond id')
-        # issue = comics.issues.first(diamond_id=diamond_id)
         issue = Issue.query.filter_by(diamond_id=diamond_id).first()
         if issue:
             url = prompt('Url of jpg image for cover image')
@@ -86,7 +104,6 @@ class SetCoverImageCommand(Command):
             if issue.cover_image.original:
                 print 'Issue object already has a cover image set.'
                 overwrite = prompt_bool('Overwrite existing picture?')
-            # success = comics.issues.set_cover_image_from_url(issue, url, overwrite)
             success = issue.set_cover_image_from_url(url, overwrite=overwrite)
             if success:
                 print 'Successfully set cover image'
@@ -125,16 +142,16 @@ class CrossCheckCommand(Command):
         return
 
 
-class UpdateDatabaseCommand(Command):
-    """Updates database with TFAW Daily Download"""
+# class UpdateDatabaseCommand(Command):
+#     """Updates database with TFAW Daily Download"""
 
-    def get_options(self):
-        return [
-            Option('-d','--days', dest='days', required=True)
-        ]
+#     def get_options(self):
+#         return [
+#             Option('-d','--days', dest='days', required=True)
+#         ]
 
-    def run(self, days):
-        print 'Starting update'
-        days = int(days)
-        comics.add_new_issues_to_database(days=days)
-        print 'Done Adding to DB'
+#     def run(self, days):
+#         print 'Starting update'
+#         days = int(days)
+#         comics.add_new_issues_to_database(days=days)
+#         print 'Done Adding to DB'
