@@ -126,7 +126,6 @@ class NewWeeklyReleasesImporter(object):
         print date
         print 'Getting Content'
         content = self.download(week, affiliate_id)
-        print content
         print 'Loading Data'
         data = self.load(content, csv_fieldnames)
         print 'Releasing Issues'
