@@ -82,7 +82,6 @@ class User(db.Model, UserMixin, CRUDMixin):
 
     #: Feature Settings
     display_pull_list = db.Column(db.Boolean, default=True)
-    default_cal = db.Column(db.String(255))
     mail_bundles = db.Column(db.Boolean, default=True)
 
     # Relationships
