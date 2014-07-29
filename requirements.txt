@@ -13,6 +13,7 @@ Flask-Script==0.6.2
 Flask-Security==1.6.9
 Flask-Social==1.6.1
 Flask-WTF==0.9.1
+Flask-Migrate==1.2.0
 Jinja2==2.7.1
 Mako==0.8.1
 MarkupSafe==0.18
