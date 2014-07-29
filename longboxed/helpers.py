@@ -17,7 +17,7 @@ from flask.json import JSONEncoder as BaseJSONEncoder
 from flask.ext.mail import Message
 
 from .core import mail
-from .services import bundle, comics
+from .models import Issue, Bundle
 
 
 def register_blueprints(app, package_name, package_path):
@@ -93,6 +93,19 @@ def last_wednesday():
     return wednesday(datetime.today().date(), -1)
 
 
+def week_handler(week):
+    if week not in ['thisweek', 'nextweek', 'twoweeks']:
+        raise Exception('Not a valid input for week selection')
+    if week == 'thisweek':
+        date = current_wednesday()
+    if week == 'nextweek':
+        date = next_wednesday()
+    if week == 'twoweeks':
+        date = two_wednesdays()
+        # raise NotImplementedError
+    return date
+
+
 def get_week(date, multiplier=0):
     """Returns Sunday and Saturday of the week the 'date' argument is currently in.
     The 'multiplier' argument provides the ability to navigate multiple weeks into 
@@ -138,13 +151,13 @@ def mail_content(recipients, sender, subject, content, html=None, attachment=Non
 
 def refresh_bundle(user, date, matches=None):
     if not matches:
-        issues = comics.issues.find_issue_with_date(date)
+        issues = Issue.query.filter(Issue.on_sale_date==date, Issue.is_parent==True).all()
         matches = [i for i in issues if i.title in user.pull_list and i.is_parent]
-    b = bundle.first(user=user, release_date=date)
+    b = Bundle.query.filter(Bundle.user==user, Bundle.release_date==date).first()
     if b:
-        b = bundle.update(b, issues=matches, last_updated=datetime.now())
+        b.update(issues=matches, last_updated=datetime.now())
     else:
-        b = bundle.create(
+        b = Bundle.create(
             user=user,
             release_date=date,
             issues=matches,
@@ -195,6 +208,14 @@ def pretty_date(time=False):
     if day_diff < 365:
         return str(day_diff/30) + " months ago"
     return str(day_diff/365) + " years ago"
+
+
+# def is_float(number):
+#     try: 
+#         float(number)
+#         return True
+#     except (ValueError, TypeError):
+#         return False
 
 
 class JsonSerializer(object):

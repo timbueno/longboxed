@@ -6,12 +6,26 @@
     Comics module
 """
 import re
-from datetime import datetime
+import sys
+from copy import deepcopy
+from datetime import datetime, timedelta
+from decimal import Decimal
+from HTMLParser import HTMLParser
 
+import requests
+
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy_imageattach.entity import Image, image_attachment
+from sqlalchemy_imageattach.entity import Image, image_attachment, store_context
 
-from ..core import db
+from ..core import store, db, CRUDMixin
+# from ..helpers import is_float
+def is_float(number):
+    try: 
+        float(number)
+        return True
+    except (ValueError, TypeError):
+        return False
 
 
 #: Many-to-Many relationship for bundles and issues helper table
@@ -26,7 +40,7 @@ issues_creators = db.Table('issues_creators',
 )
 
 
-class Publisher(db.Model):
+class Publisher(db.Model, CRUDMixin):
     """
     Publisher model class with two back referenced relationships, titles and issues.
 
@@ -49,6 +63,23 @@ class Publisher(db.Model):
         lazy='dynamic'
     )
 
+    @classmethod
+    def from_raw(cls, record):
+        record = deepcopy(record)
+        created = 0
+        try:
+            name = record.get('publisher')
+            publisher = cls.query.filter_by(name=name).first()
+            if not publisher:
+                publisher = cls.create(name=name)
+                created = created + 1
+        except Exception, err:
+            print 'Publisher failed creation: ', record.get('publisher')
+            print 'Error: ', err
+            db.session.rollback()
+            publisher = None
+        return (publisher, created)
+
     def __str__(self):
         return self.name
 
@@ -61,7 +92,8 @@ class Publisher(db.Model):
         }
         return p
 
-class Title(db.Model):
+
+class Title(db.Model, CRUDMixin):
     """
     Title Model class with backreferenced relationship, issues. Publisher 
     can also be accessed with the hidden 'publisher' attribute.
@@ -83,6 +115,32 @@ class Title(db.Model):
         lazy='dynamic',
         order_by='Issue.on_sale_date'
     )
+
+    @classmethod
+    def from_raw(cls, record):
+        record = deepcopy(record)
+        # Complete Title
+        try:
+            complete_title = record.get('complete_title')
+            m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>([+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', complete_title).groupdict()
+        except (AttributeError, TypeError):
+            m = None
+        finally:
+            pass 
+
+        created = 0
+        try:            
+            name = m.get('title')
+            title = cls.query.filter_by(name=name).first()
+            if not title:
+                title = cls.create(name=name)
+                created = created + 1
+        except Exception, err:
+            print 'Title failed creation: ', m.get('title')
+            print 'Error: ', err
+            db.session.rollback()
+            title = None
+        return (title, created)
 
     def __str__(self):
         return self.name
@@ -110,7 +168,7 @@ class Title(db.Model):
         }
         return t
 
-class Issue(db.Model):
+class Issue(db.Model, CRUDMixin):
     """
     Issue model class. Title and Publisher can both be referenced with
     the hidden 'publisher' and 'title' attributes
@@ -154,6 +212,158 @@ class Issue(db.Model):
         return self.query.filter(Issue.title==self.title, Issue.issue_number==self.issue_number, \
                                  Issue.diamond_id!=self.diamond_id)
 
+    @classmethod
+    def from_raw(cls, record, sas_id='YOURUSERID'):
+        # Create Issue dictionary
+        i = deepcopy(record)
+
+        # Complete Title
+        try:
+            complete_title = record.get('complete_title')
+            # m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>(\d+))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', title).groupdict()
+            m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>([+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', complete_title).groupdict()
+            i['complete_title'] = complete_title
+            if m['issue_number']:
+                i['issue_number'] = Decimal(m['issue_number'])
+            if m['issues']:
+                i['issues'] = Decimal(m['issues'])
+        except (AttributeError, TypeError):
+            i['complete_title'] = ''
+            m = None
+
+        # Retail Price
+        try:
+            retail_price = record.get('retail_price')
+            i['retail_price'] = float(retail_price) if is_float(retail_price) else None
+        except Exception, err:
+            i['retail_price'] = 0.00
+
+        # Affiliate Link
+        try:
+            a_link = record.get('a_link')
+            i['a_link'] = a_link.replace('YOURUSERID', sas_id)
+        except Exception, err:
+            i['a_link'] = None
+
+        # Diamond ID
+        try:
+            diamond_id = record.get('diamond_id')
+            if diamond_id[-1:].isalpha():
+                i['diamond_id'] = diamond_id[:-1]
+                i['discount_code'] = diamond_id[-1:]
+            else:
+                i['diamond_id'] = diamond_id
+                i['discount_code'] = None
+        except Exception, err:
+            i['diamond_id'] = None
+            i['discount_code'] = None
+
+        # Description
+        try:
+            description = record.get('description')
+            i['description'] = HTMLParser().unescape(description)
+        except Exception, err:
+            i['description'] = None
+
+        # Prospective Release Date
+        try:
+            prospective_release_date = record.get('prospective_release_date')
+            i['prospective_release_date'] = datetime.strptime(prospective_release_date, '%Y-%m-%d').date()
+        except Exception, err:
+            pass
+            # i['prospective_release_date'] = None
+
+        # Last Updated
+        try:
+            last_updated = record.get('last_updated')
+            i['last_updated'] = datetime.strptime(last_updated, '%Y-%m-%d %H:%M:%S')
+        except Exception, err:
+            pass
+
+        # Clean Dictionary
+        i.pop('publisher', None)
+        i.pop('title', None)
+        i.pop('people', None)
+        i.pop('creators', None)
+
+        # Create Issue Object
+        created = 0
+        try:
+            # Create Issue object
+            issue = cls.query.filter_by(diamond_id=i['diamond_id']).first()
+            if issue:
+                issue.update(**i)
+            else:
+                issue = cls.create(**i)
+                created = created + 1
+        except Exception, err:
+            print 'Issue failed creation: ', i.get('complete_title')
+            print 'Error: ', err
+            db.session.rollback()
+            issue = None
+        return (issue, created)
+
+    @classmethod
+    def check_parent_status(cls, title, issue_number):
+        similar_issues = cls.query.filter(
+            cls.title == title,
+            cls.issue_number == issue_number
+        )
+        similar_issues = sorted(similar_issues)
+        for index, issue in enumerate(similar_issues):
+            if index == 0:
+                issue.is_parent = True
+                if len(similar_issues) > 1:
+                    issue.has_alternates = True
+            else:
+                issue.is_parent = False
+                issue.has_alternates = True
+            issue.save()
+        return
+
+    @staticmethod
+    def check_record_relevancy(record, supported_publishers, future_date):
+        if record.get('category') == 'Comics':
+            if record.get('publisher') in supported_publishers:
+                record_date_string = record.get('prospective_release_date')
+                release_date = datetime.strptime(record_date_string, '%Y-%m-%d').date()
+                if release_date > (datetime.now().date() - timedelta(days=7)) \
+                    and release_date < (datetime.now().date() + timedelta(days=future_date)):
+                    return True
+        return False
+
+    @staticmethod
+    def check_release_relevancy(record, supported_publishers):
+        """
+        Strips the publisher string of an asterisk (*) and chesk to see if it is a
+        publisher in the supported publishers attribute. Also limits relevency to
+        issues with a D or an E in the discount code slot.
+        """
+        try:
+            if record['publisher'].strip('*') in supported_publishers:
+                if record['discount_code'] in ['D', 'E']:
+                    return True
+        except Exception:
+            pass
+        return False
+
+    @classmethod
+    def release_from_raw(cls, record, date):
+        if record['diamond_id'][-1:].isalpha():
+            diamond_id = record['diamond_id'][:-1]
+        else:
+            diamond_id = record['diamond_id']
+
+        issue = cls.query.filter_by(diamond_id=diamond_id).first()
+        if not issue:
+            print 'Issue not found: %s | %s | %s' % (record['diamond_id'], record['publisher'], \
+                                                     record['complete_title'])
+        else:
+            issue.on_sale_date = date
+            issue.save()
+        return issue
+
+
     def __str__(self):
         return self.complete_title
 
@@ -191,6 +401,48 @@ class Issue(db.Model):
         }
         return i
 
+    def set_cover_image_from_url(self, url, overwrite=False, default=False):
+        """
+        Downloads a jpeg file from a url and stores it in the image store.
+
+        :param issue: :class:`Issue` object class
+        :param url: URL to download the jpeg cover image format
+        :param overwrite: Boolean flag that overwrites an existing image
+        """
+        created_flag = False
+        if not self.cover_image.original or overwrite:
+            r = requests.get(url)
+            if r.status_code == 200 and r.headers['content-type'] == 'image/jpeg':
+                with store_context(store):
+                    self.cover_image.from_blob(r.content)
+                    self.save()
+                    self.cover_image.generate_thumbnail(height=600)
+                    self.save()
+                    created_flag = True
+        return created_flag
+
+    def find_or_create_thumbnail(self, width=None, height=None):
+        """
+        Creates a thumbnail image from the original if one of the same size
+        does not already exist. Width OR height must be provided. It is not
+        necessary to provide both.
+
+        Default Image (We should act on this in the future)
+        http://affimg.tfaw.com/covers_tfaw/400/no/nocover.jpg
+
+        :param issue: :class:`Issue` object class
+        :param width: Width of desired thumbnail image
+        :param height: Height of desired thumbnail image
+        """
+        assert width is not None or height is not None
+        with store_context(store):
+            try:
+                image = self.cover_image.find_thumbnail(width=width, height=height)
+            except NoResultFound:
+                image = self.cover_image.generate_thumbnail(width=width, height=height)
+            self.save()
+        return image
+
 
 class IssueCover(db.Model, Image):
     """
@@ -202,7 +454,7 @@ class IssueCover(db.Model, Image):
     issue = db.relationship('Issue')
 
 
-class Creator(db.Model):
+class Creator(db.Model, CRUDMixin):
     """
     Writers and/or Artists that create individual titles
     """
@@ -218,14 +470,36 @@ class Creator(db.Model):
     issues = db.relationship(
         'Issue',
         secondary=issues_creators,
-        backref=db.backref('creators', lazy='joined'),
+        backref=db.backref('creators', lazy='dynamic'),
         lazy='dynamic'
     )
+
+    @classmethod
+    def from_raw(cls, record):
+        record = deepcopy(record)
+        created = 0
+        creators_list = []
+        try:
+            creators_string = record.get('people')
+            people = re.split(';|,', creators_string)
+            for person in people:
+                person = person.strip()
+                creator = cls.query.filter_by(name=person).first()
+                if not creator:
+                    creator = cls.create(name=person)
+                    created = created + 1
+                creators_list.append(creator)
+        except Exception, err:
+            print 'Creator failed creation: ', person
+            print 'Error: ', err
+            db.session.rollback()
+            creators_list = []
+        return (creators_list, created)
 
     def __str__(self):
         return self.name
 
-class Bundle(db.Model):
+class Bundle(db.Model, CRUDMixin):
     """
     Bundle model class.
 

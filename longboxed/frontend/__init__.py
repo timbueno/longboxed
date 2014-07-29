@@ -13,7 +13,7 @@ from functools import wraps
 from .. import factory
 from ..helpers import pretty_date
 from ..settings import ProdConfig
-from . import assets
+# from . import assets
 from . import admin
 
 

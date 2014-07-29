@@ -7,7 +7,7 @@
 """
 from flask.ext.security import UserMixin, RoleMixin
 
-from ..core import db
+from ..core import db, CRUDMixin
 
 # Many-to-Many relationship for user defined publishers to display
 publishers_users = db.Table('publishers_users',
@@ -28,7 +28,7 @@ roles_users = db.Table('roles_users',
 )
 
 
-class Role(db.Model, RoleMixin):
+class Role(db.Model, RoleMixin, CRUDMixin):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
@@ -58,7 +58,7 @@ class Connection(db.Model):
         rank = db.Column(db.Integer)
 
 
-class User(db.Model, UserMixin):
+class User(db.Model, UserMixin, CRUDMixin):
     __tablename__ = 'users'
     # ids
     id = db.Column(db.Integer, primary_key=True)
