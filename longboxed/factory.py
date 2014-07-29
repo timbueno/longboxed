@@ -22,8 +22,6 @@ from flask.ext.security import SQLAlchemyUserDatastore
 from flask.ext.social.datastore import SQLAlchemyConnectionDatastore
 from flask.ext.security.forms import ConfirmRegisterForm, PasswordConfirmFormMixin
 from sqlalchemy_imageattach.context import push_store_context, pop_store_context
-# from wtforms import TextField
-# from wtforms.validators import Required
 
 from . import signals
 from .core import db, mail, security, store, social
@@ -53,7 +51,6 @@ def create_app(package_name, package_path, config_object=ProdConfig, debug_overr
 
     app.config.from_object(config_object)
     app.config.from_pyfile('settings.cfg', silent=True)
-    # app.config.from_object(settings_override)
     if debug_override is not None:
         app.debug = debug_override
 
