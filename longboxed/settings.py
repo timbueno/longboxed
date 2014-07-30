@@ -153,3 +153,10 @@ class StagingConfig(Config):
     USE_AWS = True
 
     
+config = {
+    'dev': DevConfig,
+    'stag': StagingConfig,
+    'prod': ProdConfig,
+
+    'default': DevConfig
+}
