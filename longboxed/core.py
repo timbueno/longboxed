@@ -13,6 +13,7 @@
 """
 import os
 
+from flask.ext.migrate import Migrate
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security
 from flask.ext.social import Social
@@ -33,6 +34,9 @@ social = Social()
 
 #: Flask Mail Extension Instance
 mail = Mail()
+
+#: Flask-Migrate Extension Instance
+migrate = Migrate()
 
 #: Image Filesystem
 if os.environ.get('USE_AWS') == 'True':

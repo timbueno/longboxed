@@ -7,6 +7,7 @@
 """
 
 from flask.ext.script import Manager
+from flask.ext.migrate import MigrateCommand
 
 from longboxed.frontend import create_app
 from longboxed.manage import CreateNewRoleCommand, CreateDefaultRolesCommand, CreateUserCommand, \
@@ -16,6 +17,7 @@ from longboxed.manage import CreateNewRoleCommand, CreateDefaultRolesCommand, Cr
                              # MailBundlesCommand, ImportDatabase
 
 manager = Manager(create_app())
+manager.add_command('db', MigrateCommand)
 manager.add_command('create_role', CreateNewRoleCommand())
 manager.add_command('create_roles', CreateDefaultRolesCommand())
 manager.add_command('create_user', CreateUserCommand())

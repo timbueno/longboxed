@@ -1,18 +1,7 @@
 from __future__ import with_statement
-
-import sys
-from os.path import dirname, abspath
-sys.path.append(dirname(dirname(abspath(__file__))))
-
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 from logging.config import fileConfig
-
-from longboxed.models import *
-from longboxed.core import db
-from longboxed.frontend import create_app
-
-app = create_app()
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -26,7 +15,9 @@ fileConfig(config.config_file_name)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-# target_metadata = None
+from flask import current_app
+config.set_main_option('sqlalchemy.url', current_app.config.get('SQLALCHEMY_DATABASE_URI'))
+target_metadata = current_app.extensions['migrate'].db.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -58,18 +49,15 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    alembic_config = config.get_section(config.config_ini_section)
-    alembic_config['sqlalchemy.url'] = app.config['SQLALCHEMY_DATABASE_URI']
-
     engine = engine_from_config(
-                alembic_config,
+                config.get_section(config.config_ini_section),
                 prefix='sqlalchemy.',
                 poolclass=pool.NullPool)
 
     connection = engine.connect()
     context.configure(
                 connection=connection,
-                target_metadata=db.metadata
+                target_metadata=target_metadata
                 )
 
     try:
@@ -82,4 +70,3 @@ if context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
-

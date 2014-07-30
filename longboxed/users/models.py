@@ -63,7 +63,6 @@ class User(db.Model, UserMixin, CRUDMixin):
     # ids
     id = db.Column(db.Integer, primary_key=True)
     # Attributes
-    # google_id = db.Column(db.String(255), unique=True)
     email = db.Column(db.String(255), unique=True)
     first_name = db.Column(db.String(255))
     last_name = db.Column(db.String(255))
@@ -82,7 +81,6 @@ class User(db.Model, UserMixin, CRUDMixin):
 
     #: Feature Settings
     display_pull_list = db.Column(db.Boolean, default=True)
-    default_cal = db.Column(db.String(255))
     mail_bundles = db.Column(db.Boolean, default=True)
 
     # Relationships
