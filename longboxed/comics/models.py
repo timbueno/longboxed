@@ -6,7 +6,6 @@
     Comics module
 """
 import re
-import sys
 from copy import deepcopy
 from datetime import datetime, timedelta
 from decimal import Decimal
