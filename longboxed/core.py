@@ -18,10 +18,9 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security
 from flask.ext.social import Social
 from flask_mail import Mail
-from sqlalchemy_imageattach.stores.fs import HttpExposedFileSystemStore
-from sqlalchemy_imageattach.stores.s3 import S3Store
 
-from .settings import ProdConfig
+from .settings import config
+
 
 #: Flask-SQLAlchemy extension instance
 db = SQLAlchemy()
@@ -39,10 +38,8 @@ mail = Mail()
 migrate = Migrate()
 
 #: Image Filesystem
-if os.environ.get('USE_AWS') == 'True':
-    store = S3Store(ProdConfig.AWS_S3_BUCKET, ProdConfig.AWS_ACCESS_KEY_ID, ProdConfig.AWS_SECRET_KEY)
-else:
-    store = HttpExposedFileSystemStore('store', 'images')
+store = config[os.getenv('APP_ENV') or 'default'].get_store()
+
 
 class LongboxedError(Exception):
     """Base application error class"""
