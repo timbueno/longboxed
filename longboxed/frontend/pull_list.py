@@ -14,7 +14,7 @@ from sqlalchemy import desc
 
 from . import route
 from ..forms import AddToPullList
-from ..helpers import current_wednesday, refresh_bundle
+from ..helpers import current_wednesday
 from ..models import Bundle, Title
 
 
@@ -64,7 +64,7 @@ def remove_from_pull_list():
         current_user.pull_list.remove(title)
         # Save updated user
         current_user.save()
-        refresh_bundle(current_user, current_wednesday())
+        Bundle.refresh_user_bundle(current_user, current_wednesday())
         response = {
             'status': 'success',
             'message': title.name+' removed from your pull list'
@@ -94,7 +94,7 @@ def add_to_pull_list():
         if title and title not in current_user.pull_list:
             current_user.pull_list.append(title)
             current_user.save()
-            refresh_bundle(current_user, current_wednesday())
+            Bundle.refresh_user_bundle(current_user, current_wednesday())
             response = {
                 'status': 'success',
                 'message': '<strong>'+title.name+'</strong> has been added to your pull list!',
