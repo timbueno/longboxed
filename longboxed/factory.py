@@ -5,10 +5,6 @@
 
     longboxed factory module
 
-    USE_AWS must be set as an environment variable.
-    Values can be: 
-        'True'   to use AWS for an image store
-        'False'  for development / local image store
 """
 import os
 import json
@@ -24,7 +20,7 @@ from flask.ext.security.forms import ConfirmRegisterForm, PasswordConfirmFormMix
 from sqlalchemy_imageattach.context import push_store_context, pop_store_context
 
 from . import signals
-from .core import db, mail, security, store, social, migrate
+from .core import db, mail, security, store, social
 from .helpers import register_blueprints
 from .middleware import HTTPMethodOverrideMiddleware
 from .models import Connection, User, Role
@@ -59,7 +55,6 @@ def create_app(package_name, package_path, config_name, debug_override=None, reg
 
     #: Setup Flask Extentions
     db.init_app(app)
-    migrate.init_app(app, db)
     mail.init_app(app)
     #: Setup Flask-Security
     security.init_app(app, SQLAlchemyUserDatastore(db, User, Role),
