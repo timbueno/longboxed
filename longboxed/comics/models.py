@@ -18,13 +18,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_imageattach.entity import Image, image_attachment, store_context
 
 from ..core import store, db, CRUDMixin
-# from ..helpers import is_float
-def is_float(number):
-    try: 
-        float(number)
-        return True
-    except (ValueError, TypeError):
-        return False
+from ..helpers import is_float
 
 
 #: Many-to-Many relationship for bundles and issues helper table
@@ -527,3 +521,20 @@ class Bundle(db.Model, CRUDMixin):
             'issues': [issue.to_json() for issue in self.issues]
         }
         return b
+
+    @classmethod
+    def refresh_user_bundle(cls, user, date, matches=None):
+        if not matches:
+            issues = Issue.query.filter(Issue.on_sale_date==date, Issue.is_parent==True).all()
+            matches = [i for i in issues if i.title in user.pull_list]
+        bundle = cls.query.filter(cls.user==user, cls.release_date==date).first()
+        if bundle:
+            bundle.update(issues=matches, last_updated=datetime.now())
+        else:
+            bundle = cls.create(
+                user=user,
+                release_date=date,
+                issues=matches,
+                last_updated=datetime.now()
+            )
+        return bundle
