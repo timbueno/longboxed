@@ -5,6 +5,7 @@
 
     Manager module
 """
+import os
 
 from flask.ext.script import Manager
 from flask.ext.migrate import MigrateCommand
@@ -16,7 +17,7 @@ from longboxed.manage import CreateNewRoleCommand, CreateDefaultRolesCommand, Cr
                              TestCommand, SetCoverImageCommand, UserBundlesCommand, ImportDatabase
                              # MailBundlesCommand, ImportDatabase
 
-manager = Manager(create_app())
+manager = Manager(create_app(os.getenv('APP_ENV') or 'default'))
 manager.add_command('db', MigrateCommand)
 manager.add_command('create_role', CreateNewRoleCommand())
 manager.add_command('create_roles', CreateDefaultRolesCommand())
