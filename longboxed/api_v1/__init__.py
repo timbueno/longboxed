@@ -10,12 +10,11 @@ from functools import wraps
 from flask import jsonify
 
 from ..core import LongboxedError, LongboxedFormError
-from ..settings import ProdConfig
 from .. import factory
 
-def create_app(config_object=ProdConfig, register_security_blueprint=False):
+def create_app(config_name, register_security_blueprint=False):
     """Returns the Longboxed API application instance"""
-    app = factory.create_app(__name__, __path__, config_object,
+    app = factory.create_app(__name__, __path__, config_name,
                              register_security_blueprint=register_security_blueprint)
 
     # Register custom error handlers
