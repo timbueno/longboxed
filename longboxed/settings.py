@@ -133,11 +133,27 @@ class Config(object):
         'consumer_secret': environ['TWITTER_CONSUMER_SECRET']
     }
 
+    @staticmethod
+    def init_app(app):
+        pass
+
 
 class ProdConfig(Config):
     """Production Configuration"""
     DEBUG = False
     USE_AWS = True
+
+    @classmethod
+    def init_app(cls, app):
+        Config.init_app(app)
+
+
+class StagingConfig(ProdConfig):
+    """Staging Configuration"""
+    
+    @classmethod
+    def init_app(cls, app):
+        ProdConfig.init_app(app)
 
 
 class DevConfig(Config):
@@ -146,11 +162,9 @@ class DevConfig(Config):
     USE_AWS = False
     DEBUG_TB_INTERCEPT_REDIRECTS = False
 
-
-class StagingConfig(Config):
-    """Staging Configuration"""
-    DEBUG = False
-    USE_AWS = True
+    @classmethod
+    def init_app(cls, app):
+        Config.init_app(app)
 
     
 config = {
