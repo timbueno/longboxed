@@ -8,8 +8,12 @@
 from datetime import timedelta
 from os import environ
 
+from sqlalchemy_imageattach.stores.fs import HttpExposedFileSystemStore
+from sqlalchemy_imageattach.stores.s3 import S3Store
+
 
 class Config(object):
+    CONFIG_NAME = 'base'
     USE_AWS = False
     AWS_S3_BUCKET = environ['AWS_S3_BUCKET']
     AWS_ACCESS_KEY_ID = environ['AWS_ACCESS_KEY_ID']
@@ -134,37 +138,57 @@ class Config(object):
     }
 
     @staticmethod
-    def init_app(app):
+    def init_app(app, **kwargs):
         pass
 
 
 class ProdConfig(Config):
     """Production Configuration"""
+    CONFIG_NAME = 'production'
     DEBUG = False
     USE_AWS = True
 
     @classmethod
-    def init_app(cls, app):
+    def init_app(cls, app, **kwargs):
         Config.init_app(app)
+
+    @classmethod
+    def get_store(cls):
+        store = S3Store(cls.AWS_S3_BUCKET, cls.AWS_ACCESS_KEY_ID, cls.AWS_SECRET_KEY)
+        return store
 
 
 class StagingConfig(ProdConfig):
     """Staging Configuration"""
-    
+    CONFIG_NAME = 'staging'
+
     @classmethod
-    def init_app(cls, app):
+    def init_app(cls, app, **kwargs):
         ProdConfig.init_app(app)
+
+    @classmethod
+    def get_store(cls):
+        store = ProdConfig.get_store()
+        return store
 
 
 class DevConfig(Config):
     """Development Configuration"""
+    CONFIG_NAME = 'development'
     DEBUG = True
     USE_AWS = False
     DEBUG_TB_INTERCEPT_REDIRECTS = False
 
     @classmethod
-    def init_app(cls, app):
+    def init_app(cls, app, **kwargs):
         Config.init_app(app)
+        store = kwargs.get('store')
+        app.wsgi_app = store.wsgi_middleware(app.wsgi_app)
+
+    @classmethod
+    def get_store(cls):
+        store = HttpExposedFileSystemStore('store', 'images')
+        return store
 
     
 config = {
