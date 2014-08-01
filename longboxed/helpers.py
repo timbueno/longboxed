@@ -17,7 +17,6 @@ from flask.json import JSONEncoder as BaseJSONEncoder
 from flask.ext.mail import Message
 
 from .core import mail
-from .models import Issue, Bundle
 
 
 def register_blueprints(app, package_name, package_path):
@@ -149,23 +148,6 @@ def mail_content(recipients, sender, subject, content, html=None, attachment=Non
     return
 
 
-def refresh_bundle(user, date, matches=None):
-    if not matches:
-        issues = Issue.query.filter(Issue.on_sale_date==date, Issue.is_parent==True).all()
-        matches = [i for i in issues if i.title in user.pull_list and i.is_parent]
-    b = Bundle.query.filter(Bundle.user==user, Bundle.release_date==date).first()
-    if b:
-        b.update(issues=matches, last_updated=datetime.now())
-    else:
-        b = Bundle.create(
-            user=user,
-            release_date=date,
-            issues=matches,
-            last_updated=datetime.now()
-        )
-    return b
-
-
 def pretty_date(time=False):
     """
     Get a datetime object or a int() Epoch timestamp and return a
@@ -210,12 +192,12 @@ def pretty_date(time=False):
     return str(day_diff/365) + " years ago"
 
 
-# def is_float(number):
-#     try: 
-#         float(number)
-#         return True
-#     except (ValueError, TypeError):
-#         return False
+def is_float(number):
+    try: 
+        float(number)
+        return True
+    except (ValueError, TypeError):
+        return False
 
 
 class JsonSerializer(object):

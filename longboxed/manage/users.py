@@ -13,8 +13,8 @@ from werkzeug.datastructures import MultiDict
 from werkzeug.local import LocalProxy
 
 from ..core import db
-from ..helpers import current_wednesday, refresh_bundle
-from ..models import Issue, User, Role
+from ..helpers import current_wednesday
+from ..models import Issue, User, Role, Bundle
 
 
 class UserBundlesCommand(Command):
@@ -23,16 +23,12 @@ class UserBundlesCommand(Command):
     """
     def run(self):
         date = current_wednesday()
-        # issues_this_week = comics.issues.find_issue_with_date(date)
         issues_this_week = Issue.query.filter(
                                         Issue.on_sale_date==date,
                                         Issue.is_parent==True).all()
-        # for user in users.all():
-        #     matches = [i for i in issues_this_week if i.title in user.pull_list and i.is_parent]
-        #     refresh_bundle(user, date, matches)
         for user in User.query.all():
             matches = [i for i in issues_this_week if i.title in user.pull_list and i.is_parent]
-            refresh_bundle(user, date, matches)
+            Bundle.refresh_user_bundle(user, date, matches)
         return
 
 
