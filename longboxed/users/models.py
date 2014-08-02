@@ -5,6 +5,7 @@
 
     User models
 """
+from datetime import datetime
 from flask.ext.security import UserMixin, RoleMixin
 
 from ..core import db, CRUDMixin
@@ -68,6 +69,7 @@ class User(db.Model, UserMixin, CRUDMixin):
     last_name = db.Column(db.String(255))
     full_name = db.Column(db.String(255))
     birthday = db.Column(db.Date())
+    last_seen = db.Column(db.DateTime())
 
     # Flask-Security 
     password = db.Column(db.String(255))
@@ -122,3 +124,8 @@ class User(db.Model, UserMixin, CRUDMixin):
             'roles': [role.name for role in self.roles]
         }
         return u
+
+    def ping(self):
+        self.last_seen = datetime.utcnow()
+        self.save()
+        return

@@ -111,7 +111,7 @@ class BundleAdmin(AdministratorBase):
 
 
 class UserAdmin(SuperUserBase):
-    column_list = ('email', 'last_login_at', 'login_count', 'pull_list', 'roles')
+    column_list = ('email', 'last_seen', 'login_count', 'pull_list', 'roles')
     column_searchable_list = ('email',)
 
     def __init__(self, session):

@@ -20,15 +20,12 @@ bp = Blueprint('dashboard', __name__)
 
 @bp.before_app_request
 def before_request():
+    if current_user.is_authenticated():
+        current_user.ping()
     if not current_user.is_anonymous():
         g.user = current_user
     else:
         g.user = None
-
-
-@route(bp, '/test')
-def test():
-    return render_template('layouts/longboxed_base.html')
 
 
 @route(bp, '/')
@@ -50,6 +47,7 @@ def settings():
         user_info_form.populate_obj(current_user)
         current_user.save()
     return render_template('settings.html', user_info_form=user_info_form, delete_user_account_form=delete_user_account_form)
+
 
 @route(bp, '/delete_account', methods=('GET', 'POST'))
 @login_required

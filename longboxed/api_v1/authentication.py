@@ -27,7 +27,10 @@ def verify_password(email, password):
     if not user:
         return False
     g.current_user = user
-    return check_password(password, user.password)
+    password_success = check_password(password, user.password)
+    if password_success:
+        g.current_user.ping()
+    return password_success
 
 
 @auth.error_handler
