@@ -12,7 +12,7 @@ from flask.ext.migrate import Migrate, MigrateCommand
 
 from longboxed.core import db
 from longboxed.frontend import create_app
-from longboxed.models import User, Issue, Title, Publisher, Bundle
+from longboxed.models import User, Issue, Title, Publisher, Bundle, Role
 from longboxed.manage import CreateNewRoleCommand, CreateDefaultRolesCommand, CreateUserCommand, \
                              AddSuperUserRoleCommand, ListUsersCommand, ListRolesCommand, \
                              ScheduleReleasesCommand, \
@@ -25,7 +25,8 @@ migrate = Migrate(app, db)
 
 def _make_shell_context():
     return dict(app=app, db=db, User=User, Issue=Issue,
-                Title=Title, Publisher=Publisher, Bundle=Bundle)
+                Title=Title, Publisher=Publisher, Bundle=Bundle,
+                Role=Role)
 manager.add_command("shell", Shell(make_context=_make_shell_context))
 manager.add_command('db', MigrateCommand)
 
@@ -53,6 +54,10 @@ def deploy():
     print 'Migrating database to latest revison...',
     upgrade()
     print 'done'
+
+    print 'Checking for user roles...',
+    Role.insert_roles()
+    print 'done'    
 
 
 if __name__ == '__main__':
