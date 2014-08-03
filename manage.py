@@ -41,5 +41,19 @@ manager.add_command('set_cover_image', SetCoverImageCommand())
 manager.add_command('bundle_issues', UserBundlesCommand())
 manager.add_command('test', TestCommand())
 
+
+@manager.command
+def deploy():
+    """Run deployment tasks."""
+    from flask.ext.migrate import upgrade
+
+    print 'Running deployment tasks...'
+
+    # Migrate database to latest revision
+    print 'Migrating database to latest revison...',
+    upgrade()
+    print 'done'
+
+
 if __name__ == '__main__':
     manager.run()
