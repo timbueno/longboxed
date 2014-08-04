@@ -45,6 +45,17 @@ class Role(db.Model, RoleMixin, CRUDMixin):
     def __str__(self):
         return self.name
 
+    @classmethod
+    def insert_roles(cls):
+        roles = [('user', 'No Permissions'),
+                 ('admin', 'Comic specific permissions'), 
+                 ('super', 'All permissions')]
+        for r in roles:
+            role = cls.query.filter_by(name=r[0]).first()
+            if role is None:
+                role = cls.create(name=r[0], description=r[1])
+        return
+
 
 class Connection(db.Model):
         id = db.Column(db.Integer, primary_key=True)
