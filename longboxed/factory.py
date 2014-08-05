@@ -5,10 +5,6 @@
 
     longboxed factory module
 
-    USE_AWS must be set as an environment variable.
-    Values can be: 
-        'True'   to use AWS for an image store
-        'False'  for development / local image store
 """
 import os
 import json
@@ -22,22 +18,20 @@ from flask.ext.security import SQLAlchemyUserDatastore
 from flask.ext.social.datastore import SQLAlchemyConnectionDatastore
 from flask.ext.security.forms import ConfirmRegisterForm, PasswordConfirmFormMixin
 from sqlalchemy_imageattach.context import push_store_context, pop_store_context
-# from wtforms import TextField
-# from wtforms.validators import Required
 
 from . import signals
 from .core import db, mail, security, store, social
 from .helpers import register_blueprints
 from .middleware import HTTPMethodOverrideMiddleware
 from .models import Connection, User, Role
-from .settings import ProdConfig
+from .settings import config
 
 
 class ExtendedConfirmRegisterForm(ConfirmRegisterForm, PasswordConfirmFormMixin):
     pass
 
 
-def create_app(package_name, package_path, config_object=ProdConfig, debug_override=None, register_security_blueprint=True):
+def create_app(package_name, package_path, config_name, debug_override=None, register_security_blueprint=True):
     """Returns a :class:`Flask` application instance configured with common
     functionality for the Longboxed platform.
 
@@ -51,11 +45,13 @@ def create_app(package_name, package_path, config_object=ProdConfig, debug_overr
     # #: Register custom Jinja2 filters
     # app.jinja_env.filters['pretty_date'] = pretty_date
 
-    app.config.from_object(config_object)
+    app.config.from_object(config[config_name])
     app.config.from_pyfile('settings.cfg', silent=True)
-    # app.config.from_object(settings_override)
     if debug_override is not None:
         app.debug = debug_override
+
+    #: Additional Settings setup
+    config[config_name].init_app(app, store=store)
 
     #: Setup Flask Extentions
     db.init_app(app)
@@ -74,8 +70,6 @@ def create_app(package_name, package_path, config_object=ProdConfig, debug_overr
     signals.init_app(app)
 
     app.wsgi_app = HTTPMethodOverrideMiddleware(app.wsgi_app)
-    if not os.environ.get('USE_AWS')=='True':
-        app.wsgi_app = store.wsgi_middleware(app.wsgi_app)
 
     @app.before_request
     def start_implicit_store_context():

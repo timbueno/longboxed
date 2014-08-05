@@ -12,17 +12,15 @@ from functools import wraps
 
 from .. import factory
 from ..helpers import pretty_date
-from ..settings import ProdConfig
-from . import assets
 from . import admin
 
 
-def create_app(config_object=ProdConfig):
+def create_app(config_name):
     """Returns the Longboxed dashboard application instance
 
     :param settings_override: dictionary of settings to overide
     """
-    app = factory.create_app(__name__, __path__, config_object)
+    app = factory.create_app(__name__, __path__, config_name)
     
     #: Register custom Jinja2 filters
     app.jinja_env.filters['pretty_date'] = pretty_date

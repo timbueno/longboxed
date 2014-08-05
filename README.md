@@ -35,3 +35,9 @@ When you are finished working for the day:
 2. `vagrant halt`
 
 More information can be found in the project wiki!
+
+
+License
+-------
+
+Longboxed is released under a MIT License. See LICENSE file for details.

@@ -9,7 +9,6 @@ from flask import Blueprint, g, jsonify, request
 
 from ..models import Bundle, Title
 from ..helpers import current_wednesday
-from ..services import users
 from .authentication import auth
 from .errors import bad_request, forbidden
 from . import route
@@ -49,7 +48,8 @@ def add_title_to_pull_list(id):
         return bad_request('title_id: attribute not found')
     if title not in g.current_user.pull_list:
         g.current_user.pull_list.append(title)
-        g.current_user = users.save(g.current_user)
+        g.current_user = g.current_user.save()
+        Bundle.refresh_user_bundle(g.current_user, current_wednesday())
     else:
         return bad_request('Title is already on users pull list')
     return jsonify({
@@ -70,7 +70,8 @@ def remove_title_from_pull_list(id):
         return bad_request('title_id: attribute not found')
     if title in g.current_user.pull_list:
         g.current_user.pull_list.remove(title)
-        g.current_user = users.save(g.current_user)
+        g.current_user = g.current_user.save()
+        Bundle.refresh_user_bundle(g.current_user, current_wednesday())
     else:
         return bad_request('Title is not on the users pull list')
     return jsonify({

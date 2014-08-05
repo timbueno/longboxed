@@ -12,7 +12,7 @@ from flask.ext.security import AnonymousUser
 from flask.ext.security.utils import verify_password as check_password
 
 from .errors import unauthorized
-from ..services import users
+from ..models import User
 
 
 auth = HTTPBasicAuth()
@@ -23,11 +23,14 @@ def verify_password(email, password):
     if email == '':
         g.current_user = AnonymousUser()
         return True
-    user = users.first(email=email)
+    user = User.query.filter_by(email=email).first()
     if not user:
         return False
     g.current_user = user
-    return check_password(password, user.password)
+    password_success = check_password(password, user.password)
+    if password_success:
+        g.current_user.ping()
+    return password_success
 
 
 @auth.error_handler

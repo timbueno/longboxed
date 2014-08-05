@@ -10,7 +10,7 @@ from datetime import date as _date
 
 from flask import abort, Blueprint, jsonify, request
 
-from ..helpers import current_wednesday
+from ..helpers import current_wednesday, next_wednesday
 from ..models import Issue
 from . import route
 
@@ -63,6 +63,30 @@ def this_week():
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 50, type=int)
     date = current_wednesday()
+    pagination = Issue.query.filter(Issue.on_sale_date==date, Issue.is_parent==True).\
+                         paginate(page, per_page=50, error_out=False)
+    issues = pagination.items
+    prev = None
+    if pagination.has_prev:
+        prev = page-1
+    next = None
+    if pagination.has_next:
+        next = page+1
+    return jsonify({
+        'date': date.strftime('%Y-%m-%d'),
+        'issues': [issue.to_json() for issue in issues],
+        'prev': prev,
+        'next': next,
+        'total': pagination.total,
+        'count': count
+    })
+
+
+@route(bp, '/nextweek/', methods=['GET'])
+def next_week():
+    page = request.args.get('page', 1, type=int)
+    count = request.args.get('count', 50, type=int)
+    date = next_wednesday()
     pagination = Issue.query.filter(Issue.on_sale_date==date, Issue.is_parent==True).\
                          paginate(page, per_page=50, error_out=False)
     issues = pagination.items

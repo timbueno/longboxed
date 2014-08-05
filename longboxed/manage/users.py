@@ -5,7 +5,7 @@
 
     user management commands
 """
-from flask import current_app, render_template
+from flask import current_app
 from flask.ext.script import Command, prompt, prompt_pass
 from flask.ext.security.forms import RegisterForm
 from flask.ext.security.registerable import register_user
@@ -13,8 +13,8 @@ from werkzeug.datastructures import MultiDict
 from werkzeug.local import LocalProxy
 
 from ..core import db
-from ..helpers import current_wednesday, mail_content, refresh_bundle
-from ..services import comics, roles, users
+from ..helpers import current_wednesday
+from ..models import Issue, User, Role, Bundle
 
 
 class UserBundlesCommand(Command):
@@ -23,31 +23,12 @@ class UserBundlesCommand(Command):
     """
     def run(self):
         date = current_wednesday()
-        issues_this_week = comics.issues.find_issue_with_date(date)
-        for user in users.all():
+        issues_this_week = Issue.query.filter(
+                                        Issue.on_sale_date==date,
+                                        Issue.is_parent==True).all()
+        for user in User.query.all():
             matches = [i for i in issues_this_week if i.title in user.pull_list and i.is_parent]
-            refresh_bundle(user, date, matches)
-        return
-
-
-class MailBundlesCommand(Command):
-    """
-    Mails bundles to users
-    """
-    def run(self):
-        date = current_wednesday()
-        users_to_mail = users.find(mail_bundles=True)
-        for user in users_to_mail:
-            b = user.bundles.filter_by(release_date=date).first()
-            if b.issues:
-                html = render_template('mail/bundle_mail.html', issues=b.issues)
-                mail_content(
-                    [user.email],
-                    'bundles@longboxed.com',
-                    'Your weekly comic book bundle!',
-                    'Content',
-                    html
-                )
+            Bundle.refresh_user_bundle(user, date, matches)
         return
 
 
@@ -99,7 +80,8 @@ class AddSuperUserRoleCommand(Command):
 
     def run(self):
         email = prompt('Email')
-        user = users.first(email=email)
+        # user = users.first(email=email)
+        user = User.query.filter_by(email=email).first()
         if user:
             _security_datastore = LocalProxy(lambda: current_app.extensions['security'].datastore)
             admin_role = _security_datastore.find_role('admin')
@@ -117,7 +99,8 @@ class AddAdminUserRoleCommand(Command):
 
     def run(self):
         email = prompt('Email')
-        user = users.first(email=email)
+        # user = users.first(email=email)
+        user = User.query.filter_by(email=email).first()
         if user:
             _security_datastore = LocalProxy(lambda: current_app.extensions['security'].datastore)
             admin_role = _security_datastore.find_role('admin')
@@ -132,13 +115,17 @@ class ListRolesCommand(Command):
     """List all roles"""
 
     def run(self):
-        for r in roles.all():
+        for r in Role.query.all():
             print 'Role(name=%s description=%s)' % (r.name, r.description)
+        # for r in roles.all():
+        #     print 'Role(name=%s description=%s)' % (r.name, r.description)
 
 
 class ListUsersCommand(Command):
     """List all users"""
 
     def run(self):
-        for u in users.all():
+        for u in User.query.all():
             print 'User(id=%s email=%s)' % (u.id, u.email)
+        # for u in users.all():
+        #     print 'User(id=%s email=%s)' % (u.id, u.email)

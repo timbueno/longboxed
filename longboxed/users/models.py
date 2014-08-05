@@ -5,9 +5,10 @@
 
     User models
 """
+from datetime import datetime
 from flask.ext.security import UserMixin, RoleMixin
 
-from ..core import db
+from ..core import db, CRUDMixin
 
 # Many-to-Many relationship for user defined publishers to display
 publishers_users = db.Table('publishers_users',
@@ -28,7 +29,7 @@ roles_users = db.Table('roles_users',
 )
 
 
-class Role(db.Model, RoleMixin):
+class Role(db.Model, RoleMixin, CRUDMixin):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
@@ -44,6 +45,17 @@ class Role(db.Model, RoleMixin):
     def __str__(self):
         return self.name
 
+    @classmethod
+    def insert_roles(cls):
+        roles = [('user', 'No Permissions'),
+                 ('admin', 'Comic specific permissions'), 
+                 ('super', 'All permissions')]
+        for r in roles:
+            role = cls.query.filter_by(name=r[0]).first()
+            if role is None:
+                role = cls.create(name=r[0], description=r[1])
+        return
+
 
 class Connection(db.Model):
         id = db.Column(db.Integer, primary_key=True)
@@ -58,17 +70,17 @@ class Connection(db.Model):
         rank = db.Column(db.Integer)
 
 
-class User(db.Model, UserMixin):
+class User(db.Model, UserMixin, CRUDMixin):
     __tablename__ = 'users'
     # ids
     id = db.Column(db.Integer, primary_key=True)
     # Attributes
-    # google_id = db.Column(db.String(255), unique=True)
     email = db.Column(db.String(255), unique=True)
     first_name = db.Column(db.String(255))
     last_name = db.Column(db.String(255))
     full_name = db.Column(db.String(255))
     birthday = db.Column(db.Date())
+    last_seen = db.Column(db.DateTime())
 
     # Flask-Security 
     password = db.Column(db.String(255))
@@ -82,7 +94,6 @@ class User(db.Model, UserMixin):
 
     #: Feature Settings
     display_pull_list = db.Column(db.Boolean, default=True)
-    default_cal = db.Column(db.String(255))
     mail_bundles = db.Column(db.Boolean, default=True)
 
     # Relationships
@@ -124,3 +135,8 @@ class User(db.Model, UserMixin):
             'roles': [role.name for role in self.roles]
         }
         return u
+
+    def ping(self):
+        self.last_seen = datetime.utcnow()
+        self.save()
+        return
