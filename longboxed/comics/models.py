@@ -352,6 +352,7 @@ class Issue(db.Model, CRUDMixin):
             print 'Issue not found: %s | %s | %s' % (record['diamond_id'], record['publisher'], \
                                                      record['complete_title'])
         else:
+            print 'Releasing: ', issue.complete_title
             issue.on_sale_date = date
             issue.save()
         return issue
