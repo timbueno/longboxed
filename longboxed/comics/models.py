@@ -315,13 +315,13 @@ class Issue(db.Model, CRUDMixin):
         return
 
     @staticmethod
-    def check_record_relevancy(record, supported_publishers, future_date):
+    def check_record_relevancy(record, supported_publishers, days):
         if record.get('category') == 'Comics':
             if record.get('publisher') in supported_publishers:
                 record_date_string = record.get('prospective_release_date')
                 release_date = datetime.strptime(record_date_string, '%Y-%m-%d').date()
                 if release_date > (datetime.now().date() - timedelta(days=7)) \
-                    and release_date < (datetime.now().date() + timedelta(days=future_date)):
+                    and release_date < (datetime.now().date() + timedelta(days=days)):
                     return True
         return False
 
@@ -352,6 +352,7 @@ class Issue(db.Model, CRUDMixin):
             print 'Issue not found: %s | %s | %s' % (record['diamond_id'], record['publisher'], \
                                                      record['complete_title'])
         else:
+            print 'Releasing: ', issue.complete_title
             issue.on_sale_date = date
             issue.save()
         return issue

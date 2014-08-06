@@ -76,11 +76,13 @@ class NewDailyDownloadImporter(object):
                         issue.save()
 
                         issue.set_cover_image_from_url(issue.big_image)
-                        for width in thumbnail_widths:
-                            thumbnail = issue.find_or_create_thumbnail(width)
+                        if issue.cover_image:
+                            for width in thumbnail_widths:
+                                thumbnail = issue.find_or_create_thumbnail(width)
                         Issue.check_parent_status(issue.title, issue.issue_number)
-        except Exception:
+        except Exception, err:
             ####### PUT SOMETHING HERE
+            print 'Something Happened!!!!', err
             print record
         finally:
             summary = """
@@ -157,7 +159,9 @@ class NewWeeklyReleasesImporter(object):
         """
         html = BeautifulSoup(content)
         f = StringIO(html.pre.string.strip(' \t\n\r'))
-        reader = DictReader(f, fieldnames=fieldnames)
+        # reader = DictReader(f, fieldnames=fieldnames)
+        # data = [row for row in reader]
+        reader = unicode_csv_reader(f, fieldnames=fieldnames)
         data = [row for row in reader]
         return data
 
@@ -172,6 +176,21 @@ class NewWeeklyReleasesImporter(object):
                 issue = Issue.release_from_raw(row, date)
                 issues.append(issue)
         return issues
+
+
+
+def unicode_csv_reader(unicode_csv_data, fieldnames, **kwargs):
+    # csv.py doesn't do Unicode; encode temporarily as UTF-8:
+    csv_reader = DictReader(utf_8_encoder(unicode_csv_data), fieldnames=fieldnames, **kwargs)
+    for row in csv_reader:
+        # decode UTF-8 back to Unicode, cell by cell:
+        yield dict([(key, unicode(value, 'utf-8')) for key, value in row.iteritems()])
+        # yield [unicode(cell, 'utf-8') for cell in row]
+
+def utf_8_encoder(unicode_csv_data):
+    for line in unicode_csv_data:
+        yield line.encode('utf-8')
+
 
 
 if __name__ == "__main__":
