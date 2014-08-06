@@ -76,11 +76,13 @@ class NewDailyDownloadImporter(object):
                         issue.save()
 
                         issue.set_cover_image_from_url(issue.big_image)
-                        for width in thumbnail_widths:
-                            thumbnail = issue.find_or_create_thumbnail(width)
+                        if issue.cover_image:
+                            for width in thumbnail_widths:
+                                thumbnail = issue.find_or_create_thumbnail(width)
                         Issue.check_parent_status(issue.title, issue.issue_number)
-        except Exception:
+        except Exception, err:
             ####### PUT SOMETHING HERE
+            print 'Something Happened!!!!', err
             print record
         finally:
             summary = """
