@@ -8,7 +8,7 @@ import requests
 
 from bs4 import BeautifulSoup
 
-from .helpers import week_handler
+from .helpers import week_handler, unicode_csv_reader
 from .models import Issue, Title, Publisher, Creator
 
 
@@ -179,17 +179,17 @@ class NewWeeklyReleasesImporter(object):
 
 
 
-def unicode_csv_reader(unicode_csv_data, fieldnames, **kwargs):
-    # csv.py doesn't do Unicode; encode temporarily as UTF-8:
-    csv_reader = DictReader(utf_8_encoder(unicode_csv_data), fieldnames=fieldnames, **kwargs)
-    for row in csv_reader:
-        # decode UTF-8 back to Unicode, cell by cell:
-        yield dict([(key, unicode(value, 'utf-8')) for key, value in row.iteritems()])
-        # yield [unicode(cell, 'utf-8') for cell in row]
+# def unicode_csv_reader(unicode_csv_data, fieldnames, **kwargs):
+#     # csv.py doesn't do Unicode; encode temporarily as UTF-8:
+#     csv_reader = DictReader(utf_8_encoder(unicode_csv_data), fieldnames=fieldnames, **kwargs)
+#     for row in csv_reader:
+#         # decode UTF-8 back to Unicode, cell by cell:
+#         yield dict([(key, unicode(value, 'utf-8')) for key, value in row.iteritems()])
+#         # yield [unicode(cell, 'utf-8') for cell in row]
 
-def utf_8_encoder(unicode_csv_data):
-    for line in unicode_csv_data:
-        yield line.encode('utf-8')
+# def utf_8_encoder(unicode_csv_data):
+#     for line in unicode_csv_data:
+#         yield line.encode('utf-8')
 
 
 
