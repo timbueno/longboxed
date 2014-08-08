@@ -12,7 +12,8 @@ from flask.ext.security import current_user
 from flask.ext.admin import Admin, AdminIndexView
 from flask.ext.admin.actions import action
 from flask.ext.admin.babel import gettext, lazy_gettext
-from flask.ext.admin.contrib.sqlamodel import ModelView
+from flask.ext.admin.contrib.sqla import ModelView
+from flask.ext.admin.contrib.sqla.ajax import QueryAjaxModelLoader
 
 from ..core import db
 from ..helpers import current_wednesday, last_wednesday, next_wednesday 
@@ -39,6 +40,13 @@ class IssueAdmin(AdministratorBase):
     column_sortable_list = ('issue_number', 'complete_title', 'on_sale_date', ('title',Title.name), ('publisher', Publisher.name))
     column_searchable_list = ('complete_title', 'diamond_id')
     column_list = ('on_sale_date', 'prospective_release_date', 'diamond_id', 'issue_number', 'issues', 'complete_title', 'title', 'publisher')
+    form_excluded_columns = ('cover_image', 'bundles')
+
+    form_ajax_refs = {
+            'title': QueryAjaxModelLoader('title', db.session, Title, fields=['name'], page_size=10),
+            'publisher': QueryAjaxModelLoader('publisher', db.session, Publisher, fields=['name'], page_size=10),
+            'creators': QueryAjaxModelLoader('creators', db.session, Creator, fields=['name'], page_size=10)
+    }
 
     def __init__(self, session):
         # Just call parent class with predefined model.
@@ -88,7 +96,13 @@ class IssueAdmin(AdministratorBase):
 class PublisherAdmin(AdministratorBase):
     def __init__(self, session):
         # Just call parent class with predefined model.
-        super(PublisherAdmin, self).__init__(Publisher, session) 
+        super(PublisherAdmin, self).__init__(Publisher, session)
+
+
+    form_excluded_columns = ('titles', 'comics')
+    form_ajax_refs = {
+        'users': QueryAjaxModelLoader('users', db.session, User, fields=['email'], page_size=10),
+    }
 
 
 class TitleAdmin(AdministratorBase):
@@ -97,22 +111,40 @@ class TitleAdmin(AdministratorBase):
         # Just call parent class with predefined model.
         super(TitleAdmin, self).__init__(Title, session)
 
+    form_ajax_refs = {
+        'users': QueryAjaxModelLoader('users', db.session, User, fields=['email'], page_size=10),
+        'issues': QueryAjaxModelLoader('issues', db.session, Issue, fields=['complete_title'], page_size=10),
+        'publisher': QueryAjaxModelLoader('publisher', db.session, Publisher, fields=['name'], page_size=10)
+    }
+
 
 class CreatorAdmin(AdministratorBase):
     def __init__(self, session):
         # Just call parent class with predefined model.
         super(CreatorAdmin, self).__init__(Creator, session)
 
+    form_excluded_columns = ('issues')
+
 
 class BundleAdmin(AdministratorBase):
     def __init__(self, session):
         # Just call parent class with predefined model.
-        super(BundleAdmin, self).__init__(Bundle, session)      
+        super(BundleAdmin, self).__init__(Bundle, session)    
+
+    form_ajax_refs = {
+        'issues': QueryAjaxModelLoader('issues', db.session, Issue, fields=['complete_title'], page_size=10),
+        'user': QueryAjaxModelLoader('user', db.session, User, fields=['email'], page_size=10)
+    }  
 
 
 class UserAdmin(SuperUserBase):
     column_list = ('email', 'last_seen', 'login_count', 'pull_list', 'roles')
     column_searchable_list = ('email',)
+
+    form_excluded_columns = ('bundles',)
+    form_ajax_refs = {
+        'pull_list': QueryAjaxModelLoader('pull_list', db.session, Title, fields=['name'], page_size=10)
+    }
 
     def __init__(self, session):
         # Just call parent class with predefined model.
@@ -123,6 +155,10 @@ class RoleAdmin(SuperUserBase):
     def __init__(self, session):
         # Just call parent class with predefined model.
         super(RoleAdmin, self).__init__(Role, session)
+
+    form_ajax_refs = {
+        'users': QueryAjaxModelLoader('users', db.session, User, fields=['email'], page_size=10)
+    }
 
 
 class ConnectionAdmin(SuperUserBase):
