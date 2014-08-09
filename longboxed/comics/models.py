@@ -429,12 +429,14 @@ class Issue(db.Model, CRUDMixin):
         :param height: Height of desired thumbnail image
         """
         assert width is not None or height is not None
-        with store_context(store):
-            try:
-                image = self.cover_image.find_thumbnail(width=width, height=height)
-            except NoResultFound:
-                image = self.cover_image.generate_thumbnail(width=width, height=height)
-            self.save()
+        image = None
+        if self.cover_image:
+            with store_context(store):
+                try:
+                    image = self.cover_image.find_thumbnail(width=width, height=height)
+                except NoResultFound:
+                    image = self.cover_image.generate_thumbnail(width=width, height=height)
+                self.save()
         return image
 
 
