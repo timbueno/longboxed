@@ -123,10 +123,22 @@ def get_week(date, multiplier=0):
     """Returns Sunday and Saturday of the week the 'date' argument is currently in.
     The 'multiplier' argument provides the ability to navigate multiple weeks into 
     the future and past"""
-    day_idx = (date.weekday() + 1) % 7 # Turn sunday into 0, monday into 1, etc.
+    day_idx = get_day_index(date)
     sunday = (date - timedelta(days=day_idx)) + (multiplier * timedelta(days=7))
     saturday = (sunday + timedelta(days=6))
     return (sunday, saturday)
+
+
+def get_day_index(date):
+    return (date.weekday() + 1) % 7 # Turn sunday into 0, monday into 1, etc.
+
+
+def after_wednesday(date):
+    day_index = get_day_index(date)
+    if day_index > 3:
+        return True
+    else:
+        return False
 
 
 def next_n_weeks(date, n=1):
