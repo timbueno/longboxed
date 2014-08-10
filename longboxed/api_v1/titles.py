@@ -5,11 +5,12 @@
 
     Title endpoints
 """
+from datetime import datetime
 
 from flask import Blueprint, jsonify, request
 from sqlalchemy.orm.exc import NoResultFound
 
-from ..helpers import current_wednesday
+from ..helpers import current_wednesday, next_wednesday, after_wednesday
 from ..models import Title, Issue
 from .errors import bad_request
 from . import route
@@ -52,7 +53,11 @@ def get_issues_for_title(id):
     title = Title.query.get_or_404(id)
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 50, type=int)
-    pagination = Issue.query.filter(Issue.title==title, Issue.on_sale_date <= current_wednesday()) \
+
+    # Set the maximum date to search for issues (This week or next week)
+    date = next_wednesday() if after_wednesday(datetime.today().date()) else current_wednesday()
+
+    pagination = Issue.query.filter(Issue.title==title, Issue.on_sale_date <= date) \
         .order_by(Issue.on_sale_date.desc()) \
         .paginate(page, per_page=count, error_out=False)
     issues = pagination.items
