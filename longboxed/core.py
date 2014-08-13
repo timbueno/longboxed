@@ -7,7 +7,7 @@
     depend on
 
     USE_AWS must be set as an environment variable.
-    Values can be: 
+    Values can be:
         'True'   to use AWS for an image store
         'False'  for development / local image store
 """

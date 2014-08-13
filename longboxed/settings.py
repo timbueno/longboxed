@@ -23,16 +23,18 @@ class Config(object):
 
     # Longboxed Specific Variables
     AFFILIATE_ID = environ['AFFILIATE_ID']
-    SUPPORTED_PUBS = ['Marvel Comics', 'DC Comics', 'Dark Horse', 'IDW Publishing',\
-                      'Boom! Studios', 'Image Comics', 'Dynamite Entertainment', \
-                      'Avatar Press', 'Abstract Studios','Archie Comics', \
-                      'Vertigo', 'Valiant Comics']
+    SUPPORTED_PUBS = ['Marvel Comics', 'DC Comics', 'Dark Horse',
+                      'IDW Publishing', 'Boom! Studios', 'Image Comics',
+                      'Dynamite Entertainment', 'Avatar Press',
+                      'Abstract Studios','Archie Comics', 'Vertigo',
+                      'Valiant Comics']
 
-    SUPPORTED_DIAMOND_PUBS = ['MARVEL COMICS', 'DC COMICS', 'DARK HORSE COMICS', \
-                              'IDEA & DESIGN WORKS LLC', 'BOOM ENTERTAINMENT', 'IMAGE COMICS',\
-                              'DYNAMIC FORCES','ABSTRACT STUDIOS', 'AVATAR PRESS INC', \
-                              'ARCHIE COMIC PUBLICATIONS', 'VALIANT ENTERTAINMENT LLC', \
-                              'IDW PUBLISHING']
+    SUPPORTED_DIAMOND_PUBS = ['MARVEL COMICS', 'DC COMICS', 'DARK HORSE COMICS',
+                              'IDEA & DESIGN WORKS LLC', 'BOOM ENTERTAINMENT',
+                              'IMAGE COMICS', 'DYNAMIC FORCES',
+                              'ABSTRACT STUDIOS', 'AVATAR PRESS INC',
+                              'ARCHIE COMIC PUBLICATIONS', 'IDW PUBLISHING',
+                              'VALIANT ENTERTAINMENT LLC']
 
     # Flask Application Configuration
     SECRET_KEY = environ['SECRET_KEY']
@@ -154,7 +156,11 @@ class ProdConfig(Config):
 
     @classmethod
     def get_store(cls):
-        store = S3Store(cls.AWS_S3_BUCKET, cls.AWS_ACCESS_KEY_ID, cls.AWS_SECRET_KEY)
+        store = S3Store(
+                cls.AWS_S3_BUCKET,
+                cls.AWS_ACCESS_KEY_ID,
+                cls.AWS_SECRET_KEY
+        )
         return store
 
 
@@ -190,7 +196,7 @@ class DevConfig(Config):
         store = HttpExposedFileSystemStore('store', 'images')
         return store
 
-    
+
 config = {
     'dev': DevConfig,
     'stag': StagingConfig,

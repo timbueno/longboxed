@@ -51,7 +51,11 @@ class JSONEncoder(BaseJSONEncoder):
 
 def unicode_csv_reader(unicode_csv_data, fieldnames, **kwargs):
     # csv.py doesn't do Unicode; encode temporarily as UTF-8:
-    csv_reader = DictReader(utf_8_encoder(unicode_csv_data), fieldnames=fieldnames, **kwargs)
+    csv_reader = DictReader(
+            utf_8_encoder(unicode_csv_data),
+            fieldnames=fieldnames,
+            **kwargs
+    )
     for row in csv_reader:
         # decode UTF-8 back to Unicode, cell by cell:
         yield dict([(key, unicode(value, 'utf-8')) for key, value in row.iteritems()])
@@ -80,7 +84,7 @@ def strip_tags(html):
 
 def wednesday(date, multiplier=0):
     """Given a date, returns a Date() object containing the week's wednesday.
-    A week is defined as Sunday thru Saturday. The 'multiplier' argument 
+    A week is defined as Sunday thru Saturday. The 'multiplier' argument
     provides the ability navigate multiple weeks into the future and past
 
     :param date: :class:`Date` object used to center in on desired week
@@ -120,9 +124,13 @@ def week_handler(week):
 
 
 def get_week(date, multiplier=0):
-    """Returns Sunday and Saturday of the week the 'date' argument is currently in.
-    The 'multiplier' argument provides the ability to navigate multiple weeks into 
-    the future and past"""
+    """
+    Returns Sunday and Saturday of the week the 'date' argument is
+    currently in.
+
+    The 'multiplier' argument provides the ability to navigate multiple
+    weeks into the future and past
+    """
     day_idx = get_day_index(date)
     sunday = (date - timedelta(days=day_idx)) + (multiplier * timedelta(days=7))
     saturday = (sunday + timedelta(days=6))
@@ -143,7 +151,7 @@ def after_wednesday(date):
 
 def next_n_weeks(date, n=1):
     """
-    Returns the first sunday and last saturday of the range. This is useful to 
+    Returns the first sunday and last saturday of the range. This is useful to
     provide a lower and upper bound on SQL queries.
     """
     first_sunday, first_saturday = get_week(date)
@@ -151,7 +159,8 @@ def next_n_weeks(date, n=1):
     return (first_sunday, last_saturday)
 
 
-def mail_content(recipients, sender, subject, content, html=None, attachment=None):
+def mail_content(recipients, sender, subject, content,
+                 html=None, attachment=None):
     """
     Generic function allowing for easy sending of email. A :class:`Mail`
     from :module:`longboxed.core` must be in the applications context
@@ -169,7 +178,11 @@ def mail_content(recipients, sender, subject, content, html=None, attachment=Non
                   html=html
     )
     if attachment:
-        msg.attach(filename='checks.txt', content_type='text/plain', data=attachment)
+        msg.attach(
+                filename='checks.txt',
+                content_type='text/plain',
+                data=attachment
+        )
     mail.send(msg)
     return
 
@@ -185,7 +198,7 @@ def pretty_date(time=False):
     if type(time) is int:
         diff = now - datetime.fromtimestamp(time)
     elif isinstance(time,datetime):
-        diff = now - time 
+        diff = now - time
     elif not time:
         diff = now - now
     second_diff = diff.seconds
@@ -219,7 +232,7 @@ def pretty_date(time=False):
 
 
 def is_float(number):
-    try: 
+    try:
         float(number)
         return True
     except (ValueError, TypeError):
