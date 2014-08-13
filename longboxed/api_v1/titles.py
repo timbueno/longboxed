@@ -55,11 +55,16 @@ def get_issues_for_title(id):
     count = request.args.get('count', 50, type=int)
 
     # Set the maximum date to search for issues (This week or next week)
-    date = next_wednesday() if after_wednesday(datetime.today().date()) else current_wednesday()
+    if after_wednesday(datetime.today().date()):
+        date = next_wednesday()
+    else:
+        date = current_wednesday()
 
-    pagination = Issue.query.filter(Issue.title==title, Issue.on_sale_date <= date) \
-        .order_by(Issue.on_sale_date.desc()) \
-        .paginate(page, per_page=count, error_out=False)
+    pagination = Issue.query.filter(
+                                Issue.title==title,
+                                Issue.on_sale_date <= date)\
+                            .order_by(Issue.on_sale_date.desc())\
+                            .paginate(page, per_page=count, error_out=False)
     issues = pagination.items
     prev = None
     if pagination.has_prev:
@@ -86,10 +91,10 @@ def autocomplete():
     searchstring = '%%'.join(keywords)
     searchstring = '%%%s%%' % (searchstring)
     try:
-        res = Title.query.filter(Title.name.ilike(searchstring)).\
-                         order_by(Title.num_subscribers.desc()).\
-                         limit(20).\
-                         all()
+        res = Title.query.filter(Title.name.ilike(searchstring))\
+                         .order_by(Title.num_subscribers.desc())\
+                         .limit(20)\
+                         .all()
         return jsonify({
                 'query': fragment,
                 'suggestions': [r.to_json() for r in res],
