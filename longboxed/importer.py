@@ -1,3 +1,15 @@
+# -*- coding: utf-8 -*-
+"""
+    longboxed.importer
+    ~~~~~~~~~~~~~~~
+
+    NewDailyDownloadImporter creates issues, titles, and publishers from
+    TFAW's database CSV file.
+
+    NewWeeklyReleasesImporter sets the 'on_sale_date' attribute of issue models
+    based on Diamond Lists recieved from TFAW.
+"""
+
 from csv import DictReader
 from datetime import datetime
 from gzip import GzipFile
@@ -77,7 +89,7 @@ class NewDailyDownloadImporter(object):
 
                         issue.set_cover_image_from_url(issue.big_image)
                         for width in thumbnail_widths:
-                            thumbnail = issue.find_or_create_thumbnail(width)
+                            issue.find_or_create_thumbnail(width)
                         Issue.check_parent_status(issue.title, issue.issue_number)
         except Exception, err:
             ####### PUT SOMETHING HERE
@@ -120,18 +132,18 @@ class NewWeeklyReleasesImporter(object):
         print 'Loading Data'
         data = self.load(content, csv_fieldnames)
         print 'Releasing Issues'
-        issues = self.process(data, supported_publishers, date)
+        self.process(data, supported_publishers, date)
         return
 
 
     def download(self, week, affiliate_id):
         """
         Gets file containing a list of shippments from Diamond Distributers.
-        This file is served from TFAW's servers. Three files are available at 
-        any given time; thisweek, nextweek, twoweeks. They describe shipments 
+        This file is served from TFAW's servers. Three files are available at
+        any given time; thisweek, nextweek, twoweeks. They describe shipments
         pertaining to their respective timeframes.
 
-        :param week: String designating which diamond list to download 
+        :param week: String designating which diamond list to download
                      Options: 'thisweek', 'nextweek', 'twoweeks'
         """
         if week not in ['thisweek', 'nextweek', 'twoweeks']:
@@ -158,8 +170,6 @@ class NewWeeklyReleasesImporter(object):
         """
         html = BeautifulSoup(content)
         f = StringIO(html.pre.string.strip(' \t\n\r'))
-        # reader = DictReader(f, fieldnames=fieldnames)
-        # data = [row for row in reader]
         reader = unicode_csv_reader(f, fieldnames=fieldnames)
         data = [row for row in reader]
         return data
@@ -175,21 +185,6 @@ class NewWeeklyReleasesImporter(object):
                 issue = Issue.release_from_raw(row, date)
                 issues.append(issue)
         return issues
-
-
-
-# def unicode_csv_reader(unicode_csv_data, fieldnames, **kwargs):
-#     # csv.py doesn't do Unicode; encode temporarily as UTF-8:
-#     csv_reader = DictReader(utf_8_encoder(unicode_csv_data), fieldnames=fieldnames, **kwargs)
-#     for row in csv_reader:
-#         # decode UTF-8 back to Unicode, cell by cell:
-#         yield dict([(key, unicode(value, 'utf-8')) for key, value in row.iteritems()])
-#         # yield [unicode(cell, 'utf-8') for cell in row]
-
-# def utf_8_encoder(unicode_csv_data):
-#     for line in unicode_csv_data:
-#         yield line.encode('utf-8')
-
 
 
 if __name__ == "__main__":
