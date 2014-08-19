@@ -51,7 +51,8 @@ class LongboxedFormError(Exception):
 
 
 class CRUDMixin(object):
-    """Mixin that adds convenience methods for CRUD (create, read, update, delete)
+    """
+    Mixin that adds convenience methods for CRUD (create, read, update, delete)
     operations.
     """
 
