@@ -205,8 +205,10 @@ class Issue(db.Model, CRUDMixin):
     has_alternates = db.Column(db.Boolean(), default=False)
     @property
     def alternates(self):
-        return self.query.filter(Issue.title==self.title, Issue.issue_number==self.issue_number, \
-                                 Issue.diamond_id!=self.diamond_id)
+        return self.query.filter(
+                Issue.title==self.title,
+                Issue.issue_number==self.issue_number,
+                Issue.diamond_id!=self.diamond_id).all()
 
     @classmethod
     def from_raw(cls, record, sas_id='YOURUSERID'):
@@ -223,6 +225,8 @@ class Issue(db.Model, CRUDMixin):
                 i['issue_number'] = Decimal(m['issue_number'])
             if m['issues']:
                 i['issues'] = Decimal(m['issues'])
+            if m.get('other'):
+                i['other'] = m['other'].strip('()')
         except (AttributeError, TypeError):
             i['complete_title'] = ''
             m = None
@@ -385,6 +389,20 @@ class Issue(db.Model, CRUDMixin):
                 )
 
     def to_json(self):
+        if self.on_sale_date:
+            release_date = self.on_sale_date.strftime('%Y-%m-%d')
+        else:
+            release_date = None
+        if self.has_alternates:
+            alternates = [
+                    {
+                        'complete_title': i.complete_title,
+                        'id': i.id
+                    }
+                    for i in self.alternates
+            ]
+        else:
+            alternates = []
         i = {
             'id': self.id,
             'complete_title': self.complete_title,
@@ -392,12 +410,15 @@ class Issue(db.Model, CRUDMixin):
                           'name': self.publisher.name},
             'title': {'id': self.title.id,
                       'name': self.title.name},
+            'other': self.other,
             'price': self.retail_price,
             'diamond_id': self.diamond_id,
-            'release_date': self.on_sale_date.strftime('%Y-%m-%d') if self.on_sale_date else None,
+            'release_date': release_date,
             'issue_number': self.issue_number,
             'cover_image': self.cover_image.find_thumbnail(width=500).locate(),
-            'description': self.description
+            'description': self.description,
+            'is_parent': self.is_parent,
+            'alternates': alternates
         }
         return i
 
