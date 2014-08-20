@@ -397,6 +397,7 @@ class Issue(db.Model, CRUDMixin):
             alternates = [
                     {
                         'complete_title': i.complete_title,
+                        'is_parent': i.is_parent,
                         'id': i.id
                     }
                     for i in self.alternates
