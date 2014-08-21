@@ -12,7 +12,8 @@ def user_registered_signal_handler(app, user, confirm_token):
     :param user: Newly registered Flask-Login User object
     :param confirm_token: Users confirm token
     """
-    _security_datastore = LocalProxy(lambda: app.extensions['security'].datastore)
+    _security_datastore = LocalProxy(
+            lambda: app.extensions['security'].datastore)
     default_role = _security_datastore.find_role('user')
     _security_datastore.add_role_to_user(user, default_role)
     db.session.commit()

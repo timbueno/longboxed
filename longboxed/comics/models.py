@@ -35,7 +35,8 @@ issues_creators = db.Table('issues_creators',
 
 class Publisher(db.Model, CRUDMixin):
     """
-    Publisher model class with two back referenced relationships, titles and issues.
+    Publisher model class with two back referenced relationships, titles and
+    issues.
 
     Example: Marvel Comics, Image Comics
     """
@@ -88,7 +89,7 @@ class Publisher(db.Model, CRUDMixin):
 
 class Title(db.Model, CRUDMixin):
     """
-    Title Model class with backreferenced relationship, issues. Publisher 
+    Title Model class with backreferenced relationship, issues. Publisher
     can also be accessed with the hidden 'publisher' attribute.
 
     Example: Saga, East Of West
@@ -119,10 +120,10 @@ class Title(db.Model, CRUDMixin):
         except (AttributeError, TypeError):
             m = None
         finally:
-            pass 
+            pass
 
         created = 0
-        try:            
+        try:
             name = m.get('title')
             title = cls.query.filter_by(name=name).first()
             if not title:
@@ -145,16 +146,18 @@ class Title(db.Model, CRUDMixin):
     @num_subscribers.expression
     def _num_subscribers_expression(cls):
         from ..users.models import titles_users
-        return (db.select([db.func.count(titles_users.c.user_id).label('num_subscribers')])
-                .where(titles_users.c.title_id == cls.id)
-                .label('total_subscribers')
+        return (db.select(
+                    [db.func.count(titles_users.c.user_id)\
+                            .label('num_subscribers')])\
+                   .where(titles_users.c.title_id == cls.id)\
+                   .label('total_subscribers')
                 )
 
     def to_json(self):
         t = {
             'id': self.id,
             'name': self.name,
-            'publisher': {'id': self.publisher.id, 
+            'publisher': {'id': self.publisher.id,
                           'name': self.publisher.name},
             'issue_count': self.issues.count(),
             'subscribers': self.users.count()
@@ -202,8 +205,10 @@ class Issue(db.Model, CRUDMixin):
     has_alternates = db.Column(db.Boolean(), default=False)
     @property
     def alternates(self):
-        return self.query.filter(Issue.title==self.title, Issue.issue_number==self.issue_number, \
-                                 Issue.diamond_id!=self.diamond_id)
+        return self.query.filter(
+                Issue.title==self.title,
+                Issue.issue_number==self.issue_number,
+                Issue.diamond_id!=self.diamond_id).all()
 
     @classmethod
     def from_raw(cls, record, sas_id='YOURUSERID'):
@@ -220,6 +225,8 @@ class Issue(db.Model, CRUDMixin):
                 i['issue_number'] = Decimal(m['issue_number'])
             if m['issues']:
                 i['issues'] = Decimal(m['issues'])
+            if m.get('other'):
+                i['other'] = m['other'].strip('()')
         except (AttributeError, TypeError):
             i['complete_title'] = ''
             m = None
@@ -349,7 +356,8 @@ class Issue(db.Model, CRUDMixin):
 
         issue = cls.query.filter_by(diamond_id=diamond_id).first()
         if not issue:
-            print 'Issue not found: %s | %s | %s' % (record['diamond_id'], record['publisher'], \
+            print 'Issue not found: %s | %s | %s' % (record['diamond_id'],
+                                                     record['publisher'],
                                                      record['complete_title'])
         else:
             print 'Releasing: ', issue.complete_title
@@ -373,12 +381,29 @@ class Issue(db.Model, CRUDMixin):
     @num_subscribers.expression
     def _num_subscribers_expression(cls):
         from ..users.models import titles_users
-        return (db.select([db.func.count(titles_users.c.user_id).label('num_subscribers')])
-                .where(titles_users.c.title_id == cls.title_id)
-                .label('total_subscribers')
+        return (db.select(
+                        [db.func.count(titles_users.c.user_id)
+                                .label('num_subscribers')])
+                   .where(titles_users.c.title_id == cls.title_id)
+                   .label('total_subscribers')
                 )
 
     def to_json(self):
+        if self.on_sale_date:
+            release_date = self.on_sale_date.strftime('%Y-%m-%d')
+        else:
+            release_date = None
+        if self.has_alternates:
+            alternates = [
+                    {
+                        'complete_title': i.complete_title,
+                        'is_parent': i.is_parent,
+                        'id': i.id
+                    }
+                    for i in self.alternates
+            ]
+        else:
+            alternates = []
         i = {
             'id': self.id,
             'complete_title': self.complete_title,
@@ -386,12 +411,15 @@ class Issue(db.Model, CRUDMixin):
                           'name': self.publisher.name},
             'title': {'id': self.title.id,
                       'name': self.title.name},
+            'other': self.other,
             'price': self.retail_price,
             'diamond_id': self.diamond_id,
-            'release_date': self.on_sale_date.strftime('%Y-%m-%d') if self.on_sale_date else None,
+            'release_date': release_date,
             'issue_number': self.issue_number,
             'cover_image': self.cover_image.find_thumbnail(width=500).locate(),
-            'description': self.description
+            'description': self.description,
+            'is_parent': self.is_parent,
+            'alternates': alternates
         }
         return i
 
@@ -406,7 +434,7 @@ class Issue(db.Model, CRUDMixin):
         created_flag = False
         if not self.cover_image.original or overwrite:
             r = requests.get(url)
-            if r.status_code == 200 and r.headers['content-type'] == 'image/jpeg':
+            if r.status_code==200 and r.headers['content-type']=='image/jpeg':
                 with store_context(store):
                     self.cover_image.from_blob(r.content)
                     self.save()
@@ -433,9 +461,13 @@ class Issue(db.Model, CRUDMixin):
         if self.cover_image:
             with store_context(store):
                 try:
-                    image = self.cover_image.find_thumbnail(width=width, height=height)
+                    image = self.cover_image.find_thumbnail(
+                                                width=width,
+                                                height=height)
                 except NoResultFound:
-                    image = self.cover_image.generate_thumbnail(width=width, height=height)
+                    image = self.cover_image.generate_thumbnail(
+                                                width=width,
+                                                height=height)
                 self.save()
         return image
 
@@ -528,9 +560,13 @@ class Bundle(db.Model, CRUDMixin):
     @classmethod
     def refresh_user_bundle(cls, user, date, matches=None):
         if not matches:
-            issues = Issue.query.filter(Issue.on_sale_date==date, Issue.is_parent==True).all()
+            issues = Issue.query.filter(
+                                    Issue.on_sale_date==date,
+                                    Issue.is_parent==True)\
+                                .all()
             matches = [i for i in issues if i.title in user.pull_list]
-        bundle = cls.query.filter(cls.user==user, cls.release_date==date).first()
+        bundle = cls.query.filter(cls.user==user, cls.release_date==date)\
+                          .first()
         if bundle:
             bundle.update(issues=matches, last_updated=datetime.now())
         else:

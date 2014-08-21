@@ -16,7 +16,8 @@ from celery import Celery
 from flask import Flask
 from flask.ext.security import SQLAlchemyUserDatastore
 from flask.ext.social.datastore import SQLAlchemyConnectionDatastore
-from flask.ext.security.forms import ConfirmRegisterForm, PasswordConfirmFormMixin
+from flask.ext.security.forms import (ConfirmRegisterForm,
+                                      PasswordConfirmFormMixin)
 from sqlalchemy_imageattach.context import push_store_context, pop_store_context
 
 from . import signals
@@ -27,11 +28,13 @@ from .models import Connection, User, Role
 from .settings import config
 
 
-class ExtendedConfirmRegisterForm(ConfirmRegisterForm, PasswordConfirmFormMixin):
+class ExtendedConfirmRegisterForm(ConfirmRegisterForm,
+                                  PasswordConfirmFormMixin):
     pass
 
 
-def create_app(package_name, package_path, config_name, debug_override=None, register_security_blueprint=True):
+def create_app(package_name, package_path, config_name, debug_override=None,
+               register_security_blueprint=True):
     """Returns a :class:`Flask` application instance configured with common
     functionality for the Longboxed platform.
 
@@ -61,7 +64,10 @@ def create_app(package_name, package_path, config_name, debug_override=None, reg
                       register_blueprint=register_security_blueprint,
                       confirm_register_form=ExtendedConfirmRegisterForm)
 
-    app.social = social.init_app(app, SQLAlchemyConnectionDatastore(db, Connection))
+    app.social = social.init_app(
+            app,
+            SQLAlchemyConnectionDatastore(db, Connection)
+    )
 
     # Register all blueprints
     register_blueprints(app, package_name, package_path)
@@ -111,7 +117,9 @@ def create_celery_app(app=None):
     return celery
 
 
-def setup_logging(default_path='longboxed/logging.json', default_level=logging.INFO, env_key='LOG_CFG'):
+def setup_logging(
+        default_path='longboxed/logging.json',
+        default_level=logging.INFO, env_key='LOG_CFG'):
     """
     Setup logging configuration
 
@@ -133,8 +141,8 @@ def setup_logging(default_path='longboxed/logging.json', default_level=logging.I
 
 class LogOnlyLevel(object):
     """
-    Filter function. Used in a logging json configuration file to allow a handler to 
-    log only its own specific log level.
+    Filter function. Used in a logging json configuration file to allow a
+    handler to log only its own specific log level.
     """
 
     def __init__(self, level):

@@ -7,28 +7,18 @@
 """
 from flask import current_app
 from flask.ext.script import Command, Option, prompt, prompt_bool
+from flask.ext.security.utils import verify_password
 
+from ..core import db
 from ..importer import NewDailyDownloadImporter, NewWeeklyReleasesImporter
-from ..models import Issue
+from ..models import (Issue, IssueCover, issues_creators, issues_bundles,
+                      User)
 
 
 class TestCommand(Command):
-    def get_options(self):
-        return [
-            Option('-w', '--week', dest='week', required=True, choices=['thisweek', 'nextweek', 'twoweeks']),
-        ]
+    def run(self):
+        pass
 
-    def run(self, week):
-        fieldnames = [x[2] for x in current_app.config['RELEASE_CSV_RULES']]
-        issue_releaser = NewWeeklyReleasesImporter()
-        issue_releaser.run(
-            csv_fieldnames = fieldnames,
-            supported_publishers = current_app.config['SUPPORTED_DIAMOND_PUBS'],
-            affiliate_id = current_app.config['AFFILIATE_ID'],
-            week = week
-        )
-        return
-        
 
 class ScheduleReleasesCommand(Command):
     def get_options(self):
@@ -69,7 +59,7 @@ class ImportDatabase(Command):
 
 class SetCoverImageCommand(Command):
     """
-    Sets the cover image of an issue. The issues is found in the 
+    Sets the cover image of an issue. The issues is found in the
     database with a diamond id. If the issue already has an image
     attached, you can optionally choose to replace it.
     """
@@ -88,3 +78,34 @@ class SetCoverImageCommand(Command):
             return
         print 'No issue found!'
         return
+
+class DeleteAllIssues(Command):
+    def run(self):
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+        print 'WARNING!!!!! YOU ARE ABOUT TO DELETE ALL ISSUES!!!!!'
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+        c = prompt_bool('Are you sure you wish to continue?')
+        if c:
+            email = prompt('Enter your administrator email address: ')
+            u = User.query.filter_by(email=email).first()
+            if u and u.has_role('super'):
+                password = prompt('Enter password: ')
+                if verify_password(password, u.password):
+                    print 'Deleting `issue_creators` table'
+                    db.engine.execute(issues_creators.delete())
+                    print 'Deleting `issues_bundles` table'
+                    db.engine.execute(issues_bundles.delete())
+                    print 'Deleting `Issue Covers` table'
+                    IssueCover.query.delete()
+                    print 'Deleting all objects from `Issues` table'
+                    Issue.query.delete()
+                    db.session.commit()
+                    print 'All Issues have been deleted.'
+                    print 'You should delete the cover images from the store!'
+                else:
+                    print 'Incorrect password, Aborting...'
+            else:
+                print 'User not found or is not an administrator, Aborting...'
+        else:
+            print 'Aborting...'
+            return

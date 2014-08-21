@@ -7,7 +7,7 @@
     depend on
 
     USE_AWS must be set as an environment variable.
-    Values can be: 
+    Values can be:
         'True'   to use AWS for an image store
         'False'  for development / local image store
 """
@@ -51,7 +51,8 @@ class LongboxedFormError(Exception):
 
 
 class CRUDMixin(object):
-    """Mixin that adds convenience methods for CRUD (create, read, update, delete)
+    """
+    Mixin that adds convenience methods for CRUD (create, read, update, delete)
     operations.
     """
 

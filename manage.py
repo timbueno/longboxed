@@ -13,10 +13,12 @@ from flask.ext.migrate import Migrate, MigrateCommand
 from longboxed.core import db
 from longboxed.frontend import create_app
 from longboxed.models import User, Issue, Title, Publisher, Bundle, Role
-from longboxed.manage import CreateNewRoleCommand, CreateDefaultRolesCommand, CreateUserCommand, \
-                             AddSuperUserRoleCommand, ListUsersCommand, ListRolesCommand, \
-                             ScheduleReleasesCommand, \
-                             TestCommand, SetCoverImageCommand, UserBundlesCommand, ImportDatabase
+from longboxed.manage import (CreateNewRoleCommand, CreateDefaultRolesCommand,
+                             CreateUserCommand, AddSuperUserRoleCommand,
+                             ListUsersCommand, ListRolesCommand,
+                             ScheduleReleasesCommand, TestCommand,
+                             SetCoverImageCommand, UserBundlesCommand,
+                             ImportDatabase, DeleteAllIssues)
 
 
 app = create_app(os.getenv('APP_ENV') or 'default')
@@ -40,6 +42,7 @@ manager.add_command('schedule_releases', ScheduleReleasesCommand())
 manager.add_command('import_database', ImportDatabase())
 manager.add_command('set_cover_image', SetCoverImageCommand())
 manager.add_command('bundle_issues', UserBundlesCommand())
+manager.add_command('delete_all_issues', DeleteAllIssues())
 manager.add_command('test', TestCommand())
 
 
@@ -57,7 +60,7 @@ def deploy():
 
     print 'Checking for user roles...',
     Role.insert_roles()
-    print 'done'    
+    print 'done'
 
 
 if __name__ == '__main__':

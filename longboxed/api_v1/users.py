@@ -54,7 +54,7 @@ def add_title_to_pull_list(id):
         return bad_request('Title is already on users pull list')
     return jsonify({
         'user': g.current_user.email,
-        'pull_list': [title.to_json() for title in g.current_user.pull_list]
+        'pull_list': [t.to_json() for t in g.current_user.pull_list]
     })
 
 
@@ -76,7 +76,7 @@ def remove_title_from_pull_list(id):
         return bad_request('Title is not on the users pull list')
     return jsonify({
         'user': g.current_user.email,
-        'pull_list': [title.to_json() for title in g.current_user.pull_list]
+        'pull_list': [t.to_json() for t in g.current_user.pull_list]
     })
 
 
@@ -87,8 +87,10 @@ def get_user_bundles(id):
         return forbidden('You do not have permission to access this users pull list')
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 5, type=int)
-    pagination = Bundle.query.filter(Bundle.user == g.current_user, Bundle.release_date <= current_wednesday()) \
-                             .order_by(Bundle.release_date.desc()) \
+    pagination = Bundle.query.filter(
+                                Bundle.user==g.current_user,
+                                Bundle.release_date<=current_wednesday())\
+                             .order_by(Bundle.release_date.desc())\
                              .paginate(page, per_page=count, error_out=False)
     bundles = pagination.items
     prev = None
@@ -112,7 +114,9 @@ def get_latest_bundles(id):
     from ..comics.models import Bundle
     if id != g.current_user.id:
         return forbidden('You do not have permission to access this users pull list')
-    b = Bundle.query.filter(Bundle.user == g.current_user, Bundle.release_date <= current_wednesday()) \
-                    .order_by(Bundle.release_date.desc()) \
+    b = Bundle.query.filter(
+                        Bundle.user==g.current_user,
+                        Bundle.release_date<=current_wednesday())\
+                    .order_by(Bundle.release_date.desc())\
                     .first()
     return jsonify(b.to_json())

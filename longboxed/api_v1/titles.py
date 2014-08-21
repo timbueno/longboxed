@@ -5,11 +5,12 @@
 
     Title endpoints
 """
+from datetime import datetime
 
 from flask import Blueprint, jsonify, request
 from sqlalchemy.orm.exc import NoResultFound
 
-from ..helpers import current_wednesday
+from ..helpers import current_wednesday, next_wednesday, after_wednesday
 from ..models import Title, Issue
 from .errors import bad_request
 from . import route
@@ -52,9 +53,18 @@ def get_issues_for_title(id):
     title = Title.query.get_or_404(id)
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 50, type=int)
-    pagination = Issue.query.filter(Issue.title==title, Issue.on_sale_date <= current_wednesday()) \
-        .order_by(Issue.on_sale_date.desc()) \
-        .paginate(page, per_page=count, error_out=False)
+
+    # Set the maximum date to search for issues (This week or next week)
+    if after_wednesday(datetime.today().date()):
+        date = next_wednesday()
+    else:
+        date = current_wednesday()
+
+    pagination = Issue.query.filter(
+                                Issue.title==title,
+                                Issue.on_sale_date <= date)\
+                            .order_by(Issue.on_sale_date.desc())\
+                            .paginate(page, per_page=count, error_out=False)
     issues = pagination.items
     prev = None
     if pagination.has_prev:
@@ -81,10 +91,10 @@ def autocomplete():
     searchstring = '%%'.join(keywords)
     searchstring = '%%%s%%' % (searchstring)
     try:
-        res = Title.query.filter(Title.name.ilike(searchstring)).\
-                         order_by(Title.num_subscribers.desc()).\
-                         limit(20).\
-                         all()
+        res = Title.query.filter(Title.name.ilike(searchstring))\
+                         .order_by(Title.num_subscribers.desc())\
+                         .limit(20)\
+                         .all()
         return jsonify({
                 'query': fragment,
                 'suggestions': [r.to_json() for r in res],
