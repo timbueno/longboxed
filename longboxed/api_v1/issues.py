@@ -31,9 +31,7 @@ def issues_with_date():
         date = datetime.strptime(date, '%Y-%m-%d')
     else:
         return abort(404)
-    pagination = Issue.query.filter(
-                                Issue.on_sale_date==date,
-                                Issue.is_parent==True)\
+    pagination = Issue.query.filter(Issue.on_sale_date==date)\
                             .paginate(page, per_page=count, error_out=False)
     issues = pagination.items
     prev = None
@@ -65,9 +63,7 @@ def this_week():
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 50, type=int)
     date = current_wednesday()
-    pagination = Issue.query.filter(
-                                Issue.on_sale_date==date,
-                                Issue.is_parent==True)\
+    pagination = Issue.query.filter(Issue.on_sale_date==date)\
                              .paginate(page, per_page=50, error_out=False)
     issues = pagination.items
     prev = None
@@ -91,9 +87,7 @@ def next_week():
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 50, type=int)
     date = next_wednesday()
-    pagination = Issue.query.filter(
-                                Issue.on_sale_date==date,
-                                Issue.is_parent==True)\
+    pagination = Issue.query.filter(Issue.on_sale_date==date)\
                             .paginate(page, per_page=50, error_out=False)
     issues = pagination.items
     prev = None
