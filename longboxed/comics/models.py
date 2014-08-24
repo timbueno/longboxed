@@ -12,6 +12,7 @@ from decimal import Decimal
 from HTMLParser import HTMLParser
 
 import requests
+from requests.exceptions import Timeout
 
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -424,7 +425,8 @@ class Issue(db.Model, CRUDMixin):
         }
         return i
 
-    def set_cover_image_from_url(self, url, overwrite=False, default=False):
+    def set_cover_image_from_url(self, url, overwrite=False, default=False,
+            timeout=5):
         """
         Downloads a jpeg file from a url and stores it in the image store.
 
@@ -435,7 +437,7 @@ class Issue(db.Model, CRUDMixin):
         created_flag = False
         try:
             if not self.cover_image.original or overwrite:
-                r = requests.get(url)
+                r = requests.get(url, timeout=timeout)
                 if r.status_code==200 and r.headers['content-type']=='image/jpeg':
                     with store_context(store):
                         self.cover_image.from_blob(r.content)
@@ -445,6 +447,8 @@ class Issue(db.Model, CRUDMixin):
                         created_flag = True
         except Exception, err:
             print 'Exception caught in set_cover_image_from_url', err
+        except Timeout:
+            print 'The request for the image has timed out!'
         return created_flag
 
     def find_or_create_thumbnail(self, width=None, height=None):
