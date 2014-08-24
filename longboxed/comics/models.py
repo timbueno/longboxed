@@ -425,7 +425,8 @@ class Issue(db.Model, CRUDMixin):
         }
         return i
 
-    def set_cover_image_from_url(self, url, overwrite=False, default=False):
+    def set_cover_image_from_url(self, url, overwrite=False, default=False,
+            timeout=5):
         """
         Downloads a jpeg file from a url and stores it in the image store.
 
@@ -436,7 +437,7 @@ class Issue(db.Model, CRUDMixin):
         created_flag = False
         try:
             if not self.cover_image.original or overwrite:
-                r = requests.get(url, timeout=1)
+                r = requests.get(url, timeout=timeout)
                 if r.status_code==200 and r.headers['content-type']=='image/jpeg':
                     with store_context(store):
                         self.cover_image.from_blob(r.content)
