@@ -46,6 +46,7 @@ class Publisher(db.Model, CRUDMixin):
     id = db.Column(db.Integer, primary_key=True)
     #: Attributes
     name = db.Column(db.String(255))
+    logo = image_attachment('PublisherLogo')
     #: Relationships
     titles = db.relationship(
         'Title',
@@ -86,6 +87,26 @@ class Publisher(db.Model, CRUDMixin):
             'issue_count': self.comics.count()
         }
         return p
+
+    @classmethod
+    def set_publisher_images(cls):
+        for pub in cls.query.all():
+            name = pub.name.lower()
+            name = name.replace(' ', '_')
+            print name
+
+
+class PublisherLogo(db.Model, Image):
+    """
+    Color publisher logo
+    """
+    __tablename__ = 'publisher_logo'
+
+    publisher_id = db.Column(
+            db.Integer,
+            db.ForeignKey('publishers.id'),
+            primary_key=True)
+    publisher = db.relationship('Publisher')
 
 
 class Title(db.Model, CRUDMixin):
