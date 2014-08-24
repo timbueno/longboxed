@@ -46,8 +46,10 @@ class Publisher(db.Model, CRUDMixin):
     id = db.Column(db.Integer, primary_key=True)
     #: Attributes
     name = db.Column(db.String(255))
+    #: Images
     logo = image_attachment('PublisherLogo')
     logo_bw = image_attachment('PublisherLogoBW')
+    splash = image_attachment('PublisherSplash')
     #: Relationships
     titles = db.relationship(
         'Title',
@@ -100,6 +102,28 @@ class Publisher(db.Model, CRUDMixin):
                 print 'Could not set %s logo, rolling back session' % self.name
                 db.session.rollback()
 
+    def set_logo_bw(self, image, overwrite=False):
+        if not self.logo_bw.original or overwrite:
+            try:
+                print 'Setting b&w logo image for %s...' % self.name
+                with store_context(store):
+                    image = self.logo_bw.from_file(image)
+                    self.save()
+            except Exception:
+                print 'Could not set %s logo, rolling back session' % self.name
+                db.session.rollback()
+
+    def set_splash(self, image, overwrite=False):
+        if not self.splash.original or overwrite:
+            try:
+                print 'Setting b&w logo image for %s...' % self.name
+                with store_context(store):
+                    image = self.splash.from_file(image)
+                    self.save()
+            except Exception:
+                print 'Could not set %s splash rolling back session' % self.name
+                db.session.rollback()
+
     @classmethod
     def set_images(cls, overwrite=False):
         for pub in cls.query.all():
@@ -111,7 +135,23 @@ class Publisher(db.Model, CRUDMixin):
                     with open(file_path, 'rb') as f:
                         pub.set_logo(f, overwrite)
             except IOError:
-                print 'No file found for %s' % pub.name
+                print 'No logo found for %s' % pub.name
+                print '    File path: %s' % file_path
+            try:
+                if not pub.logo_bw.original or overwrite:
+                    file_path = 'media/publisher_images/%s_bw.png' % name
+                    with open(file_path, 'rb') as f:
+                        pub.set_logo_bw(f, overwrite)
+            except IOError:
+                print 'No black and white logo  found for %s' % pub.name
+                print '    File path: %s' % file_path
+            try:
+                if not pub.splash.original or overwrite:
+                    file_path = 'media/publisher_images/%s_splash.png' % name
+                    with open(file_path, 'rb') as f:
+                        pub.set_splash(f, overwrite)
+            except IOError:
+                print 'No splash image found for %s' % pub.name
                 print '    File path: %s' % file_path
 
 
@@ -140,6 +180,18 @@ class PublisherLogoBW(db.Model, Image):
             primary_key=True)
     publisher = db.relationship('Publisher')
 
+
+class PublisherSplash(db.Model, Image):
+    """
+    Slash image for publisher object
+    """
+    __tablename__ = 'publisher_splash'
+
+    publisher_id = db.Column(
+            db.Integer,
+            db.ForeignKey('publishers.id'),
+            primary_key=True)
+    publisher = db.relationship('Publisher')
 
 
 class Title(db.Model, CRUDMixin):
