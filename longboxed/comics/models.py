@@ -433,15 +433,18 @@ class Issue(db.Model, CRUDMixin):
         :param overwrite: Boolean flag that overwrites an existing image
         """
         created_flag = False
-        if not self.cover_image.original or overwrite:
-            r = requests.get(url)
-            if r.status_code==200 and r.headers['content-type']=='image/jpeg':
-                with store_context(store):
-                    self.cover_image.from_blob(r.content)
-                    self.save()
-                    self.cover_image.generate_thumbnail(height=600)
-                    self.save()
-                    created_flag = True
+        try:
+            if not self.cover_image.original or overwrite:
+                r = requests.get(url)
+                if r.status_code==200 and r.headers['content-type']=='image/jpeg':
+                    with store_context(store):
+                        self.cover_image.from_blob(r.content)
+                        self.save()
+                        self.cover_image.generate_thumbnail(height=600)
+                        self.save()
+                        created_flag = True
+        except Exception, err:
+            print 'Exception caught in set_cover_image_from_url', err
         return created_flag
 
     def find_or_create_thumbnail(self, width=None, height=None):
