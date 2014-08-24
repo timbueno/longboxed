@@ -88,12 +88,30 @@ class Publisher(db.Model, CRUDMixin):
         }
         return p
 
+    def set_logo(self, image, overwrite=False):
+        if not self.logo.original or overwrite:
+            try:
+                print 'Setting logo image for %s...' % self.name
+                with store_context(store):
+                    image = self.logo.from_file(image)
+                    self.save()
+            except Exception:
+                print 'Could not set %s logo, rolling back session' % self.name
+                db.session.rollback()
+
     @classmethod
-    def set_publisher_images(cls):
+    def set_images(cls, overwrite=False):
         for pub in cls.query.all():
             name = pub.name.lower()
             name = name.replace(' ', '_')
-            print name
+            try:
+                if not pub.logo.original or overwrite:
+                    file_path = 'media/publisher_images/%s.png' % name
+                    with open(file_path, 'rb') as f:
+                        pub.set_logo(f, overwrite)
+            except IOError:
+                print 'No file found for %s' % pub.name
+                print '    File path: %s' % file_path
 
 
 class PublisherLogo(db.Model, Image):
