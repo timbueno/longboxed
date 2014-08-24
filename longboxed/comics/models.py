@@ -114,6 +114,7 @@ class Title(db.Model, CRUDMixin):
     def from_raw(cls, record):
         record = deepcopy(record)
         # Complete Title
+        complete_title = ''
         try:
             complete_title = record.get('complete_title')
             m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>([+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', complete_title).groupdict()
@@ -130,7 +131,7 @@ class Title(db.Model, CRUDMixin):
                 title = cls.create(name=name)
                 created = created + 1
         except Exception, err:
-            print 'Title failed creation: ', m.get('title')
+            print 'Title failed creation: ', complete_title
             print 'Error: ', err
             db.session.rollback()
             title = None
