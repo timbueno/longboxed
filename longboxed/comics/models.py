@@ -47,6 +47,7 @@ class Publisher(db.Model, CRUDMixin):
     #: Attributes
     name = db.Column(db.String(255))
     logo = image_attachment('PublisherLogo')
+    logo_bw = image_attachment('PublisherLogoBW')
     #: Relationships
     titles = db.relationship(
         'Title',
@@ -125,6 +126,20 @@ class PublisherLogo(db.Model, Image):
             db.ForeignKey('publishers.id'),
             primary_key=True)
     publisher = db.relationship('Publisher')
+
+
+class PublisherLogoBW(db.Model, Image):
+    """
+    Black and white publisher logo
+    """
+    __tablename__ = 'publisher_logo_bw'
+
+    publisher_id = db.Column(
+            db.Integer,
+            db.ForeignKey('publishers.id'),
+            primary_key=True)
+    publisher = db.relationship('Publisher')
+
 
 
 class Title(db.Model, CRUDMixin):
