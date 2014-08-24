@@ -136,7 +136,7 @@ class Publisher(db.Model, CRUDMixin):
                         pub.set_logo(f, overwrite)
             except IOError:
                 print 'No logo found for %s' % pub.name
-                print '    File path: %s' % file_path
+                print '    File not found: %s' % file_path
             try:
                 if not pub.logo_bw.original or overwrite:
                     file_path = 'media/publisher_images/%s_bw.png' % name
@@ -144,7 +144,7 @@ class Publisher(db.Model, CRUDMixin):
                         pub.set_logo_bw(f, overwrite)
             except IOError:
                 print 'No black and white logo  found for %s' % pub.name
-                print '    File path: %s' % file_path
+                print '    File not found: %s' % file_path
             try:
                 if not pub.splash.original or overwrite:
                     file_path = 'media/publisher_images/%s_splash.png' % name
@@ -152,7 +152,7 @@ class Publisher(db.Model, CRUDMixin):
                         pub.set_splash(f, overwrite)
             except IOError:
                 print 'No splash image found for %s' % pub.name
-                print '    File path: %s' % file_path
+                print '    File not found: %s' % file_path
 
 
 class PublisherLogo(db.Model, Image):
