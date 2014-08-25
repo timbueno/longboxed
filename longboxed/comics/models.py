@@ -83,11 +83,44 @@ class Publisher(db.Model, CRUDMixin):
         return self.name
 
     def to_json(self):
+        if self.logo.original:
+            logo = self.logo.locate()
+            logo_md = self.logo.find_thumbnail(height=512).locate()
+            logo_sm = self.logo.find_thumbnail(height=256).locate()
+        else:
+            logo, logo_md, logo_sm = None, None, None
+        if self.logo_bw.original:
+            logo_bw = self.logo_bw.locate()
+            logo_bw_md = self.logo_bw.find_thumbnail(height=512).locate()
+            logo_bw_sm = self.logo_bw.find_thumbnail(height=256).locate()
+        else:
+            logo_bw, logo_bw_md, logo_bw_sm = None, None, None
+        if self.splash.original:
+            splash = self.splash.locate()
+            splash_md = None
+            splash_sm = None
+        else:
+            splash, splash_md, splash_sm = None, None, None
         p = {
             'id': self.id,
             'name': self.name,
             'title_count': self.titles.count(),
-            'issue_count': self.comics.count()
+            'issue_count': self.comics.count(),
+            'logo': {
+                'sm': logo_sm,
+                'md': logo_md,
+                'lg': logo
+            },
+            'logo_bw': {
+                'sm': logo_bw_sm,
+                'md': logo_bw_md,
+                'lg': logo_bw
+            },
+            'splash': {
+                'sm': splash_sm,
+                'md': splash_md,
+                'lg': splash
+            }
         }
         return p
 
