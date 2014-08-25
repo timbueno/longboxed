@@ -91,26 +91,36 @@ class Publisher(db.Model, CRUDMixin):
         }
         return p
 
-    def set_logo(self, image, overwrite=False):
+    def set_logo(self, image, thumbnail_heights=[512, 256], overwrite=False):
         if not self.logo.original or overwrite:
             try:
                 print 'Setting logo image for %s...' % self.name
                 with store_context(store):
-                    image = self.logo.from_file(image)
+                    self.logo.from_file(image)
                     self.save()
-            except Exception:
+                    for height in thumbnail_heights:
+                        print '    Generating h%i px thumbnail...' % height
+                        self.logo.generate_thumbnail(height=height)
+                        self.save()
+            except Exception, err:
                 print 'Could not set %s logo, rolling back session' % self.name
+                print '    Error: %s' % err
                 db.session.rollback()
 
-    def set_logo_bw(self, image, overwrite=False):
+    def set_logo_bw(self, image, thumbnail_heights=[512, 256], overwrite=False):
         if not self.logo_bw.original or overwrite:
             try:
                 print 'Setting b&w logo image for %s...' % self.name
                 with store_context(store):
-                    image = self.logo_bw.from_file(image)
+                    self.logo_bw.from_file(image)
                     self.save()
-            except Exception:
+                    for height in thumbnail_heights:
+                        print '    Generating h%i px thumbnail...' % height
+                        self.logo_bw.generate_thumbnail(height=height)
+                        self.save()
+            except Exception, err:
                 print 'Could not set %s logo, rolling back session' % self.name
+                print '    Error: %s' % err
                 db.session.rollback()
 
     def set_splash(self, image, overwrite=False):
@@ -118,7 +128,7 @@ class Publisher(db.Model, CRUDMixin):
             try:
                 print 'Setting b&w logo image for %s...' % self.name
                 with store_context(store):
-                    image = self.splash.from_file(image)
+                    self.splash.from_file(image)
                     self.save()
             except Exception:
                 print 'Could not set %s splash rolling back session' % self.name
@@ -133,7 +143,7 @@ class Publisher(db.Model, CRUDMixin):
                 if not pub.logo.original or overwrite:
                     file_path = 'media/publisher_images/%s.png' % name
                     with open(file_path, 'rb') as f:
-                        pub.set_logo(f, overwrite)
+                        pub.set_logo(f, overwrite=overwrite)
             except IOError:
                 print 'No logo found for %s' % pub.name
                 print '    File not found: %s' % file_path
@@ -141,7 +151,7 @@ class Publisher(db.Model, CRUDMixin):
                 if not pub.logo_bw.original or overwrite:
                     file_path = 'media/publisher_images/%s_bw.png' % name
                     with open(file_path, 'rb') as f:
-                        pub.set_logo_bw(f, overwrite)
+                        pub.set_logo_bw(f, overwrite=overwrite)
             except IOError:
                 print 'No black and white logo  found for %s' % pub.name
                 print '    File not found: %s' % file_path
@@ -149,7 +159,7 @@ class Publisher(db.Model, CRUDMixin):
                 if not pub.splash.original or overwrite:
                     file_path = 'media/publisher_images/%s_splash.png' % name
                     with open(file_path, 'rb') as f:
-                        pub.set_splash(f, overwrite)
+                        pub.set_splash(f, overwrite=overwrite)
             except IOError:
                 print 'No splash image found for %s' % pub.name
                 print '    File not found: %s' % file_path
