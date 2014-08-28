@@ -62,6 +62,10 @@ def deploy():
     Role.insert_roles()
     print 'done'
 
+    print 'Checking for Publisher images...'
+    Publisher.set_images()
+    print 'done'
+
 
 if __name__ == '__main__':
     manager.run()
