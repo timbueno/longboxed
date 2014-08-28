@@ -58,14 +58,8 @@ def deploy():
     upgrade()
     print 'done'
 
-    # Add user roles
     print 'Checking for user roles...',
     Role.insert_roles()
-    print 'done'
-
-    # Attach images to publishers
-    print 'Settings images on publishers...'
-    Publisher.set_images()
     print 'done'
 
 
