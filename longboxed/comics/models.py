@@ -46,6 +46,13 @@ class Publisher(db.Model, CRUDMixin):
     id = db.Column(db.Integer, primary_key=True)
     #: Attributes
     name = db.Column(db.String(255))
+    #: Images
+    logo = image_attachment('PublisherLogo')
+    logo_bw = image_attachment('PublisherLogoBW')
+    splash = image_attachment('PublisherSplash')
+    #: Colors
+    primary_color = db.Column(db.String(20), default='#aaaaaa')
+    secondary_color = db.Column(db.String(20), default='#aaaaaa')
     #: Relationships
     titles = db.relationship(
         'Title',
@@ -79,13 +86,163 @@ class Publisher(db.Model, CRUDMixin):
         return self.name
 
     def to_json(self):
+        if self.logo.original:
+            logo = self.logo.locate()
+            logo_md = self.logo.find_thumbnail(height=512).locate()
+            logo_sm = self.logo.find_thumbnail(height=256).locate()
+        else:
+            logo, logo_md, logo_sm = None, None, None
+        if self.logo_bw.original:
+            logo_bw = self.logo_bw.locate()
+            logo_bw_md = self.logo_bw.find_thumbnail(height=512).locate()
+            logo_bw_sm = self.logo_bw.find_thumbnail(height=256).locate()
+        else:
+            logo_bw, logo_bw_md, logo_bw_sm = None, None, None
+        if self.splash.original:
+            splash = self.splash.locate()
+            splash_md = None
+            splash_sm = None
+        else:
+            splash, splash_md, splash_sm = None, None, None
         p = {
             'id': self.id,
             'name': self.name,
             'title_count': self.titles.count(),
-            'issue_count': self.comics.count()
+            'issue_count': self.comics.count(),
+            'logo': {
+                'sm': logo_sm,
+                'md': logo_md,
+                'lg': logo
+            },
+            'logo_bw': {
+                'sm': logo_bw_sm,
+                'md': logo_bw_md,
+                'lg': logo_bw
+            },
+            'splash': {
+                'sm': splash_sm,
+                'md': splash_md,
+                'lg': splash
+            },
+            'colors': {
+                'primary': self.primary_color or '#aaaaaa',
+                'secondary': self.secondary_color or '#aaaaaa'
+            }
         }
         return p
+
+    def set_logo(self, image, thumbnail_heights=[512, 256], overwrite=False):
+        if not self.logo.original or overwrite:
+            try:
+                print 'Setting logo image for %s...' % self.name
+                with store_context(store):
+                    self.logo.from_file(image)
+                    self.save()
+                    for height in thumbnail_heights:
+                        print '    Generating h%i px thumbnail...' % height
+                        self.logo.generate_thumbnail(height=height)
+                        self.save()
+            except Exception, err:
+                print 'Could not set %s logo, rolling back session' % self.name
+                print '    Error: %s' % err
+                db.session.rollback()
+
+    def set_logo_bw(self, image, thumbnail_heights=[512, 256], overwrite=False):
+        if not self.logo_bw.original or overwrite:
+            try:
+                print 'Setting b&w logo image for %s...' % self.name
+                with store_context(store):
+                    self.logo_bw.from_file(image)
+                    self.save()
+                    for height in thumbnail_heights:
+                        print '    Generating h%i px thumbnail...' % height
+                        self.logo_bw.generate_thumbnail(height=height)
+                        self.save()
+            except Exception, err:
+                print 'Could not set %s logo, rolling back session' % self.name
+                print '    Error: %s' % err
+                db.session.rollback()
+
+    def set_splash(self, image, overwrite=False):
+        if not self.splash.original or overwrite:
+            try:
+                print 'Setting b&w logo image for %s...' % self.name
+                with store_context(store):
+                    self.splash.from_file(image)
+                    self.save()
+            except Exception:
+                print 'Could not set %s splash rolling back session' % self.name
+                db.session.rollback()
+
+    @classmethod
+    def set_images(cls, overwrite=False):
+        for pub in cls.query.all():
+            name = pub.name.lower()
+            name = name.replace(' ', '_')
+            try:
+                if not pub.logo.original or overwrite:
+                    file_path = 'media/publisher_images/%s.png' % name
+                    with open(file_path, 'rb') as f:
+                        pub.set_logo(f, overwrite=overwrite)
+            except IOError, err:
+                print 'No logo found for %s' % pub.name
+                print '    File not found: %s' % file_path
+                print '    %s' % err
+            try:
+                if not pub.logo_bw.original or overwrite:
+                    file_path = 'media/publisher_images/%s_bw.png' % name
+                    with open(file_path, 'rb') as f:
+                        pub.set_logo_bw(f, overwrite=overwrite)
+            except IOError:
+                print 'No black and white logo  found for %s' % pub.name
+                print '    File not found: %s' % file_path
+            try:
+                if not pub.splash.original or overwrite:
+                    file_path = 'media/publisher_images/%s_splash.png' % name
+                    with open(file_path, 'rb') as f:
+                        pub.set_splash(f, overwrite=overwrite)
+            except IOError:
+                print 'No splash image found for %s' % pub.name
+                print '    File not found: %s' % file_path
+
+
+class PublisherLogo(db.Model, Image):
+    """
+    Color publisher logo
+    """
+    __tablename__ = 'publisher_logo'
+
+    publisher_id = db.Column(
+            db.Integer,
+            db.ForeignKey('publishers.id'),
+            primary_key=True)
+    publisher = db.relationship('Publisher')
+
+
+class PublisherLogoBW(db.Model, Image):
+    """
+    Black and white publisher logo
+    """
+    __tablename__ = 'publisher_logo_bw'
+
+    publisher_id = db.Column(
+            db.Integer,
+            db.ForeignKey('publishers.id'),
+            primary_key=True)
+    publisher = db.relationship('Publisher')
+
+
+class PublisherSplash(db.Model, Image):
+    """
+    Slash image for publisher object
+    """
+    __tablename__ = 'publisher_splash'
+
+    publisher_id = db.Column(
+            db.Integer,
+            db.ForeignKey('publishers.id'),
+            primary_key=True)
+    publisher = db.relationship('Publisher')
 
 
 class Title(db.Model, CRUDMixin):
