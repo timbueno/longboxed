@@ -50,6 +50,9 @@ class Publisher(db.Model, CRUDMixin):
     logo = image_attachment('PublisherLogo')
     logo_bw = image_attachment('PublisherLogoBW')
     splash = image_attachment('PublisherSplash')
+    #: Colors
+    primary_color = db.Column(db.String(20), default='#aaaaaa')
+    secondary_color = db.Column(db.String(20), default='#aaaaaa')
     #: Relationships
     titles = db.relationship(
         'Title',
@@ -120,6 +123,10 @@ class Publisher(db.Model, CRUDMixin):
                 'sm': splash_sm,
                 'md': splash_md,
                 'lg': splash
+            },
+            'colors': {
+                'primary': self.primary_color or '#aaaaaa',
+                'secondary': self.secondary_color or '#aaaaaa'
             }
         }
         return p
@@ -177,9 +184,10 @@ class Publisher(db.Model, CRUDMixin):
                     file_path = 'media/publisher_images/%s.png' % name
                     with open(file_path, 'rb') as f:
                         pub.set_logo(f, overwrite=overwrite)
-            except IOError:
+            except IOError, err:
                 print 'No logo found for %s' % pub.name
                 print '    File not found: %s' % file_path
+                print '    %s' % err
             try:
                 if not pub.logo_bw.original or overwrite:
                     file_path = 'media/publisher_images/%s_bw.png' % name
