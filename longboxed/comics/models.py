@@ -563,6 +563,11 @@ class Issue(db.Model, CRUDMixin):
             ]
         else:
             alternates = []
+        if self.cover_image.original:
+            cover_image = self.find_or_create_thumbnail(width=500)
+            cover_image = cover_image.locate()
+        else:
+            cover_image = None
         i = {
             'id': self.id,
             'complete_title': self.complete_title,
@@ -575,7 +580,7 @@ class Issue(db.Model, CRUDMixin):
             'diamond_id': self.diamond_id,
             'release_date': release_date,
             'issue_number': self.issue_number,
-            'cover_image': self.cover_image.find_thumbnail(width=500).locate(),
+            'cover_image': cover_image,
             'description': self.description,
             'is_parent': self.is_parent,
             'alternates': alternates
