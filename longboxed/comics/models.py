@@ -313,7 +313,6 @@ class Title(db.Model, CRUDMixin):
                    .label('total_subscribers')
                 )
 
-
     def get_latest_released_issue(self):
         # Set the maximum date to search for issues (This week or next week)
         if after_wednesday(datetime.today().date()):
@@ -330,19 +329,6 @@ class Title(db.Model, CRUDMixin):
 
     def to_json(self):
         issue = self.get_latest_released_issue()
-        if issue:
-            if issue.cover_image.original:
-                cover_image = issue.find_or_create_thumbnail(width=500)
-                cover_image = cover_image.locate()
-            else:
-                cover_image = None
-            if issue.on_sale_date:
-                release_date = issue.on_sale_date.strftime('%Y-%m-%d')
-            else:
-                release_date = None
-        else:
-            cover_image = None
-            release_date = None
         t = {
             'id': self.id,
             'name': self.name,
@@ -350,10 +336,7 @@ class Title(db.Model, CRUDMixin):
                           'name': self.publisher.name},
             'issue_count': self.issues.count(),
             'subscribers': self.users.count(),
-            'latest_issue': {
-                'cover_image': cover_image,
-                'release_date': release_date
-            }
+            'latest_issue': issue.to_json() if issue else None
         }
         return t
 
