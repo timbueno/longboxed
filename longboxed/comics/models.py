@@ -19,7 +19,8 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_imageattach.entity import Image, image_attachment, store_context
 
 from ..core import store, db, CRUDMixin
-from ..helpers import is_float
+from ..helpers import (is_float, after_wednesday, next_wednesday,
+                       current_wednesday)
 
 
 #: Many-to-Many relationship for bundles and issues helper table
@@ -312,14 +313,47 @@ class Title(db.Model, CRUDMixin):
                    .label('total_subscribers')
                 )
 
+
+    def get_latest_released_issue(self):
+        # Set the maximum date to search for issues (This week or next week)
+        if after_wednesday(datetime.today().date()):
+            date = next_wednesday()
+        else:
+            date = current_wednesday()
+
+        i = self.issues.filter(
+                            Issue.on_sale_date <= date,
+                            Issue.on_sale_date != None)\
+                       .order_by(Issue.on_sale_date.desc())\
+                       .first()
+        return i
+
     def to_json(self):
+        issue = self.get_latest_released_issue()
+        if issue:
+            if issue.cover_image.original:
+                cover_image = issue.find_or_create_thumbnail(width=500)
+                cover_image = cover_image.locate()
+            else:
+                cover_image = None
+            if issue.on_sale_date:
+                release_date = issue.on_sale_date.strftime('%Y-%m-%d')
+            else:
+                release_date = None
+        else:
+            cover_image = None
+            release_date = None
         t = {
             'id': self.id,
             'name': self.name,
             'publisher': {'id': self.publisher.id,
                           'name': self.publisher.name},
             'issue_count': self.issues.count(),
-            'subscribers': self.users.count()
+            'subscribers': self.users.count(),
+            'latest_issue': {
+                'cover_image': cover_image,
+                'release_date': release_date
+            }
         }
         return t
 
