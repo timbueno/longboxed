@@ -334,7 +334,7 @@ class Title(db.Model, CRUDMixin):
                        .order_by(Issue.on_sale_date.asc())\
                        .all()
         print i
-        return i
+        return i[0]
 
     def to_json(self):
         issue = self.get_latest_released_issue()
