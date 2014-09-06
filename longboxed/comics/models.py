@@ -319,22 +319,18 @@ class Title(db.Model, CRUDMixin):
             date = next_wednesday()
         else:
             date = current_wednesday()
-
-        print date
-
         #i = self.issues.filter(
                             #Issue.on_sale_date <= date,
                             #Issue.on_sale_date != None)\
                        #.order_by(Issue.on_sale_date.desc())\
                        #.first()
-
-        i = self.issues.filter(
+        i = Issue.query.filter(
+                            Issue.title == self,
                             Issue.on_sale_date <= date,
                             Issue.on_sale_date != None)\
-                       .order_by(Issue.on_sale_date.asc())\
-                       .all()
-        print i
-        return i[0]
+                        .order_by(Issue.on_sale_date.desc())\
+                        .first()
+        return i
 
     def to_json(self):
         issue = self.get_latest_released_issue()
