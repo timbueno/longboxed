@@ -331,7 +331,7 @@ class Title(db.Model, CRUDMixin):
         i = self.issues.filter(
                             Issue.on_sale_date <= date,
                             Issue.on_sale_date != None)\
-                       .order_by(Issue.on_sale_date.desc())\
+                       .order_by(Issue.on_sale_date.asc())\
                        .all()
         print i
         return i
