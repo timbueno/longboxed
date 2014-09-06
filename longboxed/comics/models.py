@@ -265,8 +265,7 @@ class Title(db.Model, CRUDMixin):
     #: Relationships
     issues = db.relationship('Issue',
         backref=db.backref('title', lazy='joined'),
-        lazy='dynamic',
-        order_by='Issue.on_sale_date'
+        lazy='dynamic'
     )
 
     @classmethod
@@ -319,17 +318,11 @@ class Title(db.Model, CRUDMixin):
             date = next_wednesday()
         else:
             date = current_wednesday()
-        #i = self.issues.filter(
-                            #Issue.on_sale_date <= date,
-                            #Issue.on_sale_date != None)\
-                       #.order_by(Issue.on_sale_date.desc())\
-                       #.first()
-        i = Issue.query.filter(
-                            Issue.title == self,
+        i = self.issues.filter(
                             Issue.on_sale_date <= date,
                             Issue.on_sale_date != None)\
-                        .order_by(Issue.on_sale_date.desc())\
-                        .first()
+                       .order_by(Issue.on_sale_date.desc())\
+                       .first()
         return i
 
     def to_json(self):
