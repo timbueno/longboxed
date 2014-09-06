@@ -19,7 +19,8 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_imageattach.entity import Image, image_attachment, store_context
 
 from ..core import store, db, CRUDMixin
-from ..helpers import is_float
+from ..helpers import (is_float, after_wednesday, next_wednesday,
+                       current_wednesday)
 
 
 #: Many-to-Many relationship for bundles and issues helper table
@@ -264,8 +265,7 @@ class Title(db.Model, CRUDMixin):
     #: Relationships
     issues = db.relationship('Issue',
         backref=db.backref('title', lazy='joined'),
-        lazy='dynamic',
-        order_by='Issue.on_sale_date'
+        lazy='dynamic'
     )
 
     @classmethod
@@ -312,14 +312,29 @@ class Title(db.Model, CRUDMixin):
                    .label('total_subscribers')
                 )
 
+    def get_latest_released_issue(self):
+        # Set the maximum date to search for issues (This week or next week)
+        if after_wednesday(datetime.today().date()):
+            date = next_wednesday()
+        else:
+            date = current_wednesday()
+        i = self.issues.filter(
+                            Issue.on_sale_date <= date,
+                            Issue.on_sale_date != None)\
+                       .order_by(Issue.on_sale_date.desc())\
+                       .first()
+        return i
+
     def to_json(self):
+        issue = self.get_latest_released_issue()
         t = {
             'id': self.id,
             'name': self.name,
             'publisher': {'id': self.publisher.id,
                           'name': self.publisher.name},
             'issue_count': self.issues.count(),
-            'subscribers': self.users.count()
+            'subscribers': self.users.count(),
+            'latest_issue': issue.to_json() if issue else None
         }
         return t
 
