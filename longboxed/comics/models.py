@@ -319,6 +319,7 @@ class Title(db.Model, CRUDMixin):
         else:
             date = current_wednesday()
         i = self.issues.filter(
+                            Issue.is_parent == True,
                             Issue.on_sale_date <= date,
                             Issue.on_sale_date != None)\
                        .order_by(Issue.on_sale_date.desc())\
