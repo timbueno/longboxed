@@ -302,6 +302,13 @@ class Title(db.Model, CRUDMixin):
     def issue_count(self):
         return self.issues.filter(Issue.is_parent==True).count()
 
+    @property
+    def scheduled_issue_count(self):
+        return self.issues.filter(
+                            Issue.on_sale_date != None,
+                            Issue.is_parent==True)\
+                          .count()
+
     @hybrid_property
     def num_subscribers(self):
         return self.users.count()
@@ -337,7 +344,7 @@ class Title(db.Model, CRUDMixin):
             'name': self.name,
             'publisher': {'id': self.publisher.id,
                           'name': self.publisher.name},
-            'issue_count': self.issue_count,
+            'issue_count': self.scheduled_issue_count,
             'subscribers': self.num_subscribers,
             'latest_issue': issue.to_json() if issue else None
         }
