@@ -19,6 +19,7 @@ echo '-----> Restoring exported database on staging server...'
 #ssh root@staging.longboxed.com FILENAME=$FILENAME <<'ENDSSH'
 #	"dokku postgresql:restore staging < /root/backup/longboxed_database/$FILENAME"
 #ENDSSH
+echo "-----: $NOW - Longboxed Sync :-----" >> /home/logs/db_restore_log.txt
 ssh root@staging.longboxed.com \
     "dokku postgresql:restore staging < /root/backup/longboxed_database/$FILENAME" \
     >> /home/logs/db_restore_log.txt 2>&1\
