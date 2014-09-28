@@ -1,7 +1,10 @@
 #!/bin/bash
+export PATH="/root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
+
 NOW=$(date +"%F")
 FILENAME="$NOW-longboxed-backup.sql"
 
+echo '-----: $NOW - Longboxed Sync :-----'
 echo '-----> Syncing production and staging S3 buckets....'
 aws s3 sync s3://longboxed_dokku s3://lbstaging
 echo '-----> Backing up production S3 bucket to backup S3 bucket....'
