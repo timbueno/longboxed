@@ -132,33 +132,43 @@ class Publisher(db.Model, CRUDMixin):
         }
         return p
 
-    def set_logo(self, image, thumbnail_heights=[512, 256], overwrite=False):
+    def set_logo(self, image, thumb_dimensions=[512, 256], overwrite=False):
         if not self.logo.original or overwrite:
             try:
                 print 'Setting logo image for %s...' % self.name
                 with store_context(store):
                     self.logo.from_file(image)
                     self.save()
-                    for height in thumbnail_heights:
-                        print '    Generating h%i px thumbnail...' % height
-                        self.logo.generate_thumbnail(height=height)
-                        self.save()
+                    if self.logo.original.height > self.logo.original.width:
+                        for height in thumb_dimensions:
+                            print '    Generating h%i px thumbnail...' % height
+                            self.logo.generate_thumbnail(height=height)
+                    else:
+                        for width in thumb_dimensions:
+                            print '    Generating w%i px thumbnail...' % height
+                            self.logo.generate_thumbnail(width=width)
+                    self.save()
             except Exception, err:
                 print 'Could not set %s logo, rolling back session' % self.name
                 print '    Error: %s' % err
                 db.session.rollback()
 
-    def set_logo_bw(self, image, thumbnail_heights=[512, 256], overwrite=False):
+    def set_logo_bw(self, image, thumb_dimensions=[512, 256], overwrite=False):
         if not self.logo_bw.original or overwrite:
             try:
                 print 'Setting b&w logo image for %s...' % self.name
                 with store_context(store):
                     self.logo_bw.from_file(image)
                     self.save()
-                    for height in thumbnail_heights:
-                        print '    Generating h%i px thumbnail...' % height
-                        self.logo_bw.generate_thumbnail(height=height)
-                        self.save()
+                    if self.logo_bw.original.height > self.logo_bw.original.width:
+                        for height in thumb_dimensions:
+                            print '    Generating h%i px thumbnail...' % height
+                            self.logo_bw.generate_thumbnail(height=height)
+                    else:
+                        for width in thumb_dimensions:
+                            print '    Generating w%i px thumbnail...' % width
+                            self.logo_bw.generate_thumbnail(width=width)
+                    self.save()
             except Exception, err:
                 print 'Could not set %s logo, rolling back session' % self.name
                 print '    Error: %s' % err
@@ -167,7 +177,7 @@ class Publisher(db.Model, CRUDMixin):
     def set_splash(self, image, overwrite=False):
         if not self.splash.original or overwrite:
             try:
-                print 'Setting b&w logo image for %s...' % self.name
+                print 'Setting splash image for %s...' % self.name
                 with store_context(store):
                     self.splash.from_file(image)
                     self.save()
