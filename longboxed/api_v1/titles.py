@@ -23,7 +23,8 @@ bp = Blueprint('titles', __name__, url_prefix='/titles')
 def get_titles():
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 50, type=int)
-    pagination = Title.query.paginate(page, per_page=count, error_out=False)
+    pagination = Title.query.order_by(Title.name)\
+                            .paginate(page, per_page=count, error_out=False)
     titles = pagination.items
     prev = None
     if pagination.has_prev:

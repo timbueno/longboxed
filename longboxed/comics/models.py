@@ -89,14 +89,22 @@ class Publisher(db.Model, CRUDMixin):
     def to_json(self):
         if self.logo.original:
             logo = self.logo.locate()
-            logo_md = self.logo.find_thumbnail(height=512).locate()
-            logo_sm = self.logo.find_thumbnail(height=256).locate()
+            if self.logo.original.height > self.logo.original.width:
+                logo_md = self.logo.find_thumbnail(height=512).locate()
+                logo_sm = self.logo.find_thumbnail(height=256).locate()
+            else:
+                logo_md = self.logo.find_thumbnail(width=512).locate()
+                logo_sm = self.logo.find_thumbnail(width=256).locate()
         else:
             logo, logo_md, logo_sm = None, None, None
         if self.logo_bw.original:
             logo_bw = self.logo_bw.locate()
-            logo_bw_md = self.logo_bw.find_thumbnail(height=512).locate()
-            logo_bw_sm = self.logo_bw.find_thumbnail(height=256).locate()
+            if self.logo_bw.original.height > self.logo_bw.original.width:
+                logo_bw_md = self.logo_bw.find_thumbnail(height=512).locate()
+                logo_bw_sm = self.logo_bw.find_thumbnail(height=256).locate()
+            else:
+                logo_bw_md = self.logo_bw.find_thumbnail(width=512).locate()
+                logo_bw_sm = self.logo_bw.find_thumbnail(width=256).locate()
         else:
             logo_bw, logo_bw_md, logo_bw_sm = None, None, None
         if self.splash.original:
@@ -132,33 +140,43 @@ class Publisher(db.Model, CRUDMixin):
         }
         return p
 
-    def set_logo(self, image, thumbnail_heights=[512, 256], overwrite=False):
+    def set_logo(self, image, thumb_dimensions=[512, 256], overwrite=False):
         if not self.logo.original or overwrite:
             try:
                 print 'Setting logo image for %s...' % self.name
                 with store_context(store):
                     self.logo.from_file(image)
                     self.save()
-                    for height in thumbnail_heights:
-                        print '    Generating h%i px thumbnail...' % height
-                        self.logo.generate_thumbnail(height=height)
-                        self.save()
+                    if self.logo.original.height > self.logo.original.width:
+                        for height in thumb_dimensions:
+                            print '    Generating h%i px thumbnail...' % height
+                            self.logo.generate_thumbnail(height=height)
+                    else:
+                        for width in thumb_dimensions:
+                            print '    Generating w%i px thumbnail...' % width
+                            self.logo.generate_thumbnail(width=width)
+                    self.save()
             except Exception, err:
                 print 'Could not set %s logo, rolling back session' % self.name
                 print '    Error: %s' % err
                 db.session.rollback()
 
-    def set_logo_bw(self, image, thumbnail_heights=[512, 256], overwrite=False):
+    def set_logo_bw(self, image, thumb_dimensions=[512, 256], overwrite=False):
         if not self.logo_bw.original or overwrite:
             try:
                 print 'Setting b&w logo image for %s...' % self.name
                 with store_context(store):
                     self.logo_bw.from_file(image)
                     self.save()
-                    for height in thumbnail_heights:
-                        print '    Generating h%i px thumbnail...' % height
-                        self.logo_bw.generate_thumbnail(height=height)
-                        self.save()
+                    if self.logo_bw.original.height > self.logo_bw.original.width:
+                        for height in thumb_dimensions:
+                            print '    Generating h%i px thumbnail...' % height
+                            self.logo_bw.generate_thumbnail(height=height)
+                    else:
+                        for width in thumb_dimensions:
+                            print '    Generating w%i px thumbnail...' % width
+                            self.logo_bw.generate_thumbnail(width=width)
+                    self.save()
             except Exception, err:
                 print 'Could not set %s logo, rolling back session' % self.name
                 print '    Error: %s' % err
@@ -167,7 +185,7 @@ class Publisher(db.Model, CRUDMixin):
     def set_splash(self, image, overwrite=False):
         if not self.splash.original or overwrite:
             try:
-                print 'Setting b&w logo image for %s...' % self.name
+                print 'Setting splash image for %s...' % self.name
                 with store_context(store):
                     self.splash.from_file(image)
                     self.save()
@@ -298,6 +316,17 @@ class Title(db.Model, CRUDMixin):
     def __str__(self):
         return self.name
 
+    @property
+    def issue_count(self):
+        return self.issues.filter(Issue.is_parent==True).count()
+
+    @property
+    def scheduled_issue_count(self):
+        return self.issues.filter(
+                            Issue.on_sale_date != None,
+                            Issue.is_parent==True)\
+                          .count()
+
     @hybrid_property
     def num_subscribers(self):
         return self.users.count()
@@ -319,6 +348,7 @@ class Title(db.Model, CRUDMixin):
         else:
             date = current_wednesday()
         i = self.issues.filter(
+                            Issue.is_parent == True,
                             Issue.on_sale_date <= date,
                             Issue.on_sale_date != None)\
                        .order_by(Issue.on_sale_date.desc())\
@@ -332,8 +362,8 @@ class Title(db.Model, CRUDMixin):
             'name': self.name,
             'publisher': {'id': self.publisher.id,
                           'name': self.publisher.name},
-            'issue_count': self.issues.count(),
-            'subscribers': self.users.count(),
+            'issue_count': self.scheduled_issue_count,
+            'subscribers': self.num_subscribers,
             'latest_issue': issue.to_json() if issue else None
         }
         return t

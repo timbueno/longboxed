@@ -50,10 +50,7 @@ def get_titles_for_publisher(id):
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 50, type=int)
     pagination = publisher.titles.order_by(Title.name)\
-                                 .paginate(
-                                    page,
-                                    per_page=count,
-                                    error_out=False)
+                                 .paginate(page, per_page=count, error_out=False)
     titles = pagination.items
     prev = None
     if pagination.has_prev:
