@@ -89,14 +89,22 @@ class Publisher(db.Model, CRUDMixin):
     def to_json(self):
         if self.logo.original:
             logo = self.logo.locate()
-            logo_md = self.logo.find_thumbnail(height=512).locate()
-            logo_sm = self.logo.find_thumbnail(height=256).locate()
+            if self.logo.original.height > self.logo.original.width:
+                logo_md = self.logo.find_thumbnail(height=512).locate()
+                logo_sm = self.logo.find_thumbnail(height=256).locate()
+            else:
+                logo_md = self.logo.find_thumbnail(width=512).locate()
+                logo_sm = self.logo.find_thumbnail(width=256).locate()
         else:
             logo, logo_md, logo_sm = None, None, None
         if self.logo_bw.original:
             logo_bw = self.logo_bw.locate()
-            logo_bw_md = self.logo_bw.find_thumbnail(height=512).locate()
-            logo_bw_sm = self.logo_bw.find_thumbnail(height=256).locate()
+            if self.logo_bw.original.height > self.logo_bw.original.width:
+                logo_bw_md = self.logo_bw.find_thumbnail(height=512).locate()
+                logo_bw_sm = self.logo_bw.find_thumbnail(height=256).locate()
+            else:
+                logo_bw_md = self.logo_bw.find_thumbnail(width=512).locate()
+                logo_bw_sm = self.logo_bw.find_thumbnail(width=256).locate()
         else:
             logo_bw, logo_bw_md, logo_bw_sm = None, None, None
         if self.splash.original:
