@@ -145,7 +145,7 @@ class Publisher(db.Model, CRUDMixin):
                             self.logo.generate_thumbnail(height=height)
                     else:
                         for width in thumb_dimensions:
-                            print '    Generating w%i px thumbnail...' % height
+                            print '    Generating w%i px thumbnail...' % width
                             self.logo.generate_thumbnail(width=width)
                     self.save()
             except Exception, err:
