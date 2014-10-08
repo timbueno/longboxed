@@ -1,0 +1,56 @@
+{% extends 'mail/base_email.html' %}
+
+{% block content %}
+<table class="row">
+  <tr>
+    <td class="wrapper last">
+
+      <table class="twelve columns">
+        <tr>
+          <td>
+            <h1>Welcome!</h1>
+            <p class="lead">Please confirm your account.</p>
+          </td>
+          <td class="expander"></td>
+        </tr>
+      </table>
+
+    </td>
+  </tr>
+</table>
+
+<table class="row callout">
+  <tr>
+    <td class="wrapper last">
+
+      <table class="twelve columns">
+        <tr>
+          <td class="panel">
+            <p>You can confirm your email through the link below:</p>
+            <p><a href="{{ confirmation_link }}">Confirm my account</a></p>
+          </td>
+          <td class="expander"></td>
+        </tr>
+      </table>
+
+    </td>
+  </tr>
+</table>
+
+<table class="row">
+  <tr>
+    <td class="wrapper last">
+
+      <table class="twelve columns">
+        <tr>
+          <td>
+            <p>We are excited that you have decided to join Longboxed. Each week, Longboxed is updated with the latest releases to keep you informed about your favorite comic books! What are you waiting for? Confirm your account and <a href="http://www.longboxed.com/pull_list">create</a> a Pull List now!</p>
+          </td>
+          <td class="expander"></td>
+        </tr>
+      </table>
+
+    </td>
+  </tr>
+</table>
+{% endblock content %}

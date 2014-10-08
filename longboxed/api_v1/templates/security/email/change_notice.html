@@ -1,0 +1,39 @@
+{% extends 'mail/base_email.html' %}
+
+{% block content %}
+<table class="row">
+  <tr>
+    <td class="wrapper last">
+
+      <table class="twelve columns">
+        <tr>
+          <td>
+            <h1>Your Password Was Changed</h1>
+          </td>
+          <td class="expander"></td>
+        </tr>
+      </table>
+
+    </td>
+  </tr>
+</table>
+
+<table class="row callout">
+  <tr>
+    <td class="wrapper last">
+
+      <table class="twelve columns">
+        <tr>
+          <td class="panel">
+            {% if security.recoverable %}
+            <p>If you did not change your password, <a href="{{ url_for_security('forgot_password', _external=True) }}">click here to reset it</a>.</p>
+            {% endif %}
+          </td>
+          <td class="expander"></td>
+        </tr>
+      </table>
+
+    </td>
+  </tr>
+</table>
+{% endblock content %}
