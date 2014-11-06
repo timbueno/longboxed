@@ -36,8 +36,8 @@ def register():
     if form.validate_on_submit():
         user = register_user(**form.to_dict())
         form.user = user
-        #return _render_json(form)
-        return jsonify(dict(user=user.to_json())), 200
+        message = 'User: %s created successfully!' % user.email
+        return jsonify(dict(user=user.to_json(), message=message)), 200
     return jsonify(dict(errors=form.errors)), 400
 
 
