@@ -5,9 +5,11 @@
 
     Frontend blueprints
 """
-from flask import current_app, Blueprint, g, redirect, render_template, url_for
+from flask import (current_app, Blueprint, g, jsonify, redirect,
+                   render_template, url_for)
 from flask.ext.security import current_user, login_required
 from flask.ext.security.utils import logout_user
+from flask.ext.wtf.csrf import generate_csrf
 from werkzeug.local import LocalProxy
 
 from . import route
@@ -28,6 +30,13 @@ def before_request():
         g.user = None
 
 
+#@route(bp, '/csrf')
+#def csrf():
+#    secret_key = current_app.config.get('SECRET_KEY')
+#    print secret_key
+#    return jsonify(csrf=generate_csrf(secret_key=secret_key))
+
+
 @route(bp, '/')
 def index():
     issues = Issue.query.filter(Issue.on_sale_date == current_wednesday(), Issue.is_parent == True).\
@@ -35,7 +44,6 @@ def index():
                          limit(4).\
                          all()
     return render_template('splash.html', issues=issues)
-
 
 
 @route(bp, '/settings', methods=('GET', 'POST'))
@@ -53,7 +61,7 @@ def settings():
 @login_required
 def delete_account():
     delete_user_account_form = DeleteUserAccountForm()
-    if delete_user_account_form.validate_on_submit(): 
+    if delete_user_account_form.validate_on_submit():
         user_temp = User.query.get(current_user.id)
         logout_user()
         _security_datastore = LocalProxy(lambda: current_app.extensions['security'].datastore)
