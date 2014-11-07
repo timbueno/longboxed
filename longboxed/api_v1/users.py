@@ -41,6 +41,17 @@ def register():
     return jsonify(dict(errors=form.errors)), 400
 
 
+@route(bp, '/delete', methods=['DELETE'])
+@auth.login_required
+def delete():
+    email = g.current_user.email
+    _security_datastore = LocalProxy(lambda:
+            current_app.extensions['security'].datastore)
+    _security_datastore.delete_user(g.current_user)
+    _security_datastore.commit()
+    return jsonify(dict(user=email, message='Successfully deleted user!'))
+
+
 @route(bp, '/<int:id>/pull_list/', methods=['GET'])
 @auth.login_required
 def get_user_pull_list(id):
