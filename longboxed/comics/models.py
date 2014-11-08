@@ -18,8 +18,8 @@ from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_imageattach.entity import Image, image_attachment, store_context
 
-from ..core import store, db, CRUDMixin
-from ..helpers import (is_float, after_wednesday, next_wednesday,
+from ..core import store, db, CRUDMixin, MissingCoverImageError
+from ..helpers import (compare_images, is_float, after_wednesday, next_wednesday,
                        current_wednesday)
 
 
@@ -632,7 +632,7 @@ class Issue(db.Model, CRUDMixin):
         }
         return i
 
-    def set_cover_image_from_url(self, url, overwrite=False, default=False,
+    def set_cover_image_from_url(self, url, overwrite=False, comparison=None,
             timeout=5):
         """
         Downloads a jpeg file from a url and stores it in the image store.
@@ -646,6 +646,14 @@ class Issue(db.Model, CRUDMixin):
             if not self.cover_image.original or overwrite:
                 r = requests.get(url, timeout=timeout)
                 if r.status_code==200 and r.headers['content-type']=='image/jpeg':
+                    if comparison:
+                        with open(comparison) as f:
+                            comparison_byte_string = f.read()
+                        if compare_images(r.content, comparison_byte_string):
+                            message = '%s is missing a cover image' % self.complete_title
+                            raise MissingCoverImageError(message)
+                        else:
+                            print 'Unique Image found for %s' % self.complete_title
                     with store_context(store):
                         self.cover_image.from_blob(r.content)
                         self.save()
@@ -656,6 +664,8 @@ class Issue(db.Model, CRUDMixin):
             print 'Exception caught in set_cover_image_from_url', err
         except Timeout:
             print 'The request for the image has timed out!'
+        except MissingCoverImageError as e:
+            print e.value
         return created_flag
 
     def find_or_create_thumbnail(self, width=None, height=None):
