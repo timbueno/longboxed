@@ -6,6 +6,7 @@
     longboxed helpers module
 """
 
+import hashlib
 import pkgutil
 import importlib
 
@@ -37,6 +38,18 @@ def register_blueprints(app, package_name, package_path):
                 app.register_blueprint(item)
             rv.append(item)
     return rv
+
+
+def compare_images(image1, image2):
+    """Compares byte strings of two images by hashing them with md5
+    if hashes are the same - return true
+    if not return false.
+    This is used primarily for checking if issues are missing a unique cover
+    image from TFAW.
+    """
+    hash1 = hashlib.md5(image1).hexdigest()
+    hash2 = hashlib.md5(image2).hexdigest()
+    return hash1 == hash2
 
 
 class JSONEncoder(BaseJSONEncoder):
