@@ -50,6 +50,11 @@ class LongboxedFormError(Exception):
         self.errors = errors
 
 
+class MissingCoverImageError(Exception):
+    """Raise when issue is missing a cover image"""
+    pass
+
+
 class CRUDMixin(object):
     """
     Mixin that adds convenience methods for CRUD (create, read, update, delete)
