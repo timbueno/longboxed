@@ -87,7 +87,9 @@ class NewDailyDownloadImporter(object):
                         issue.creators = creators
                         issue.save()
 
-                        issue.set_cover_image_from_url(issue.big_image)
+                        issue.set_cover_image_from_url(
+                                issue.big_image,
+                                comparison='media/tfaw_nocover.jpg')
                         for width in thumbnail_widths:
                             issue.find_or_create_thumbnail(width)
                         Issue.check_parent_status(issue.title, issue.issue_number)
