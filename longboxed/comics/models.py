@@ -632,6 +632,23 @@ class Issue(db.Model, CRUDMixin):
         }
         return i
 
+    def remove_cover_image(self):
+        if self.cover_image.original:
+            with store_context(store):
+                self.cover_image.delete()
+                self.save()
+        return
+
+    def check_cover_image(self, image1, image2=None):
+        if not image2:
+            with store_context(store):
+                if self.cover_image.original:
+                    return compare_images(image1, self.cover_image.make_blob())
+                else:
+                    return False
+        else:
+            return compare_images(image1, image2)
+
     def set_cover_image_from_url(self, url, overwrite=False, comparison=None,
             timeout=5):
         """
