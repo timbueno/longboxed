@@ -57,7 +57,11 @@
                 {% for issue in issues %}
                 <div class="col-xs-6 col-sm-3">
                     <a href="{{ url_for('comics.issue', diamond_id=issue.diamond_id) }}">
-                        <img class="" src={% if issue.cover_image %}"{{ issue.cover_image.find_thumbnail(width=250).locate() }}"{% endif %} title="{{ issue.complete_title }}" alt="{{ issue.complete_title }}">
+                        {% if issue.cover_image %}
+                        <img src="{{ issue.cover_image.find_thumbnail(width=250).locate() }}" title="{{ issue.complete_title }}" alt="{{ issue.complete_title }}">
+                        {% else %}
+                        <img src="{{ url_for('static', filename='img/lb_nocover_medium.png') }}" title="{{ issue.complete_title }}" alt="{{ issue.complete_title }}">
+                        {% endif %}
                     </a>
                 </div>
                 {% endfor %}
