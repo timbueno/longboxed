@@ -79,6 +79,17 @@ class SetCoverImageCommand(Command):
         print 'No issue found!'
         return
 
+
+class CleanCoverImages(Command):
+    """Removes TFAW "Image Not Available" cover images"""
+    def run(self):
+        for issue in Issue.query.all():
+            with open('media/tfaw_nocover.jpg') as f:
+                compare_bytes = f.read()
+            if issue.check_cover_image(compare_bytes):
+                print "Removing cover image for %s" % issue.complete_title
+
+
 class DeleteAllIssues(Command):
     def run(self):
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
