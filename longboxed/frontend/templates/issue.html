@@ -7,7 +7,11 @@
     <div class='full-issue-content'>
         <div class="row">
             <div class="col-sm-5 cover-image">
-                <img class="img-responsive" src={% if issue.cover_image %}"{{ issue.cover_image.find_thumbnail(width=500).locate()  }}"{% endif %}> 
+                {% if issue.cover_image %}
+                <img class="img-responsive" src="{{ issue.cover_image.find_thumbnail(width=500).locate()  }}"> 
+                {% else %}
+                <img class="img-responsive" src="{{ url_for('static', filename='img/lb_nocover.png') }}">
+                {% endif %}
             </div>
             <div class="col-sm-7 issue-table">
                 <div class="panel panel-default">

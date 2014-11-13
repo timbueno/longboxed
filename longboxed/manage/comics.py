@@ -52,7 +52,8 @@ class ImportDatabase(Command):
             supported_publishers = current_app.config['SUPPORTED_PUBS'],
             affiliate_id = current_app.config['AFFILIATE_ID'],
             thumbnail_widths = current_app.config['THUMBNAIL_WIDTHS'],
-            days = days
+            days = days,
+            comparison_image = current_app.config['COMPARISON_IMAGE']
         )
         return
 
@@ -78,6 +79,30 @@ class SetCoverImageCommand(Command):
             return
         print 'No issue found!'
         return
+
+
+class CleanCoverImages(Command):
+    """Removes TFAW "Image Not Available" cover images"""
+    def run(self):
+        print 'Cleaning cover images...'
+        print '~~~~~~~~~~~~~~~~~~~~~~~~'
+        total_count = Issue.query.count()
+        total_processed = 0
+        total_cleaned = 0
+        thumbs = current_app.config.get('THUMBNAIL_WIDTHS')
+        for issue in Issue.query.all():
+            if total_processed % 50 == 0:
+                print 'Proccessed %i/%i issues...' % (total_processed, total_count)
+            total_processed = total_processed+1
+            with open('media/tfaw_nocover.jpg') as f:
+                compare_bytes = f.read()
+            if issue.check_cover_image(compare_bytes):
+                print "Removing cover image for %s" % issue.complete_title
+                issue.remove_cover_image(thumbs)
+                total_cleaned = total_cleaned + 1
+        print 'Done!'
+        print 'Cleaned %i issue covers' % total_cleaned
+
 
 class DeleteAllIssues(Command):
     def run(self):
