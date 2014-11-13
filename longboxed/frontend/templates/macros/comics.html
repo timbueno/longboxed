@@ -20,7 +20,7 @@
     {% if issue.cover_image %}
     <img src="{{ issue.cover_image.find_thumbnail(width=100).locate() }}">
     {% else %}
-    <img src="">
+    <img src="{{ url_for('static', filename='img/lb_nocover_small.png') }}">
     {% endif %}
   </a>
   <div class="media-body">

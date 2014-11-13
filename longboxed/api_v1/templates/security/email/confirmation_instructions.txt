@@ -1,0 +1,5 @@
+Confirm Your account at Longboxed
+You requested a confirmation link.
+
+You can confirm your email through the link below:
+<a href="{{ confirmation_link }}">Confirm my account</a>

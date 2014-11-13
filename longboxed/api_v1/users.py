@@ -5,7 +5,10 @@
 
     Users endpoints
 """
-from flask import Blueprint, g, jsonify, request
+from flask import current_app, Blueprint, g, jsonify, request
+from flask.ext.security.registerable import register_user
+from werkzeug.datastructures import MultiDict
+from werkzeug.local import LocalProxy
 
 from ..models import Bundle, Title
 from ..helpers import current_wednesday
@@ -14,15 +17,39 @@ from .errors import bad_request, forbidden
 from . import route
 
 
+_security = LocalProxy(lambda: current_app.extensions['security'])
+
 bp = Blueprint('users', __name__, url_prefix='/users')
 
 
 @route(bp, '/login')
 @auth.login_required
 def login():
-    return jsonify({
-        'user': g.current_user.to_json()
-    })
+    return jsonify(dict(user=g.current_user.to_json()))
+
+
+@route(bp, '/register', methods=['POST'])
+def register():
+    form_class = _security.register_form
+    form_data = MultiDict(request.json)
+    form = form_class(form_data, csrf_enabled=False)
+    if form.validate_on_submit():
+        user = register_user(**form.to_dict())
+        form.user = user
+        message = 'User: %s created successfully!' % user.email
+        return jsonify(dict(user=user.to_json(), message=message)), 200
+    return jsonify(dict(errors=form.errors)), 400
+
+
+@route(bp, '/delete', methods=['DELETE'])
+@auth.login_required
+def delete():
+    email = g.current_user.email
+    _security_datastore = LocalProxy(lambda:
+            current_app.extensions['security'].datastore)
+    _security_datastore.delete_user(g.current_user)
+    _security_datastore.commit()
+    return jsonify(dict(user=email, message='Successfully deleted user!'))
 
 
 @route(bp, '/<int:id>/pull_list/', methods=['GET'])

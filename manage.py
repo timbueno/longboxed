@@ -18,7 +18,8 @@ from longboxed.manage import (CreateNewRoleCommand, CreateDefaultRolesCommand,
                              ListUsersCommand, ListRolesCommand,
                              ScheduleReleasesCommand, TestCommand,
                              SetCoverImageCommand, UserBundlesCommand,
-                             ImportDatabase, DeleteAllIssues)
+                             ImportDatabase, DeleteAllIssues,
+                             CleanCoverImages)
 
 
 app = create_app(os.getenv('APP_ENV') or 'default')
@@ -43,6 +44,7 @@ manager.add_command('import_database', ImportDatabase())
 manager.add_command('set_cover_image', SetCoverImageCommand())
 manager.add_command('bundle_issues', UserBundlesCommand())
 manager.add_command('delete_all_issues', DeleteAllIssues())
+manager.add_command('clean_cover_images', CleanCoverImages())
 manager.add_command('test', TestCommand())
 
 

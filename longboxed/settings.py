@@ -23,6 +23,8 @@ class Config(object):
 
     # Longboxed Specific Variables
     AFFILIATE_ID = environ['AFFILIATE_ID']
+    COMPARISON_IMAGE = 'media/tfaw_nocover.jpg'
+    COMPARISON_IMAGE_URL = 'http://affimg.tfaw.com/covers_tfaw/400/no/nocover.jpg'
     SUPPORTED_PUBS = ['Marvel Comics', 'DC Comics', 'Dark Horse',
                       'IDW Publishing', 'Boom! Studios', 'Image Comics',
                       'Dynamite Entertainment', 'Avatar Press',
@@ -94,8 +96,8 @@ class Config(object):
     SECURITY_RECOVERABLE = True
     SECURITY_CHANGEABLE = True
     SECURITY_SEND_REGISTER_EMAIL = True
-    SECURITY_CONFIRMABLE = True
-    SECURITY_LOGIN_WITHOUT_CONFIRMATION = True
+    #SECURITY_CONFIRMABLE = True
+    #SECURITY_LOGIN_WITHOUT_CONFIRMATION = True
 
     # SECURITY_POST_CONFIRM_VIEW = '/set_something_up'
 
@@ -107,11 +109,11 @@ class Config(object):
     SECURITY_REMEMBER_SALT = environ['SECURITY_REMEMBER_SALT']
     SECURITY_RESET_SALT = environ['SECURITY_RESET_SALT']
     SECURITY_RESET_WITHIN = '5 days'
-    SECURITY_CONFIRM_WITHIN = '5 days'
+    #SECURITY_CONFIRM_WITHIN = '5 days'
 
     SECURITY_EMAIL_SENDER = 'no-reply@longboxed.com'
     SECURITY_EMAIL_SUBJECT_REGISTER = 'Welcome to Longboxed!'
-    SECURITY_EMAIL_SUBJECT_CONFIRM = 'Please confirm your Longboxed email!'
+    #SECURITY_EMAIL_SUBJECT_CONFIRM = 'Please confirm your Longboxed email!'
 
     # Mail configuration
     MAIL_SERVER = 'smtp.mailgun.org'
