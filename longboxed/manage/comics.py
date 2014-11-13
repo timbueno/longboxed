@@ -52,7 +52,8 @@ class ImportDatabase(Command):
             supported_publishers = current_app.config['SUPPORTED_PUBS'],
             affiliate_id = current_app.config['AFFILIATE_ID'],
             thumbnail_widths = current_app.config['THUMBNAIL_WIDTHS'],
-            days = days
+            days = days,
+            comparison_image = current_app.config['COMPARISON_IMAGE']
         )
         return
 

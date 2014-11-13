@@ -34,10 +34,13 @@ class NewDailyDownloadImporter(object):
     def __init__(self):
         pass
 
-    def run(self, csv_fieldnames, supported_publishers, affiliate_id, thumbnail_widths, days=7):
+    def run(self, csv_fieldnames, supported_publishers, affiliate_id,
+            thumbnail_widths, days=7, comparison_image=None):
         content = self.download(affiliate_id)
         data = self.load(content, csv_fieldnames)
-        issues = self.process(data, supported_publishers, days, affiliate_id, thumbnail_widths)
+        issues = self.process(data, supported_publishers, days,
+                              affiliate_id, thumbnail_widths,
+                              comparison_image)
         return issues
 
     def download(self, affiliate_id):
@@ -56,7 +59,8 @@ class NewDailyDownloadImporter(object):
             data = [row for row in reader]
         return data
 
-    def process(self, data, supported_publishers, days, affiliate_id, thumbnail_widths):
+    def process(self, data, supported_publishers, days, affiliate_id,
+            thumbnail_widths, comparison_image):
         try:
             new_publishers = 0
             new_titles = 0
@@ -89,7 +93,7 @@ class NewDailyDownloadImporter(object):
 
                         issue.set_cover_image_from_url(
                                 issue.big_image,
-                                comparison='media/tfaw_nocover.jpg')
+                                comparison=comparison_image)
                         for width in thumbnail_widths:
                             issue.find_or_create_thumbnail(width)
                         Issue.check_parent_status(issue.title, issue.issue_number)
