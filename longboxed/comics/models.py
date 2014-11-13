@@ -632,20 +632,36 @@ class Issue(db.Model, CRUDMixin):
         }
         return i
 
-    def remove_cover_image(self):
-        if self.cover_image.original:
-            with store_context(store):
+    def remove_cover_image(self, thumb_dimensions=[]):
+        with store_context(store):
+            for width in thumb_dimensions:
+                try:
+                    print 'Removing %i thumbnail' % width
+                    image = self.cover_image.find_thumbnail(width=width)
+                    store.delete(image)
+                except NoResultFound:
+                    print 'Failed to remove %i image, no thumbnail found...' % width
+            try:
+                print "Removing original image..."
+                store.delete(self.cover_image.original)
                 self.cover_image.delete()
                 self.save()
+            except NoResultFound:
+                print 'Failed to remove cover image, no original image...'
         return
 
     def check_cover_image(self, image1, image2=None):
         if not image2:
-            with store_context(store):
-                if self.cover_image.original:
-                    return compare_images(image1, self.cover_image.make_blob())
-                else:
-                    return False
+            try:
+                with store_context(store):
+                    if self.cover_image.original:
+                        return compare_images(image1, self.cover_image.make_blob())
+                    else:
+                        return False
+            except IOError:
+                print 'IOError: Missing image - deleting...'
+                self.cover_image.delete()
+                self.save()
         else:
             return compare_images(image1, image2)
 
