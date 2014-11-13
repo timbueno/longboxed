@@ -88,6 +88,7 @@ class CleanCoverImages(Command):
         total_count = Issue.query.count()
         total_processed = 0
         total_cleaned = 0
+        thumbs = current_app.config.get('THUMBNAIL_WIDTHS')
         for issue in Issue.query.all():
             if total_processed % 50 == 0:
                 print 'Proccessed %i/%i issues...' % (total_processed, total_count)
@@ -96,6 +97,7 @@ class CleanCoverImages(Command):
                 compare_bytes = f.read()
             if issue.check_cover_image(compare_bytes):
                 print "Removing cover image for %s" % issue.complete_title
+                issue.remove_cover_image(thumbs)
                 total_cleaned = total_cleaned + 1
         print 'Done!'
         print 'Cleaned %i issue covers' % total_cleaned
