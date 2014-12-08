@@ -7,11 +7,11 @@
 """
 from datetime import datetime
 
-from flask import Blueprint, jsonify, request
+from flask import current_app, Blueprint, jsonify, request
 from sqlalchemy.orm.exc import NoResultFound
 
 from ..helpers import current_wednesday, next_wednesday, after_wednesday
-from ..models import Title, Issue
+from ..models import Title, Issue, Publisher
 from .errors import bad_request
 from . import route
 
@@ -23,7 +23,12 @@ bp = Blueprint('titles', __name__, url_prefix='/titles')
 def get_titles():
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 50, type=int)
-    pagination = Title.query.order_by(Title.name)\
+    disabled_pubs = current_app.config.get('DISABLED_PUBS', [])
+    #pagination = Title.query.order_by(Title.name)\
+    #                        .paginate(page, per_page=count, error_out=False)
+    pagination = Title.query.join(Title.publisher)\
+                            .filter(Publisher.name.notin_(disabled_pubs))\
+                            .order_by(Title.name)\
                             .paginate(page, per_page=count, error_out=False)
     titles = pagination.items
     prev = None
@@ -44,6 +49,8 @@ def get_titles():
 @route(bp, '/<int:id>')
 def get_title(id):
     title = Title.query.get_or_404(id)
+    if title.publisher.name in current_app.config.get('DISABLED_PUBS', []):
+        return bad_request('Titles not available from this publisher')
     return jsonify({
         'title': title.to_json()
     })
@@ -52,6 +59,8 @@ def get_title(id):
 @route(bp, '/<int:id>/issues/')
 def get_issues_for_title(id):
     title = Title.query.get_or_404(id)
+    if title.publisher.name in current_app.config.get('DISABLED_PUBS', []):
+        return bad_request('Titles not available from this publisher')
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 50, type=int)
 
@@ -89,14 +98,21 @@ def get_issues_for_title(id):
 def autocomplete():
     if 'query' not in request.args.keys():
         return bad_request('Must submit a \'query\' parameter!')
+    disabled_pubs = current_app.config.get('DISABLED_PUBS', [])
     fragment = request.args.get('query')
     keywords = fragment.split()
     searchstring = '%%'.join(keywords)
     searchstring = '%%%s%%' % (searchstring)
     try:
+        #res = Title.query.filter(Title.name.ilike(searchstring))\
+        #                 .order_by(Title.num_subscribers.desc())\
+        #                 .limit(20)\
+        #                 .all()
         res = Title.query.filter(Title.name.ilike(searchstring))\
+                         .join(Title.publisher)\
+                         .filter(Publisher.name.notin_(disabled_pubs))\
                          .order_by(Title.num_subscribers.desc())\
-                         .limit(20)\
+                         .limit(10)\
                          .all()
         return jsonify({
                 'query': fragment,
