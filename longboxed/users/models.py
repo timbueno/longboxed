@@ -48,7 +48,7 @@ class Role(db.Model, RoleMixin, CRUDMixin):
     @classmethod
     def insert_roles(cls):
         roles = [('user', 'No Permissions'),
-                 ('admin', 'Comic specific permissions'), 
+                 ('admin', 'Comic specific permissions'),
                  ('super', 'All permissions')]
         for r in roles:
             role = cls.query.filter_by(name=r[0]).first()
@@ -82,7 +82,7 @@ class User(db.Model, UserMixin, CRUDMixin):
     birthday = db.Column(db.Date())
     last_seen = db.Column(db.DateTime())
 
-    # Flask-Security 
+    # Flask-Security
     password = db.Column(db.String(255))
     active = db.Column(db.Boolean())
     last_login_at = db.Column(db.DateTime())
