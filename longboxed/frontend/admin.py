@@ -16,8 +16,9 @@ from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.contrib.sqla.ajax import QueryAjaxModelLoader
 
 from ..core import db
-from ..helpers import current_wednesday, last_wednesday, next_wednesday 
-from ..models import Connection, Creator, Issue, Publisher, Title, User, Role, Bundle
+from ..helpers import current_wednesday, last_wednesday, next_wednesday
+from ..models import (Connection, Creator, Issue, Publisher, Title, User, Role,
+                      Bundle, DiamondList)
 
 
 class LongboxedAdminIndexView(AdminIndexView):
@@ -170,6 +171,14 @@ class ConnectionAdmin(SuperUserBase):
         super(ConnectionAdmin, self).__init__(Connection, session)
 
 
+class DiamondListAdmin(SuperUserBase):
+    def __init__(self, session):
+        super(DiamondListAdmin, self).__init__(DiamondList, session)
+
+    form_ajax_refs = {'issues': QueryAjaxModelLoader('issues', db.session,
+        Issue, fields=['complete_title'], page_size=10)}
+    column_list = ('date_created', 'date', 'revision', 'hash_string',)
+
 def init_app(app):
     admin = Admin(app, index_view=LongboxedAdminIndexView())
     admin.add_view(UserAdmin(db.session))
@@ -180,3 +189,4 @@ def init_app(app):
     admin.add_view(RoleAdmin(db.session))
     admin.add_view(BundleAdmin(db.session))
     admin.add_view(ConnectionAdmin(db.session))
+    admin.add_view(DiamondListAdmin(db.session))
