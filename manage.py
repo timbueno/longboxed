@@ -12,14 +12,15 @@ from flask.ext.migrate import Migrate, MigrateCommand
 
 from longboxed.core import db
 from longboxed.frontend import create_app
-from longboxed.models import User, Issue, Title, Publisher, Bundle, Role
+from longboxed.models import (User, Issue, Title, Publisher, Bundle, Role,
+                              DiamondList)
 from longboxed.manage import (CreateNewRoleCommand, CreateDefaultRolesCommand,
                              CreateUserCommand, AddSuperUserRoleCommand,
                              ListUsersCommand, ListRolesCommand,
                              ScheduleReleasesCommand, TestCommand,
                              SetCoverImageCommand, UserBundlesCommand,
                              ImportDatabase, DeleteAllIssues,
-                             CleanCoverImages)
+                             CleanCoverImages, NewNewScheduleReleasesCommand)
 
 
 app = create_app(os.getenv('APP_ENV') or 'default')
@@ -29,7 +30,7 @@ migrate = Migrate(app, db)
 def _make_shell_context():
     return dict(app=app, db=db, User=User, Issue=Issue,
                 Title=Title, Publisher=Publisher, Bundle=Bundle,
-                Role=Role)
+                Role=Role, DiamondList=DiamondList)
 manager.add_command("shell", Shell(make_context=_make_shell_context))
 manager.add_command('db', MigrateCommand)
 
@@ -46,6 +47,7 @@ manager.add_command('bundle_issues', UserBundlesCommand())
 manager.add_command('delete_all_issues', DeleteAllIssues())
 manager.add_command('clean_cover_images', CleanCoverImages())
 manager.add_command('test', TestCommand())
+manager.add_command('newtest', NewNewScheduleReleasesCommand())
 
 
 @manager.command
