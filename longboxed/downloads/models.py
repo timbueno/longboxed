@@ -99,6 +99,18 @@ class DiamondList(db.Model, CRUDMixin):
             self.issues = []
         return self.issues
 
+    def release_issues(self, date_override=None):
+        date = date_override or self.date
+        currently_released_issues = Issue.query.filter(
+                                                   Issue.on_sale_date==date)\
+                                               .all()
+        for issue in currently_released_issues:
+            issue.on_sale_date = None
+            issue.save()
+        for issue in self.issues.all():
+            issue.on_sale_date = date
+            issue.save()
+
     @classmethod
     def download_and_process(cls, week, fieldnames, supported_publishers):
         d_list = None
