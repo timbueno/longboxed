@@ -50,7 +50,7 @@ class DiamondList(db.Model, CRUDMixin):
         dc = self.date_created.strftime('%Y-%m-%d')
         d = self.date.strftime('%Y-%m-%d')
         h = self.hash_string
-        return '<DiamondList(date_created=%s, date=%s, hash=%s)' % (dc, d, h)
+        return '<DiamondList(date_created=%s, date=%s, hash=%s)>' % (dc, d, h)
 
     def __repr__(self):
         return self.__str__()
