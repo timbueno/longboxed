@@ -46,6 +46,15 @@ class DiamondList(db.Model, CRUDMixin):
     def __init__(self):
         pass
 
+    def __str__(self):
+        dc = self.date_created.strftime('%Y-%m-%d')
+        d = self.date.strftime('%Y-%m-%d')
+        h = self.hash_string
+        return '<DiamondList(date_created=%s, date=%s, hash=%s)' % (dc, d, h)
+
+    def __repr__(self):
+        return self.__str__()
+
     def download(self, week, affiliate_id=None):
         """
         Gets file containing a list of shippments from Diamond Distributers.
@@ -118,7 +127,9 @@ class DiamondList(db.Model, CRUDMixin):
         source, date = new_list.download(week)
         hash_string = new_list.hash_source()
         old_list = cls.query.filter_by(hash_string=hash_string).first()
+
         if not old_list:
+            print 'Processing a new list!'
             latest_list = cls.query.filter(
                                        cls.date==date)\
                                    .order_by(cls.revision.desc())\
@@ -132,5 +143,7 @@ class DiamondList(db.Model, CRUDMixin):
                 new_list.revision = 1
             issues = new_list.link_issues(fieldnames, supported_publishers)
             d_list = new_list.save()
+        else:
+            print 'Found an old list: %s' % old_list
         return d_list
 
