@@ -23,5 +23,8 @@ class NewNewScheduleReleasesCommand(Command):
         f = current_app.config.get('RELEASE_CSV_RULES')
         f = [x[2] for x in f]
         sp = current_app.config.get('SUPPORTED_DIAMOND_PUBS')
-        x = DiamondList.download_and_process(week, f, sp)
-        print x
+        diamond_list = DiamondList.download_and_process(week, f, sp)
+
+        if diamond_list:
+            print 'Releasing issues for %s' % diamond_list.date
+            diamond_list.release_issues()
