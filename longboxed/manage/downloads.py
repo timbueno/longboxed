@@ -11,7 +11,7 @@ from flask.ext.script import Command, Option
 from ..models import DiamondList
 
 
-class NewNewScheduleReleasesCommand(Command):
+class NewScheduleReleasesCommand(Command):
     def get_options(self):
         return [
             Option('-w', '--week', dest='week',

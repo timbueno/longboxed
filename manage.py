@@ -20,7 +20,7 @@ from longboxed.manage import (CreateNewRoleCommand, CreateDefaultRolesCommand,
                              ScheduleReleasesCommand, TestCommand,
                              SetCoverImageCommand, UserBundlesCommand,
                              ImportDatabase, DeleteAllIssues,
-                             CleanCoverImages, NewNewScheduleReleasesCommand)
+                             CleanCoverImages, NewScheduleReleasesCommand)
 
 
 app = create_app(os.getenv('APP_ENV') or 'default')
@@ -47,7 +47,7 @@ manager.add_command('bundle_issues', UserBundlesCommand())
 manager.add_command('delete_all_issues', DeleteAllIssues())
 manager.add_command('clean_cover_images', CleanCoverImages())
 manager.add_command('test', TestCommand())
-manager.add_command('newtest', NewNewScheduleReleasesCommand())
+manager.add_command('new_schedule_releases', NewScheduleReleasesCommand())
 
 
 @manager.command
