@@ -251,6 +251,13 @@ def is_float(number):
     except (ValueError, TypeError):
         return False
 
+def is_int(number):
+    try:
+        int(number)
+        return True
+    except(ValueError, TypeError):
+        return False
+
 
 class JsonSerializer(object):
     """A mixin that can be used to mark a SQLAlchemy model class which
