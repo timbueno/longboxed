@@ -39,7 +39,7 @@ class DownloadDiamondListCommand(Command):
         f = current_app.config.get('RELEASE_CSV_RULES')
         f = [x[2] for x in f]
         sp = current_app.config.get('SUPPORTED_DIAMOND_PUBS')
-        diamond_list= DiamondList.download_and_process(week, f, sp)
+        diamond_list = DiamondList.download_and_process(week, f, sp)
         return diamond_list
 
 
