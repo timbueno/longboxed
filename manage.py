@@ -52,6 +52,7 @@ manager.add_command('test', TestCommand())
 manager.add_command('download_schedule_bundle', DownloadScheduleBundleCommand())
 manager.add_command('new_schedule_releases', NewScheduleReleasesCommand())
 manager.add_command('download_diamond_list', DownloadDiamondListCommand())
+manager.add_command('new_bundle_issues', NewBundleIssuesCommand())
 
 
 @manager.command
