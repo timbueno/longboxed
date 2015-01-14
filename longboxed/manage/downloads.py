@@ -135,11 +135,14 @@ class NewBundleIssuesCommand(Command):
 
         pagination = User.query.paginate(1, per_page=20, error_out=False)
         has_next = True
+        test_count = 0
         while has_next:
             for user in pagination.items:
                 matches = [i for i in issues
                            if i.title in user.pull_list and i.is_parent]
                 Bundle.refresh_user_bundle(user, date, matches)
+                test_count = test_count + 1
+                print test_count
             if pagination.has_next:
                 pagination = pagination.next(error_out=False)
             else:
