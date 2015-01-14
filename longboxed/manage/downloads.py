@@ -145,8 +145,8 @@ class NewBundleIssuesCommand(Command):
             else:
                 has_next = False
             if pagination.page:
-                percent_complete = (pagination.page/pagination.pages) * 100
-                print '%s%% complete...' % percent_complete
+                percent_complete = (pagination.page/pagination.pages) * 100.0
+                print '%.2f%% complete...' % percent_complete
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
         print '           Complete           '
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
