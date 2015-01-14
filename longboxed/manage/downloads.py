@@ -140,13 +140,14 @@ class NewBundleIssuesCommand(Command):
                 matches = [i for i in issues
                            if i.title in user.pull_list and i.is_parent]
                 Bundle.refresh_user_bundle(user, date, matches)
+            if pagination.page:
+                percent_complete = (pagination.page/float(pagination.pages)) * 100.0
+                print '%.2f%% complete...' % percent_complete
             if pagination.has_next:
                 pagination = pagination.next(error_out=False)
             else:
                 has_next = False
-            if pagination.page:
-                percent_complete = (pagination.page/float(pagination.pages)) * 100.0
-                print '%.2f%% complete...' % percent_complete
+
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
         print '           Complete           '
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
