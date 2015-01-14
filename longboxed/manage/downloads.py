@@ -8,7 +8,7 @@
 from flask import current_app
 from flask.ext.script import Command, Option, prompt, prompt_bool
 
-from ..models import DiamondList, User, Bundle
+from ..models import DiamondList, Issue, User, Bundle
 from ..helpers import week_handler, is_int
 
 
@@ -24,6 +24,8 @@ class DownloadScheduleBundleCommand(Command):
         diamond_list = DownloadDiamondListCommand().run(week)
         if diamond_list:
             NewScheduleReleasesCommand().run(diamond_list=diamond_list)
+            issues = diamond_list.issues.all()
+            NewBundleIssuesCommand().run(week=week, issues=issues)
 
 
 class DownloadDiamondListCommand(Command):
@@ -35,11 +37,17 @@ class DownloadDiamondListCommand(Command):
         ]
 
     def run(self, week):
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+        print 'Starting: DL Diamond List     '
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
         date = week_handler(week)
         f = current_app.config.get('RELEASE_CSV_RULES')
         f = [x[2] for x in f]
         sp = current_app.config.get('SUPPORTED_DIAMOND_PUBS')
         diamond_list = DiamondList.download_and_process(week, f, sp)
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+        print '           Complete           '
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
         return diamond_list
 
 
@@ -47,9 +55,14 @@ class NewScheduleReleasesCommand(Command):
     def get_options(self):
         return [
                 Option('-m', '--md5', dest='md5', required=True),
-                Option('-d', '--date', dest='date')
+                Option('-d', '--date', dest='date'),
+                Option('-l', '--link', dest='link')
         ]
-    def run(self, md5=None, date=None, diamond_list=None):
+    def run(self, md5=None, date=None, diamond_list=None, link=False):
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+        print 'Starting: Releasing Issues     '
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+
         if not diamond_list:
             s = md5+'%%'
             diamond_lists = DiamondList.query.filter(
@@ -75,13 +88,25 @@ class NewScheduleReleasesCommand(Command):
                             print x
                         else:
                             print 'Choice must be a number! Aborting...'
+                else:
+                    print 'Found diamond list matching %s' % md5
+                    diamond_list = diamond_lists[0]
             else:
                 print 'No diamond lists matching md5 hash \'%s\'' % md5
         if diamond_list:
             date = date or diamond_list.date
             ds = date.strftime('%Y-%m-%d')
+            if link:
+                print 'Linking issues...'
+                f = current_app.config.get('RELEASE_CSV_RULES')
+                f = [x[2] for x in f]
+                sp = current_app.config.get('SUPPORTED_DIAMOND_PUBS')
+                diamond_list.link_issues(f, sp)
             print 'Releasing %s on date %s' % (diamond_list, ds)
             diamond_list.release_issues(date)
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+        print '           Complete           '
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 
 
 class NewBundleIssuesCommand(Command):
@@ -93,9 +118,36 @@ class NewBundleIssuesCommand(Command):
                         choices=['thisweek', 'nextweek', 'twoweeks']),
         ]
     def run(self, week, issues=[]):
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+        print 'Starting:  User Bundle Routine'
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
         date = week_handler(week)
-        for user in User.query.all():
-            matches = [i for i in issues
-                       if i.title in user.pull_list and i.is_parent]
-            Bundle.refresh_user_bundle(user, date, matches)
+        if not issues:
+            print 'Querying for issues on %s' % date
+            issues = Issue.query.filter_by(on_sale_date=date).all()
+        print 'Processing bundles for:'
+        print '    date: %s' % date
+        print '    user count: %i' % User.query.count()
+        #for user in User.query.all():
+        #    matches = [i for i in issues
+        #               if i.title in user.pull_list and i.is_parent]
+        #    Bundle.refresh_user_bundle(user, date, matches)
+
+        pagination = User.query.paginate(1, per_page=20, error_out=False)
+        has_next = True
+        while has_next:
+            for user in pagination.items:
+                matches = [i for i in issues
+                           if i.title in user.pull_list and i.is_parent]
+                Bundle.refresh_user_bundle(user, date, matches)
+            if pagination.has_next:
+                pagination = pagination.next(error_out=False)
+            else:
+                has_next = False
+            if pagination.page:
+                percent_complete = (pagination.page/pagination.pages) * 100
+                print '%s%% complete...' % percent_complete
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+        print '           Complete           '
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 
