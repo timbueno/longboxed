@@ -11,7 +11,7 @@ from werkzeug.datastructures import MultiDict
 from werkzeug.local import LocalProxy
 
 from ..models import Bundle, Title
-from ..helpers import current_wednesday
+from ..helpers import current_wednesday, next_wednesday, two_wednesdays
 from .authentication import auth
 from .errors import bad_request, forbidden
 from . import route
@@ -77,6 +77,8 @@ def add_title_to_pull_list(id):
         g.current_user.pull_list.append(title)
         g.current_user = g.current_user.save()
         Bundle.refresh_user_bundle(g.current_user, current_wednesday())
+        Bundle.refresh_user_bundle(g.current_user, next_wednesday())
+        Bundle.refresh_user_bundle(g.current_user, two_wednesdays())
     else:
         return bad_request('Title is already on users pull list')
     return jsonify({
@@ -99,6 +101,8 @@ def remove_title_from_pull_list(id):
         g.current_user.pull_list.remove(title)
         g.current_user = g.current_user.save()
         Bundle.refresh_user_bundle(g.current_user, current_wednesday())
+        Bundle.refresh_user_bundle(g.current_user, next_wednesday())
+        Bundle.refresh_user_bundle(g.current_user, two_wednesdays())
     else:
         return bad_request('Title is not on the users pull list')
     return jsonify({

@@ -15,7 +15,7 @@ from sqlalchemy import desc
 
 from . import route
 from ..forms import AddToPullList
-from ..helpers import current_wednesday
+from ..helpers import current_wednesday, next_wednesday, two_wednesdays
 from ..models import Bundle, Publisher, Title
 
 
@@ -71,6 +71,8 @@ def remove_from_pull_list():
         # Save updated user
         current_user.save()
         Bundle.refresh_user_bundle(current_user, current_wednesday())
+        Bundle.refresh_user_bundle(current_user, next_wednesday())
+        Bundle.refresh_user_bundle(current_user, two_wednesdays())
         response = {
             'status': 'success',
             'message': title.name+' removed from your pull list'
@@ -101,6 +103,8 @@ def add_to_pull_list():
             current_user.pull_list.append(title)
             current_user.save()
             Bundle.refresh_user_bundle(current_user, current_wednesday())
+            Bundle.refresh_user_bundle(current_user, next_wednesday())
+            Bundle.refresh_user_bundle(current_user, two_wednesdays())
             response = {
                 'status': 'success',
                 'message': '<strong>'+title.name+'</strong> has been added to your pull list!',
