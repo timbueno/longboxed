@@ -823,6 +823,12 @@ class Bundle(db.Model, CRUDMixin):
                                     Issue.is_parent==True)\
                                 .all()
             matches = [i for i in issues if i.title in user.pull_list]
+            #matches = Issue.query.join(Title).\
+                        #filter(Issue.on_sale_date==date,
+                                #Issue.is_parent==True).\
+                        #join(Title.users).\
+                        #filter(User.id==user.id).\
+                        #all()
         bundle = cls.query.filter(cls.user==user, cls.release_date==date)\
                           .first()
         if bundle:
