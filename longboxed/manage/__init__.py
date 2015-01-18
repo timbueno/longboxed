@@ -8,3 +8,4 @@
 
 from .comics import *
 from .users import *
+from .downloads import *

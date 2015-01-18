@@ -124,6 +124,10 @@ def last_wednesday():
 
 
 def week_handler(week):
+    if type(week) == datetime.date:
+        return week
+    elif type(week) != str:
+        raise Exception('week variable must be a date or a string type!')
     if week not in ['thisweek', 'nextweek', 'twoweeks']:
         raise Exception('Not a valid input for week selection')
     if week == 'thisweek':
@@ -249,6 +253,13 @@ def is_float(number):
         float(number)
         return True
     except (ValueError, TypeError):
+        return False
+
+def is_int(number):
+    try:
+        int(number)
+        return True
+    except(ValueError, TypeError):
         return False
 
 

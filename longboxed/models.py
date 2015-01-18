@@ -8,3 +8,4 @@
 
 from .comics.models import *
 from .users.models import *
+from .downloads.models import *
