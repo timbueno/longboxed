@@ -17,15 +17,26 @@ class DownloadScheduleBundleCommand(Command):
         return [
             Option('-w', '--week', dest='week',
                    required=True,
-                   choices=['thisweek', 'nextweek', 'twoweeks']),
+                   choices=['thisweek', 'nextweek', 'twoweeks', 'all']),
         ]
 
     def run(self, week):
-        diamond_list = DownloadDiamondListCommand().run(week)
-        if diamond_list:
-            NewScheduleReleasesCommand().run(diamond_list=diamond_list)
-            issues = diamond_list.issues.all()
-            NewBundleIssuesCommand().run(week=week, issues=issues)
+        if week == 'all':
+            weeks = ['thisweek', 'nextweek', 'twoweeks']
+        else:
+            weeks = [week]
+        for week in weeks:
+            print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+            print '!! Starting: %s' % week
+            print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+            diamond_list = DownloadDiamondListCommand().run(week)
+            if diamond_list:
+                NewScheduleReleasesCommand().run(diamond_list=diamond_list)
+                issues = diamond_list.issues.all()
+                NewBundleIssuesCommand().run(week=week, issues=issues)
+            print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+            print '**  Complete: %s' % week
+            print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 
 
 class DownloadDiamondListCommand(Command):
