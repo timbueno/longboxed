@@ -109,7 +109,12 @@ class DiamondList(db.Model, CRUDMixin):
         return self.issues
 
     def release_issues(self, date_override=None):
+        print 'Releasing Issues!'
         date = date_override or self.date
+        print '    Date Created: %s' % self.date_created
+        print '    Date: %s' % date
+        print '    Issues: %i' % self.issues.count()
+        print '    Hash: %s' % self.hash_string
         currently_released_issues = Issue.query.filter(
                                                    Issue.on_sale_date==date)\
                                                .all()
@@ -144,6 +149,11 @@ class DiamondList(db.Model, CRUDMixin):
             issues = new_list.link_issues(fieldnames, supported_publishers)
             d_list = new_list.save()
         else:
-            print 'Found an old list: %s' % old_list
+            print 'Found an old list!'
+            print '    Date Created: %s' % old_list.date_created
+            print '    Date: %s' % old_list.date
+            print '    Issues: %i' % old_list.issues.count()
+            print '    Hash: %s' % old_list.hash_string
+
         return d_list
 
