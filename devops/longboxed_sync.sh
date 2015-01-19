@@ -21,7 +21,7 @@ echo '-----> Restoring exported database on staging server...'
 #ENDSSH
 echo "-----: $NOW - Longboxed Sync :-----" >> /home/logs/db_restore_log.txt
 ssh root@dev.longboxed.com \
-    "dokku postgresql:restore staging < /root/backup/longboxed_database/$FILENAME" \
+    "dokku postgresql:restore dev.longboxed.com < /root/backup/longboxed_database/$FILENAME" \
     >> /home/logs/db_restore_log.txt 2>&1\
     /
 echo 'Longboxed Database Sync Complete!'

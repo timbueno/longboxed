@@ -25,6 +25,7 @@ class Config(object):
     AFFILIATE_ID = environ['AFFILIATE_ID']
     COMPARISON_IMAGE = 'media/tfaw_nocover.jpg'
     COMPARISON_IMAGE_URL = 'http://affimg.tfaw.com/covers_tfaw/400/no/nocover.jpg'
+    DISABLED_PUBS = ['Dark Horse']
     SUPPORTED_PUBS = ['Marvel Comics', 'DC Comics', 'Dark Horse',
                       'IDW Publishing', 'Boom! Studios', 'Image Comics',
                       'Dynamite Entertainment', 'Avatar Press',

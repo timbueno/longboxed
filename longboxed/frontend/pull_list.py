@@ -8,14 +8,15 @@
 import sys
 from json import dumps
 
-from flask import (Blueprint, jsonify, render_template, Response, request)
+from flask import (current_app, Blueprint, jsonify, render_template, Response,
+                   request)
 from flask.ext.login import current_user, login_required
 from sqlalchemy import desc
 
 from . import route
 from ..forms import AddToPullList
-from ..helpers import current_wednesday
-from ..models import Bundle, Title
+from ..helpers import current_wednesday, next_wednesday, two_wednesdays
+from ..models import Bundle, Publisher, Title
 
 
 bp = Blueprint('pull_list', __name__)
@@ -37,6 +38,11 @@ def typeahead():
 
     Gets title names for all titles. This should go away someday
     """
+    disabled_pubs = current_app.config.get('DISABLED_PUBS', [])
+    ts = Title.query.join(Title.publisher)\
+                    .filter(Publisher.name.notin_(disabled_pubs))\
+                    .order_by(Title.name)\
+                    .all()
     titles = [
         {
             'id': title.id,
@@ -44,7 +50,7 @@ def typeahead():
             'publisher': title.publisher.name,
             'users': title.users.count()
         }
-        for title in Title.query.all()
+        for title in ts
     ]
     return Response(dumps(titles), mimetype='application/json')
 
@@ -65,6 +71,8 @@ def remove_from_pull_list():
         # Save updated user
         current_user.save()
         Bundle.refresh_user_bundle(current_user, current_wednesday())
+        Bundle.refresh_user_bundle(current_user, next_wednesday())
+        Bundle.refresh_user_bundle(current_user, two_wednesdays())
         response = {
             'status': 'success',
             'message': title.name+' removed from your pull list'
@@ -72,7 +80,7 @@ def remove_from_pull_list():
     except:
         print "Unexpected error:", sys.exc_info()[1]
         response = {
-            'status': 'error', 
+            'status': 'error',
             'message': 'Something went wrong...'
         }
     return jsonify(response)
@@ -95,6 +103,8 @@ def add_to_pull_list():
             current_user.pull_list.append(title)
             current_user.save()
             Bundle.refresh_user_bundle(current_user, current_wednesday())
+            Bundle.refresh_user_bundle(current_user, next_wednesday())
+            Bundle.refresh_user_bundle(current_user, two_wednesdays())
             response = {
                 'status': 'success',
                 'message': '<strong>'+title.name+'</strong> has been added to your pull list!',
@@ -112,4 +122,4 @@ def add_to_pull_list():
                     'title_id': title.id
                 }
             }
-    return jsonify(response)  
+    return jsonify(response)
