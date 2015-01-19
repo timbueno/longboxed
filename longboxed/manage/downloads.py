@@ -106,14 +106,12 @@ class NewScheduleReleasesCommand(Command):
                 print 'No diamond lists matching md5 hash \'%s\'' % md5
         if diamond_list:
             date = date or diamond_list.date
-            ds = date.strftime('%Y-%m-%d')
             if link:
                 print 'Linking issues...'
                 f = current_app.config.get('RELEASE_CSV_RULES')
                 f = [x[2] for x in f]
                 sp = current_app.config.get('SUPPORTED_DIAMOND_PUBS')
                 diamond_list.link_issues(f, sp)
-            print 'Releasing %s on date %s' % (diamond_list, ds)
             diamond_list.release_issues(date)
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
         print '           Complete           '
