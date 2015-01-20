@@ -21,7 +21,7 @@ from flask.ext.security.forms import (ConfirmRegisterForm,
 from sqlalchemy_imageattach.context import push_store_context, pop_store_context
 
 from . import signals
-from .core import db, mail, security, store, social
+from .core import cache, db, mail, security, store, social
 from .helpers import register_blueprints
 from .middleware import HTTPMethodOverrideMiddleware
 from .models import Connection, User, Role
@@ -57,6 +57,7 @@ def create_app(package_name, package_path, config_name, debug_override=None,
     config[config_name].init_app(app, store=store)
 
     #: Setup Flask Extentions
+    cache.init_app(app, config=app.config.get('CACHE_CONFIG'))
     db.init_app(app)
     mail.init_app(app)
     #: Setup Flask-Security
