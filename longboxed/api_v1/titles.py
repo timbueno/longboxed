@@ -10,7 +10,9 @@ from datetime import datetime
 from flask import current_app, Blueprint, jsonify, request
 from sqlalchemy.orm.exc import NoResultFound
 
-from ..helpers import current_wednesday, next_wednesday, after_wednesday
+from ..core import cache
+from ..helpers import (current_wednesday, next_wednesday, after_wednesday,
+                       make_cache_key)
 from ..models import Title, Issue, Publisher
 from .errors import bad_request
 from . import route
@@ -19,8 +21,19 @@ from . import route
 bp = Blueprint('titles', __name__, url_prefix='/titles')
 
 
+@route(bp, '/test/<int:id>')
+@cache.cached(timeout=30, key_prefix=make_cache_key)
+def test(id):
+    print 'NOT CACHE'
+    a = int(request.args.get('a'))
+    b = int(request.args.get('b'))
+    return str(a + b + id)
+
+
 @route(bp, '/')
+@cache.cached(timeout=300, key_prefix=make_cache_key)
 def get_titles():
+    print 'NOT CACHE'
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 50, type=int)
     disabled_pubs = current_app.config.get('DISABLED_PUBS', [])
