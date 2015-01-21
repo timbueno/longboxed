@@ -33,7 +33,6 @@ def test(id):
 @route(bp, '/')
 @cache.cached(timeout=300, key_prefix=make_cache_key)
 def get_titles():
-    print 'NOT CACHE'
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 50, type=int)
     disabled_pubs = current_app.config.get('DISABLED_PUBS', [])
@@ -60,6 +59,7 @@ def get_titles():
 
 
 @route(bp, '/<int:id>')
+@cache.cached(timeout=300, key_prefix=make_cache_key)
 def get_title(id):
     title = Title.query.get_or_404(id)
     if title.publisher.name in current_app.config.get('DISABLED_PUBS', []):
@@ -70,6 +70,7 @@ def get_title(id):
 
 
 @route(bp, '/<int:id>/issues/')
+@cache.cached(timeout=300, key_prefix=make_cache_key)
 def get_issues_for_title(id):
     title = Title.query.get_or_404(id)
     if title.publisher.name in current_app.config.get('DISABLED_PUBS', []):
