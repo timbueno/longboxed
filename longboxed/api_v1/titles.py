@@ -22,7 +22,7 @@ bp = Blueprint('titles', __name__, url_prefix='/titles')
 
 
 @route(bp, '/test/<int:id>')
-@cache.cached(timeout=30, key_prefix=make_cache_key)
+@cache.cached(key_prefix=make_cache_key)
 def test(id):
     print 'NOT CACHE'
     a = int(request.args.get('a'))
@@ -31,7 +31,7 @@ def test(id):
 
 
 @route(bp, '/')
-@cache.cached(timeout=300, key_prefix=make_cache_key)
+@cache.cached(key_prefix=make_cache_key)
 def get_titles():
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 50, type=int)
@@ -59,7 +59,7 @@ def get_titles():
 
 
 @route(bp, '/<int:id>')
-@cache.cached(timeout=300, key_prefix=make_cache_key)
+@cache.cached(key_prefix=make_cache_key)
 def get_title(id):
     title = Title.query.get_or_404(id)
     if title.publisher.name in current_app.config.get('DISABLED_PUBS', []):
@@ -70,7 +70,7 @@ def get_title(id):
 
 
 @route(bp, '/<int:id>/issues/')
-@cache.cached(timeout=300, key_prefix=make_cache_key)
+@cache.cached(key_prefix=make_cache_key)
 def get_issues_for_title(id):
     title = Title.query.get_or_404(id)
     if title.publisher.name in current_app.config.get('DISABLED_PUBS', []):

@@ -20,7 +20,7 @@ bp = Blueprint('issues', __name__, url_prefix='/issues')
 
 
 @route(bp, '/', methods=['GET'])
-@cache.cached(timeout=300, key_prefix=make_cache_key)
+@cache.cached(key_prefix=make_cache_key)
 def issues_with_date():
     if 'date' not in request.args.keys():
         abort(404)
@@ -55,7 +55,7 @@ def issues_with_date():
 
 
 @route(bp, '/<int:id>', methods=['GET'])
-@cache.cached(timeout=300, key_prefix=make_cache_key)
+@cache.cached(key_prefix=make_cache_key)
 def get_issue(id):
     issue = Issue.query.get_or_404(id)
     return jsonify({
@@ -64,7 +64,7 @@ def get_issue(id):
 
 
 @route(bp, '/thisweek/', methods=['GET'])
-@cache.cached(timeout=300, key_prefix=make_cache_key)
+@cache.cached(key_prefix=make_cache_key)
 def this_week():
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 50, type=int)
@@ -91,7 +91,7 @@ def this_week():
 
 
 @route(bp, '/nextweek/', methods=['GET'])
-@cache.cached(timeout=300, key_prefix=make_cache_key)
+@cache.cached(key_prefix=make_cache_key)
 def next_week():
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 50, type=int)
@@ -118,7 +118,7 @@ def next_week():
 
 
 @route(bp, '/popular/', methods=['GET'])
-@cache.cached(timeout=300, key_prefix=make_cache_key)
+@cache.cached(key_prefix=make_cache_key)
 def popular_issues_with_date():
     date = request.args.get('date', current_wednesday())
     print date
