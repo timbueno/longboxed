@@ -5,7 +5,7 @@
 
     longboxed manager package
 """
-
 from .comics import *
+from .general import *
 from .users import *
 from .downloads import *
