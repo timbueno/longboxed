@@ -19,7 +19,8 @@ class Config(object):
     AWS_ACCESS_KEY_ID = environ['AWS_ACCESS_KEY_ID']
     AWS_SECRET_KEY = environ['AWS_SECRET_KEY']
 
-    CACHE_CONFIG = {'CACHE_TYPE': 'simple'}
+    CACHE_CONFIG = {'CACHE_TYPE': 'simple',
+                    'CACHE_DEFAULT_TIMEOUT': 30}
 
     THUMBNAIL_WIDTHS = [100, 250, 500]
 
@@ -154,7 +155,9 @@ class ProdConfig(Config):
     CONFIG_NAME = 'production'
     DEBUG = False
     USE_AWS = True
-    CACHE_CONFIG = {'CACHE_TYPE': 'simple'}
+    CACHE_CONFIG = {'CACHE_TYPE': 'memcached',
+                    'CACHE_MEMCACHED_SERVERS': ['localhost:11211'],
+                    'CACHE_DEFAULT_TIMEOUT': 30}
 
     @classmethod
     def init_app(cls, app, **kwargs):
@@ -190,7 +193,10 @@ class DevConfig(Config):
     DEBUG = True
     USE_AWS = False
     DEBUG_TB_INTERCEPT_REDIRECTS = False
-    CACHE_CONFIG = {'CACHE_TYPE': 'simple'}
+    #CACHE_CONFIG = {'CACHE_TYPE': 'simple'}
+    CACHE_CONFIG = {'CACHE_TYPE': 'memcached',
+                    'CACHE_MEMCACHED_SERVERS': ['localhost:11211'],
+                    'CACHE_DEFAULT_TIMEOUT': 30}
 
     @classmethod
     def init_app(cls, app, **kwargs):
