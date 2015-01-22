@@ -39,10 +39,12 @@ def register_blueprints(app, package_name, package_path):
             rv.append(item)
     return rv
 
+
 def make_cache_key(*args, **kwargs):
     path = request.path
     args = str(hash(frozenset(request.args.items())))
     return (path + args).encode('utf-8')
+
 
 def compare_images(image1, image2):
     """Compares byte strings of two images by hashing them with md5
