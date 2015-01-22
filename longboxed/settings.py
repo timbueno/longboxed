@@ -156,7 +156,7 @@ class ProdConfig(Config):
     DEBUG = False
     USE_AWS = True
     CACHE_CONFIG = {'CACHE_TYPE': 'memcached',
-                    'CACHE_MEMCACHED_SERVERS': [environ['MEMCACHED_URL']],
+                    'CACHE_MEMCACHED_SERVERS': [environ['MEMCACHE_SCHEME']],
                     'CACHE_DEFAULT_TIMEOUT': 30}
 
     @classmethod
@@ -195,7 +195,7 @@ class DevConfig(Config):
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     #CACHE_CONFIG = {'CACHE_TYPE': 'simple'}
     CACHE_CONFIG = {'CACHE_TYPE': 'memcached',
-                    'CACHE_MEMCACHED_SERVERS': [environ['MEMCACHED_URL']],
+                    'CACHE_MEMCACHED_SERVERS': [environ['MEMCACHE_SCHEME']],
                     'CACHE_DEFAULT_TIMEOUT': 30}
 
     @classmethod
