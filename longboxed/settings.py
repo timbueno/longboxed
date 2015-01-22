@@ -157,7 +157,7 @@ class ProdConfig(Config):
     USE_AWS = True
     CACHE_CONFIG = {'CACHE_TYPE': 'memcached',
                     'CACHE_MEMCACHED_SERVERS': [environ['MEMCACHE_SCHEME']],
-                    'CACHE_DEFAULT_TIMEOUT': environ['MEMCACHE_DEFAULT_TIMEOUT']
+                    'CACHE_DEFAULT_TIMEOUT': int(environ['MEMCACHE_DEFAULT_TIMEOUT'])
                    }
 
     @classmethod
@@ -197,7 +197,7 @@ class DevConfig(Config):
     #CACHE_CONFIG = {'CACHE_TYPE': 'simple'}
     CACHE_CONFIG = {'CACHE_TYPE': 'memcached',
                     'CACHE_MEMCACHED_SERVERS': [environ['MEMCACHE_SCHEME']],
-                    'CACHE_DEFAULT_TIMEOUT': environ['MEMCACHE_DEFAULT_TIMEOUT']
+                    'CACHE_DEFAULT_TIMEOUT': int(environ['MEMCACHE_DEFAULT_TIMEOUT'])
                    }
 
     @classmethod
