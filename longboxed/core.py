@@ -13,6 +13,7 @@
 """
 import os
 
+from flask.ext.cache import Cache
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security
 from flask.ext.social import Social
@@ -32,6 +33,9 @@ social = Social()
 
 #: Flask Mail Extension Instance
 mail = Mail()
+
+#: Flask-Cache Extension Instance
+cache = Cache()
 
 #: Image Filesystem
 store = config[os.getenv('APP_ENV') or 'default'].get_store()

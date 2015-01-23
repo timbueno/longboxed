@@ -7,6 +7,8 @@
 """
 from flask import current_app, Blueprint, jsonify, request
 
+from ..core import cache
+from ..helpers import make_cache_key
 from ..models import Title, Publisher
 from . import route
 from .errors import bad_request
@@ -16,6 +18,7 @@ bp = Blueprint('publishers', __name__, url_prefix='/publishers')
 
 
 @route(bp, '/', methods=['GET'])
+@cache.cached(key_prefix=make_cache_key)
 def publishers():
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 50, type=int)
@@ -42,6 +45,7 @@ def publishers():
 
 
 @route(bp, '/<int:id>', methods=['GET'])
+@cache.cached(key_prefix=make_cache_key)
 def get_publisher(id):
     publisher = Publisher.query.get_or_404(id)
     if publisher.name in current_app.config.get('DISABLED_PUBS', []):
@@ -52,6 +56,7 @@ def get_publisher(id):
 
 
 @route(bp, '/<int:id>/titles/', methods=['GET'])
+@cache.cached(key_prefix=make_cache_key)
 def get_titles_for_publisher(id):
     publisher = Publisher.query.get_or_404(id)
     if publisher.name in current_app.config.get('DISABLED_PUBS', []):
