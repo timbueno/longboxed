@@ -8,6 +8,7 @@
 from flask import current_app
 from flask.ext.script import Command, Option, prompt, prompt_bool
 
+from .general import ClearCacheCommand
 from ..models import DiamondList, Issue, User, Bundle
 from ..helpers import week_handler, is_int
 
@@ -34,6 +35,7 @@ class DownloadScheduleBundleCommand(Command):
                 NewScheduleReleasesCommand().run(diamond_list=diamond_list)
                 issues = diamond_list.issues.all()
                 NewBundleIssuesCommand().run(week=week, issues=issues)
+                ClearCacheCommand().run(proceed=True)
             print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
             print '**  Complete: %s' % week
             print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'

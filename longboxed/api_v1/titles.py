@@ -10,7 +10,9 @@ from datetime import datetime
 from flask import current_app, Blueprint, jsonify, request
 from sqlalchemy.orm.exc import NoResultFound
 
-from ..helpers import current_wednesday, next_wednesday, after_wednesday
+from ..core import cache
+from ..helpers import (current_wednesday, next_wednesday, after_wednesday,
+                       make_cache_key)
 from ..models import Title, Issue, Publisher
 from .errors import bad_request
 from . import route
@@ -19,7 +21,17 @@ from . import route
 bp = Blueprint('titles', __name__, url_prefix='/titles')
 
 
+@route(bp, '/test/<int:id>')
+@cache.cached(key_prefix=make_cache_key)
+def test(id):
+    print 'NOT CACHE'
+    a = int(request.args.get('a'))
+    b = int(request.args.get('b'))
+    return str(a + b + id)
+
+
 @route(bp, '/')
+@cache.cached(key_prefix=make_cache_key)
 def get_titles():
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 50, type=int)
@@ -47,6 +59,7 @@ def get_titles():
 
 
 @route(bp, '/<int:id>')
+@cache.cached(key_prefix=make_cache_key)
 def get_title(id):
     title = Title.query.get_or_404(id)
     if title.publisher.name in current_app.config.get('DISABLED_PUBS', []):
@@ -57,6 +70,7 @@ def get_title(id):
 
 
 @route(bp, '/<int:id>/issues/')
+@cache.cached(key_prefix=make_cache_key)
 def get_issues_for_title(id):
     title = Title.query.get_or_404(id)
     if title.publisher.name in current_app.config.get('DISABLED_PUBS', []):
