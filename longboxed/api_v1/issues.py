@@ -72,7 +72,7 @@ def this_week():
     pagination = Issue.query.filter(
                                 Issue.on_sale_date==date,
                                 Issue.is_parent==True)\
-                             .paginate(page, per_page=50, error_out=False)
+                             .paginate(page, per_page=count, error_out=False)
     issues = pagination.items
     prev = None
     if pagination.has_prev:
@@ -99,7 +99,7 @@ def next_week():
     pagination = Issue.query.filter(
                                 Issue.on_sale_date==date,
                                 Issue.is_parent==True)\
-                            .paginate(page, per_page=50, error_out=False)
+                            .paginate(page, per_page=count, error_out=False)
     issues = pagination.items
     prev = None
     if pagination.has_prev:
