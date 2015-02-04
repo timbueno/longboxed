@@ -1,0 +1,65 @@
+{
+    "quotes": [
+        {
+            "quote":"What happens when the unstoppable force meets the immovable object? They surrender",
+            "author":"Superman",
+            "issue":"All-Star Superman #3",
+            "id": null
+        },
+        {
+            "quote":"It's been fifteen years since I had to take out a Green Beret",
+            "author":"Commissioner Jim Gordon",
+            "issue":"Batman #404",
+            "id": null
+        },
+        {
+            "quote":"We are responsible for each other. Thats part of being human - isn't it?",
+            "author":"Robin",
+            "issue":"Batman #355",
+            "id": null
+        },
+        {
+            "quote":"Not even in the face of Armageddon. Never compromise.",
+            "author":"Rorschach",
+            "issue":"The Watchmen #12",
+            "id": null
+        },
+        {
+            "quote":"What you say is reasonable, logical, justifiable. But does that make it right?",
+            "author":"Nightcrawler",
+            "issue":"Uncanny X-Men #140",
+            "id": null
+        },
+        {
+            "quote":"...nobody's got so many friends that he can afford to start losin' 'em.'",
+            "author":"The Falcon",
+            "issue":"The Avengers #88",
+            "id": null
+        },
+        {
+            "quote":"The price for getting what you want, is getting what once you wanted.",
+            "author":"Dream",
+            "issue":"The Sandman #19",
+            "id": null
+        },
+        {
+            "quote":"We are both, in our ways, outcasts of society...you just haven't realized it yet!",
+            "author":"Lex Luthor",
+            "issue":"Superman: The Secret Years #2",
+            "id": null
+        },
+        {
+            "quote":"It always ends. That's what gives it value.",
+            "author":"Death",
+            "issue":"Death: The High Cost of Living",
+            "id": null
+        },
+        {
+            "quote":"Behind this mask there is more than just flesh. Beneath this mask there is an idea... and ideas are bulletproof.",
+            "author":"V",
+            "issue":"V for Vendetta",
+            "id": null
+        }
+
+    ]
+}
