@@ -1,13 +1,13 @@
 {
     "quotes": [
         {
-            "quote":"What happens when the unstoppable force meets the immovable object? They surrender",
+            "quote":"What happens when the unstoppable force meets the immovable object? They surrender.",
             "author":"Superman",
             "issue":"All-Star Superman #3",
             "id": null
         },
         {
-            "quote":"It's been fifteen years since I had to take out a Green Beret",
+            "quote":"It's been fifteen years since I had to take out a Green Beret.",
             "author":"Commissioner Jim Gordon",
             "issue":"Batman #404",
             "id": null
@@ -31,7 +31,7 @@
             "id": null
         },
         {
-            "quote":"...nobody's got so many friends that he can afford to start losin' 'em.'",
+            "quote":"Nobody's got so many friends that he can afford to start losin' 'em.'",
             "author":"The Falcon",
             "issue":"The Avengers #88",
             "id": null
