@@ -72,7 +72,7 @@ def this_week():
     pagination = Issue.query.filter(
                                 Issue.on_sale_date==date,
                                 Issue.is_parent==True)\
-                             .paginate(page, per_page=50, error_out=False)
+                             .paginate(page, per_page=count, error_out=False)
     issues = pagination.items
     prev = None
     if pagination.has_prev:
@@ -99,7 +99,7 @@ def next_week():
     pagination = Issue.query.filter(
                                 Issue.on_sale_date==date,
                                 Issue.is_parent==True)\
-                            .paginate(page, per_page=50, error_out=False)
+                            .paginate(page, per_page=count, error_out=False)
     issues = pagination.items
     prev = None
     if pagination.has_prev:
@@ -121,7 +121,7 @@ def next_week():
 @cache.cached(key_prefix=make_cache_key)
 def popular_issues_with_date():
     date = request.args.get('date', current_wednesday())
-    print date
+    count = request.args.get('count', 10, type=int)
     if isinstance(date, _date):
         pass
     elif isinstance(date, unicode):
@@ -132,9 +132,10 @@ def popular_issues_with_date():
                             Issue.on_sale_date==date,
                             Issue.is_parent==True)\
                          .order_by(Issue.num_subscribers.desc())\
-                         .limit(10)\
+                         .limit(count)\
                          .all()
     return jsonify({
         'date': date.strftime('%Y-%m-%d'),
-        'issues': [issue.to_json() for issue in issues]
+        'issues': [issue.to_json() for issue in issues],
+        'count': count
     })

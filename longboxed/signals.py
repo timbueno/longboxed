@@ -1,7 +1,18 @@
+# -*- coding: utf-8 -*-
+"""
+    longboxed.signals
+    ~~~~~~~~~~~~~~~~~
+
+    longboxed signals module
+
+"""
+
 from flask.ext.security.signals import user_registered
 from werkzeug.local import LocalProxy
 
 from .core import db
+from .models import Bundle
+from .helpers import current_wednesday, next_wednesday, two_wednesdays
 
 
 def user_registered_signal_handler(app, user, confirm_token):
@@ -17,6 +28,9 @@ def user_registered_signal_handler(app, user, confirm_token):
     default_role = _security_datastore.find_role('user')
     _security_datastore.add_role_to_user(user, default_role)
     db.session.commit()
+    Bundle.refresh_user_bundle(user, current_wednesday())
+    Bundle.refresh_user_bundle(user, next_wednesday())
+    Bundle.refresh_user_bundle(user, two_wednesdays())
 
 
 def init_app(app):
