@@ -37,7 +37,7 @@
                                 <span class="fa fa-facebook facebook" data-title="{{ issue.complete_title }}" data-url="{{ url_for('comics.issue', diamond_id=issue.diamond_id, _external=True) }}"></span>
                             </div>
                         </div>
-                        <p>{{ issue.description }}</p>
+                        <p>{{ issue.description|safe }}</p>
                     </div>
                     <table class="table">
                         <tbody>
