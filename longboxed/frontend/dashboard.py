@@ -45,6 +45,9 @@ def index():
                          all()
     return render_template('splash.html', issues=issues)
 
+@route(bp, '/privacy')
+def privacy():
+    return render_template('privacy.html')
 
 @route(bp, '/settings', methods=('GET', 'POST'))
 @login_required
@@ -55,7 +58,6 @@ def settings():
         user_info_form.populate_obj(current_user)
         current_user.save()
     return render_template('settings.html', user_info_form=user_info_form, delete_user_account_form=delete_user_account_form)
-
 
 @route(bp, '/delete_account', methods=('GET', 'POST'))
 @login_required
