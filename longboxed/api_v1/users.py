@@ -5,6 +5,9 @@
 
     Users endpoints
 """
+from datetime import datetime
+from datetime import date as _date
+
 from flask import current_app, Blueprint, g, jsonify, request
 from flask.ext.security.registerable import register_user
 from werkzeug.datastructures import MultiDict
@@ -118,9 +121,16 @@ def get_user_bundles(id):
         return forbidden('You do not have permission to access this users pull list')
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 5, type=int)
+    date = request.args.get('date', current_wednesday())
+    if isinstance(date, _date):
+        pass
+    elif isinstance(date, unicode):
+        date = datetime.strptime(date, '%Y-%m-%d')
+    else:
+        return abort(404)
     pagination = Bundle.query.filter(
                                 Bundle.user==g.current_user,
-                                Bundle.release_date<=current_wednesday())\
+                                Bundle.release_date<=date)\
                              .order_by(Bundle.release_date.desc())\
                              .paginate(page, per_page=count, error_out=False)
     bundles = pagination.items
