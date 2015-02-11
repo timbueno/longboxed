@@ -1,8 +1,11 @@
 .headerwrap {
     .section(2);
 
-    background: url(../img/header-bg.jpg) no-repeat center top;
-    text-align:center;
+    /*background: url(../img/header-bg.jpg) no-repeat center top;*/
+    background: url(../img/ultron-bw.jpg) no-repeat center top;
+    /*background-color: black;*/
+    //background: linear-gradient(to bottom,#fff 0,@gray-lighter 100%);
+    /*text-align:center;*/
     background-attachment: relative;
     background-position: center center;
     min-height: 450px;
@@ -38,13 +41,79 @@
     }
 
     h1 {
-        font-size: 8em;
+        font-size: 3em;
         z-index: 10000;
         color: white;
 
+        @media (max-width: @screen-sm-min) {
+            font-size: 2.5em;
+        }
         @media (max-width: @screen-xs-min) {
             font-size: 2em;
             // line-height: 60px;
+        }
+    }
+}
+
+.signup-button {
+    .btn;
+    .btn-outline-inverse;
+    margin: 10px;
+    @media (min-width: @screen-md-min) {
+        .btn-lg;
+    }
+}
+
+.app-button {
+    .btn;
+    .btn-outline-inverse;
+    margin: 10px;
+
+    @media (min-width: @screen-md-min) {
+        .btn-lg;
+    }
+
+    @media (max-width: @screen-xs-min) {
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+}
+
+.featured-comic {
+    .media;
+    @media (max-width: @screen-xs-min) {
+        width: 280px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .featured-cover {
+        .pull-left;
+        float: left;
+        img {
+            .media-object;
+            width: 150px;
+            @media (max-width: @screen-xs-min) {
+                width:100px;
+            }
+        }
+    }
+    .featured-info {
+        .media-body;
+        color: white;
+        /*display: inline-block;*/
+        h3 {
+            .media-heading;
+            font-weight: normal;
+            margin-top: 10px;
+            @media (max-width: @screen-xs-min) {
+                font-size: 1em;
+            }
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            padding-top: 5px;
         }
     }
 }

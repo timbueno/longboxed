@@ -4,20 +4,54 @@
 
 {% block content -%}
 <div class="headerwrap">
-    <div class="container centered">
+    <div class="container">
         <div class="row">
-            <div class="col-xs-12">
+            <div class="centered col-sm-6">
+                <!--
                 <div class="visible-xs">
                     <span class="icon-longboxed-logo logo"></span>
                 </div>
-                <h1>Never miss an issue again</h1>
+                -->
+                <h1>
+                    Never miss an issue again.
+                </h1>
+                <!--
+                <h1>
+                    <span>Never</span>
+                    <span>miss an issue</span>
+                    <span>Again</span>
+                </h1>
+                -->
+                {% if not g.user %}
+                <a href="{{ url_for('security.register') }}" role="button" class="signup-button">
+                   Sign Up 
+                </a>
+                <a href="{{ url_for('security.register') }}" role="button" class="app-button">
+                    Get the App
+                </a>
+                {% endif %}
+            </div>
+            <div class="col-sm-6">
+                <div class="featured-comic">
+                    <div class="featured-cover">
+                        <a href="#">
+                            <img src="{{
+                            featured.cover_image.find_thumbnail(width=250).locate() }}">
+                        </a>
+                    </div>
+                    <div class="featured-info">
+                        <h3>Featured Comic</h3>
+                        <span>Feb 11, 2015</span>
+                        <ul>
+                            <li>{{ featured.title.name }}</li>
+                            {% if featured.issue_number %}
+                            <li>#{{ '%g' % featured.issue_number }}</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
-        {% if not g.user %}
-        <a href="{{ url_for('security.register') }}" role="button" class="btn btn-outline-inverse btn-lg">
-            Get Started
-        </a>
-        {% endif %}
     </div>
 </div>
 <div class="slide1">

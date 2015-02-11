@@ -7910,8 +7910,10 @@ hr {
 .headerwrap {
   padding-top: 2em;
   padding-bottom: 2em;
-  background: url(../img/header-bg.jpg) no-repeat center top;
-  text-align: center;
+  /*background: url(../img/header-bg.jpg) no-repeat center top;*/
+  background: url(../img/ultron-bw.jpg) no-repeat center top;
+  /*background-color: black;*/
+  /*text-align:center;*/
   background-attachment: relative;
   background-position: center center;
   min-height: 450px;
@@ -7938,14 +7940,214 @@ hr {
   font-size: 8em;
 }
 .headerwrap h1 {
-  font-size: 8em;
+  font-size: 3em;
   z-index: 10000;
   color: white;
+}
+@media (max-width: 768px) {
+  .headerwrap h1 {
+    font-size: 2.5em;
+  }
 }
 @media (max-width: 480px) {
   .headerwrap h1 {
     font-size: 2em;
   }
+}
+.signup-button {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: normal;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  padding: 6px 12px;
+  font-size: 16px;
+  line-height: 1.42857143;
+  border-radius: 3px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  color: #fff;
+  background-color: transparent;
+  border-color: #fff;
+  letter-spacing: 3px;
+  margin: 10px;
+}
+.signup-button:focus {
+  outline: thin dotted #333;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+.signup-button:hover,
+.signup-button:focus {
+  color: #333333;
+  text-decoration: none;
+}
+.signup-button:active,
+.signup-button.active {
+  outline: 0;
+  background-image: none;
+  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+.signup-button.disabled,
+.signup-button[disabled],
+fieldset[disabled] .signup-button {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.65;
+  filter: alpha(opacity=65);
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.signup-button:hover,
+.signup-button:focus,
+.signup-button:active {
+  color: #000;
+  text-shadow: none;
+  background-color: #fff;
+  border-color: #fff;
+}
+@media (min-width: 992px) {
+  .signup-button {
+    padding: 10px 16px;
+    font-size: 20px;
+    line-height: 1.33;
+    border-radius: 3px;
+  }
+}
+.app-button {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: normal;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  padding: 6px 12px;
+  font-size: 16px;
+  line-height: 1.42857143;
+  border-radius: 3px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  color: #fff;
+  background-color: transparent;
+  border-color: #fff;
+  letter-spacing: 3px;
+  margin: 10px;
+}
+.app-button:focus {
+  outline: thin dotted #333;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+.app-button:hover,
+.app-button:focus {
+  color: #333333;
+  text-decoration: none;
+}
+.app-button:active,
+.app-button.active {
+  outline: 0;
+  background-image: none;
+  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+.app-button.disabled,
+.app-button[disabled],
+fieldset[disabled] .app-button {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.65;
+  filter: alpha(opacity=65);
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.app-button:hover,
+.app-button:focus,
+.app-button:active {
+  color: #000;
+  text-shadow: none;
+  background-color: #fff;
+  border-color: #fff;
+}
+@media (min-width: 992px) {
+  .app-button {
+    padding: 10px 16px;
+    font-size: 20px;
+    line-height: 1.33;
+    border-radius: 3px;
+  }
+}
+@media (max-width: 480px) {
+  .app-button {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+}
+.featured-comic {
+  overflow: hidden;
+  zoom: 1;
+  margin-top: 15px;
+}
+.featured-comic > .pull-left {
+  margin-right: 10px;
+}
+.featured-comic > .pull-right {
+  margin-left: 10px;
+}
+@media (max-width: 480px) {
+  .featured-comic {
+    width: 280px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+.featured-comic .featured-cover {
+  margin-right: 10px;
+  float: left;
+}
+.featured-comic .featured-cover img {
+  display: block;
+  width: 150px;
+}
+@media (max-width: 480px) {
+  .featured-comic .featured-cover img {
+    width: 100px;
+  }
+}
+.featured-comic .featured-info {
+  overflow: hidden;
+  zoom: 1;
+  color: white;
+  /*display: inline-block;*/
+}
+.featured-comic .featured-info h3 {
+  margin: 0 0 5px;
+  font-weight: normal;
+  margin-top: 10px;
+}
+@media (max-width: 480px) {
+  .featured-comic .featured-info h3 {
+    font-size: 1em;
+  }
+}
+.featured-comic .featured-info ul {
+  list-style-type: none;
+  padding: 0;
+  padding-top: 5px;
 }
 .week-links {
   padding-top: 2em;
