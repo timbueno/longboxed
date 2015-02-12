@@ -1098,6 +1098,17 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
+	"\/longboxed\/frontend\/static\/img\/splash\/hulk-bw.jpg": {
+		"fileType": 16384,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 78173,
+		"inputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/splash\/hulk-bw.jpg",
+		"outputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/splash\/hulk-bw.jpg",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
 	"\/longboxed\/frontend\/static\/img\/test\/1.jpeg": {
 		"fileType": 16384,
 		"ignore": 0,
@@ -1219,12 +1230,34 @@
 		"outputStyle": 1,
 		"syntaxCheckerStyle": 1
 		},
+	"\/longboxed\/frontend\/static\/js\/min\/randomSplash-min.js": {
+		"fileType": 64,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/longboxed\/frontend\/static\/js\/min\/randomSplash-min.js",
+		"outputAbbreviatedPath": "\/longboxed\/frontend\/static\/js\/min\/min\/randomSplash-min-min.js",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
+		},
 	"\/longboxed\/frontend\/static\/js\/pull_list.js": {
 		"fileType": 64,
 		"ignore": 0,
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/longboxed\/frontend\/static\/js\/pull_list.js",
 		"outputAbbreviatedPath": "\/longboxed\/frontend\/static\/js\/min\/pull_list-min.js",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1,
+		"syntaxCheckerStyle": 1
+		},
+	"\/longboxed\/frontend\/static\/js\/randomSplash.js": {
+		"fileType": 64,
+		"ignore": 1,
+		"ignoreWasSetByUser": 1,
+		"inputAbbreviatedPath": "\/longboxed\/frontend\/static\/js\/randomSplash.js",
+		"outputAbbreviatedPath": "\/longboxed\/frontend\/static\/js\/min\/randomSplash-min.js",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1,

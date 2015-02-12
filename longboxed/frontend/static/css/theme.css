@@ -7910,10 +7910,10 @@ hr {
 .headerwrap {
   padding-top: 2em;
   padding-bottom: 2em;
-  /*background: url(../img/header-bg.jpg) no-repeat center top;*/
-  background: url(../img/ultron-bw.jpg) no-repeat center top;
-  /*background-color: black;*/
-  /*text-align:center;*/
+  background-color: black;
+  /*background-image: url(../img/ultron-bw.jpg);*/
+  background-repeat: no-repeat;
+  background-position: center top;
   background-attachment: relative;
   background-position: center center;
   min-height: 450px;
