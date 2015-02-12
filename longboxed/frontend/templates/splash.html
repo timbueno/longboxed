@@ -6,32 +6,20 @@
 <div class="headerwrap">
     <div class="container">
         <div class="row">
-            <div class="centered col-sm-6">
-                <!--
-                <div class="visible-xs">
-                    <span class="icon-longboxed-logo logo"></span>
+            <div class="centered col-sm-6 col-xs-12">
+                <div class="copy-block">
+                    <h1>Never miss an issue again.</h1>
+                    {% if not g.user %}
+                    <a href="{{ url_for('security.register') }}" role="button" class="signup-button">
+                       Sign Up 
+                    </a>
+                    <a href="{{ url_for('security.register') }}" role="button" class="app-button">
+                        Get the App
+                    </a>
+                    {% endif %}
                 </div>
-                -->
-                <h1>
-                    Never miss an issue again.
-                </h1>
-                <!--
-                <h1>
-                    <span>Never</span>
-                    <span>miss an issue</span>
-                    <span>Again</span>
-                </h1>
-                -->
-                {% if not g.user %}
-                <a href="{{ url_for('security.register') }}" role="button" class="signup-button">
-                   Sign Up 
-                </a>
-                <a href="{{ url_for('security.register') }}" role="button" class="app-button">
-                    Get the App
-                </a>
-                {% endif %}
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-6 hidden-xs">
                 <div class="featured-comic">
                     <div class="featured-cover">
                         <a href="#">

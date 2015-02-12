@@ -9,6 +9,10 @@
     background-attachment: relative;
     background-position: center center;
     min-height: 450px;
+    @media (max-width: @screen-xs-min) {
+        min-height: 250px;
+    }
+
     width: 100%;
 
     -webkit-background-size: 100%;
@@ -55,38 +59,48 @@
     }
 }
 
-.signup-button {
-    .btn;
-    .btn-outline-inverse;
-    margin: 10px;
-    @media (min-width: @screen-md-min) {
-        .btn-lg;
-    }
-}
+.copy-block {
+    /*margin-top: 45px;*/
+    /*@media (max-width: @screen-xs-min) {*/
+        /*margin-top: 45px;*/
+    /*}*/
 
-.app-button {
-    .btn;
-    .btn-outline-inverse;
-    margin: 10px;
-
-    @media (min-width: @screen-md-min) {
-        .btn-lg;
+    .signup-button {
+            .btn;
+        .btn-outline-inverse;
+        margin: 10px;
+        @media (min-width: @screen-md-min) {
+            .btn-lg;
+        }
     }
 
-    @media (max-width: @screen-xs-min) {
-        margin-left: 5px;
-        margin-right: 5px;
+    .app-button {
+        .btn;
+        .btn-outline-inverse;
+        margin: 10px;
+
+        @media (min-width: @screen-md-min) {
+            .btn-lg;
+        }
+
+        @media (max-width: @screen-xs-min) {
+            margin-left: 5px;
+            margin-right: 5px;
+        }
     }
 }
 
 .featured-comic {
     .media;
+    margin-left: 30px;
+
     @media (max-width: @screen-xs-min) {
         width: 280px;
         display: block;
         margin-left: auto;
         margin-right: auto;
     }
+
     .featured-cover {
         .pull-left;
         float: left;

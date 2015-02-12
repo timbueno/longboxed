@@ -7935,6 +7935,11 @@ hr {
   -webkit-box-pack: center;
   -webkit-box-align: center;
 }
+@media (max-width: 480px) {
+  .headerwrap {
+    min-height: 250px;
+  }
+}
 .headerwrap .logo {
   color: white;
   font-size: 8em;
@@ -7954,7 +7959,13 @@ hr {
     font-size: 2em;
   }
 }
-.signup-button {
+.copy-block {
+  /*margin-top: 45px;*/
+  /*@media (max-width: @screen-xs-min) {*/
+  /*margin-top: 45px;*/
+  /*}*/
+}
+.copy-block .signup-button {
   display: inline-block;
   margin-bottom: 0;
   font-weight: normal;
@@ -7979,26 +7990,26 @@ hr {
   letter-spacing: 3px;
   margin: 10px;
 }
-.signup-button:focus {
+.copy-block .signup-button:focus {
   outline: thin dotted #333;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
-.signup-button:hover,
-.signup-button:focus {
+.copy-block .signup-button:hover,
+.copy-block .signup-button:focus {
   color: #333333;
   text-decoration: none;
 }
-.signup-button:active,
-.signup-button.active {
+.copy-block .signup-button:active,
+.copy-block .signup-button.active {
   outline: 0;
   background-image: none;
   -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
-.signup-button.disabled,
-.signup-button[disabled],
-fieldset[disabled] .signup-button {
+.copy-block .signup-button.disabled,
+.copy-block .signup-button[disabled],
+fieldset[disabled] .copy-block .signup-button {
   cursor: not-allowed;
   pointer-events: none;
   opacity: 0.65;
@@ -8006,23 +8017,23 @@ fieldset[disabled] .signup-button {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
-.signup-button:hover,
-.signup-button:focus,
-.signup-button:active {
+.copy-block .signup-button:hover,
+.copy-block .signup-button:focus,
+.copy-block .signup-button:active {
   color: #000;
   text-shadow: none;
   background-color: #fff;
   border-color: #fff;
 }
 @media (min-width: 992px) {
-  .signup-button {
+  .copy-block .signup-button {
     padding: 10px 16px;
     font-size: 20px;
     line-height: 1.33;
     border-radius: 3px;
   }
 }
-.app-button {
+.copy-block .app-button {
   display: inline-block;
   margin-bottom: 0;
   font-weight: normal;
@@ -8047,26 +8058,26 @@ fieldset[disabled] .signup-button {
   letter-spacing: 3px;
   margin: 10px;
 }
-.app-button:focus {
+.copy-block .app-button:focus {
   outline: thin dotted #333;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
-.app-button:hover,
-.app-button:focus {
+.copy-block .app-button:hover,
+.copy-block .app-button:focus {
   color: #333333;
   text-decoration: none;
 }
-.app-button:active,
-.app-button.active {
+.copy-block .app-button:active,
+.copy-block .app-button.active {
   outline: 0;
   background-image: none;
   -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
-.app-button.disabled,
-.app-button[disabled],
-fieldset[disabled] .app-button {
+.copy-block .app-button.disabled,
+.copy-block .app-button[disabled],
+fieldset[disabled] .copy-block .app-button {
   cursor: not-allowed;
   pointer-events: none;
   opacity: 0.65;
@@ -8074,16 +8085,16 @@ fieldset[disabled] .app-button {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
-.app-button:hover,
-.app-button:focus,
-.app-button:active {
+.copy-block .app-button:hover,
+.copy-block .app-button:focus,
+.copy-block .app-button:active {
   color: #000;
   text-shadow: none;
   background-color: #fff;
   border-color: #fff;
 }
 @media (min-width: 992px) {
-  .app-button {
+  .copy-block .app-button {
     padding: 10px 16px;
     font-size: 20px;
     line-height: 1.33;
@@ -8091,7 +8102,7 @@ fieldset[disabled] .app-button {
   }
 }
 @media (max-width: 480px) {
-  .app-button {
+  .copy-block .app-button {
     margin-left: 5px;
     margin-right: 5px;
   }
@@ -8100,6 +8111,7 @@ fieldset[disabled] .app-button {
   overflow: hidden;
   zoom: 1;
   margin-top: 15px;
+  margin-left: 30px;
 }
 .featured-comic > .pull-left {
   margin-right: 10px;
