@@ -8199,6 +8199,11 @@ fieldset[disabled] .copy-block .app-button {
 }
 .slide1 p {
   margin-bottom: 2em;
+  margin-left: 1.5em;
+  margin-right: 1.5em;
+}
+.slide1 .copy {
+  margin-bottom: 5em;
 }
 .slide2 {
   padding-top: 2em;
