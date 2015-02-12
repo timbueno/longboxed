@@ -7,13 +7,16 @@ function getRandomInt(min, max) {
 }
 
 var splashImages = [
-    "/static/img/ultron-bw.jpg",
-    "/static/img/header-bg.jpg",
-    "/static/img/slide-01.jpg",
-    "/static/img/slide-02.jpg"
+    "/static/img/splash/ultron-bw.jpg",
+    "/static/img/splash/hulk-bw.jpg",
+    "/static/img/splash/marvel-assorted-bw.jpg",
+    "/static/img/splash/sandman-bw.jpg",
+    "/static/img/splash/rorschach-bw.jpg",
+    "/static/img/splash/dc-assorted-bw.jpg",
+    "/static/img/splash/batman-bw.jpg"
 ];
 // Get random splash image
-splashImage = splashImages[getRandomInt(0, (splashImages.length-1))];
+var splashImage = splashImages[getRandomInt(0, (splashImages.length-1))];
 // Set background image
 $('.headerwrap').css('background-image', 'url(' + splashImage + ')');
 
