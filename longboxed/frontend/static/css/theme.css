@@ -7944,6 +7944,13 @@ hr {
   color: white;
   font-size: 8em;
 }
+.headerwrap a:hover,
+.headerwrap a:focus {
+  text-decoration: none;
+}
+.headerwrap a:active {
+  text-decoration: none;
+}
 .headerwrap h1 {
   font-size: 3em;
   z-index: 10000;
