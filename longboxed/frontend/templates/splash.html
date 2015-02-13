@@ -20,11 +20,15 @@
                 </div>
             </div>
             <div class="col-sm-6 hidden-xs">
+                {% if featured %}
                 <div class="featured-comic">
                     <div class="featured-cover">
                         <a href="#">
-                            <img src="{{
-                            featured.cover_image.find_thumbnail(width=250).locate() }}">
+                            {% if featured.cover_image %}
+                            <img src="{{ featured.cover_image.find_thumbnail(width=250).locate() }}">
+                            {% else %}
+                            <img src="{{ url_for('static', filename='img/lb_nocover_small.png') }}">
+                            {% endif %}
                         </a>
                     </div>
                     <div class="featured-info">
@@ -38,6 +42,7 @@
                         </ul>
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
