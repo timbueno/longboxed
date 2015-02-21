@@ -44,7 +44,7 @@ class RemovePublisherTitleFromPullLists(Command):
 
     def run(self, publisher=None):
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
-        print '!! Starting: Removing all %s titles from users pull lists' % week
+        print '!! Starting: Removing all \'%s\' titles from users pull lists' % publisher
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
         if Publisher.query.filter_by(name=publisher).first():
             pagination = User.query.paginate(1, per_page=20, error_out=False)
