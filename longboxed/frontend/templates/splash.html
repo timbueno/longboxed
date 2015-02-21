@@ -32,7 +32,7 @@
                     </div>
                     <div class="featured-info">
                         <h3>Featured Comic</h3>
-                        <span>Feb 11, 2015</span>
+                        <span>{{ featured.on_sale_date.strftime('%b %-d, %Y') }}</span>
                         <ul>
                             <li>{{ featured.title.name }}</li>
                             {% if featured.issue_number %}
