@@ -43,7 +43,15 @@ def index():
                          order_by(Issue.num_subscribers.desc()).\
                          limit(4).\
                          all()
-    return render_template('splash.html', issues=issues)
+    if issues:
+        for issue in issues:
+            if issue.cover_image.original:
+                featured = issue
+                break
+            featured = issues[0]
+    else:
+        featured = None
+    return render_template('splash.html', issues=issues, featured=featured)
 
 @route(bp, '/privacy')
 def privacy():

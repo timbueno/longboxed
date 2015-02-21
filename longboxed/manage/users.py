@@ -6,7 +6,7 @@
     user management commands
 """
 from flask import current_app
-from flask.ext.script import Command, prompt, prompt_pass
+from flask.ext.script import Command, Option, prompt, prompt_pass
 from flask.ext.security.forms import RegisterForm
 from flask.ext.security.registerable import register_user
 from werkzeug.datastructures import MultiDict
@@ -14,7 +14,7 @@ from werkzeug.local import LocalProxy
 
 from ..core import db
 from ..helpers import current_wednesday
-from ..models import Issue, User, Role, Bundle
+from ..models import Issue, User, Role, Bundle, Publisher
 
 
 class UserBundlesCommand(Command):
@@ -30,6 +30,44 @@ class UserBundlesCommand(Command):
             matches = [i for i in issues_this_week if i.title in user.pull_list and i.is_parent]
             Bundle.refresh_user_bundle(user, date, matches)
         return
+
+
+class RemovePublisherTitleFromPullLists(Command):
+    """
+    Removes all instances of titles by a certain publisher from all users pull
+    lists
+    """
+    def get_options(self):
+        return [
+                Option('-p', '--publisher', dest='publisher', required=True),
+        ]
+
+    def run(self, publisher=None):
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+        print '!! Starting: Removing all \'%s\' titles from users pull lists' % publisher
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+        if Publisher.query.filter_by(name=publisher).first():
+            pagination = User.query.paginate(1, per_page=20, error_out=False)
+            has_next = True
+            while has_next:
+                for user in pagination.items:
+                    save_user = False
+                    for title in user.pull_list:
+                        if title.publisher.name == publisher:
+                            print 'Removing %s from %s\'s pull list...' % (title.name, user.email)
+                            save_user = True
+                            user.pull_list.remove(title)
+                    if save_user:
+                        user.save()
+                if pagination.page:
+                    percent_complete = (pagination.page/float(pagination.pages)) * 100.0
+                    print '%.2f%% complete...' % percent_complete
+                if pagination.has_next:
+                    pagination = pagination.next(error_out=False)
+                else:
+                    has_next = False
+        else:
+            print 'Publisher \'%s\' not found' % publisher
 
 
 class CreateNewRoleCommand(Command):
