@@ -1,11 +1,17 @@
 .headerwrap {
     .section(2);
 
-    background: url(../img/header-bg.jpg) no-repeat center top;
-    text-align:center;
+    background-color: black;
+    /*background-image: url(../img/ultron-bw.jpg);*/
+    background-repeat: no-repeat;
+    background-position: center top;
     background-attachment: relative;
     background-position: center center;
     min-height: 450px;
+    @media (max-width: @screen-xs-min) {
+        min-height: 250px;
+    }
+
     width: 100%;
 
     -webkit-background-size: 100%;
@@ -28,23 +34,104 @@
     -webkit-box-pack:center;
     -webkit-box-align:center;
 
-    // @media (max-width: @screen-xs-min) {
-    //     height: 500px;
-    // }
-
     .logo {
         color: white;
         font-size: 8em;
     }
 
+    a:hover, a:focus {
+        text-decoration: none;
+    }
+    a:active {
+        text-decoration: none;
+    }
+
     h1 {
-        font-size: 8em;
+        font-size: 3em;
         z-index: 10000;
         color: white;
 
+        @media (max-width: @screen-sm-min) {
+            font-size: 2.5em;
+        }
         @media (max-width: @screen-xs-min) {
             font-size: 2em;
             // line-height: 60px;
+        }
+    }
+}
+
+.copy-block {
+    /*margin-top: 45px;*/
+    /*@media (max-width: @screen-xs-min) {*/
+        /*margin-top: 45px;*/
+    /*}*/
+
+    .signup-button {
+            .btn;
+        .btn-outline-inverse;
+        margin: 10px;
+        @media (min-width: @screen-md-min) {
+            .btn-lg;
+        }
+    }
+
+    .app-button {
+        .btn;
+        .btn-outline-inverse;
+        margin: 10px;
+
+        @media (min-width: @screen-md-min) {
+            .btn-lg;
+        }
+
+        @media (max-width: @screen-xs-min) {
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+    }
+}
+
+
+
+.featured-comic {
+    .media;
+    margin-left: 30px;
+
+    @media (max-width: @screen-xs-min) {
+        width: 280px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .featured-cover {
+        .pull-left;
+        float: left;
+        img {
+            .media-object;
+            width: 150px;
+            @media (max-width: @screen-xs-min) {
+                width:100px;
+            }
+        }
+    }
+    .featured-info {
+        .media-body;
+        color: white;
+        /*display: inline-block;*/
+        h3 {
+            .media-heading;
+            font-weight: normal;
+            margin-top: 10px;
+            @media (max-width: @screen-xs-min) {
+                font-size: 1em;
+            }
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            padding-top: 5px;
         }
     }
 }
@@ -92,6 +179,12 @@
 
     p {
         margin-bottom: 2em;
+        margin-left: 1.5em;
+        margin-right: 1.5em;
+    }
+
+    .copy {
+        margin-bottom: 5em;
     }
 }
 

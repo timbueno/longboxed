@@ -1,0 +1,1 @@
+function getRandomInt(a,s){return Math.floor(Math.random()*(s-a+1))+a}var splashImages=["/static/img/ultron-bw.jpg","/static/img/splash/hulk-bw.jpg"];splashImage=splashImages[getRandomInt(0,splashImages.length-1)],$(".headerwrap").css("background-image","url("+splashImage+")");
