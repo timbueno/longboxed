@@ -1032,6 +1032,39 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
+	"\/longboxed\/frontend\/static\/img\/iphone6-app-image-150.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 521427,
+		"inputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/iphone6-app-image-150.png",
+		"outputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/iphone6-app-image-150.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/longboxed\/frontend\/static\/img\/iphone6-app-image-300.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 715436,
+		"inputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/iphone6-app-image-300.png",
+		"outputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/iphone6-app-image-300.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/longboxed\/frontend\/static\/img\/iphone6-app-image-75.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 167344,
+		"inputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/iphone6-app-image-75.png",
+		"outputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/iphone6-app-image-75.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
 	"\/longboxed\/frontend\/static\/img\/lb_nocover.png": {
 		"fileType": 32768,
 		"ignore": 0,
@@ -1098,6 +1131,28 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
+	"\/longboxed\/frontend\/static\/img\/splash\/batman-bw.jpg": {
+		"fileType": 16384,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 63376,
+		"inputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/splash\/batman-bw.jpg",
+		"outputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/splash\/batman-bw.jpg",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/longboxed\/frontend\/static\/img\/splash\/dc-assorted-bw.jpg": {
+		"fileType": 16384,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 81468,
+		"inputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/splash\/dc-assorted-bw.jpg",
+		"outputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/splash\/dc-assorted-bw.jpg",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
 	"\/longboxed\/frontend\/static\/img\/splash\/hulk-bw.jpg": {
 		"fileType": 16384,
 		"ignore": 0,
@@ -1105,6 +1160,50 @@
 		"initialSize": 78173,
 		"inputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/splash\/hulk-bw.jpg",
 		"outputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/splash\/hulk-bw.jpg",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/longboxed\/frontend\/static\/img\/splash\/marvel-assorted-bw.jpg": {
+		"fileType": 16384,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 116994,
+		"inputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/splash\/marvel-assorted-bw.jpg",
+		"outputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/splash\/marvel-assorted-bw.jpg",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/longboxed\/frontend\/static\/img\/splash\/rorschach-bw.jpg": {
+		"fileType": 16384,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 91735,
+		"inputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/splash\/rorschach-bw.jpg",
+		"outputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/splash\/rorschach-bw.jpg",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/longboxed\/frontend\/static\/img\/splash\/sandman-bw.jpg": {
+		"fileType": 16384,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 63319,
+		"inputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/splash\/sandman-bw.jpg",
+		"outputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/splash\/sandman-bw.jpg",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/longboxed\/frontend\/static\/img\/splash\/ultron-bw.jpg": {
+		"fileType": 16384,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 105172,
+		"inputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/splash\/ultron-bw.jpg",
+		"outputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/splash\/ultron-bw.jpg",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"processed": 0
@@ -1182,17 +1281,6 @@
 		"initialSize": 92907,
 		"inputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/test\/7.jpeg",
 		"outputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/test\/7.jpeg",
-		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0,
-		"processed": 0
-		},
-	"\/longboxed\/frontend\/static\/img\/ultron-bw.jpg": {
-		"fileType": 16384,
-		"ignore": 0,
-		"ignoreWasSetByUser": 0,
-		"initialSize": 105172,
-		"inputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/ultron-bw.jpg",
-		"outputAbbreviatedPath": "\/longboxed\/frontend\/static\/img\/ultron-bw.jpg",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"processed": 0
