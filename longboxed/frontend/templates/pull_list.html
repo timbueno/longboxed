@@ -10,6 +10,23 @@
 {% endblock styles %}
 
 {% block content %}
+<div class="container">
+    <div class="row">
+        <div class="centered col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+            <br>
+            <div class="ios-alert alert alert-info alert-dismissable hidden-xs">
+              <button type="button" class="close"
+                            data-dismiss="alert"
+                            aria-hidden="true">&times;</button>
+              <span class="callout">Longboxed is now on iOS!       </span>
+              <!--<br />-->
+              <a href="{{ config.get('IOS_APP_URL', '#')|safe }}">
+                  <img class="store-icon" src="{{ url_for('static', filename='img/app_store_badge.svg') }}" /> 
+              </a>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="add-title-section">
     <div class="container">
         <div class="row title-input">
