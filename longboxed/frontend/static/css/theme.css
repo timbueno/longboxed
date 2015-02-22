@@ -7473,6 +7473,14 @@ hr {
 .right {
   text-alight: right;
 }
+.ios-alert {
+  /*.store-icon {*/
+  /*padding-left: 25px;*/
+  /*}*/
+}
+.ios-alert .callout {
+  margin-right: 50px;
+}
 .batman-exclamation-bg {
   position: absolute;
   top: 0;
