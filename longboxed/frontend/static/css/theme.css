@@ -8220,6 +8220,44 @@ fieldset[disabled] .copy-block .app-button {
 .slide1 .copy {
   margin-bottom: 5em;
 }
+.app-slide {
+  padding-top: 2em;
+  padding-bottom: 2em;
+  border-top: 1px solid #e0e0e0;
+}
+.app-slide .app-image {
+  border-bottom: 1px solid #e0e0e0;
+  height: 400px;
+  width: 350px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  padding-left: 15px;
+  padding-right: 15px;
+  position: relative;
+  overflow: hidden;
+}
+@media (max-width: 480px) {
+  .app-slide .app-image {
+    width: 250px;
+    height: 300px;
+  }
+}
+.app-slide .app-description {
+  margin-top: 150px;
+  margin-bottom: 50px;
+}
+@media (max-width: 480px) {
+  .app-slide .app-description {
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+}
+.app-slide .app-description .app-store-icn {
+  margin-top: 25px;
+}
 .slide2 {
   padding-top: 2em;
   padding-bottom: 2em;

@@ -72,6 +72,29 @@
         </div>
     </div>
 </div>
+<div class="app-slide">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 col-lg-5 col-lg-offset-1">
+                <div class="app-image">
+                    <img class="img-responsive" src="{{ url_for('static', filename='img/iphone6-app-image-150.png') }}">
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-5 centered">
+                <div class="app-description">
+                    <h2>GET THE APP</h2>
+                    <h4>The best way to use LONGBOXED</h4>
+                    <!--<ul>-->
+                        <!--<li>-->
+                    <!--</ul>-->
+                    <a href="{{ config.get('IOS_APP_URL', '#')|safe }}">
+                        <img class="app-store-icn" src="{{ url_for('static', filename='img/app_store_badge.svg') }}">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="slide2">
     <div class="container">
         <div class="row centered">
