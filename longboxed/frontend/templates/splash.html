@@ -13,9 +13,9 @@
                     <a href="{{ url_for('security.register') }}" role="button" class="signup-button">
                        Sign Up 
                     </a>
-                    <!--<a href="#" role="button" class="app-button">-->
-                        <!--Get the App-->
-                    <!--</a>-->
+                    <a href="{{ config.get('IOS_APP_URL', '#')|safe }}" role="button" class="app-button">
+                        Get the App
+                    </a>
                     {% endif %}
                 </div>
             </div>
