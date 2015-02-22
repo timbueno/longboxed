@@ -128,6 +128,7 @@ class Config(object):
     BOOTSTRAP_GOOGLE_ANALYTICS_ACCOUNT = environ['BOOTSTRAP_GOOGLE_ANALYTICS_ACCOUNT']
 
     IOS_APP_URL = 'https://itunes.apple.com/us/app/longboxed/id965045339?ls=1&mt=8'
+    IOS_APP_ID = '965045339'
 
     SOCIAL_GOOGLE = {
         'consumer_key': environ['GOOGLE_CONSUMER_KEY'],
