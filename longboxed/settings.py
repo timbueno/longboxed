@@ -160,10 +160,7 @@ class ProdConfig(Config):
     CONFIG_NAME = 'production'
     DEBUG = False
     USE_S3 = True
-    S3_HEADERS = {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET'
-    }
+
     CACHE_CONFIG = {'CACHE_TYPE': 'memcached',
                     'CACHE_MEMCACHED_SERVERS': [environ['MEMCACHE_SCHEME']],
                     'CACHE_DEFAULT_TIMEOUT': int(environ['MEMCACHE_DEFAULT_TIMEOUT'])
