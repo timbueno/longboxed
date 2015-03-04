@@ -80,6 +80,14 @@ def deploy():
     Publisher.set_images()
     print 'done'
 
+    if app.config.get('APP_ENV') in ('prod', 'stag'):
+        print 'Uploading Static assets to S3...'
+        import flask_s3
+        flask_s3.create_all(app)
+        print 'done'
+    else:
+        print 'NOT uploading assets to S3, on dev...'
+
 
 if __name__ == '__main__':
     # Run the manager
