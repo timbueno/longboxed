@@ -6,10 +6,6 @@
     Core module contains basic classes that all applications
     depend on
 
-    USE_AWS must be set as an environment variable.
-    Values can be:
-        'True'   to use AWS for an image store
-        'False'  for development / local image store
 """
 import os
 
@@ -18,6 +14,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security
 from flask.ext.social import Social
 from flask_mail import Mail
+from flask_s3 import FlaskS3
 
 from .settings import config
 
@@ -36,6 +33,9 @@ mail = Mail()
 
 #: Flask-Cache Extension Instance
 cache = Cache()
+
+#: Flask-S3 Extension Instance (for Static Assets)
+s3_assets = FlaskS3() 
 
 #: Image Filesystem
 store = config[os.getenv('APP_ENV') or 'default'].get_store()
