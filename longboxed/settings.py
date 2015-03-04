@@ -14,6 +14,7 @@ from sqlalchemy_imageattach.stores.s3 import S3Store
 
 class Config(object):
     CONFIG_NAME = 'base'
+    APP_ENV = environ.get('APP_ENV', 'dev')
     USE_S3 = False
 
     CACHE_CONFIG = {'CACHE_TYPE': 'simple',
