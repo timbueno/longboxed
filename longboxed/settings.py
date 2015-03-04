@@ -161,7 +161,8 @@ class ProdConfig(Config):
     DEBUG = False
     USE_S3 = True
     S3_HEADERS = {
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET'
     }
     CACHE_CONFIG = {'CACHE_TYPE': 'memcached',
                     'CACHE_MEMCACHED_SERVERS': [environ['MEMCACHE_SCHEME']],
