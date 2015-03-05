@@ -14,10 +14,8 @@ from sqlalchemy_imageattach.stores.s3 import S3Store
 
 class Config(object):
     CONFIG_NAME = 'base'
-    USE_AWS = False
-    AWS_S3_BUCKET = environ['AWS_S3_BUCKET']
-    AWS_ACCESS_KEY_ID = environ['AWS_ACCESS_KEY_ID']
-    AWS_SECRET_KEY = environ['AWS_SECRET_KEY']
+    APP_ENV = environ.get('APP_ENV', 'dev')
+    USE_S3 = False
 
     CACHE_CONFIG = {'CACHE_TYPE': 'simple',
                     'CACHE_DEFAULT_TIMEOUT': 30}
@@ -155,9 +153,14 @@ class Config(object):
 
 class ProdConfig(Config):
     """Production Configuration"""
+    S3_BUCKET_NAME = environ.get('S3_BUCKET_NAME')
+    AWS_ACCESS_KEY_ID = environ.get('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = environ.get('AWS_SECRET_ACCESS_KEY')
+
     CONFIG_NAME = 'production'
     DEBUG = False
-    USE_AWS = True
+    USE_S3 = True
+
     CACHE_CONFIG = {'CACHE_TYPE': 'memcached',
                     'CACHE_MEMCACHED_SERVERS': [environ['MEMCACHE_SCHEME']],
                     'CACHE_DEFAULT_TIMEOUT': int(environ['MEMCACHE_DEFAULT_TIMEOUT'])
@@ -170,9 +173,9 @@ class ProdConfig(Config):
     @classmethod
     def get_store(cls):
         store = S3Store(
-                cls.AWS_S3_BUCKET,
+                cls.S3_BUCKET_NAME,
                 cls.AWS_ACCESS_KEY_ID,
-                cls.AWS_SECRET_KEY
+                cls.AWS_SECRET_ACCESS_KEY
         )
         return store
 
@@ -195,7 +198,7 @@ class DevConfig(Config):
     """Development Configuration"""
     CONFIG_NAME = 'development'
     DEBUG = True
-    USE_AWS = False
+    USE_S3 = False
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     #CACHE_CONFIG = {'CACHE_TYPE': 'simple'}
     CACHE_CONFIG = {'CACHE_TYPE': 'memcached',
