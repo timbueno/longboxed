@@ -1,7 +1,7 @@
 # Longboxed
 
-Longboxed is a web service and iOS app dedicated to comic book lovers who just
-want an easy way to discover which comics are coming out each week. Never miss
+Longboxed is a web service and iOS app dedicated to comic book lovers who want
+an easy way to discover which comics are coming out each week. Never miss
 an issue again.
 
 
