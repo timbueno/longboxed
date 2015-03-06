@@ -6,8 +6,6 @@
     NewDailyDownloadImporter creates issues, titles, and publishers from
     TFAW's database CSV file.
 
-    NewWeeklyReleasesImporter sets the 'on_sale_date' attribute of issue models
-    based on Diamond Lists recieved from TFAW.
 """
 
 from csv import DictReader
@@ -120,77 +118,6 @@ class NewDailyDownloadImporter(object):
             print summary
 
         return True
-
-
-class NewWeeklyReleasesImporter(object):
-    """
-    Processes releases
-    """
-    def __init__(self):
-        pass
-
-    def run(self, csv_fieldnames, supported_publishers, affiliate_id, week='thisweek'):
-        print 'Setting Date'
-        date = week_handler(week)
-        print date
-        print 'Getting Content'
-        content = self.download(week, affiliate_id)
-        print 'Loading Data'
-        data = self.load(content, csv_fieldnames)
-        print 'Releasing Issues'
-        self.process(data, supported_publishers, date)
-        return
-
-
-    def download(self, week, affiliate_id):
-        """
-        Gets file containing a list of shippments from Diamond Distributers.
-        This file is served from TFAW's servers. Three files are available at
-        any given time; thisweek, nextweek, twoweeks. They describe shipments
-        pertaining to their respective timeframes.
-
-        :param week: String designating which diamond list to download
-                     Options: 'thisweek', 'nextweek', 'twoweeks'
-        """
-        if week not in ['thisweek', 'nextweek', 'twoweeks']:
-            raise Exception('Not a valid input for week selection')
-        base_url = 'http://www.tfaw.com/intranet/diamondlists_raw.php'
-        payload = {
-            'mode': week,
-            'uid': affiliate_id,
-            'show%5B%5D': 'Comics',
-            'display': 'text_raw'
-        }
-        r = requests.get(base_url, params=payload)
-
-        return r.content
-
-    def load(self, content, fieldnames):
-        """
-        Turns returned content from a request for a Diamond list into someting
-        we can work with. It discards any items that do not have a vender matching
-        a vender in 'SUPPORTED_DIAMOND_PUBS' settings variable. It also discards any
-        item whose discount code is not a D or and E.
-
-        :param raw_content: html content returned from TFAWs servers, diamond list
-        """
-        html = BeautifulSoup(content)
-        f = StringIO(html.pre.string.strip(' \t\n\r'))
-        reader = unicode_csv_reader(f, fieldnames=fieldnames)
-        data = [row for row in reader]
-        return data
-
-    def process(self, data, supported_publishers, date):
-        issues = []
-        already_scheduled = Issue.query.filter_by(on_sale_date=date).all()
-        for issue in already_scheduled:
-            issue.on_sale_date = None
-            issue.save()
-        for row in data:
-            if Issue.check_release_relevancy(row, supported_publishers):
-                issue = Issue.release_from_raw(row, date)
-                issues.append(issue)
-        return issues
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@ from flask.ext.script import Command, Option, prompt, prompt_bool
 from flask.ext.security.utils import verify_password
 
 from ..core import db
-from ..importer import NewDailyDownloadImporter, NewWeeklyReleasesImporter
+from ..importer import DailyDownloadImporter
 from ..models import (Issue, IssueCover, issues_creators, issues_bundles,
                       User)
 
