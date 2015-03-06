@@ -28,7 +28,7 @@ class ImportDatabase(Command):
 
     def run(self, days):
         fieldnames = [x[2] for x in current_app.config['CSV_RULES']]
-        database_importer = NewDailyDownloadImporter()
+        database_importer = DailyDownloadImporter()
         database_importer.run(
             csv_fieldnames = fieldnames,
             supported_publishers = current_app.config['SUPPORTED_PUBS'],

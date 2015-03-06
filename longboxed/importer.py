@@ -3,7 +3,7 @@
     longboxed.importer
     ~~~~~~~~~~~~~~~
 
-    NewDailyDownloadImporter creates issues, titles, and publishers from
+    DailyDownloadImporter creates issues, titles, and publishers from
     TFAW's database CSV file.
 
 """
@@ -25,7 +25,7 @@ from .models import Issue, Title, Publisher, Creator
 process_logger = getLogger('issue_processing')
 
 
-class NewDailyDownloadImporter(object):
+class DailyDownloadImporter(object):
     """
     Imports the daily download from TFAW
     """
