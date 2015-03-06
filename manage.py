@@ -17,14 +17,11 @@ from longboxed.models import (User, Issue, Title, Publisher, Bundle, Role,
 from longboxed.manage import (CreateNewRoleCommand, CreateDefaultRolesCommand,
                              CreateUserCommand, AddSuperUserRoleCommand,
                              ListUsersCommand, ListRolesCommand,
-                             ScheduleReleasesCommand, TestCommand,
-                             SetCoverImageCommand, UserBundlesCommand,
-                             ImportDatabase, DeleteAllIssues,
+                             TestCommand, ImportDatabase, DeleteAllIssues,
+                             SetCoverImageCommand, ScheduleReleasesCommand,
                              CleanCoverImages, DownloadScheduleBundleCommand,
-                             NewScheduleReleasesCommand,
-                             NewBundleIssuesCommand, DownloadDiamondListCommand,
-                             ClearCacheCommand,
-                             RemovePublisherTitleFromPullLists)
+                             BundleIssuesCommand, DownloadDiamondListCommand,
+                             ClearCacheCommand, RemovePublisherTitleFromPullLists)
 
 
 app = create_app(os.getenv('APP_ENV') or 'default')
@@ -38,24 +35,28 @@ def _make_shell_context():
 manager.add_command("shell", Shell(make_context=_make_shell_context))
 manager.add_command('db', MigrateCommand)
 
+manager.add_command('test', TestCommand())
+
+# Application management commands
+manager.add_command('clear_cache', ClearCacheCommand())
+
+# User Commands
 manager.add_command('create_role', CreateNewRoleCommand())
 manager.add_command('create_roles', CreateDefaultRolesCommand())
 manager.add_command('create_user', CreateUserCommand())
 manager.add_command('add_super_role', AddSuperUserRoleCommand())
 manager.add_command('list_users', ListUsersCommand())
 manager.add_command('list_roles', ListRolesCommand())
-manager.add_command('schedule_releases', ScheduleReleasesCommand())
+
+# Comic Book Management Commands
 manager.add_command('import_database', ImportDatabase())
-manager.add_command('set_cover_image', SetCoverImageCommand())
-manager.add_command('bundle_issues', UserBundlesCommand())
-manager.add_command('delete_all_issues', DeleteAllIssues())
-manager.add_command('clean_cover_images', CleanCoverImages())
-manager.add_command('test', TestCommand())
-manager.add_command('download_schedule_bundle', DownloadScheduleBundleCommand())
-manager.add_command('new_schedule_releases', NewScheduleReleasesCommand())
 manager.add_command('download_diamond_list', DownloadDiamondListCommand())
-manager.add_command('new_bundle_issues', NewBundleIssuesCommand())
-manager.add_command('clear_cache', ClearCacheCommand())
+manager.add_command('new_schedule_releases', ScheduleReleasesCommand())
+manager.add_command('new_bundle_issues', BundleIssuesCommand())
+manager.add_command('download_schedule_bundle', DownloadScheduleBundleCommand())
+manager.add_command('delete_all_issues', DeleteAllIssues())
+manager.add_command('set_cover_image', SetCoverImageCommand())
+manager.add_command('clean_cover_images', CleanCoverImages())
 manager.add_command('remove_publisher_title_from_pull_lists',
                     RemovePublisherTitleFromPullLists())
 
