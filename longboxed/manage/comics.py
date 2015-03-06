@@ -20,24 +20,6 @@ class TestCommand(Command):
         pass
 
 
-class ScheduleReleasesCommand(Command):
-    def get_options(self):
-        return [
-            Option('-w', '--week', dest='week', required=True, choices=['thisweek', 'nextweek', 'twoweeks']),
-        ]
-
-    def run(self, week):
-        fieldnames = [x[2] for x in current_app.config['RELEASE_CSV_RULES']]
-        issue_releaser = NewWeeklyReleasesImporter()
-        issue_releaser.run(
-            csv_fieldnames = fieldnames,
-            supported_publishers = current_app.config['SUPPORTED_DIAMOND_PUBS'],
-            affiliate_id = current_app.config['AFFILIATE_ID'],
-            week = week
-        )
-        return
-
-
 class ImportDatabase(Command):
     def get_options(self):
         return [
