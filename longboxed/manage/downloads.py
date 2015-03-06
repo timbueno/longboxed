@@ -32,9 +32,9 @@ class DownloadScheduleBundleCommand(Command):
             print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
             diamond_list = DownloadDiamondListCommand().run(week)
             if diamond_list:
-                NewScheduleReleasesCommand().run(diamond_list=diamond_list)
+                ScheduleReleasesCommand().run(diamond_list=diamond_list)
                 issues = diamond_list.issues.all()
-                NewBundleIssuesCommand().run(week=week, issues=issues)
+                BundleIssuesCommand().run(week=week, issues=issues)
                 ClearCacheCommand().run(proceed=True)
             print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
             print '**  Complete: %s' % week
@@ -64,7 +64,7 @@ class DownloadDiamondListCommand(Command):
         return diamond_list
 
 
-class NewScheduleReleasesCommand(Command):
+class ScheduleReleasesCommand(Command):
     def get_options(self):
         return [
                 Option('-m', '--md5', dest='md5', required=True),
@@ -120,7 +120,7 @@ class NewScheduleReleasesCommand(Command):
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 
 
-class NewBundleIssuesCommand(Command):
+class BundleIssuesCommand(Command):
     """Creates bundles for users"""
     def get_options(self):
         return [
