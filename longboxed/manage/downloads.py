@@ -139,11 +139,6 @@ class BundleIssuesCommand(Command):
         print 'Processing bundles for:'
         print '    date: %s' % date
         print '    user count: %i' % User.query.count()
-        #for user in User.query.all():
-        #    matches = [i for i in issues
-        #               if i.title in user.pull_list and i.is_parent]
-        #    Bundle.refresh_user_bundle(user, date, matches)
-
         pagination = User.query.paginate(1, per_page=20, error_out=False)
         has_next = True
         while has_next:

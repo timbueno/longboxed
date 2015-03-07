@@ -30,13 +30,6 @@ def before_request():
         g.user = None
 
 
-#@route(bp, '/csrf')
-#def csrf():
-#    secret_key = current_app.config.get('SECRET_KEY')
-#    print secret_key
-#    return jsonify(csrf=generate_csrf(secret_key=secret_key))
-
-
 @route(bp, '/')
 def index():
     issues = Issue.query.filter(Issue.on_sale_date == current_wednesday(), Issue.is_parent == True).\

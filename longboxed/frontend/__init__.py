@@ -25,13 +25,8 @@ def create_app(config_name):
     #: Register custom Jinja2 filters
     app.jinja_env.filters['pretty_date'] = pretty_date
 
-    #: Init assets
-    # assets.init_app(app)
     #: Flask-Admin
     admin.init_app(app)
-
-    #: Flask-DebugToolbar
-    # DebugToolbarExtension(app)
 
     #: Register custom error handlers
     if not app.debug:
