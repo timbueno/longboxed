@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-    longboxed.frontend.assets
+    longboxed.frontend.admin
     ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    frontend application asset "pipeline"
+    Administrative interface
+
 """
 from datetime import datetime
 
@@ -130,12 +131,12 @@ class CreatorAdmin(AdministratorBase):
 class BundleAdmin(AdministratorBase):
     def __init__(self, session):
         # Just call parent class with predefined model.
-        super(BundleAdmin, self).__init__(Bundle, session)    
+        super(BundleAdmin, self).__init__(Bundle, session)
 
     form_ajax_refs = {
         'issues': QueryAjaxModelLoader('issues', db.session, Issue, fields=['complete_title'], page_size=10),
         'user': QueryAjaxModelLoader('user', db.session, User, fields=['email'], page_size=10)
-    }  
+    }
 
 
 class UserAdmin(SuperUserBase):

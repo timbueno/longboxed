@@ -78,7 +78,6 @@ def unicode_csv_reader(unicode_csv_data, fieldnames, **kwargs):
     for row in csv_reader:
         # decode UTF-8 back to Unicode, cell by cell:
         yield dict([(key, unicode(value, 'utf-8')) for key, value in row.iteritems()])
-        # yield [unicode(cell, 'utf-8') for cell in row]
 
 def utf_8_encoder(unicode_csv_data):
     for line in unicode_csv_data:
@@ -142,7 +141,6 @@ def week_handler(week):
         date = next_wednesday()
     if week == 'twoweeks':
         date = two_wednesdays()
-        # raise NotImplementedError
     return date
 
 

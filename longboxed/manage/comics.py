@@ -10,7 +10,7 @@ from flask.ext.script import Command, Option, prompt, prompt_bool
 from flask.ext.security.utils import verify_password
 
 from ..core import db
-from ..importer import NewDailyDownloadImporter, NewWeeklyReleasesImporter
+from ..importer import DailyDownloadImporter
 from ..models import (Issue, IssueCover, issues_creators, issues_bundles,
                       User)
 
@@ -18,24 +18,6 @@ from ..models import (Issue, IssueCover, issues_creators, issues_bundles,
 class TestCommand(Command):
     def run(self):
         pass
-
-
-class ScheduleReleasesCommand(Command):
-    def get_options(self):
-        return [
-            Option('-w', '--week', dest='week', required=True, choices=['thisweek', 'nextweek', 'twoweeks']),
-        ]
-
-    def run(self, week):
-        fieldnames = [x[2] for x in current_app.config['RELEASE_CSV_RULES']]
-        issue_releaser = NewWeeklyReleasesImporter()
-        issue_releaser.run(
-            csv_fieldnames = fieldnames,
-            supported_publishers = current_app.config['SUPPORTED_DIAMOND_PUBS'],
-            affiliate_id = current_app.config['AFFILIATE_ID'],
-            week = week
-        )
-        return
 
 
 class ImportDatabase(Command):
@@ -46,7 +28,7 @@ class ImportDatabase(Command):
 
     def run(self, days):
         fieldnames = [x[2] for x in current_app.config['CSV_RULES']]
-        database_importer = NewDailyDownloadImporter()
+        database_importer = DailyDownloadImporter()
         database_importer.run(
             csv_fieldnames = fieldnames,
             supported_publishers = current_app.config['SUPPORTED_PUBS'],

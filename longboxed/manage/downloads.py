@@ -32,9 +32,9 @@ class DownloadScheduleBundleCommand(Command):
             print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
             diamond_list = DownloadDiamondListCommand().run(week)
             if diamond_list:
-                NewScheduleReleasesCommand().run(diamond_list=diamond_list)
+                ScheduleReleasesCommand().run(diamond_list=diamond_list)
                 issues = diamond_list.issues.all()
-                NewBundleIssuesCommand().run(week=week, issues=issues)
+                BundleIssuesCommand().run(week=week, issues=issues)
                 ClearCacheCommand().run(proceed=True)
             print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
             print '**  Complete: %s' % week
@@ -64,7 +64,7 @@ class DownloadDiamondListCommand(Command):
         return diamond_list
 
 
-class NewScheduleReleasesCommand(Command):
+class ScheduleReleasesCommand(Command):
     def get_options(self):
         return [
                 Option('-m', '--md5', dest='md5', required=True),
@@ -120,7 +120,7 @@ class NewScheduleReleasesCommand(Command):
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 
 
-class NewBundleIssuesCommand(Command):
+class BundleIssuesCommand(Command):
     """Creates bundles for users"""
     def get_options(self):
         return [
@@ -139,11 +139,6 @@ class NewBundleIssuesCommand(Command):
         print 'Processing bundles for:'
         print '    date: %s' % date
         print '    user count: %i' % User.query.count()
-        #for user in User.query.all():
-        #    matches = [i for i in issues
-        #               if i.title in user.pull_list and i.is_parent]
-        #    Bundle.refresh_user_bundle(user, date, matches)
-
         pagination = User.query.paginate(1, per_page=20, error_out=False)
         has_next = True
         while has_next:

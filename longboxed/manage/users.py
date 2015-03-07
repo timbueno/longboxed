@@ -17,21 +17,6 @@ from ..helpers import current_wednesday
 from ..models import Issue, User, Role, Bundle, Publisher
 
 
-class UserBundlesCommand(Command):
-    """
-    Creates bundles for each user
-    """
-    def run(self):
-        date = current_wednesday()
-        issues_this_week = Issue.query.filter(
-                                        Issue.on_sale_date==date,
-                                        Issue.is_parent==True).all()
-        for user in User.query.all():
-            matches = [i for i in issues_this_week if i.title in user.pull_list and i.is_parent]
-            Bundle.refresh_user_bundle(user, date, matches)
-        return
-
-
 class RemovePublisherTitleFromPullLists(Command):
     """
     Removes all instances of titles by a certain publisher from all users pull

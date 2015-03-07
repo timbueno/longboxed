@@ -98,10 +98,6 @@ class Config(object):
     SECURITY_RECOVERABLE = True
     SECURITY_CHANGEABLE = True
     SECURITY_SEND_REGISTER_EMAIL = True
-    #SECURITY_CONFIRMABLE = True
-    #SECURITY_LOGIN_WITHOUT_CONFIRMATION = True
-
-    # SECURITY_POST_CONFIRM_VIEW = '/set_something_up'
 
     SECURITY_TRACKABLE = True
     SECURITY_POST_LOGIN_URL = '/'
@@ -111,11 +107,9 @@ class Config(object):
     SECURITY_REMEMBER_SALT = environ['SECURITY_REMEMBER_SALT']
     SECURITY_RESET_SALT = environ['SECURITY_RESET_SALT']
     SECURITY_RESET_WITHIN = '5 days'
-    #SECURITY_CONFIRM_WITHIN = '5 days'
 
     SECURITY_EMAIL_SENDER = 'no-reply@longboxed.com'
     SECURITY_EMAIL_SUBJECT_REGISTER = 'Welcome to Longboxed!'
-    #SECURITY_EMAIL_SUBJECT_CONFIRM = 'Please confirm your Longboxed email!'
 
     # Mail configuration
     MAIL_SERVER = 'smtp.mailgun.org'
@@ -200,7 +194,6 @@ class DevConfig(Config):
     DEBUG = True
     USE_S3 = False
     DEBUG_TB_INTERCEPT_REDIRECTS = False
-    #CACHE_CONFIG = {'CACHE_TYPE': 'simple'}
     CACHE_CONFIG = {'CACHE_TYPE': 'memcached',
                     'CACHE_MEMCACHED_SERVERS': [environ['MEMCACHE_SCHEME']],
                     'CACHE_DEFAULT_TIMEOUT': int(environ['MEMCACHE_DEFAULT_TIMEOUT'])
