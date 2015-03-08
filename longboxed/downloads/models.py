@@ -91,10 +91,13 @@ class DiamondList(db.Model, CRUDMixin):
             diamond_id = diamond_id[:-1]
         return diamond_id
 
-    def link_issues(self, fieldnames, supported_publishers):
+    def process_csv(self, fieldnames):
         f = StringIO(self.source)
         reader = unicode_csv_reader(f, fieldnames)
-        data = [row for row in reader]
+        return [row for row in reader]
+
+    def link_issues(self, fieldnames, supported_publishers):
+        data = self.process_csv(fieldnames)
         issues = []
         for row in data:
             if Issue.check_release_relevancy(row, supported_publishers):

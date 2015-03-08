@@ -11,13 +11,44 @@ from flask.ext.security.utils import verify_password
 
 from ..core import db
 from ..importer import DailyDownloadImporter
-from ..models import (Issue, IssueCover, issues_creators, issues_bundles,
+from ..models import (DiamondList, Issue, IssueCover, issues_creators, issues_bundles,
                       User)
+import re
 
 
 class TestCommand(Command):
     def run(self):
-        pass
+        supported_publishers = current_app.config.get('SUPPORTED_DIAMOND_PUBS')
+        fieldnames = [c[2] for c in current_app.config.get('RELEASE_CSV_RULES')]
+        diamond_list = DiamondList.query.filter_by(hash_string='a4084c91829c3d826c93b9954fed1e75').first()
+        data = diamond_list.process_csv(fieldnames)
+        failed_rows = {}
+        for row in data:
+            if Issue.check_release_relevancy(row, supported_publishers):
+                issue = Issue.query.filter_by(diamond_id=row['diamond_id']).first()
+                if issue:
+                    # Process issue
+                    pass
+                else:
+                    try:
+                        m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>([+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', row['complete_title']).groupdict()
+                        matched_tuple = (m['issue_number'], m['title'])
+                        if matched_tuple in failed_rows.keys():
+                            failed_rows[matched_tuple].append(row)
+                        else:
+                            failed_rows[matched_tuple] = [row]
+                    except Exception, err:
+                        print err
+        for key in failed_rows.keys():
+            issues = Issue.query.filter(
+                                    Issue.complete_title.ilike('%'+key[1].replace(' ', '%%')+'%'),
+                                    Issue.issue_number==key[0],
+                                    Issue.is_parent==True)
+            for issue in issues:
+                if issues[0].diamond_id.isnumeric():
+                    # Replace queried issue diamond_id with issue.diamond_id
+                    print key, issues[0].complete_title, issue.diamond_id, failed_rows[key][0]['diamond_id']
+
 
 
 class ImportDatabase(Command):
