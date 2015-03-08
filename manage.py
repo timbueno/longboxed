@@ -21,8 +21,7 @@ from longboxed.manage import (CreateNewRoleCommand, CreateDefaultRolesCommand,
                              SetCoverImageCommand, ScheduleReleasesCommand,
                              CleanCoverImages, DownloadScheduleBundleCommand,
                              BundleIssuesCommand, DownloadDiamondListCommand,
-                             ClearCacheCommand, CloneDiamondIdCommand,
-                             RemovePublisherTitleFromPullLists)
+                             ClearCacheCommand, RemovePublisherTitleFromPullLists)
 
 
 app = create_app(os.getenv('APP_ENV') or 'default')
@@ -40,7 +39,6 @@ manager.add_command('test', TestCommand())
 
 # Application management commands
 manager.add_command('clear_cache', ClearCacheCommand())
-manager.add_command('clone_diamond_id', CloneDiamondIdCommand())
 
 # User Commands
 manager.add_command('create_role', CreateNewRoleCommand())
