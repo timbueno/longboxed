@@ -16,6 +16,43 @@ from ..models import (DiamondList, Issue, IssueCover, issues_creators, issues_bu
 import re
 
 
+#def process_failed_rows(failed_rows):
+    #try:
+        #m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>([+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', row['complete_title']).groupdict()
+        #matched_tuple = (m['issue_number'], m['title'])
+        #if matched_tuple in failed_rows.keys():
+            #failed_rows[matched_tuple].append(row)
+        #else:
+            #failed_rows[matched_tuple] = [row]
+    #except Exception, err:
+        #print err
+    #for key in failed_rows.keys():
+            #diamond_list_fixes = current_app.config['DIAMOND_LIST_FIXES']
+            #if diamond_list_fixes.get(key[1]):
+                #fixed_name = diamond_list_fixes[key[1]]
+                #failed_rows[(key[0], fixed_name)] = failed_rows.pop(key)
+        #for key in failed_rows.keys():
+            #query_string = '%'+key[1].replace(' ', '%%')+'%'
+            #issues = Issue.query\
+                          #.filter(
+                            #Issue.complete_title.ilike(query_string),
+                            #Issue.issue_number==key[0])\
+                          #.all()
+            #if issues:
+                #issues.sort()
+                #issue = issues[0]
+                #if issue.diamond_id.isnumeric():
+                    ## Replace queried issue diamond_id with issue.diamond_id
+                    #issue.diamond_id = failed_rows[key][0]['diamond_id']
+                    #issue.save()
+                    #print key, issue.complete_title, issue.diamond_id, failed_rows[key][0]['diamond_id']
+                #else:
+                    #pass
+                    ##print failed_rows[key]
+
+    #pass
+
+
 class TestCommand(Command):
     def run(self):
         supported_publishers = current_app.config.get('SUPPORTED_DIAMOND_PUBS')
@@ -25,12 +62,19 @@ class TestCommand(Command):
                                   .first()
         data = diamond_list.process_csv(fieldnames)
         failed_rows = {}
+        #failed_rows = []
+        issues = []
         for row in data:
             if Issue.check_release_relevancy(row, supported_publishers):
-                issue = Issue.query.filter_by(diamond_id=row['diamond_id']).first()
+                #print 'Searching for: %s - %s' % (row['diamond_id'],
+                                                #row['complete_title'])
+                #diamond_id = DiamondList.clean_diamond_id(row['diamond_id'])
+                issue = Issue.query.filter_by(diamond_id=row['diamond_id'])\
+                                   .first()
+
                 if issue:
                     # Process issue
-                    pass
+                    issues.append(issue)
                 else:
                     try:
                         m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>([+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', row['complete_title']).groupdict()
@@ -45,20 +89,25 @@ class TestCommand(Command):
             diamond_list_fixes = current_app.config['DIAMOND_LIST_FIXES']
             if diamond_list_fixes.get(key[1]):
                 fixed_name = diamond_list_fixes[key[1]]
-                print 'FIX MATCH! - %s : %s' % (key[1], fixed_name)
                 failed_rows[(key[0], fixed_name)] = failed_rows.pop(key)
         for key in failed_rows.keys():
-            complete_title = key[1]
-            issue = Issue.query\
+            query_string = '%'+key[1].replace(' ', '%%')+'%'
+            issues = Issue.query\
                           .filter(
-                            Issue.complete_title.ilike('%'+complete_title.replace(' ', '%%')+'%'),
-                            Issue.issue_number==key[0],
-                            Issue.is_parent==True)\
-                          .first()
-            if issue:
+                            Issue.complete_title.ilike(query_string),
+                            Issue.issue_number==key[0])\
+                          .all()
+            if issues:
+                issues.sort()
+                issue = issues[0]
                 if issue.diamond_id.isnumeric():
                     # Replace queried issue diamond_id with issue.diamond_id
+                    issue.diamond_id = failed_rows[key][0]['diamond_id']
+                    issue.save()
                     print key, issue.complete_title, issue.diamond_id, failed_rows[key][0]['diamond_id']
+                else:
+                    pass
+                    #print failed_rows[key]
 
 
 
