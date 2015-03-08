@@ -20,7 +20,9 @@ class TestCommand(Command):
     def run(self):
         supported_publishers = current_app.config.get('SUPPORTED_DIAMOND_PUBS')
         fieldnames = [c[2] for c in current_app.config.get('RELEASE_CSV_RULES')]
-        diamond_list = DiamondList.query.filter_by(hash_string='a4084c91829c3d826c93b9954fed1e75').first()
+        diamond_list = DiamondList.query\
+                                  .filter_by(hash_string='a4084c91829c3d826c93b9954fed1e75')\
+                                  .first()
         data = diamond_list.process_csv(fieldnames)
         failed_rows = {}
         for row in data:
@@ -40,14 +42,23 @@ class TestCommand(Command):
                     except Exception, err:
                         print err
         for key in failed_rows.keys():
-            issues = Issue.query.filter(
-                                    Issue.complete_title.ilike('%'+key[1].replace(' ', '%%')+'%'),
-                                    Issue.issue_number==key[0],
-                                    Issue.is_parent==True)
-            for issue in issues:
-                if issues[0].diamond_id.isnumeric():
+            diamond_list_fixes = current_app.config['DIAMOND_LIST_FIXES']
+            if diamond_list_fixes.get(key[1]):
+                fixed_name = diamond_list_fixes[key[1]]
+                print 'FIX MATCH! - %s : %s' % (key[1], fixed_name)
+                failed_rows[(key[0], fixed_name)] = failed_rows.pop(key)
+        for key in failed_rows.keys():
+            complete_title = key[1]
+            issue = Issue.query\
+                          .filter(
+                            Issue.complete_title.ilike('%'+complete_title.replace(' ', '%%')+'%'),
+                            Issue.issue_number==key[0],
+                            Issue.is_parent==True)\
+                          .first()
+            if issue:
+                if issue.diamond_id.isnumeric():
                     # Replace queried issue diamond_id with issue.diamond_id
-                    print key, issues[0].complete_title, issue.diamond_id, failed_rows[key][0]['diamond_id']
+                    print key, issue.complete_title, issue.diamond_id, failed_rows[key][0]['diamond_id']
 
 
 

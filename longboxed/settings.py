@@ -40,6 +40,11 @@ class Config(object):
                               'ARCHIE COMIC PUBLICATIONS', 'IDW PUBLISHING',
                               'VALIANT ENTERTAINMENT LLC']
 
+    DIAMOND_LIST_FIXES = {
+            'ANGEL AND FAITH SEASON 10': 'Angel and Faith: Season Ten',
+            'HELLBOY AND THE BPRD': 'Hellboy and the B.P.R.D.: 1952'
+    }
+
     # Flask Application Configuration
     SECRET_KEY = environ['SECRET_KEY']
 
