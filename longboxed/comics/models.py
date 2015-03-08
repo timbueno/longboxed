@@ -400,6 +400,7 @@ class Issue(db.Model, CRUDMixin):
     popularity = db.Column(db.Float())
     last_updated = db.Column(db.DateTime())
     diamond_id = db.Column(db.String(100))
+    old_diamond_id = db.Column(db.String(100))
     discount_code = db.Column(db.String(1))
     category = db.Column(db.String(100))
     upc = db.Column(db.String(100))
@@ -454,12 +455,15 @@ class Issue(db.Model, CRUDMixin):
             diamond_id = record.get('diamond_id')
             if diamond_id[-1:].isalpha():
                 i['diamond_id'] = diamond_id[:-1]
+                i['old_diamond_id'] = diamond_id[:-1]
                 i['discount_code'] = diamond_id[-1:]
             else:
                 i['diamond_id'] = diamond_id
+                i['old_diamond_id'] = diamond_id
                 i['discount_code'] = None
         except Exception, err:
             i['diamond_id'] = None
+            i['old_diamond_id'] = None
             i['discount_code'] = None
 
         # Description
@@ -494,8 +498,9 @@ class Issue(db.Model, CRUDMixin):
         created = 0
         try:
             # Create Issue object
-            issue = cls.query.filter_by(diamond_id=i['diamond_id']).first()
+            issue = cls.query.filter_by(old_diamond_id=i['old_diamond_id']).first()
             if issue:
+                i.pop('diamond_id', None)
                 issue.update(**i)
             else:
                 issue = cls.create(**i)

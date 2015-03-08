@@ -39,9 +39,12 @@ class SuperUserBase(ModelView):
 class IssueAdmin(AdministratorBase):
     edit_template = 'edit_issue_model.html'
     # List of columns that can be sorted
-    column_sortable_list = ('issue_number', 'complete_title', 'on_sale_date', ('title',Title.name), ('publisher', Publisher.name))
+    column_sortable_list = ('issue_number', 'complete_title', 'on_sale_date',
+                            ('title',Title.name), ('publisher', Publisher.name))
     column_searchable_list = ('complete_title', 'diamond_id')
-    column_list = ('on_sale_date', 'prospective_release_date', 'diamond_id', 'issue_number', 'issues', 'complete_title', 'title', 'publisher')
+    column_list = ('on_sale_date', 'prospective_release_date', 'diamond_id', 
+                   'old_diamond_id', 'issue_number', 'issues', 'complete_title',
+                   'title', 'publisher')
     form_excluded_columns = ('cover_image', 'bundles')
 
     form_ajax_refs = {
