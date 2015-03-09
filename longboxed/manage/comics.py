@@ -58,7 +58,6 @@ def process_failed_rows(failed_rows):
                       .order_by(func.char_length(Issue.complete_title))\
                       .all()
         if issues:
-            issues.sort()
             rows = grouped_rows[key]
             rows.sort(key=lambda row: len(row['complete_title']), reverse=False)
             numeric_issues = []
