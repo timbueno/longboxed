@@ -10,11 +10,12 @@ import re
 from flask import current_app
 from flask.ext.script import Command, Option, prompt, prompt_bool
 from flask.ext.security.utils import verify_password
+from sqlalchemy import func
 
 from ..core import db
 from ..importer import DailyDownloadImporter
-from ..models import (DiamondList, Issue, IssueCover, issues_creators, issues_bundles,
-                      User)
+from ..models import (DiamondList, Issue, IssueCover, issues_creators,
+                      issues_bundles, User, Title)
 
 
 def process_failed_rows(failed_rows):
@@ -44,21 +45,34 @@ def process_failed_rows(failed_rows):
     # and the associated issue number.
     for key in grouped_rows.keys():
         query_string = '%'+key[1].replace(' ', '%%')+'%'
+        #issues = Issue.query\
+                      #.filter(
+                        #Issue.complete_title.ilike(query_string),
+                        #Issue.issue_number==key[0])\
+                      #.order_by(func.char_length(Issue.complete_title))\
+                      #.all()
         issues = Issue.query\
-                      .filter(
-                        Issue.complete_title.ilike(query_string),
-                        Issue.issue_number==key[0])\
+                      .filter(Issue.issue_number==key[0])\
+                      .join(Title.issues)\
+                      .filter(Title.name.ilike(query_string))\
+                      .order_by(func.char_length(Issue.complete_title))\
                       .all()
         if issues:
             issues.sort()
-            issue = issues[0]
-            if issue.diamond_id.isnumeric():
-                # Replace queried issue diamond_id with issue.diamond_id
-                issue.diamond_id = grouped_rows[key][0]['diamond_id']
-                issue.save()
+            rows = grouped_rows[key]
+            rows.sort(key=lambda row: len(row['complete_title']), reverse=False)
+            numeric_issues = []
+            for issue in issues:
+                if issue.diamond_id.isnumeric():
+                    numeric_issues.append(issue)
+            for i, issue in enumerate(numeric_issues):
+                if i > (len(rows)-1):
+                    break
+                print 'ID: %s | DB: %s | DL: %s' % (rows[i]['diamond_id'],
+                                                  issue.complete_title,
+                                                  rows[i]['complete_title'])
+                #issue.diamond_id = rows[i]['diamond_id']
                 fixed_issues.append(issue)
-            else:
-                pass
     return fixed_issues
 
 
@@ -84,9 +98,10 @@ class TestCommand(Command):
                     # processing
                     failed_rows.append(row)
         fixed_issues = process_failed_rows(failed_rows)
-        if fixed_issues:
-            for issue in fixed_issues:
-                print issue
+        #if fixed_issues:
+            #print 'Corrected %d issues!' % len(fixed_issues)
+            #for issue in fixed_issues:
+                #print issue
         # Combine the lists, set them on the DiamondList model.
         issues = issues + fixed_issues
 
