@@ -67,6 +67,12 @@ def process_failed_rows(failed_rows):
                 #issue.diamond_id = rows[i]['diamond_id']
                 #issue.save()
                 fixed_issues.append(issue)
+        else:
+            #rows = grouped_rows[key]
+            #for row in rows:
+                #print 'Failed Issues: %s | %s' % (row['complete_title'],
+                                                  #row['publisher'])
+            pass
     return fixed_issues
 
 
@@ -77,7 +83,7 @@ class TestCommand(Command):
         supported_publishers = current_app.config.get('SUPPORTED_DIAMOND_PUBS')
         fieldnames = [c[2] for c in current_app.config.get('RELEASE_CSV_RULES')]
         diamond_list = DiamondList.query\
-                                  .filter_by(hash_string='a4084c91829c3d826c93b9954fed1e75')\
+                                  .filter_by(hash_string=hash_string)\
                                   .first()
         data = diamond_list.process_csv(fieldnames)
         failed_rows = []
