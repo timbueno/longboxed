@@ -109,6 +109,7 @@ class DiamondList(db.Model, CRUDMixin):
             self.issues = issues
         else:
             self.issues = []
+        self.save()
         return self.issues
 
     def release_issues(self, date_override=None):
