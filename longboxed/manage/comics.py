@@ -72,6 +72,8 @@ def process_failed_rows(failed_rows):
 
 class TestCommand(Command):
     def run(self):
+        hash_string = '9ed898ec185ec6b106ff82d78a7ab023'
+        #hash_string = 'a4084c91829c3d826c93b9954fed1e75'
         supported_publishers = current_app.config.get('SUPPORTED_DIAMOND_PUBS')
         fieldnames = [c[2] for c in current_app.config.get('RELEASE_CSV_RULES')]
         diamond_list = DiamondList.query\
