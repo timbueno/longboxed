@@ -99,7 +99,7 @@ class DiamondList(db.Model, CRUDMixin):
         reader = unicode_csv_reader(f, fieldnames)
         return [row for row in reader]
 
-    def link_issues(self, fieldnames, supported_publishers):
+    def link_issues(self, fieldnames, supported_publishers, process_failed=True):
         data = self.process_csv(fieldnames)
         issues = []
         failed_rows = []
@@ -114,7 +114,10 @@ class DiamondList(db.Model, CRUDMixin):
                     # Row not found for various reasons, add to list for later
                     # processing
                     failed_rows.append(row)
-        fixed_issues = self.process_failed_rows(failed_rows, fix_records=True)
+        if process_failed:
+            fixed_issues = self.process_failed_rows(failed_rows, fix_records=True)
+        else:
+            fixed_issues = []
         issues = issues + fixed_issues
         if issues:
             self.issues = issues
