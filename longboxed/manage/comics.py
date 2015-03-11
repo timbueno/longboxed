@@ -45,12 +45,6 @@ def process_failed_rows(failed_rows):
     # and the associated issue number.
     for key in grouped_rows.keys():
         query_string = '%'+key[1].replace(' ', '%%')+'%'
-        #issues = Issue.query\
-                      #.filter(
-                        #Issue.complete_title.ilike(query_string),
-                        #Issue.issue_number==key[0])\
-                      #.order_by(func.char_length(Issue.complete_title))\
-                      #.all()
         issues = Issue.query\
                       .filter(Issue.issue_number==key[0])\
                       .join(Title.issues)\
