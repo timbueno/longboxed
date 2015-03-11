@@ -65,6 +65,7 @@ def process_failed_rows(failed_rows):
                                                   issue.complete_title,
                                                   rows[i]['complete_title'])
                 #issue.diamond_id = rows[i]['diamond_id']
+                #issue.save()
                 fixed_issues.append(issue)
     return fixed_issues
 
