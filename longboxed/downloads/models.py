@@ -5,6 +5,8 @@
 
     Download models
 """
+import re
+
 import requests
 
 from datetime import datetime
@@ -13,10 +15,11 @@ from StringIO import StringIO
 
 from bs4 import BeautifulSoup
 from flask import current_app
+from sqlalchemy import func
 
 from ..core import db, CRUDMixin
 from ..helpers import unicode_csv_reader, week_handler
-from ..models import Issue
+from ..models import Issue, Title
 
 
 diamonds_issues = db.Table('diamonds_issues',
@@ -99,12 +102,20 @@ class DiamondList(db.Model, CRUDMixin):
     def link_issues(self, fieldnames, supported_publishers):
         data = self.process_csv(fieldnames)
         issues = []
+        failed_rows = []
         for row in data:
             if Issue.check_release_relevancy(row, supported_publishers):
                 diamond_id = self.clean_diamond_id(row['diamond_id'])
                 issue = Issue.query.filter_by(diamond_id=diamond_id).first()
                 if issue:
+                    # Issue was found, save for later
                     issues.append(issue)
+                else:
+                    # Row not found for various reasons, add to list for later
+                    # processing
+                    failed_rows.append(row)
+        fixed_issues = self.process_failed_rows(failed_rows, fix_records=True)
+        issues = issues + fixed_issues
         if issues:
             self.issues = issues
         else:
@@ -208,9 +219,8 @@ class DiamondList(db.Model, CRUDMixin):
                                                       issue.complete_title,
                                                       rows[i]['complete_title'])
                     if fix_records:
-                        pass
-                        #issue.diamond_id = rows[i]['diamond_id']
-                        #issue.save()
+                        issue.diamond_id = rows[i]['diamond_id']
+                        issue.save()
                     fixed_issues.append(issue)
             else:
                 pass
