@@ -18,63 +18,6 @@ from ..models import (DiamondList, Issue, IssueCover, issues_creators,
                       issues_bundles, User, Title)
 
 
-def process_failed_rows(failed_rows):
-    grouped_rows = {}
-    fixed_issues = []
-    for row in failed_rows:
-        # Parse the complete title row into its base parts.
-        # Group the rows together based on like titles and issue numbers
-        try:
-            m = re.match(r'(?P<title>[^#]*[^#\s])\s*(?:#(?P<issue_number>([+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?))\s*)?(?:\(of (?P<issues>(\d+))\)\s*)?(?P<other>(.+)?)', row['complete_title']).groupdict()
-            matched_tuple = (m['issue_number'], m['title'])
-            if matched_tuple in grouped_rows.keys():
-                grouped_rows[matched_tuple].append(row)
-            else:
-                grouped_rows[matched_tuple] = [row]
-        except Exception, err:
-            print err
-    # Some diamond list titles just cannot be matched correctly to the database
-    # titles. Run them against a mapping between bum titles and their correctly
-    # named database titles.
-    for key in grouped_rows.keys():
-        diamond_list_fixes = current_app.config['DIAMOND_LIST_FIXES']
-        if diamond_list_fixes.get(key[1]):
-            fixed_name = diamond_list_fixes[key[1]]
-            grouped_rows[(key[0], fixed_name)] = grouped_rows.pop(key)
-    # Process the grouped rows. Search the database based on the grouped title
-    # and the associated issue number.
-    for key in grouped_rows.keys():
-        query_string = '%'+key[1].replace(' ', '%%')+'%'
-        issues = Issue.query\
-                      .filter(Issue.issue_number==key[0])\
-                      .join(Title.issues)\
-                      .filter(Title.name.ilike(query_string))\
-                      .order_by(func.char_length(Issue.complete_title))\
-                      .all()
-        if issues:
-            rows = grouped_rows[key]
-            rows.sort(key=lambda row: len(row['complete_title']), reverse=False)
-            numeric_issues = []
-            for issue in issues:
-                if issue.diamond_id.isnumeric():
-                    numeric_issues.append(issue)
-            for i, issue in enumerate(numeric_issues):
-                if i > (len(rows)-1):
-                    break
-                print 'ID: %s | DB: %s | DL: %s' % (rows[i]['diamond_id'],
-                                                  issue.complete_title,
-                                                  rows[i]['complete_title'])
-                #issue.diamond_id = rows[i]['diamond_id']
-                #issue.save()
-                fixed_issues.append(issue)
-        else:
-            #rows = grouped_rows[key]
-            #for row in rows:
-                #print 'Failed Issues: %s | %s' % (row['complete_title'],
-                                                  #row['publisher'])
-            pass
-    return fixed_issues
-
 class TestCommand(Command):
     def run(self):
         hash_string = '9ed898ec185ec6b106ff82d78a7ab023'
@@ -86,37 +29,6 @@ class TestCommand(Command):
         for issue in issues:
             if issue.publisher.name == 'Dark Horse':
                 print issue
-
-#class TestCommand(Command):
-    #def run(self):
-        #hash_string = '9ed898ec185ec6b106ff82d78a7ab023'
-        ##hash_string = 'a4084c91829c3d826c93b9954fed1e75'
-        #supported_publishers = current_app.config.get('SUPPORTED_DIAMOND_PUBS')
-        #fieldnames = [c[2] for c in current_app.config.get('RELEASE_CSV_RULES')]
-        #diamond_list = DiamondList.query\
-                                  #.filter_by(hash_string=hash_string)\
-                                  #.first()
-        #data = diamond_list.process_csv(fieldnames)
-        #failed_rows = []
-        #issues = []
-        #for row in data:
-            #if Issue.check_release_relevancy(row, supported_publishers):
-                #issue = Issue.query.filter_by(diamond_id=row['diamond_id'])\
-                                   #.first()
-                #if issue:
-                    ## Issue was found, save for later
-                    #issues.append(issue)
-                #else:
-                    ## Row not found for various reasons, add to list for later
-                    ## processing
-                    #failed_rows.append(row)
-        #fixed_issues = process_failed_rows(failed_rows)
-        ##if fixed_issues:
-            ##print 'Corrected %d issues!' % len(fixed_issues)
-            ##for issue in fixed_issues:
-                ##print issue
-        ## Combine the lists, set them on the DiamondList model.
-        #issues = issues + fixed_issues
 
 
 class ImportDatabase(Command):
