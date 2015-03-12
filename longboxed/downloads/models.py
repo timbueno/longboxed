@@ -131,6 +131,7 @@ class DiamondList(db.Model, CRUDMixin):
         date = date_override or self.date
         print '    Date Created: %s' % self.date_created
         print '    Date: %s' % date
+        print '    Revision: %d' % self.revision
         print '    Issues: %i' % self.issues.count()
         print '    Hash: %s' % self.hash_string
         currently_released_issues = Issue.query.filter(
