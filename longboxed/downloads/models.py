@@ -177,6 +177,9 @@ class DiamondList(db.Model, CRUDMixin):
         return d_list
 
     def process_failed_rows(self, failed_rows, fix_records=False):
+        print 'Processing Failed Rows'
+        print 'Correcting Records: %s' % fix_records
+        print '--------------------------------'
         grouped_rows = {}
         fixed_issues = []
         for row in failed_rows:
@@ -219,6 +222,8 @@ class DiamondList(db.Model, CRUDMixin):
                 for i, issue in enumerate(numeric_issues):
                     if i > (len(rows)-1):
                         break
+                    if i == 0:
+                        print 'Found problem issues:'
                     print 'ID: %s | DB: %s | DL: %s' % (rows[i]['diamond_id'],
                                                       issue.complete_title,
                                                       rows[i]['complete_title'])

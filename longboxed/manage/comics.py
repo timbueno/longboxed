@@ -52,6 +52,7 @@ class TestCommand(Command):
                 issues = dlist.link_issues(fieldnames, supported_publishers)
                 if i == 0:
                     dlists_to_release.append(dlist)
+        print '--------------------------------'
         print 'Releasing latest Diamond Lists: %d' % len(dlists_to_release)
         for dlist in dlists_to_release:
             print '--------------------------------'
