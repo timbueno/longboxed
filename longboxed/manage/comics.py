@@ -20,66 +20,7 @@ from ..models import (DiamondList, Issue, IssueCover, issues_creators,
 
 class TestCommand(Command):
     def run(self):
-        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
-        print '!! Reprocessing all DiamondLists'
-        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
-
-        # Get all diamond lists from database.
-        dlists = DiamondList.query\
-                            .order_by(DiamondList.revision.desc())\
-                            .all()
-        # Group all diamond lists by like date
-        grouped_dlists = {}
-        for dlist in dlists:
-            if grouped_dlists.get(dlist.date):
-                grouped_dlists[dlist.date].append(dlist)
-            else:
-                grouped_dlists[dlist.date] = [dlist]
-        # Iterate over all diamond lists by group. Re-Link all diamond lists and
-        # Re-Release only the diamond list with the latest revision. This should
-        # be the first list in the iteration.
-        dlists_to_release = []
-        keys = grouped_dlists.keys()
-        keys.sort(reverse=True)
-        fieldnames = [x[2] for x in current_app.config.get('RELEASE_CSV_RULES')]
-        supported_publishers = current_app.config.get('SUPPORTED_DIAMOND_PUBS')
-
-        print 'Linking all Diamond Lists...'
-        for key in keys:
-            print '--------------------------------'
-            print 'Linking: ' + dlist.date.strftime('%Y-%m-%d')
-            for i, dlist in enumerate(grouped_dlists[key]):
-                issues = dlist.link_issues(fieldnames, supported_publishers)
-                if i == 0:
-                    dlists_to_release.append(dlist)
-        print '--------------------------------'
-        print 'Releasing latest Diamond Lists: %d' % len(dlists_to_release)
-        for dlist in dlists_to_release:
-            print '--------------------------------'
-            dlist.release_issues()
-
-        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
-        print '            Complete            '
-        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
-
-
-#class TestCommand(Command):
-    #def run(self):
-        ##hash_string = '9ed898ec185ec6b106ff82d78a7ab023'
-        #hash_string = 'a4084c91829c3d826c93b9954fed1e75'
-        #supported_publishers = current_app.config.get('SUPPORTED_DIAMOND_PUBS')
-        #fieldnames = [x[2] for x in current_app.config.get('RELEASE_CSV_RULES')]
-        #dlist = DiamondList.query.filter_by(hash_string=hash_string)\
-                                 #.first()
-        #issues = dlist.link_issues(
-                #fieldnames,
-                #supported_publishers,
-                #process_failed=True
-        #)
-        #for issue in issues:
-            #if issue.publisher.name == 'Dark Horse':
-                #print issue
-
+        pass
 
 class ImportDatabase(Command):
     def get_options(self):

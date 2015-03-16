@@ -21,7 +21,9 @@ from longboxed.manage import (CreateNewRoleCommand, CreateDefaultRolesCommand,
                              SetCoverImageCommand, ScheduleReleasesCommand,
                              CleanCoverImages, DownloadScheduleBundleCommand,
                              BundleIssuesCommand, DownloadDiamondListCommand,
-                             ClearCacheCommand, RemovePublisherTitleFromPullLists)
+                             ClearCacheCommand,
+                             RemovePublisherTitleFromPullLists,
+                             ReprocessDiamondListsCommand)
 
 
 app = create_app(os.getenv('APP_ENV') or 'default')
@@ -54,6 +56,7 @@ manager.add_command('download_diamond_list', DownloadDiamondListCommand())
 manager.add_command('schedule_releases', ScheduleReleasesCommand())
 manager.add_command('bundle_issues', BundleIssuesCommand())
 manager.add_command('download_schedule_bundle', DownloadScheduleBundleCommand())
+manager.add_command('reprocess_diamond_lists', ReprocessDiamondListsCommand())
 manager.add_command('delete_all_issues', DeleteAllIssues())
 manager.add_command('set_cover_image', SetCoverImageCommand())
 manager.add_command('clean_cover_images', CleanCoverImages())
