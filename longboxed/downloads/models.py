@@ -228,7 +228,8 @@ class DiamondList(db.Model, CRUDMixin):
                                                       issue.complete_title,
                                                       rows[i]['complete_title'])
                     if fix_records:
-                        issue.diamond_id = rows[i]['diamond_id']
+                        issue.diamond_id = self.clean_diamond_id(
+                                                    rows[i]['diamond_id'])
                         issue.save()
                     fixed_issues.append(issue)
             else:
