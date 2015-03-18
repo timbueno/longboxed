@@ -158,6 +158,7 @@ class BundleIssuesCommand(Command):
         print '           Complete           '
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 
+
 class ReprocessDiamondListsCommand(Command):
     def run(self):
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
@@ -180,7 +181,7 @@ class ReprocessDiamondListsCommand(Command):
         # be the first list in the iteration.
         dlists_to_release = []
         keys = grouped_dlists.keys()
-        keys.sort(reverse=True)
+        keys.sort() # Sort Diamond Lists starting with the earliest
         fieldnames = [x[2] for x in current_app.config.get('RELEASE_CSV_RULES')]
         supported_publishers = current_app.config.get('SUPPORTED_DIAMOND_PUBS')
 
