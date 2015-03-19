@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-    longboxed.frontend.assets
+    longboxed.frontend.admin
     ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    frontend application asset "pipeline"
+    Administrative interface
+
 """
 from datetime import datetime
 
@@ -38,9 +39,12 @@ class SuperUserBase(ModelView):
 class IssueAdmin(AdministratorBase):
     edit_template = 'edit_issue_model.html'
     # List of columns that can be sorted
-    column_sortable_list = ('issue_number', 'complete_title', 'on_sale_date', ('title',Title.name), ('publisher', Publisher.name))
+    column_sortable_list = ('issue_number', 'complete_title', 'on_sale_date',
+                            ('title',Title.name), ('publisher', Publisher.name))
     column_searchable_list = ('complete_title', 'diamond_id')
-    column_list = ('on_sale_date', 'prospective_release_date', 'diamond_id', 'issue_number', 'issues', 'complete_title', 'title', 'publisher')
+    column_list = ('on_sale_date', 'prospective_release_date', 'diamond_id', 
+                   'old_diamond_id', 'issue_number', 'issues', 'complete_title',
+                   'title', 'publisher')
     form_excluded_columns = ('cover_image', 'bundles')
 
     form_ajax_refs = {
@@ -130,12 +134,12 @@ class CreatorAdmin(AdministratorBase):
 class BundleAdmin(AdministratorBase):
     def __init__(self, session):
         # Just call parent class with predefined model.
-        super(BundleAdmin, self).__init__(Bundle, session)    
+        super(BundleAdmin, self).__init__(Bundle, session)
 
     form_ajax_refs = {
         'issues': QueryAjaxModelLoader('issues', db.session, Issue, fields=['complete_title'], page_size=10),
         'user': QueryAjaxModelLoader('user', db.session, User, fields=['email'], page_size=10)
-    }  
+    }
 
 
 class UserAdmin(SuperUserBase):

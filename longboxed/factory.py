@@ -45,9 +45,6 @@ def create_app(package_name, package_path, config_name, debug_override=None,
     """
     app = Flask(package_name, instance_relative_config=True)
 
-    # #: Register custom Jinja2 filters
-    # app.jinja_env.filters['pretty_date'] = pretty_date
-
     app.config.from_object(config[config_name])
     app.config.from_pyfile('settings.cfg', silent=True)
     if debug_override is not None:

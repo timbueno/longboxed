@@ -22,7 +22,7 @@ bp = Blueprint('publishers', __name__, url_prefix='/publishers')
 def publishers():
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 50, type=int)
-    disabled_pubs = current_app.config.get('DISABLED_PUBS', [])
+    disabled_pubs = current_app.config.get('DISABLED_PUBS', ['disabled_pub'])
     #pagination = Publisher.query.order_by(Publisher.name)\
     #                            .paginate(page, per_page=count, error_out=False)
     pagination = Publisher.query.filter(Publisher.name.notin_(disabled_pubs))\

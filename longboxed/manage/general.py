@@ -8,6 +8,7 @@
 from flask.ext.script import Command, prompt_bool
 
 from ..core import cache
+from ..models import Issue
 
 
 class ClearCacheCommand(Command):
@@ -23,4 +24,5 @@ class ClearCacheCommand(Command):
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
         print '           Complete           '
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+
 

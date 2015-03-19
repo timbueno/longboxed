@@ -30,13 +30,6 @@ def before_request():
         g.user = None
 
 
-#@route(bp, '/csrf')
-#def csrf():
-#    secret_key = current_app.config.get('SECRET_KEY')
-#    print secret_key
-#    return jsonify(csrf=generate_csrf(secret_key=secret_key))
-
-
 @route(bp, '/')
 def index():
     issues = Issue.query.filter(Issue.on_sale_date == current_wednesday(), Issue.is_parent == True).\
@@ -53,9 +46,11 @@ def index():
         featured = None
     return render_template('splash.html', issues=issues, featured=featured)
 
+
 @route(bp, '/privacy')
 def privacy():
     return render_template('privacy.html')
+
 
 @route(bp, '/settings', methods=('GET', 'POST'))
 @login_required
@@ -66,6 +61,7 @@ def settings():
         user_info_form.populate_obj(current_user)
         current_user.save()
     return render_template('settings.html', user_info_form=user_info_form, delete_user_account_form=delete_user_account_form)
+
 
 @route(bp, '/delete_account', methods=('GET', 'POST'))
 @login_required

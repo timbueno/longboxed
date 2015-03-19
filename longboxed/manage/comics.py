@@ -5,37 +5,36 @@
 
     comic management commands
 """
+import re
+
+from datetime import date
+
 from flask import current_app
 from flask.ext.script import Command, Option, prompt, prompt_bool
 from flask.ext.security.utils import verify_password
+from sqlalchemy import func
 
 from ..core import db
-from ..importer import NewDailyDownloadImporter, NewWeeklyReleasesImporter
-from ..models import (Issue, IssueCover, issues_creators, issues_bundles,
-                      User)
+from ..importer import DailyDownloadImporter
+from ..models import (DiamondList, Issue, IssueCover, issues_creators,
+                      issues_bundles, User, Title, Publisher)
 
 
 class TestCommand(Command):
     def run(self):
-        pass
-
-
-class ScheduleReleasesCommand(Command):
-    def get_options(self):
-        return [
-            Option('-w', '--week', dest='week', required=True, choices=['thisweek', 'nextweek', 'twoweeks']),
-        ]
-
-    def run(self, week):
-        fieldnames = [x[2] for x in current_app.config['RELEASE_CSV_RULES']]
-        issue_releaser = NewWeeklyReleasesImporter()
-        issue_releaser.run(
-            csv_fieldnames = fieldnames,
-            supported_publishers = current_app.config['SUPPORTED_DIAMOND_PUBS'],
-            affiliate_id = current_app.config['AFFILIATE_ID'],
-            week = week
-        )
-        return
+        ddate = date(year=2015, month=1, day=21)
+        issues = Issue.query.filter(
+                                Issue.on_sale_date==None,
+                                Issue.prospective_release_date<ddate)\
+                            .join(Publisher.comics)\
+                            .filter(Publisher.name=='Dark Horse')\
+                            .all()
+        print 'Setting dates for %d issues' % len(issues)
+        for issue in issues:
+            print '%s - %s' % (issue.complete_title,
+                               issue.prospective_release_date)
+            issue.on_sale_date = issue.prospective_release_date
+            issue.save()
 
 
 class ImportDatabase(Command):
@@ -46,7 +45,7 @@ class ImportDatabase(Command):
 
     def run(self, days):
         fieldnames = [x[2] for x in current_app.config['CSV_RULES']]
-        database_importer = NewDailyDownloadImporter()
+        database_importer = DailyDownloadImporter()
         database_importer.run(
             csv_fieldnames = fieldnames,
             supported_publishers = current_app.config['SUPPORTED_PUBS'],
