@@ -158,3 +158,50 @@ class BundleIssuesCommand(Command):
         print '           Complete           '
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 
+
+class ReprocessDiamondListsCommand(Command):
+    def run(self):
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+        print '!! Reprocessing all DiamondLists'
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+
+        # Get all diamond lists from database.
+        dlists = DiamondList.query\
+                            .order_by(DiamondList.revision.desc())\
+                            .all()
+        # Group all diamond lists by like date
+        grouped_dlists = {}
+        for dlist in dlists:
+            if grouped_dlists.get(dlist.date):
+                grouped_dlists[dlist.date].append(dlist)
+            else:
+                grouped_dlists[dlist.date] = [dlist]
+        # Iterate over all diamond lists by group. Re-Link all diamond lists and
+        # Re-Release only the diamond list with the latest revision. This should
+        # be the first list in the iteration.
+        dlists_to_release = []
+        keys = grouped_dlists.keys()
+        keys.sort() # Sort Diamond Lists starting with the earliest
+        fieldnames = [x[2] for x in current_app.config.get('RELEASE_CSV_RULES')]
+        supported_publishers = current_app.config.get('SUPPORTED_DIAMOND_PUBS')
+
+        print 'Linking all Diamond Lists...'
+        for key in keys:
+            for i, dlist in enumerate(grouped_dlists[key]):
+                print '--------------------------------'
+                print 'Linking: %s, Rev: %d' % (dlist.date.strftime('%Y-%m-%d'),
+                                                dlist.revision)
+                issues = dlist.link_issues(fieldnames, supported_publishers)
+                if i == 0:
+                    dlists_to_release.append(dlist)
+        print '--------------------------------'
+        print 'Releasing latest Diamond Lists: %d' % len(dlists_to_release)
+        for dlist in dlists_to_release:
+            print '--------------------------------'
+            dlist.release_issues()
+
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+        print '            Complete            '
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+
+

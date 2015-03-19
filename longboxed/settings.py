@@ -26,7 +26,7 @@ class Config(object):
     AFFILIATE_ID = environ['AFFILIATE_ID']
     COMPARISON_IMAGE = 'media/tfaw_nocover.jpg'
     COMPARISON_IMAGE_URL = 'http://affimg.tfaw.com/covers_tfaw/400/no/nocover.jpg'
-    DISABLED_PUBS = ['Dark Horse']
+    DISABLED_PUBS = ['default_placeholder']
     SUPPORTED_PUBS = ['Marvel Comics', 'DC Comics', 'Dark Horse',
                       'IDW Publishing', 'Boom! Studios', 'Image Comics',
                       'Dynamite Entertainment', 'Avatar Press',
@@ -39,6 +39,11 @@ class Config(object):
                               'ABSTRACT STUDIOS', 'AVATAR PRESS INC',
                               'ARCHIE COMIC PUBLICATIONS', 'IDW PUBLISHING',
                               'VALIANT ENTERTAINMENT LLC']
+
+    DIAMOND_LIST_FIXES = {
+            'ANGEL AND FAITH SEASON 10': 'Angel and Faith: Season Ten',
+            'HELLBOY AND THE BPRD': 'Hellboy and the B.P.R.D.: 1952'
+    }
 
     # Flask Application Configuration
     SECRET_KEY = environ['SECRET_KEY']

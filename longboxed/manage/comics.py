@@ -5,19 +5,36 @@
 
     comic management commands
 """
+import re
+
+from datetime import date
+
 from flask import current_app
 from flask.ext.script import Command, Option, prompt, prompt_bool
 from flask.ext.security.utils import verify_password
+from sqlalchemy import func
 
 from ..core import db
 from ..importer import DailyDownloadImporter
-from ..models import (Issue, IssueCover, issues_creators, issues_bundles,
-                      User)
+from ..models import (DiamondList, Issue, IssueCover, issues_creators,
+                      issues_bundles, User, Title, Publisher)
 
 
 class TestCommand(Command):
     def run(self):
-        pass
+        ddate = date(year=2015, month=1, day=21)
+        issues = Issue.query.filter(
+                                Issue.on_sale_date==None,
+                                Issue.prospective_release_date<ddate)\
+                            .join(Publisher.comics)\
+                            .filter(Publisher.name=='Dark Horse')\
+                            .all()
+        print 'Setting dates for %d issues' % len(issues)
+        for issue in issues:
+            print '%s - %s' % (issue.complete_title,
+                               issue.prospective_release_date)
+            issue.on_sale_date = issue.prospective_release_date
+            issue.save()
 
 
 class ImportDatabase(Command):
