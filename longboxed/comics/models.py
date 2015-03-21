@@ -749,7 +749,7 @@ class Issue(db.Model, CRUDMixin):
                     image = self.cover_image.generate_thumbnail(
                                                 width=width,
                                                 height=height)
-                self.save()
+                    self.save()
         return image
 
     def get_cover_image_file(self):
