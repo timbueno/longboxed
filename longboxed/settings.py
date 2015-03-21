@@ -146,6 +146,13 @@ class Config(object):
         'consumer_secret': environ['TWITTER_CONSUMER_SECRET']
     }
 
+    TWITTER = {
+        'consumer_key': environ.get('TWITTER_CONSUMER_KEY', ''),
+        'consumer_secret': environ.get('TWITTER_CONSUMER_SECRET', ''),
+        'access_token_key': environ.get('LB_TWITTER_ACCESS_TOKEN', ''),
+        'access_token_secret': environ.get('LB_TWITTER_TOKEN_SECRET', '')
+    }
+
     @staticmethod
     def init_app(app, **kwargs):
         pass
