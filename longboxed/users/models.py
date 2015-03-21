@@ -9,7 +9,6 @@ from datetime import datetime
 
 from flask import current_app
 from flask.ext.security import UserMixin, RoleMixin
-from flask.ext.social.providers import twitter
 
 from ..core import db, CRUDMixin
 from ..models import Issue
