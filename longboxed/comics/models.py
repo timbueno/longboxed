@@ -416,6 +416,20 @@ class Issue(db.Model, CRUDMixin):
                 Issue.diamond_id!=self.diamond_id).all()
 
     @classmethod
+    def popular_issues(cls, date, count=10):
+        issues = cls.query.filter(
+                                cls.on_sale_date==date,
+                                Issue.is_parent==True)\
+                          .order_by(cls.num_subscribers.desc())\
+                          .limit(count)\
+                          .all()
+        return issues
+
+    @classmethod
+    def featured_issue(cls, date):
+        raise NotImplementedError
+
+    @classmethod
     def from_raw(cls, record, sas_id='YOURUSERID'):
         # Create Issue dictionary
         i = deepcopy(record)
