@@ -427,7 +427,8 @@ class Issue(db.Model, CRUDMixin):
 
     @classmethod
     def featured_issue(cls, date):
-        raise NotImplementedError
+        issues = cls.popular_issues(date, count=1)
+        return issues[0]
 
     @classmethod
     def from_raw(cls, record, sas_id='YOURUSERID'):
