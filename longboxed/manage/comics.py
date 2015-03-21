@@ -9,12 +9,15 @@ import re
 
 from datetime import date
 
-from flask import current_app
+import twitter
+
+from flask import current_app, url_for
 from flask.ext.script import Command, Option, prompt, prompt_bool
 from flask.ext.security.utils import verify_password
 from sqlalchemy import func
 
 from ..core import db
+from ..helpers import current_wednesday
 from ..importer import DailyDownloadImporter
 from ..models import (DiamondList, Issue, IssueCover, issues_creators,
                       issues_bundles, User, Title, Publisher)
@@ -22,7 +25,22 @@ from ..models import (DiamondList, Issue, IssueCover, issues_creators,
 
 class TestCommand(Command):
     def run(self):
-        pass
+        # Set up the api
+        kwargs = current_app.config.get('TWITTER')
+        api = twitter.Api(**kwargs)
+
+        # Build the tweet
+        issue = Issue.featured_issue(current_wednesday())
+        text = 'Featured This Week: %s\n' % issue.complete_title
+        f = issue.get_cover_image_file()
+        link = url_for(
+                'comics.issue',
+                diamond_id=issue.diamond_id,
+                _external=True)
+        tweet = text + link + '\n'
+        # Tweet the featured issue
+        print tweet
+        #status = api.PostMedia(status=tweet, media=f)
 
 
 class ImportDatabase(Command):
