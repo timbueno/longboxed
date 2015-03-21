@@ -429,8 +429,15 @@ class Issue(db.Model, CRUDMixin):
 
     @classmethod
     def featured_issue(cls, date):
-        issues = cls.popular_issues(date, count=1)
-        return issues[0]
+        # The featured issue should always have a cover image. We check against
+        # that here.
+        issues = cls.popular_issues(date, count=5)
+        featured_issue = None
+        for issue in issues:
+            if issue.cover_image.original:
+                featured_issue = issue
+                break
+        return featured_issue
 
     @classmethod
     def from_raw(cls, record, sas_id='YOURUSERID'):
