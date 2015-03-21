@@ -753,11 +753,11 @@ class Issue(db.Model, CRUDMixin):
         return image
 
     def get_cover_image_file(self):
+        f = None
         if self.cover_image.original:
             with store_context(store):
                 f = self.cover_image.open_file()
-            return f
-        return None
+        return f
 
 
 class IssueCover(db.Model, Image):
