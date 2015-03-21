@@ -419,8 +419,10 @@ class Issue(db.Model, CRUDMixin):
     def popular_issues(cls, date, count=10):
         issues = cls.query.filter(
                                 cls.on_sale_date==date,
-                                Issue.is_parent==True)\
-                          .order_by(cls.num_subscribers.desc())\
+                                cls.is_parent==True)\
+                          .order_by(
+                                cls.num_subscribers.desc(),
+                                cls.complete_title.asc())\
                           .limit(count)\
                           .all()
         return issues
