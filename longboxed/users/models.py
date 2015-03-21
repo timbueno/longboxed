@@ -6,9 +6,13 @@
     User models
 """
 from datetime import datetime
+
+from flask import current_app
 from flask.ext.security import UserMixin, RoleMixin
+from flask.ext.social.providers import twitter
 
 from ..core import db, CRUDMixin
+from ..models import Issue
 
 # Many-to-Many relationship for user defined publishers to display
 publishers_users = db.Table('publishers_users',
@@ -136,6 +140,23 @@ class User(db.Model, UserMixin, CRUDMixin):
             'roles': [role.name for role in self.roles]
         }
         return u
+
+    def tweet(self, text, issue=None):
+        connection = self.connections.filter_by(provider_id='twitter').first()
+        status = None
+        if connection:
+            api = twitter.get_api(connection,
+                                  **current_app.config['SOCIAL_TWITTER'])
+            if len(text) <= 140:
+                if issue and isinstance(issue, Issue):
+                    f = issue.get_cover_image_file()
+                    if f:
+                        status = api.PostMedia(status=text, media=f)
+                else:
+                    status = api.PostUpdate(status=text)
+        else:
+            print 'User \'%s\' has no Twitter connection! Aborting...' % self
+        return status
 
     def ping(self):
         self.last_seen = datetime.utcnow()
