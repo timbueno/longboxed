@@ -120,7 +120,8 @@ class User(db.Model, UserMixin, CRUDMixin):
     )
     connections = db.relationship(
         'Connection',
-        backref=db.backref('user', lazy='joined')
+        backref=db.backref('user', lazy='joined'),
+        lazy='dynamic'
     )
 
     def __str__(self):
