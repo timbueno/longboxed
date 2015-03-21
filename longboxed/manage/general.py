@@ -48,6 +48,6 @@ class TweetFeaturedIssueCommand(Command):
 
         # Tweet the featured issue
         print tweet
-        #status = api.PostMedia(status=tweet, media=f)
+        status = api.PostMedia(status=tweet, media=f)
 
 
