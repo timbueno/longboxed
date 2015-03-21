@@ -22,19 +22,7 @@ from ..models import (DiamondList, Issue, IssueCover, issues_creators,
 
 class TestCommand(Command):
     def run(self):
-        ddate = date(year=2015, month=1, day=21)
-        issues = Issue.query.filter(
-                                Issue.on_sale_date==None,
-                                Issue.prospective_release_date<ddate)\
-                            .join(Publisher.comics)\
-                            .filter(Publisher.name=='Dark Horse')\
-                            .all()
-        print 'Setting dates for %d issues' % len(issues)
-        for issue in issues:
-            print '%s - %s' % (issue.complete_title,
-                               issue.prospective_release_date)
-            issue.on_sale_date = issue.prospective_release_date
-            issue.save()
+        pass
 
 
 class ImportDatabase(Command):
