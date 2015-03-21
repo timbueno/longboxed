@@ -18,7 +18,7 @@ from flask.ext.admin.contrib.sqla.ajax import QueryAjaxModelLoader
 
 from ..core import db
 from ..helpers import current_wednesday, last_wednesday, next_wednesday
-from ..models import (Connection, Creator, Issue, Publisher, Title, User, Role,
+from ..models import (Creator, Issue, Publisher, Title, User, Role,
                       Bundle, DiamondList)
 
 
@@ -42,7 +42,7 @@ class IssueAdmin(AdministratorBase):
     column_sortable_list = ('issue_number', 'complete_title', 'on_sale_date',
                             ('title',Title.name), ('publisher', Publisher.name))
     column_searchable_list = ('complete_title', 'diamond_id')
-    column_list = ('on_sale_date', 'prospective_release_date', 'diamond_id', 
+    column_list = ('on_sale_date', 'prospective_release_date', 'diamond_id',
                    'old_diamond_id', 'issue_number', 'issues', 'complete_title',
                    'title', 'publisher')
     form_excluded_columns = ('cover_image', 'bundles')
@@ -166,15 +166,6 @@ class RoleAdmin(SuperUserBase):
     }
 
 
-class ConnectionAdmin(SuperUserBase):
-    # column_searchable_list = ('user.email',)
-    column_list = ('provider_id', 'display_name', 'user')
-    # column_searchable_list=('user',)
-    def __init__(self, session):
-        # Just call parent class with predefined model.
-        super(ConnectionAdmin, self).__init__(Connection, session)
-
-
 class DiamondListAdmin(SuperUserBase):
     def __init__(self, session):
         super(DiamondListAdmin, self).__init__(DiamondList, session)
@@ -192,5 +183,4 @@ def init_app(app):
     admin.add_view(CreatorAdmin(db.session))
     admin.add_view(RoleAdmin(db.session))
     admin.add_view(BundleAdmin(db.session))
-    admin.add_view(ConnectionAdmin(db.session))
     admin.add_view(DiamondListAdmin(db.session))

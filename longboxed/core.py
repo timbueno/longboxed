@@ -12,7 +12,6 @@ import os
 from flask.ext.cache import Cache
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security
-from flask.ext.social import Social
 from flask_mail import Mail
 from flask_s3 import FlaskS3
 
@@ -25,9 +24,6 @@ db = SQLAlchemy()
 #: Flask-Security extension instance
 security = Security()
 
-#: Flask-Social exetension instance
-social = Social()
-
 #: Flask Mail Extension Instance
 mail = Mail()
 
@@ -35,7 +31,7 @@ mail = Mail()
 cache = Cache()
 
 #: Flask-S3 Extension Instance (for Static Assets)
-s3_assets = FlaskS3() 
+s3_assets = FlaskS3()
 
 #: Image Filesystem
 store = config[os.getenv('APP_ENV') or 'default'].get_store()

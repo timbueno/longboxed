@@ -136,15 +136,10 @@ class Config(object):
         }
     }
 
-    SOCIAL_FACEBOOK = {
-        'consumer_key': environ['FACEBOOK_CONSUMER_KEY'],
-        'consumer_secret': environ['FACEBOOK_CONSUMER_SECRET']
-    }
-
-    SOCIAL_TWITTER = {
-        'consumer_key': environ['TWITTER_CONSUMER_KEY'],
-        'consumer_secret': environ['TWITTER_CONSUMER_SECRET']
-    }
+    #FACEBOOK = {
+        #'consumer_key': environ['FACEBOOK_CONSUMER_KEY'],
+        #'consumer_secret': environ['FACEBOOK_CONSUMER_SECRET']
+    #}
 
     TWITTER = {
         'consumer_key': environ.get('TWITTER_CONSUMER_KEY', ''),

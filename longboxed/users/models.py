@@ -61,19 +61,6 @@ class Role(db.Model, RoleMixin, CRUDMixin):
         return
 
 
-class Connection(db.Model):
-        id = db.Column(db.Integer, primary_key=True)
-        user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-        provider_id = db.Column(db.String(255))
-        provider_user_id = db.Column(db.String(255))
-        access_token = db.Column(db.String(255))
-        secret = db.Column(db.String(255))
-        display_name = db.Column(db.String(255))
-        profile_url = db.Column(db.String(512))
-        image_url = db.Column(db.String(512))
-        rank = db.Column(db.Integer)
-
-
 class User(db.Model, UserMixin, CRUDMixin):
     __tablename__ = 'users'
     # ids
@@ -122,11 +109,6 @@ class User(db.Model, UserMixin, CRUDMixin):
         backref=db.backref('user', lazy='joined'),
         lazy='dynamic'
     )
-    connections = db.relationship(
-        'Connection',
-        backref=db.backref('user', lazy='joined'),
-        lazy='dynamic'
-    )
 
     def __str__(self):
         return self.email
@@ -140,23 +122,6 @@ class User(db.Model, UserMixin, CRUDMixin):
             'roles': [role.name for role in self.roles]
         }
         return u
-
-    def tweet(self, text, issue=None):
-        connection = self.connections.filter_by(provider_id='twitter').first()
-        status = None
-        if connection:
-            api = twitter.get_api(connection,
-                                  **current_app.config['SOCIAL_TWITTER'])
-            if len(text) <= 140:
-                if issue and isinstance(issue, Issue):
-                    f = issue.get_cover_image_file()
-                    if f:
-                        status = api.PostMedia(status=text, media=f)
-                else:
-                    status = api.PostUpdate(status=text)
-        else:
-            print 'User \'%s\' has no Twitter connection! Aborting...' % self
-        return status
 
     def ping(self):
         self.last_seen = datetime.utcnow()
