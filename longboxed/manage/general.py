@@ -32,6 +32,9 @@ class ClearCacheCommand(Command):
 
 class TweetFeaturedIssueCommand(Command):
     def run(self):
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+        print 'Starting: Tweeting Featured   '
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
         # Set up the api
         kwargs = current_app.config.get('TWITTER')
         api = twitter.Api(**kwargs)
@@ -49,5 +52,9 @@ class TweetFeaturedIssueCommand(Command):
         # Tweet the featured issue
         print tweet
         status = api.PostMedia(status=tweet, media=f)
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+        print '           Complete           '
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+
 
 
