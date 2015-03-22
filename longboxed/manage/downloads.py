@@ -53,7 +53,6 @@ class DownloadDiamondListCommand(Command):
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
         print 'Starting: DL Diamond List     '
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
-        date = week_handler(week)
         f = current_app.config.get('RELEASE_CSV_RULES')
         f = [x[2] for x in f]
         sp = current_app.config.get('SUPPORTED_DIAMOND_PUBS')
