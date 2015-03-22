@@ -110,7 +110,7 @@ class ScheduleReleasesCommand(Command):
             if link:
                 print 'Linking issues...'
                 f = current_app.config.get('RELEASE_CSV_RULES')
-                f = [x[2] for x in f]
+                f = [row[2] for row in f]
                 sp = current_app.config.get('SUPPORTED_DIAMOND_PUBS')
                 diamond_list.link_issues(f, sp)
             diamond_list.release_issues(date)
