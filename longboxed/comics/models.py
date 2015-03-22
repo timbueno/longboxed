@@ -830,13 +830,13 @@ class Bundle(db.Model, CRUDMixin):
     owner. Owners are able to view previous weeks hauls.
     """
     __tablename__ = 'bundles'
-    #: IDs
+    # IDs
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    #: Attributes
+    # Attributes
     last_updated = db.Column(db.DateTime())
     release_date = db.Column(db.Date())
-    #: Relationships
+    # Relationships
     issues = db.relationship(
         'Issue',
         secondary=issues_bundles,
@@ -860,13 +860,13 @@ class Bundle(db.Model, CRUDMixin):
                                     Issue.is_parent==True)\
                                 .all()
             matches = [i for i in issues if i.title in user.pull_list]
-            #matches = Issue.query.join(Title).\
-                        #filter(Issue.on_sale_date==date,
-                                #Issue.is_parent==True).\
-                        #join(Title.users).\
-                        #filter(User.id==user.id).\
-                        #all()
-        bundle = cls.query.filter(cls.user==user, cls.release_date==date)\
+            # matches = Issue.query.join(Title)\
+                                 # .filter(Issue.on_sale_date==date,
+                                         # Issue.is_parent==True)\
+                                 # .join(Title.users)\
+                                 # .filter(User.id==user.id)\
+                                 # .all()
+        bundle = cls.query.filter(cls.user == user, cls.release_date == date)\
                           .first()
         if bundle:
             bundle.update(issues=matches, last_updated=datetime.now())
