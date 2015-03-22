@@ -7,11 +7,9 @@
 """
 from datetime import datetime
 
-from flask import current_app
 from flask.ext.security import UserMixin, RoleMixin
 
 from ..core import db, CRUDMixin
-from ..models import Issue
 
 # Many-to-Many relationship for user defined publishers to display
 publishers_users = db.Table('publishers_users',
