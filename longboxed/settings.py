@@ -15,6 +15,7 @@ from sqlalchemy_imageattach.stores.s3 import S3Store
 class Config(object):
     CONFIG_NAME = 'base'
     APP_ENV = environ.get('APP_ENV', 'dev')
+    SERVER_NAME = environ.get('SERVER_NAME', 'longboxed.com')
     USE_S3 = False
 
     CACHE_CONFIG = {'CACHE_TYPE': 'simple',
@@ -135,14 +136,16 @@ class Config(object):
         }
     }
 
-    SOCIAL_FACEBOOK = {
-        'consumer_key': environ['FACEBOOK_CONSUMER_KEY'],
-        'consumer_secret': environ['FACEBOOK_CONSUMER_SECRET']
-    }
+    #FACEBOOK = {
+        #'consumer_key': environ['FACEBOOK_CONSUMER_KEY'],
+        #'consumer_secret': environ['FACEBOOK_CONSUMER_SECRET']
+    #}
 
-    SOCIAL_TWITTER = {
-        'consumer_key': environ['TWITTER_CONSUMER_KEY'],
-        'consumer_secret': environ['TWITTER_CONSUMER_SECRET']
+    TWITTER = {
+        'consumer_key': environ.get('TWITTER_CONSUMER_KEY', ''),
+        'consumer_secret': environ.get('TWITTER_CONSUMER_SECRET', ''),
+        'access_token_key': environ.get('LB_TWITTER_ACCESS_TOKEN', ''),
+        'access_token_secret': environ.get('LB_TWITTER_TOKEN_SECRET', '')
     }
 
     @staticmethod

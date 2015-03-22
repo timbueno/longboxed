@@ -9,12 +9,15 @@ import re
 
 from datetime import date
 
-from flask import current_app
+import twitter
+
+from flask import current_app, url_for
 from flask.ext.script import Command, Option, prompt, prompt_bool
 from flask.ext.security.utils import verify_password
 from sqlalchemy import func
 
 from ..core import db
+from ..helpers import current_wednesday
 from ..importer import DailyDownloadImporter
 from ..models import (DiamondList, Issue, IssueCover, issues_creators,
                       issues_bundles, User, Title, Publisher)
@@ -22,19 +25,22 @@ from ..models import (DiamondList, Issue, IssueCover, issues_creators,
 
 class TestCommand(Command):
     def run(self):
-        ddate = date(year=2015, month=1, day=21)
-        issues = Issue.query.filter(
-                                Issue.on_sale_date==None,
-                                Issue.prospective_release_date<ddate)\
-                            .join(Publisher.comics)\
-                            .filter(Publisher.name=='Dark Horse')\
-                            .all()
-        print 'Setting dates for %d issues' % len(issues)
-        for issue in issues:
-            print '%s - %s' % (issue.complete_title,
-                               issue.prospective_release_date)
-            issue.on_sale_date = issue.prospective_release_date
-            issue.save()
+        # Set up the api
+        kwargs = current_app.config.get('TWITTER')
+        api = twitter.Api(**kwargs)
+
+        # Build the tweet
+        issue = Issue.featured_issue(current_wednesday())
+        text = 'Featured This Week: %s\n' % issue.complete_title
+        f = issue.get_cover_image_file()
+        link = url_for(
+                'comics.issue',
+                diamond_id=issue.diamond_id,
+                _external=True)
+        tweet = text + link + '\n'
+        # Tweet the featured issue
+        print tweet
+        #status = api.PostMedia(status=tweet, media=f)
 
 
 class ImportDatabase(Command):
