@@ -190,7 +190,7 @@ class ReprocessDiamondListsCommand(Command):
                 print '--------------------------------'
                 print 'Linking: %s, Rev: %d' % (dlist.date.strftime('%Y-%m-%d'),
                                                 dlist.revision)
-                issues = dlist.link_issues(fieldnames, supported_publishers)
+                dlist.link_issues(fieldnames, supported_publishers)
                 if i == 0:
                     dlists_to_release.append(dlist)
         print '--------------------------------'
