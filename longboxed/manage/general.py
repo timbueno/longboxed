@@ -7,7 +7,7 @@
 """
 import twitter
 
-from flask import current_app, url_for
+from flask import current_app
 from flask.ext.script import Command, prompt_bool
 
 from ..core import cache
