@@ -6,9 +6,12 @@
     User models
 """
 from datetime import datetime
+
+from flask import current_app
 from flask.ext.security import UserMixin, RoleMixin
 
 from ..core import db, CRUDMixin
+from ..models import Issue
 
 # Many-to-Many relationship for user defined publishers to display
 publishers_users = db.Table('publishers_users',
@@ -55,19 +58,6 @@ class Role(db.Model, RoleMixin, CRUDMixin):
             if role is None:
                 role = cls.create(name=r[0], description=r[1])
         return
-
-
-class Connection(db.Model):
-        id = db.Column(db.Integer, primary_key=True)
-        user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-        provider_id = db.Column(db.String(255))
-        provider_user_id = db.Column(db.String(255))
-        access_token = db.Column(db.String(255))
-        secret = db.Column(db.String(255))
-        display_name = db.Column(db.String(255))
-        profile_url = db.Column(db.String(512))
-        image_url = db.Column(db.String(512))
-        rank = db.Column(db.Integer)
 
 
 class User(db.Model, UserMixin, CRUDMixin):
@@ -117,10 +107,6 @@ class User(db.Model, UserMixin, CRUDMixin):
         'Bundle',
         backref=db.backref('user', lazy='joined'),
         lazy='dynamic'
-    )
-    connections = db.relationship(
-        'Connection',
-        backref=db.backref('user', lazy='joined')
     )
 
     def __str__(self):

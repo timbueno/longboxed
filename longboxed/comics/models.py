@@ -416,6 +416,30 @@ class Issue(db.Model, CRUDMixin):
                 Issue.diamond_id!=self.diamond_id).all()
 
     @classmethod
+    def popular_issues(cls, date, count=10):
+        issues = cls.query.filter(
+                                cls.on_sale_date==date,
+                                cls.is_parent==True)\
+                          .order_by(
+                                cls.num_subscribers.desc(),
+                                cls.complete_title.asc())\
+                          .limit(count)\
+                          .all()
+        return issues
+
+    @classmethod
+    def featured_issue(cls, date):
+        # The featured issue should always have a cover image. We check against
+        # that here.
+        issues = cls.popular_issues(date, count=5)
+        featured_issue = None
+        for issue in issues:
+            if issue.cover_image.original:
+                featured_issue = issue
+                break
+        return featured_issue
+
+    @classmethod
     def from_raw(cls, record, sas_id='YOURUSERID'):
         # Create Issue dictionary
         i = deepcopy(record)
@@ -732,8 +756,15 @@ class Issue(db.Model, CRUDMixin):
                     image = self.cover_image.generate_thumbnail(
                                                 width=width,
                                                 height=height)
-                self.save()
+                    self.save()
         return image
+
+    def get_cover_image_file(self):
+        f = None
+        if self.cover_image.original:
+            with store_context(store):
+                f = self.cover_image.open_file()
+        return f
 
 
 class IssueCover(db.Model, Image):

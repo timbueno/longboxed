@@ -14,16 +14,7 @@ from longboxed.core import db
 from longboxed.frontend import create_app
 from longboxed.models import (User, Issue, Title, Publisher, Bundle, Role,
                               DiamondList)
-from longboxed.manage import (CreateNewRoleCommand, CreateDefaultRolesCommand,
-                             CreateUserCommand, AddSuperUserRoleCommand,
-                             ListUsersCommand, ListRolesCommand,
-                             TestCommand, ImportDatabase, DeleteAllIssues,
-                             SetCoverImageCommand, ScheduleReleasesCommand,
-                             CleanCoverImages, DownloadScheduleBundleCommand,
-                             BundleIssuesCommand, DownloadDiamondListCommand,
-                             ClearCacheCommand,
-                             RemovePublisherTitleFromPullLists,
-                             ReprocessDiamondListsCommand)
+from longboxed.manage import *
 
 
 app = create_app(os.getenv('APP_ENV') or 'default')
@@ -62,6 +53,7 @@ manager.add_command('set_cover_image', SetCoverImageCommand())
 manager.add_command('clean_cover_images', CleanCoverImages())
 manager.add_command('remove_publisher_title_from_pull_lists',
                     RemovePublisherTitleFromPullLists())
+manager.add_command('tweet_featured_issue', TweetFeaturedIssueCommand())
 
 
 @manager.command
