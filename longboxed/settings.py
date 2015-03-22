@@ -15,7 +15,7 @@ from sqlalchemy_imageattach.stores.s3 import S3Store
 class Config(object):
     CONFIG_NAME = 'base'
     APP_ENV = environ.get('APP_ENV', 'dev')
-    SERVER_NAME = environ.get('SERVER_NAME', 'longboxed.com')
+    LB_DOMAIN_NAME = environ.get('LB_DOMAIN_NAME', 'longboxed.com')
     USE_S3 = False
 
     CACHE_CONFIG = {'CACHE_TYPE': 'simple',
