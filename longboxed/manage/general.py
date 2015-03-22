@@ -43,10 +43,8 @@ class TweetFeaturedIssueCommand(Command):
         issue = Issue.featured_issue(current_wednesday())
         text = 'Featured This Week: %s\n' % issue.complete_title
         f = issue.get_cover_image_file()
-        link = url_for(
-                'comics.issue',
-                diamond_id=issue.diamond_id,
-                _external=True)
+        domain = current_app.config.get('LB_DOMAIN_NAME', 'longboxed.com')
+        link = domain + '/issue/%s' % issue.diamond_id
         tweet = text + link
 
         # Tweet the featured issue
@@ -58,6 +56,4 @@ class TweetFeaturedIssueCommand(Command):
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
         print '           Complete           '
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
-
-
 
