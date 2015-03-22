@@ -49,6 +49,7 @@ class TweetFeaturedIssueCommand(Command):
 
         # Tweet the featured issue
         print tweet
+        status = None
         if f:
             status = api.PostMedia(status=tweet, media=f)
         else:
@@ -56,4 +57,5 @@ class TweetFeaturedIssueCommand(Command):
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
         print '           Complete           '
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+        return status
 
