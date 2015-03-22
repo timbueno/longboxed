@@ -7,7 +7,6 @@
     TFAW's database CSV file.
 
 """
-
 from csv import DictReader
 from datetime import datetime
 from gzip import GzipFile
@@ -16,9 +15,6 @@ from StringIO import StringIO
 
 import requests
 
-from bs4 import BeautifulSoup
-
-from .helpers import week_handler, unicode_csv_reader
 from .models import Issue, Title, Publisher, Creator
 
 
