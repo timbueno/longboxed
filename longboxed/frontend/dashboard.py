@@ -5,11 +5,10 @@
 
     Frontend blueprints
 """
-from flask import (current_app, Blueprint, g, jsonify, redirect,
+from flask import (current_app, Blueprint, g, redirect,
                    render_template, url_for)
 from flask.ext.security import current_user, login_required
 from flask.ext.security.utils import logout_user
-from flask.ext.wtf.csrf import generate_csrf
 from werkzeug.local import LocalProxy
 
 from . import route

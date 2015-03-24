@@ -53,7 +53,6 @@ class DownloadDiamondListCommand(Command):
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
         print 'Starting: DL Diamond List     '
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
-        date = week_handler(week)
         f = current_app.config.get('RELEASE_CSV_RULES')
         f = [x[2] for x in f]
         sp = current_app.config.get('SUPPORTED_DIAMOND_PUBS')
@@ -111,7 +110,7 @@ class ScheduleReleasesCommand(Command):
             if link:
                 print 'Linking issues...'
                 f = current_app.config.get('RELEASE_CSV_RULES')
-                f = [x[2] for x in f]
+                f = [row[2] for row in f]
                 sp = current_app.config.get('SUPPORTED_DIAMOND_PUBS')
                 diamond_list.link_issues(f, sp)
             diamond_list.release_issues(date)
@@ -191,7 +190,7 @@ class ReprocessDiamondListsCommand(Command):
                 print '--------------------------------'
                 print 'Linking: %s, Rev: %d' % (dlist.date.strftime('%Y-%m-%d'),
                                                 dlist.revision)
-                issues = dlist.link_issues(fieldnames, supported_publishers)
+                dlist.link_issues(fieldnames, supported_publishers)
                 if i == 0:
                     dlists_to_release.append(dlist)
         print '--------------------------------'

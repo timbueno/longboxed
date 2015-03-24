@@ -23,7 +23,7 @@ def verify_password(email, password):
     if email == '':
         g.current_user = AnonymousUser()
         return True
-    user = User.query.filter_by(email=email).first()
+    user = User.query.filter(User.email.ilike(email)).first()
     if not user:
         return False
     g.current_user = user
@@ -36,3 +36,4 @@ def verify_password(email, password):
 @auth.error_handler
 def auth_error():
     return unauthorized('Invalid credentials')
+
