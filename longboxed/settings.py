@@ -31,7 +31,7 @@ class Config(object):
     SUPPORTED_PUBS = ['Marvel Comics', 'DC Comics', 'Dark Horse',
                       'IDW Publishing', 'Boom! Studios', 'Image Comics',
                       'Dynamite Entertainment', 'Avatar Press',
-                      'Abstract Studios','Archie Comics', 'Vertigo',
+                      'Abstract Studios', 'Archie Comics', 'Vertigo',
                       'Valiant Comics']
 
     SUPPORTED_DIAMOND_PUBS = ['MARVEL COMICS', 'DC COMICS', 'DARK HORSE COMICS',
@@ -43,7 +43,8 @@ class Config(object):
 
     DIAMOND_LIST_FIXES = {
             'ANGEL AND FAITH SEASON 10': 'Angel and Faith: Season Ten',
-            'HELLBOY AND THE BPRD': 'Hellboy and the B.P.R.D.: 1952'
+            'HELLBOY AND THE BPRD': 'Hellboy and the B.P.R.D.: 1952',
+            'PASTAWAYS': 'Past Aways'
     }
 
     # Flask Application Configuration
