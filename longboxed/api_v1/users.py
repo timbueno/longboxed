@@ -8,7 +8,7 @@
 from datetime import datetime
 from datetime import date as _date
 
-from flask import current_app, Blueprint, g, jsonify, request
+from flask import abort, current_app, Blueprint, g, jsonify, request
 from flask.ext.security.registerable import register_user
 from werkzeug.datastructures import MultiDict
 from werkzeug.local import LocalProxy

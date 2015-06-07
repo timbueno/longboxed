@@ -48,9 +48,24 @@ class IssueAdmin(AdministratorBase):
     form_excluded_columns = ('cover_image', 'bundles')
 
     form_ajax_refs = {
-            'title': QueryAjaxModelLoader('title', db.session, Title, fields=['name'], page_size=10),
-            'publisher': QueryAjaxModelLoader('publisher', db.session, Publisher, fields=['name'], page_size=10),
-            'creators': QueryAjaxModelLoader('creators', db.session, Creator, fields=['name'], page_size=10)
+            'title': QueryAjaxModelLoader(
+                'title',
+                db.session,
+                Title,
+                fields=['name'],
+                page_size=10),
+            'publisher': QueryAjaxModelLoader(
+                'publisher',
+                db.session,
+                Publisher,
+                fields=['name'],
+                page_size=10),
+            'creators': QueryAjaxModelLoader(
+                'creators',
+                db.session,
+                Creator,
+                fields=['name'],
+                page_size=10)
     }
 
     def __init__(self, session):
@@ -103,10 +118,14 @@ class PublisherAdmin(AdministratorBase):
         # Just call parent class with predefined model.
         super(PublisherAdmin, self).__init__(Publisher, session)
 
-
     form_excluded_columns = ('titles', 'comics')
     form_ajax_refs = {
-        'users': QueryAjaxModelLoader('users', db.session, User, fields=['email'], page_size=10),
+        'users': QueryAjaxModelLoader(
+            'users',
+            db.session,
+            User,
+            fields=['email'],
+            page_size=10),
     }
 
 
@@ -117,9 +136,24 @@ class TitleAdmin(AdministratorBase):
         super(TitleAdmin, self).__init__(Title, session)
 
     form_ajax_refs = {
-        'users': QueryAjaxModelLoader('users', db.session, User, fields=['email'], page_size=10),
-        'issues': QueryAjaxModelLoader('issues', db.session, Issue, fields=['complete_title'], page_size=10),
-        'publisher': QueryAjaxModelLoader('publisher', db.session, Publisher, fields=['name'], page_size=10)
+        'users': QueryAjaxModelLoader(
+            'users',
+            db.session,
+            User,
+            fields=['email'],
+            page_size=10),
+        'issues': QueryAjaxModelLoader(
+            'issues',
+            db.session,
+            Issue,
+            fields=['complete_title'],
+            page_size=10),
+        'publisher': QueryAjaxModelLoader(
+            'publisher',
+            db.session,
+            Publisher,
+            fields=['name'],
+            page_size=10)
     }
 
 
@@ -137,8 +171,18 @@ class BundleAdmin(AdministratorBase):
         super(BundleAdmin, self).__init__(Bundle, session)
 
     form_ajax_refs = {
-        'issues': QueryAjaxModelLoader('issues', db.session, Issue, fields=['complete_title'], page_size=10),
-        'user': QueryAjaxModelLoader('user', db.session, User, fields=['email'], page_size=10)
+        'issues': QueryAjaxModelLoader(
+            'issues',
+            db.session,
+            Issue,
+            fields=['complete_title'],
+            page_size=10),
+        'user': QueryAjaxModelLoader(
+            'user',
+            db.session,
+            User,
+            fields=['email'],
+            page_size=10)
     }
 
 
@@ -148,7 +192,12 @@ class UserAdmin(SuperUserBase):
 
     form_excluded_columns = ('bundles',)
     form_ajax_refs = {
-        'pull_list': QueryAjaxModelLoader('pull_list', db.session, Title, fields=['name'], page_size=10)
+        'pull_list': QueryAjaxModelLoader(
+            'pull_list',
+            db.session,
+            Title,
+            fields=['name'],
+            page_size=10)
     }
 
     def __init__(self, session):
@@ -162,7 +211,12 @@ class RoleAdmin(SuperUserBase):
         super(RoleAdmin, self).__init__(Role, session)
 
     form_ajax_refs = {
-        'users': QueryAjaxModelLoader('users', db.session, User, fields=['email'], page_size=10)
+        'users': QueryAjaxModelLoader(
+            'users',
+            db.session,
+            User,
+            fields=['email'],
+            page_size=10)
     }
 
 
@@ -173,6 +227,14 @@ class DiamondListAdmin(SuperUserBase):
     form_ajax_refs = {'issues': QueryAjaxModelLoader('issues', db.session,
         Issue, fields=['complete_title'], page_size=10)}
     column_list = ('date_created', 'date', 'revision', 'hash_string',)
+    form_ajax_refs = {
+        'issues': QueryAjaxModelLoader(
+            'issues',
+            db.session,
+            Issue,
+            fields=['complete_title'],
+            page_size=10),
+    }
 
 def init_app(app):
     admin = Admin(app, index_view=LongboxedAdminIndexView())

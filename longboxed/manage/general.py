@@ -7,7 +7,7 @@
 """
 import twitter
 
-from flask import current_app, url_for
+from flask import current_app
 from flask.ext.script import Command, prompt_bool
 
 from ..core import cache
@@ -49,6 +49,7 @@ class TweetFeaturedIssueCommand(Command):
 
         # Tweet the featured issue
         print tweet
+        status = None
         if f:
             status = api.PostMedia(status=tweet, media=f)
         else:
@@ -56,4 +57,5 @@ class TweetFeaturedIssueCommand(Command):
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
         print '           Complete           '
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+        return status
 

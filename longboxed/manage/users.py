@@ -13,8 +13,7 @@ from werkzeug.datastructures import MultiDict
 from werkzeug.local import LocalProxy
 
 from ..core import db
-from ..helpers import current_wednesday
-from ..models import Issue, User, Role, Bundle, Publisher
+from ..models import User, Role, Publisher
 
 
 class RemovePublisherTitleFromPullLists(Command):

@@ -165,7 +165,7 @@ class DiamondList(db.Model, CRUDMixin):
             else:
                 print 'No earlier revisions'
                 new_list.revision = 1
-            issues = new_list.link_issues(fieldnames, supported_publishers)
+            new_list.link_issues(fieldnames, supported_publishers)
             d_list = new_list.save()
         else:
             print 'Found an old list!'
