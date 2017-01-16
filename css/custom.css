@@ -1,0 +1,41 @@
+/* Shared
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+body {
+  font-family: "proxima-nova", "proxima-nova-soft", "Raleway", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  text-align: center;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "proxima-nova-soft", "proxima-nova", "Raleway", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: black;
+}
+
+.logo {
+  display: block;
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  /*margin: 50px auto;*/
+}
+
+/* Bigger than 550 */
+@media (min-width: 550px) {
+}
+
+/* Bigger than 750 */
+@media (min-width: 750px) {
+  /*.logo {
+    width: 250px;
+  }*/
+}
+
+/* Bigger than 1000 */
+@media (min-width: 1000px) {
+  /*.logo {
+    width: 300px;
+  }*/
+}
